@@ -487,6 +487,8 @@ button,.btn,.opt,.choice,.tool,.tray-item,.chip,.bin,select,input,[data-go],[rol
 .cnt-badge{font-family:var(--f-mono);font-size:.82rem;color:var(--muted)}
 table.data td,table.data th{white-space:normal}
 .reveal-btn{margin-top:8px}
+.st-q .solve{margin-top:10px}
+.st-q .solve dd{line-height:1.7}
 html.kiosk .teacher-only{display:none!important}
 
 </style></head><body>
@@ -820,6 +822,15 @@ function race(el,cfg,st){
   setup();return {reset:setup};
 }
 
+/* ---------- self-test with model answers ---------- */
+function solutions(el,items,st,onAll){const shown=new Set();
+  el.innerHTML=`<div class="row-actions" style="margin:0 0 10px"><button class="tbtn" type="button" data-all>إظهار كل الحلول</button><button class="tbtn" type="button" data-hide>إخفاء كل الحلول</button></div><div class="prob-list">${items.map((it,i)=>`<div class="prob st-q"><div class="ptitle"><span class="tag">${i+1}</span><span>${it.k}</span></div><p class="q" style="font-weight:600">${it.q}</p>${it.fig||''}<p class="step-text muted" style="font-size:.9rem">فكّر واكتب إجابتك في دفترك أولًا، ثم اكشف الحل.</p><button class="btn alt" type="button" data-s="${i}">إظهار الحل</button><div class="solve-box" data-b="${i}" hidden><dl class="solve">${it.a.map(([t,d])=>`<dt>${t}</dt><dd>${d}</dd>`).join('')}</dl></div></div>`).join('')}</div>`;
+  const show=(i,on)=>{const b=el.querySelector(`[data-b="${i}"]`),btn=el.querySelector(`[data-s="${i}"]`);b.hidden=!on;btn.textContent=on?'إخفاء الحل':'إظهار الحل';if(on){shown.add(i);if(shown.size===items.length&&onAll)onAll();}};
+  el.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const i=+b.dataset.s;const on=el.querySelector(`[data-b="${i}"]`).hidden;show(i,on);G.tick();});
+  el.querySelector('[data-all]').onclick=()=>{items.forEach((_,i)=>show(i,true));G.tick();};
+  el.querySelector('[data-hide]').onclick=()=>{items.forEach((_,i)=>show(i,false));};
+  return {reset(){shown.clear();items.forEach((_,i)=>show(i,false));}};}
+
 /* ---------- «من أنا؟» riddle cards: fewer clues = more points ---------- */
 function riddles(el,items,st,onDone){let i=0,shown=1,over=false,right=0;let list=shuffle(items);
   function render(){const it=list[i];over=false;if(G.teams){G.team=i%G.teams.length;hud();}
@@ -1009,7 +1020,7 @@ function boot(meta){
   if(new URLSearchParams(location.search).has('skip'))$('#startScreen').hidden=true;
 }
 
-window.K={$,$$,G,STN,def,boot,mcq,calcQ,levels,flips,match,sortGame,tfRound,race,challenge,riddles,puzzle,vcard,ayah,modal,go,say,num,fmt,parseNum,shuffle,banner,rain,burst,SFX,note,TEAMC,TEAMN,css};
+window.K={$,$$,G,STN,def,boot,mcq,calcQ,levels,flips,match,sortGame,tfRound,race,challenge,riddles,puzzle,solutions,vcard,ayah,modal,go,say,num,fmt,parseNum,shuffle,banner,rain,burst,SFX,note,TEAMC,TEAMN,css};
 })();
 
 </script>

@@ -487,6 +487,8 @@ button,.btn,.opt,.choice,.tool,.tray-item,.chip,.bin,select,input,[data-go],[rol
 .cnt-badge{font-family:var(--f-mono);font-size:.82rem;color:var(--muted)}
 table.data td,table.data th{white-space:normal}
 .reveal-btn{margin-top:8px}
+.st-q .solve{margin-top:10px}
+.st-q .solve dd{line-height:1.7}
 html.kiosk .teacher-only{display:none!important}
 
 </style></head><body>
@@ -820,6 +822,15 @@ function race(el,cfg,st){
   setup();return {reset:setup};
 }
 
+/* ---------- self-test with model answers ---------- */
+function solutions(el,items,st,onAll){const shown=new Set();
+  el.innerHTML=`<div class="row-actions" style="margin:0 0 10px"><button class="tbtn" type="button" data-all>إظهار كل الحلول</button><button class="tbtn" type="button" data-hide>إخفاء كل الحلول</button></div><div class="prob-list">${items.map((it,i)=>`<div class="prob st-q"><div class="ptitle"><span class="tag">${i+1}</span><span>${it.k}</span></div><p class="q" style="font-weight:600">${it.q}</p>${it.fig||''}<p class="step-text muted" style="font-size:.9rem">فكّر واكتب إجابتك في دفترك أولًا، ثم اكشف الحل.</p><button class="btn alt" type="button" data-s="${i}">إظهار الحل</button><div class="solve-box" data-b="${i}" hidden><dl class="solve">${it.a.map(([t,d])=>`<dt>${t}</dt><dd>${d}</dd>`).join('')}</dl></div></div>`).join('')}</div>`;
+  const show=(i,on)=>{const b=el.querySelector(`[data-b="${i}"]`),btn=el.querySelector(`[data-s="${i}"]`);b.hidden=!on;btn.textContent=on?'إخفاء الحل':'إظهار الحل';if(on){shown.add(i);if(shown.size===items.length&&onAll)onAll();}};
+  el.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const i=+b.dataset.s;const on=el.querySelector(`[data-b="${i}"]`).hidden;show(i,on);G.tick();});
+  el.querySelector('[data-all]').onclick=()=>{items.forEach((_,i)=>show(i,true));G.tick();};
+  el.querySelector('[data-hide]').onclick=()=>{items.forEach((_,i)=>show(i,false));};
+  return {reset(){shown.clear();items.forEach((_,i)=>show(i,false));}};}
+
 /* ---------- «من أنا؟» riddle cards: fewer clues = more points ---------- */
 function riddles(el,items,st,onDone){let i=0,shown=1,over=false,right=0;let list=shuffle(items);
   function render(){const it=list[i];over=false;if(G.teams){G.team=i%G.teams.length;hud();}
@@ -1009,7 +1020,7 @@ function boot(meta){
   if(new URLSearchParams(location.search).has('skip'))$('#startScreen').hidden=true;
 }
 
-window.K={$,$$,G,STN,def,boot,mcq,calcQ,levels,flips,match,sortGame,tfRound,race,challenge,riddles,puzzle,vcard,ayah,modal,go,say,num,fmt,parseNum,shuffle,banner,rain,burst,SFX,note,TEAMC,TEAMN,css};
+window.K={$,$$,G,STN,def,boot,mcq,calcQ,levels,flips,match,sortGame,tfRound,race,challenge,riddles,puzzle,solutions,vcard,ayah,modal,go,say,num,fmt,parseNum,shuffle,banner,rain,burst,SFX,note,TEAMC,TEAMN,css};
 })();
 
 </script>
@@ -1055,7 +1066,7 @@ const TERMS=[
  {t:'القوى غير المتزنة',d:'قوى محصلتها لا تساوي صفرًا، فتغيّر حركة الجسم.',ic:'<path d="M20 20H10M20 20h18" stroke="currentColor" stroke-width="4"/><rect x="15" y="15" width="10" height="10" fill="currentColor"/>'},
  {t:'القصور الذاتي',d:'مقاومة الجسم لإحداث تغيير في حالة حركته؛ ويزداد بزيادة الكتلة.',ic:'<rect x="8" y="14" width="24" height="16" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="14" cy="34" r="3" fill="currentColor"/><circle cx="28" cy="34" r="3" fill="currentColor"/>'},
  {t:'الاحتكاك',d:'قوة ممانعة تنشأ بين سطوح الأجسام المتلامسة، وتقاوم حركتها، وتعمل عكس اتجاه الحركة.',ic:'<path d="M4 30h32" stroke="currentColor" stroke-width="3"/><path d="M6 34l4-4M14 34l4-4M22 34l4-4M30 34l4-4" stroke="currentColor" stroke-width="2"/><rect x="12" y="14" width="16" height="16" fill="currentColor"/>'}];
-def('goals',{n:'الأهداف والمصطلحات',eyebrow:'قبل أن ننطلق',title:'خريطة الرحلة: الأهداف والمصطلحات',goal:'تعرّف ما ستتعلمه اليوم، واقلب بطاقات المصطلحات، ثم طابق كل مصطلح بمعناه.',plan:4,
+def('goals',{n:'الأهداف والمصطلحات',eyebrow:'قبل أن ننطلق',title:'خريطة الرحلة: الأهداف والمصطلحات',goal:'تعرّف ما ستتعلمه اليوم، واقلب بطاقات المصطلحات، ثم طابق كل مصطلح بمعناه.',plan:3,
  icon:'<rect x="12" y="8" width="56" height="64" rx="6" fill="none" stroke="currentColor" stroke-width="6"/><path d="M24 26h32M24 40h32M24 54h20" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>',
  body:`<div class="two"><div class="card"><h3>أهداف الدرس</h3><ol class="goals">${GOALS.map(g=>`<li>${g}</li>`).join('')}</ol><p class="src-note">صيغت الأهداف من محتوى عرض الدرس الثاني، لأن العرض لا يتضمن شريحة أهداف لهذا الدرس.</p></div>
   <div class="side">${vcard('islam','قوانين ثابتة بتقدير الخالق',`${ayah('إِنَّا كُلَّ شَيْءٍ خَلَقْنَاهُ بِقَدَرٍ','القمر: 49')}<p class="mt">قوانين نيوتن تصف نظامًا دقيقًا ثابتًا في الكون؛ فالأجسام لا تتحرك عبثًا بل وفق سنن أودعها الله فيها.</p>`)}
@@ -1068,7 +1079,7 @@ def('goals',{n:'الأهداف والمصطلحات',eyebrow:'قبل أن ننط
 /* ================= S1: force & representation ================= */
 const DIRS={r:[1,0,'اليمين'],l:[-1,0,'اليسار'],u:[0,-1,'الشمال (أعلى)'],d:[0,1,'الجنوب (أسفل)']};
 const DRAW=[{f:10,d:'r',sc:1},{f:4,d:'u',sc:1},{f:6,d:'l',sc:1},{f:50,d:'r',sc:5}];
-def('s1',{n:'1 · القوة وتمثيلها',eyebrow:'المحطة 1',title:'ورشة الأسهم: ما القوة؟ وكيف نرسمها؟',goal:'القوة دفع أو سحب، رمزها ق ووحدتها النيوتن. نمثّلها بسهم: طوله يدل على مقدارها، واتجاهه يدل على اتجاهها.',plan:5,core:1,
+def('s1',{n:'1 · القوة وتمثيلها',eyebrow:'المحطة 1',title:'ورشة الأسهم: ما القوة؟ وكيف نرسمها؟',goal:'القوة دفع أو سحب، رمزها ق ووحدتها النيوتن. نمثّلها بسهم: طوله يدل على مقدارها، واتجاهه يدل على اتجاهها.',plan:4,core:1,
  icon:'<path d="M8 40h52M48 26l14 14-14 14" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>',
  body:`<div class="two"><div class="stage"><svg id="s1svg" viewBox="0 0 600 340" aria-label="شبكة لرسم سهم القوة"></svg>
    <div class="sim-bar"><span class="seg" id="s1dir"><button type="button" data-d="r" class="on">→ يمين</button><button type="button" data-d="l">← يسار</button><button type="button" data-d="u">↑ شمال</button><button type="button" data-d="d">↓ جنوب</button></span>
@@ -1095,7 +1106,7 @@ def('s1',{n:'1 · القوة وتمثيلها',eyebrow:'المحطة 1',title:'�
  explain:'<p><b>القوة</b> دفع أو سحب. تأثيرها: تغيّر شكل الجسم وحجمه وموضعه واتجاه حركته. رمزها <b>ق</b>، ووحدتها <b>النيوتن</b>.</p><p>نمثل القوة بسهم: نختار مقياس رسم، ثم نرسم سهمًا طوله يناسب المقدار ويشير إلى اتجاه القوة. مثال: 50 نيوتن باتجاه اليمين بمقياس 5 نيوتن لكل مربع = 10 مربعات.</p>'});
 
 /* ================= S2: net force ================= */
-def('s2',{n:'2 · القوة المحصلة',eyebrow:'المحطة 2',title:'ساحة القوى: المتزنة وغير المتزنة',goal:'أثّر في الصندوق بقوتين. احسب القوة المحصلة وحدد اتجاهها، ثم اضغط «أطلق» لترى: هل يتحرك الصندوق؟',plan:7,core:1,
+def('s2',{n:'2 · القوة المحصلة',eyebrow:'المحطة 2',title:'ساحة القوى: المتزنة وغير المتزنة',goal:'أثّر في الصندوق بقوتين. احسب القوة المحصلة وحدد اتجاهها، ثم اضغط «أطلق» لترى: هل يتحرك الصندوق؟',plan:5,core:1,
  icon:'<rect x="28" y="28" width="24" height="24" fill="currentColor"/><path d="M4 40h22M54 40h22" stroke="currentColor" stroke-width="7"/>',
  body:`<div class="two"><div class="stage"><canvas id="s2c" width="720" height="300" aria-label="صندوق تؤثر فيه قوتان"></canvas>
    <div class="ctrl"><label>القوة الأولى ق₁: <b id="s2f1v">10</b> نيوتن</label><div style="display:flex;gap:8px;align-items:center"><span class="seg" id="s2d1"><button type="button" data-d="1" class="on">→</button><button type="button" data-d="-1">←</button></span><input type="range" id="s2f1" min="0" max="100" step="5" value="10"></div>
@@ -1144,7 +1155,7 @@ def('s2',{n:'2 · القوة المحصلة',eyebrow:'المحطة 2',title:'س�
 
 /* ================= S3: first law, inertia, friction ================= */
 const SURF=[{n:'العشب',mu:.55,col:'#6aa84f'},{n:'الخشب',mu:.3,col:'#c79a63'},{n:'الجليد',mu:.05,col:'#d6eef8'},{n:'الفضاء (بلا احتكاك)',mu:0,col:'#14213d'}];
-def('s3',{n:'3 · القانون الأول',eyebrow:'المحطة 3',title:'القانون الأول لنيوتن: القصور الذاتي والاحتكاك',goal:'ادفع القرص مرة واحدة على أسطح مختلفة. لماذا يتوقف؟ وماذا يحدث لو لم يكن هناك احتكاك؟',plan:8,core:1,
+def('s3',{n:'3 · القانون الأول',eyebrow:'المحطة 3',title:'القانون الأول لنيوتن: القصور الذاتي والاحتكاك',goal:'ادفع القرص مرة واحدة على أسطح مختلفة. لماذا يتوقف؟ وماذا يحدث لو لم يكن هناك احتكاك؟',plan:6,core:1,
  icon:'<circle cx="40" cy="40" r="16" fill="currentColor"/><path d="M4 40h12M64 40h12" stroke="currentColor" stroke-width="6" stroke-dasharray="4 4"/>',
  body:`<div class="two"><div class="stage"><canvas id="s3c" width="720" height="260" aria-label="قرص ينزلق على سطح"></canvas>
    <div class="sim-bar"><span class="seg" id="s3s">${SURF.map((s,i)=>`<button type="button" data-s="${i}" class="${i===1?'on':''}">${s.n}</button>`).join('')}</span><button class="btn" type="button" id="s3go">ادفع القرص ⟶</button></div>
@@ -1179,7 +1190,7 @@ def('s3',{n:'3 · القانون الأول',eyebrow:'المحطة 3',title:'ا�
  explain:'<p><b>القانون الأول لنيوتن</b>: تبقى الحالة الحركية للجسم كما هي (سكونًا أو حركة بسرعة ثابتة في خط مستقيم) ما لم تؤثر فيه قوة محصلة.</p><p>تتوقف الأجسام المتحركة على الأرض بسبب <b>الاحتكاك</b>: قوة ممانعة بين السطوح المتلامسة تعمل عكس اتجاه الحركة، وتزداد بزيادة خشونة السطحين.</p><p><b>القصور الذاتي</b> مقاومة الجسم لتغيير حالته الحركية، ويزداد بزيادة الكتلة. وفي تجربة البطاقة والكأس تبقى القطعة النقدية في مكانها بسبب قصورها الذاتي فتسقط في الكأس.</p>'});
 
 /* ================= S4: second law ================= */
-def('s4',{n:'4 · القانون الثاني',eyebrow:'المحطة 4',title:'القانون الثاني لنيوتن: القوة والكتلة والتسارع',goal:'غيّر القوة المحصلة وكتلة العربة، وراقب التسارع. ما العلاقة بين الكتلة والتسارع؟ وبين القوة والتسارع؟',plan:8,core:1,
+def('s4',{n:'4 · القانون الثاني',eyebrow:'المحطة 4',title:'القانون الثاني لنيوتن: القوة والكتلة والتسارع',goal:'غيّر القوة المحصلة وكتلة العربة، وراقب التسارع. ما العلاقة بين الكتلة والتسارع؟ وبين القوة والتسارع؟',plan:6,core:1,
  icon:'<rect x="30" y="26" width="34" height="26" fill="currentColor"/><circle cx="38" cy="58" r="5" fill="currentColor"/><circle cx="58" cy="58" r="5" fill="currentColor"/><path d="M4 40h20" stroke="currentColor" stroke-width="7"/>',
  body:`<div class="two"><div class="stage"><canvas id="s4c" width="720" height="260" aria-label="عربة تدفعها قوة"></canvas>
    <div class="ctrl"><label>القوة المحصلة ق: <b id="s4Fv">40</b> نيوتن</label><input type="range" id="s4F" min="10" max="100" step="10" value="40">
@@ -1216,7 +1227,7 @@ def('s4',{n:'4 · القانون الثاني',eyebrow:'المحطة 4',title:'�
  explain:'<p><b>القانون الثاني لنيوتن</b>: إذا أثرت قوة محصلة في جسم فإنه يكتسب تسارعًا في اتجاه القوة نفسه، يساوي القوة المحصلة مقسومة على كتلة الجسم: <b>ت = ق ÷ ك</b>.</p><p>يعتمد تسارع أي جسم على القوة المحصلة المؤثرة فيه (علاقة طردية) وعلى كتلته (علاقة عكسية).</p>'});
 
 /* ================= S5: third law ================= */
-def('s5',{n:'5 · القانون الثالث',eyebrow:'المحطة 5',title:'القانون الثالث لنيوتن: الفعل ورد الفعل',goal:'انفخ البالون ثم أطلقه: الهواء يندفع إلى الخلف، فإلى أين تتحرك السيارة؟',plan:6,core:1,
+def('s5',{n:'5 · القانون الثالث',eyebrow:'المحطة 5',title:'القانون الثالث لنيوتن: الفعل ورد الفعل',goal:'انفخ البالون ثم أطلقه: الهواء يندفع إلى الخلف، فإلى أين تتحرك السيارة؟',plan:5,core:1,
  icon:'<path d="M40 8c10 10 12 30 0 52-12-22-10-42 0-52z" fill="currentColor"/><path d="M34 62l-4 12M46 62l4 12M40 62v14" stroke="currentColor" stroke-width="4"/>',
  body:`<div class="two"><div class="stage"><canvas id="s5c" width="720" height="260" aria-label="سيارة البالون"></canvas>
    <div class="ctrl"><label>مقدار نفخ البالون: <b id="s5pv">3</b> نفخات</label><input type="range" id="s5p" min="1" max="6" value="3"></div>
@@ -1244,7 +1255,7 @@ def('s5',{n:'5 · القانون الثالث',eyebrow:'المحطة 5',title:'�
  explain:'<p><b>القانون الثالث لنيوتن</b>: عندما يؤثر جسم بقوة في جسم آخر، فإن الجسم الثاني يؤثر في الأول بقوة مساوية في المقدار ومعاكسة في الاتجاه.</p><p>لا تُلغي القوتان إحداهما الأخرى لأنهما تؤثران في جسمين مختلفين. أمثلة: الصاروخ، والسباح، والقفز من القارب، ولوح التزلج.</p><p><b>نشاط منزلي:</b> سيارة البالون؛ اكتشف متعة التجربة.</p>'});
 
 /* ================= S6: problems ================= */
-def('s6',{n:'6 · مختبر المسائل',eyebrow:'المحطة 6 · تطبيق الرياضيات',title:'مختبر المسائل: اختر مستواك',goal:'ثلاثة مستويات تناسب الجميع. استعن بأزرار المساعدة عند الحاجة.',plan:4,core:1,
+def('s6',{n:'6 · مختبر المسائل',eyebrow:'المحطة 6 · تطبيق الرياضيات',title:'مختبر المسائل: اختر مستواك',goal:'ثلاثة مستويات تناسب الجميع. استعن بأزرار المساعدة عند الحاجة.',plan:3,core:1,
  icon:'<rect x="10" y="10" width="60" height="60" rx="8" fill="none" stroke="currentColor" stroke-width="6"/><path d="M24 30h12M30 24v12M46 30h12M24 52h12M46 48h12M46 56h12" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>',
  body:'<div class="card" id="s6lv"></div>',
  init(){const L1=[
@@ -1287,6 +1298,17 @@ def('s7',{n:'7 · المسابقات',eyebrow:'المحطة 7 · تنافس ال
   STN.s7.q=riddles($('#s7rid'),RID,'s7');},
  reset(){STN.s7.r.reset();STN.s7.q.reset();},
  explain:'<p>«شد الحبل» تطبيق حي للقوة المحصلة: كل إجابة صحيحة تضيف قوة لصالح الفريق. و«من أنا؟» تراعي الفروق الفردية: يمكن طلب أدلة إضافية مقابل نقاط أقل.</p>'});
+
+/* ================= SELF TEST p61 ================= */
+def('self',{n:'اختبر نفسك',eyebrow:'كتاب الطالب ص 61',title:'اختبر نفسك: الأسئلة والحلول',goal:'أسئلة «اختبر نفسك» في نهاية الدرس مع الحل النموذجي لكل سؤال.',plan:3,
+ icon:'<rect x="14" y="8" width="52" height="64" rx="6" fill="none" stroke="currentColor" stroke-width="6"/><path d="M24 30l6 6 12-12M24 54l6 6 12-12" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>',body:'<div class="card" id="selfBox"></div>',
+ init(){STN.self.s=K.solutions($('#selfBox'),[
+  {k:'اشرح',q:'اشرح العلاقة بين القصور الذاتي لجسم وكتلته.',a:[['الإجابة','علاقة طردية: كلما زادت كتلة الجسم زاد قصوره الذاتي، فيصعب تحريكه أو إيقافه أو تغيير اتجاه حركته.'],['مثال','إيقاف عربة كتلتها 20 كجم أصعب من إيقاف عربة كتلتها 10 كجم.']]},
+  {k:'طبّق',q:'إذا أثرت قوة مقدارها 5 نيوتن في جسم نحو اليسار، وقوة أخرى مقدارها 9 نيوتن نحو اليمين، فما مقدار القوة المحصلة؟',a:[['المعطيات','ق₁ = 5 نيوتن نحو اليسار ، ق₂ = 9 نيوتن نحو اليمين'],['القانون','قوتان متعاكستان: ق م = القوة الكبرى − القوة الصغرى'],['الحل','ق م = 9 − 5 = 4 نيوتن'],['الإجابة','4 نيوتن نحو اليمين (في اتجاه القوة الكبرى).']]},
+  {k:'استنتج',q:'إذا كانت سيارة تتحرك بسرعة ثابتة المقدار، فهل يلزم أن تكون واقعة تحت تأثير قوى متزنة؟',a:[['الإجابة','ليس بالضرورة.'],['إذا تحركت في خط مستقيم','فسرعتها المتجهة ثابتة، فالقوى المؤثرة فيها متزنة والقوة المحصلة صفر (القانون الأول).'],['إذا غيّرت اتجاهها','كأن تسير في منعطف، فسرعتها المتجهة تتغير؛ أي أنها تتسارع، فالقوى غير متزنة وهناك قوة محصلة.']]},
+  {k:'التفكير الناقد',q:'ينزلق كتاب على سطح طاولة بحيث تقل سرعته تدريجيًّا حتى يتوقف. فسّر: هل يُعدّ ذلك تناقضًا مع القانون الأول لنيوتن في الحركة أم لا؟',a:[['الإجابة','لا يُعدّ تناقضًا.'],['التفسير','ينص القانون الأول على أن الجسم يستمر في حركته ما لم تؤثر فيه قوة محصلة. وهنا تؤثر في الكتاب قوة الاحتكاك بين الكتاب والطاولة عكس اتجاه الحركة؛ وهي قوة غير متزنة أبطأت الكتاب حتى توقف.']]},
+  {k:'تطبيق الرياضيات',q:'احسب القوة المحصلة المؤثرة في كرة كتلتها 0.15 كجم وتسارعها 20 م/ث².',a:[['المعطيات','ك = 0.15 كجم ، ت = 20 م/ث²'],['المطلوب','ق = ؟'],['القانون','ق = ك × ت'],['الحل','ق = 0.15 × 20 = 3 نيوتن']]}],'self',()=>G.complete('self'));},
+ reset(){STN.self.s.reset();},explain:'<p>حلول نموذجية لأسئلة «اختبر نفسك» ص 61. يُفضّل أن يجيب الطلاب في دفاترهم أولًا، ثم يكشف المعلم الحل سؤالًا سؤالًا.</p>'});
 
 /* ================= CHALLENGE ================= */
 def('ch',{n:'تحدي العلماء',plan:3,icon:'<path d="M24 10h32v18a16 16 0 0 1-32 0z" fill="currentColor"/><path d="M24 16H12a10 10 0 0 0 12 14M56 16h12a10 10 0 0 1-12 14" fill="none" stroke="currentColor" stroke-width="5"/><path d="M40 44v14M28 70h24l-3-12H31z" fill="currentColor"/>',

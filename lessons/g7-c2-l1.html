@@ -487,6 +487,8 @@ button,.btn,.opt,.choice,.tool,.tray-item,.chip,.bin,select,input,[data-go],[rol
 .cnt-badge{font-family:var(--f-mono);font-size:.82rem;color:var(--muted)}
 table.data td,table.data th{white-space:normal}
 .reveal-btn{margin-top:8px}
+.st-q .solve{margin-top:10px}
+.st-q .solve dd{line-height:1.7}
 html.kiosk .teacher-only{display:none!important}
 
 </style></head><body>
@@ -820,6 +822,15 @@ function race(el,cfg,st){
   setup();return {reset:setup};
 }
 
+/* ---------- self-test with model answers ---------- */
+function solutions(el,items,st,onAll){const shown=new Set();
+  el.innerHTML=`<div class="row-actions" style="margin:0 0 10px"><button class="tbtn" type="button" data-all>إظهار كل الحلول</button><button class="tbtn" type="button" data-hide>إخفاء كل الحلول</button></div><div class="prob-list">${items.map((it,i)=>`<div class="prob st-q"><div class="ptitle"><span class="tag">${i+1}</span><span>${it.k}</span></div><p class="q" style="font-weight:600">${it.q}</p>${it.fig||''}<p class="step-text muted" style="font-size:.9rem">فكّر واكتب إجابتك في دفترك أولًا، ثم اكشف الحل.</p><button class="btn alt" type="button" data-s="${i}">إظهار الحل</button><div class="solve-box" data-b="${i}" hidden><dl class="solve">${it.a.map(([t,d])=>`<dt>${t}</dt><dd>${d}</dd>`).join('')}</dl></div></div>`).join('')}</div>`;
+  const show=(i,on)=>{const b=el.querySelector(`[data-b="${i}"]`),btn=el.querySelector(`[data-s="${i}"]`);b.hidden=!on;btn.textContent=on?'إخفاء الحل':'إظهار الحل';if(on){shown.add(i);if(shown.size===items.length&&onAll)onAll();}};
+  el.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const i=+b.dataset.s;const on=el.querySelector(`[data-b="${i}"]`).hidden;show(i,on);G.tick();});
+  el.querySelector('[data-all]').onclick=()=>{items.forEach((_,i)=>show(i,true));G.tick();};
+  el.querySelector('[data-hide]').onclick=()=>{items.forEach((_,i)=>show(i,false));};
+  return {reset(){shown.clear();items.forEach((_,i)=>show(i,false));}};}
+
 /* ---------- «من أنا؟» riddle cards: fewer clues = more points ---------- */
 function riddles(el,items,st,onDone){let i=0,shown=1,over=false,right=0;let list=shuffle(items);
   function render(){const it=list[i];over=false;if(G.teams){G.team=i%G.teams.length;hud();}
@@ -1009,7 +1020,7 @@ function boot(meta){
   if(new URLSearchParams(location.search).has('skip'))$('#startScreen').hidden=true;
 }
 
-window.K={$,$$,G,STN,def,boot,mcq,calcQ,levels,flips,match,sortGame,tfRound,race,challenge,riddles,puzzle,vcard,ayah,modal,go,say,num,fmt,parseNum,shuffle,banner,rain,burst,SFX,note,TEAMC,TEAMN,css};
+window.K={$,$$,G,STN,def,boot,mcq,calcQ,levels,flips,match,sortGame,tfRound,race,challenge,riddles,puzzle,solutions,vcard,ayah,modal,go,say,num,fmt,parseNum,shuffle,banner,rain,burst,SFX,note,TEAMC,TEAMN,css};
 })();
 
 </script>
@@ -1080,7 +1091,7 @@ def('goals',{n:'الأهداف والمصطلحات',eyebrow:'قبل أن ننط
 
 /* ================= S1: average speed ================= */
 const VEH=[{n:'عدّاء',v:5,c:'#c97c06'},{n:'دراجة',v:8,c:'#1f7a45'},{n:'سيارة',v:20,c:'#d9483b'},{n:'قطار',v:25,c:'#0b6884'}];
-def('s1',{n:'1 · السرعة المتوسطة',eyebrow:'المحطة 1',title:'حلبة القياس: السرعة المتوسطة',goal:'لوصف سرعة جسم يجب أن تعرف شيئين: المسافة التي قطعها، والزمن الذي احتاج إليه. شغّل الحلبة، واقرأ المسافة والزمن، ثم احسب السرعة.',plan:8,core:1,
+def('s1',{n:'1 · السرعة المتوسطة',eyebrow:'المحطة 1',title:'حلبة القياس: السرعة المتوسطة',goal:'لوصف سرعة جسم يجب أن تعرف شيئين: المسافة التي قطعها، والزمن الذي احتاج إليه. شغّل الحلبة، واقرأ المسافة والزمن، ثم احسب السرعة.',plan:7,core:1,
  icon:'<circle cx="40" cy="44" r="26" fill="none" stroke="currentColor" stroke-width="6"/><path d="M40 44l12-14M34 8h12M40 8v10" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>',
  body:`<div class="two"><div class="stage"><canvas id="s1c" width="720" height="300" aria-label="حلبة قياس المسافة والزمن"></canvas>
    <div class="sim-bar"><span class="seg" id="s1veh">${VEH.map((v,i)=>`<button type="button" data-v="${i}" class="${i===2?'on':''}">${v.n}</button>`).join('')}</span>
@@ -1132,7 +1143,7 @@ def('s1',{n:'1 · السرعة المتوسطة',eyebrow:'المحطة 1',title:
 });
 
 /* ================= S2: instantaneous, constant, velocity ================= */
-def('s2',{n:'2 · السرعة اللحظية والمتجهة',eyebrow:'المحطة 2',title:'قيادة ذكية: السرعة اللحظية والثابتة والمتجهة',goal:'قُد السيارة، وراقب عدّاد السرعة. متى تساوي السرعة اللحظية السرعة المتوسطة؟ وماذا يقيس نظام «ساهر»؟',plan:8,core:1,
+def('s2',{n:'2 · السرعة اللحظية والمتجهة',eyebrow:'المحطة 2',title:'قيادة ذكية: السرعة اللحظية والثابتة والمتجهة',goal:'قُد السيارة، وراقب عدّاد السرعة. متى تساوي السرعة اللحظية السرعة المتوسطة؟ وماذا يقيس نظام «ساهر»؟',plan:7,core:1,
  icon:'<path d="M10 56a30 30 0 0 1 60 0" fill="none" stroke="currentColor" stroke-width="7"/><path d="M40 56l16-20" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><circle cx="40" cy="56" r="6" fill="currentColor"/>',
  body:`<div class="two"><div class="stage"><canvas id="s2c" width="720" height="300" aria-label="سيارة على طريق مع عداد سرعة وكاميرا ساهر"></canvas>
    <div class="sim-bar"><button class="btn" type="button" id="s2gas">⬆ دوّاسة الوقود (اضغط مطولًا)</button><button class="btn alt" type="button" id="s2brk">⬇ المكابح</button><button class="tbtn" type="button" id="s2cru" aria-pressed="false">مثبت السرعة</button><button class="tbtn" type="button" id="s2rst">رحلة جديدة</button></div>
@@ -1207,7 +1218,7 @@ def('s2',{n:'2 · السرعة اللحظية والمتجهة',eyebrow:'الم�
 });
 
 /* ================= S3: acceleration ================= */
-def('s3',{n:'3 · التسارع',eyebrow:'المحطة 3',title:'مختبر التسارع: كيف تتغير السرعة مع الزمن؟',goal:'التسارع يصف كيف تتغير السرعة مع الزمن. شغّل إحدى الحالات، وراقب منحنى السرعة–الزمن، ثم احسب التسارع.',plan:8,core:1,
+def('s3',{n:'3 · التسارع',eyebrow:'المحطة 3',title:'مختبر التسارع: كيف تتغير السرعة مع الزمن؟',goal:'التسارع يصف كيف تتغير السرعة مع الزمن. شغّل إحدى الحالات، وراقب منحنى السرعة–الزمن، ثم احسب التسارع.',plan:7,core:1,
  icon:'<path d="M8 70 L70 10" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><path d="M12 70h8M26 60h12M44 46h18" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>',
  body:`<div class="two"><div class="stage"><canvas id="s3c" width="720" height="250" aria-label="سيارة وإشارة مرور"></canvas><canvas id="s3g" width="720" height="300" aria-label="منحنى السرعة مع الزمن"></canvas>
    <div class="sim-bar"><span class="seg" id="s3pre"><button type="button" data-p="0" class="on">🟢 الإشارة خضراء</button><button type="button" data-p="1">🛣 طريق مفتوح</button><button type="button" data-p="2">🔴 الإشارة حمراء</button></span><button class="btn" type="button" id="s3run">تشغيل</button></div>
@@ -1259,7 +1270,7 @@ def('s3',{n:'3 · التسارع',eyebrow:'المحطة 3',title:'مختبر ا�
 });
 
 /* ================= S4: problem lab with levels ================= */
-def('s4',{n:'4 · مختبر المسائل',eyebrow:'المحطة 4 · تطبيق الرياضيات',title:'مختبر المسائل: اختر مستواك',goal:'ثلاثة مستويات تناسب الجميع. ابدأ بالمستوى الذي يناسبك، واستعن بأزرار المساعدة عند الحاجة.',plan:7,core:1,
+def('s4',{n:'4 · مختبر المسائل',eyebrow:'المحطة 4 · تطبيق الرياضيات',title:'مختبر المسائل: اختر مستواك',goal:'ثلاثة مستويات تناسب الجميع. ابدأ بالمستوى الذي يناسبك، واستعن بأزرار المساعدة عند الحاجة.',plan:6,core:1,
  icon:'<rect x="10" y="10" width="60" height="60" rx="8" fill="none" stroke="currentColor" stroke-width="6"/><path d="M24 30h12M30 24v12M46 30h12M24 52h12M46 48h12M46 56h12" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>',
  body:`<div class="card" id="s4lv"></div>${vcard('islam','الإتقان قيمة',`<p>قال رسول الله ﷺ: «إنَّ اللهَ كتبَ الإحسانَ على كلِّ شيءٍ» <span class="ref">[رواه مسلم]</span>. اكتب المعطيات والمطلوب والقانون بإتقان قبل التعويض.</p>`)}`,
  init(){const L1=[
@@ -1297,7 +1308,7 @@ const RQ=[
 const TF=[['السرعة المتجهة هي مقدار سرعة الجسم واتجاه حركته.',true],['إذا تحرك جسم بسرعة ثابتة في دائرة فإن تسارعه صفر.',false,'اتجاهه يتغير، فهو يتسارع.'],['يمكن أن تكون السرعة اللحظية أكبر من السرعة المتوسطة.',true],
  ['ع = ف × ز هو قانون السرعة المتوسطة.',false,'قانون السرعة: ع = ف ÷ ز.'],['عندما يتوقف جسم متحرك يكون تسارعه سالبًا خلال التوقف.',true],['في منحنى السرعة–الزمن، الخط الأفقي يعني أن التسارع صفر.',true],
  ['وحدة السرعة م/ث².',false,'وحدة السرعة م/ث، أما م/ث² فهي وحدة التسارع.'],['عند أدنى نقطة في المسار نصف الدائري تكون سرعة المتزلج أكبر ما يمكن.',true],['يقيس نظام ساهر السرعة المتوسطة للرحلة كلها.',false,'يرصد السرعة اللحظية عند مرور المركبة.']];
-def('s5',{n:'5 · المسابقات',eyebrow:'المحطة 5 · تنافس المجموعات',title:'حلبة الأبطال',goal:'مسابقتان بطريقتين مختلفتين: سباق سيارات بين المجموعات، وجولة «صح أم خطأ» خاطفة.',plan:6,
+def('s5',{n:'5 · المسابقات',eyebrow:'المحطة 5 · تنافس المجموعات',title:'حلبة الأبطال',goal:'مسابقتان بطريقتين مختلفتين: سباق سيارات بين المجموعات، وجولة «صح أم خطأ» خاطفة.',plan:5,
  icon:'<path d="M14 66V12M14 12h44l-10 12 10 12H14" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>',
  body:`<div class="card"><div class="nb-head"><h2>🏎 سباق السرعة</h2><span>كل إجابة صحيحة تدفع سيارة مجموعتك خطوة نحو خط النهاية</span></div><div id="s5race"></div></div>
   <div class="card"><div class="nb-head"><h2>⚡ صح أم خطأ؟ الجولة الخاطفة</h2><span>قرار سريع قبل انتهاء العداد</span></div><div id="s5tf"></div></div>`,
@@ -1307,8 +1318,18 @@ def('s5',{n:'5 · المسابقات',eyebrow:'المحطة 5 · تنافس ال
  explain:'<p>سباق السيارات يربط فكرة الدرس بالمنافسة: كل إجابة صحيحة تقدّم السيارة خطوة. والجولة الخاطفة تقيس سرعة الاستدعاء والفهم.</p>'
 });
 
+/* ================= SELF TEST p51 ================= */
+def('self',{n:'اختبر نفسك',eyebrow:'كتاب الطالب ص 51',title:'اختبر نفسك: الأسئلة والحلول',goal:'أسئلة «اختبر نفسك» في نهاية الدرس مع الحل النموذجي لكل سؤال.',plan:3,
+ icon:'<rect x="14" y="8" width="52" height="64" rx="6" fill="none" stroke="currentColor" stroke-width="6"/><path d="M24 30l6 6 12-12M24 54l6 6 12-12" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>',body:'<div class="card" id="selfBox"></div>',
+ init(){STN.self.s=K.solutions($('#selfBox'),[
+  {k:'فسّر',q:'إذا طارت طائرة بسرعة ثابتة مقدارها 500 كم/س، فهل يمكن اعتبارها تتسارع؟',a:[['الإجابة','يعتمد ذلك على اتجاه حركتها.'],['إذا طارت في خط مستقيم','لا تتسارع؛ لأن مقدار سرعتها واتجاهها ثابتان، فسرعتها المتجهة لا تتغير والتسارع = صفر.'],['إذا غيّرت اتجاهها','فهي تتسارع؛ لأن التسارع تغيّر في السرعة المتجهة، وتغيّر الاتجاه وحده يغيّر السرعة المتجهة حتى لو بقي المقدار 500 كم/س.']]},
+  {k:'استنتج',q:'هل يمكن للسرعة اللحظية لجسم ما أن تكون أكبر من سرعته المتوسطة؟',a:[['الإجابة','نعم.'],['التفسير','السرعة المتوسطة = المسافة الكلية ÷ الزمن الكلي، أما السرعة اللحظية فتتغير من لحظة إلى أخرى؛ فتكون في بعض اللحظات أكبر من المتوسطة وفي لحظات أخرى أصغر منها. ولا تتساويان دائمًا إلا إذا تحرك الجسم بسرعة ثابتة.'],['مثال','سيارة سرعتها المتوسطة 60 كم/س في رحلة، وقد يقرأ عدّادها 80 كم/س في لحظة ما.']]},
+  {k:'حدّد',q:'هل يمكن لجسم متحرك بسرعة ثابتة في المقدار أن تتغير سرعته المتجهة؟',a:[['الإجابة','نعم.'],['التفسير','السرعة المتجهة تشمل المقدار والاتجاه؛ فإذا تغيّر اتجاه حركة الجسم تغيّرت سرعته المتجهة حتى لو بقي مقدار سرعته ثابتًا.'],['مثال','سيارة تدور حول دوّار بسرعة ثابتة المقدار.']]},
+  {k:'التفكير الناقد',q:'صف حركة متزلج عندما يتسارع نازلًا إلى أسفل منحدر ثم عندما يصعد الجانب الآخر. ماذا يمكن أن يحدث لو كان الجانب الذي يصعده أقل انحدارًا من الجانب الآخر؟',a:[['أثناء النزول','تتزايد سرعته؛ لأن التسارع في اتجاه الحركة.'],['عند أسفل المنحدر','تكون سرعته أكبر ما يمكن.'],['أثناء الصعود','تتناقص سرعته؛ لأن التسارع عكس اتجاه الحركة، حتى تصبح سرعته صفرًا ثم يعود.'],['إذا كان الجانب الآخر أقل انحدارًا','تتناقص سرعته بمعدل أصغر، فيقطع مسافة أطول على السطح قبل أن تصبح سرعته صفرًا.']]}],'self',()=>G.complete('self'));},
+ reset(){STN.self.s.reset();},explain:'<p>حلول نموذجية لأسئلة «اختبر نفسك» ص 51. يُفضّل أن يجيب الطلاب في دفاترهم أولًا، ثم يكشف المعلم الحل سؤالًا سؤالًا.</p>'});
+
 /* ================= CHALLENGE ================= */
-def('ch',{n:'تحدي العلماء',icon:'<path d="M24 10h32v18a16 16 0 0 1-32 0z" fill="currentColor"/><path d="M24 16H12a10 10 0 0 0 12 14M56 16h12a10 10 0 0 1-12 14" fill="none" stroke="currentColor" stroke-width="5"/><path d="M40 44v14M28 70h24l-3-12H31z" fill="currentColor"/>',plan:4,
+def('ch',{n:'تحدي العلماء',icon:'<path d="M24 10h32v18a16 16 0 0 1-32 0z" fill="currentColor"/><path d="M24 16H12a10 10 0 0 0 12 14M56 16h12a10 10 0 0 1-12 14" fill="none" stroke="currentColor" stroke-width="5"/><path d="M40 44v14M28 70h24l-3-12H31z" fill="currentColor"/>',plan:3,
  eyebrow:'التقويم الختامي',title:'تحدي العلماء',goal:'ثمانية أسئلة متنوعة تقيس أهداف الدرس الثلاثة. لكل سؤال محاولتان.',
  body:'<div class="card" id="chBox"></div>',
  init(){STN.ch.c=challenge($('#chBox'),[
