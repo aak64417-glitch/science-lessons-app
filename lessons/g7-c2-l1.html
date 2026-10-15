@@ -591,7 +591,7 @@ img.auc-im,img.tf-im{max-height:190px;width:auto;max-width:100%;border-radius:12
       <button class="tbtn" type="button" id="bFx" aria-pressed="true">بطاقات الانتقال والحركة</button>
     </div></div>
     <div><h4>زمن الحصة</h4>
-      <div class="dgrid"><select id="periodLen" aria-label="مدة الحصة"><option value="40">40 دقيقة</option><option value="45" selected>45 دقيقة</option><option value="50">50 دقيقة</option></select><button class="tbtn" type="button" id="bTimer">ابدأ الحصة</button></div>
+      <div class="dgrid"><select id="periodLen" aria-label="مدة الحصة"><option value="40">40 دقيقة</option><option value="45" selected>45 دقيقة</option><option value="50">50 دقيقة</option><option value="90">حصتان (90 دقيقة)</option></select><button class="tbtn" type="button" id="bTimer">ابدأ الحصة</button></div>
       <div class="dgrid" style="margin-top:6px"><button class="tbtn" type="button" id="bTimerReset">تصفير المؤقت</button></div>
       <div id="planList" style="margin-top:8px"></div>
     </div>
@@ -724,7 +724,8 @@ const VI={
   life:'<svg class="vi" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="20" r="12" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18 36h12M20 42h8M24 8v-4M10 20H6M42 20h-4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
   safety:'<svg class="vi" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4l17 6v12c0 11-7 19-17 22C14 41 7 33 7 22V10z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M16 24l6 6 11-12" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>'};
 const VK={islam:'قيمة إسلامية',nation:'هويتي الوطنية',life:'العلم في حياتي',safety:'سلامتي'};
-function vcard(kind,title,html){return `<div class="vcard ${kind}">${VI[kind]}<div><span class="vk">${VK[kind]}</span><h4>${title}</h4>${html}</div></div>`;}
+const VCOUNT={};
+function vcard(kind,title,html){if(kind==='islam'||kind==='nation'){VCOUNT[kind]=(VCOUNT[kind]||0)+1;if(VCOUNT[kind]>1)return '';}return `<div class="vcard ${kind}">${VI[kind]}<div><span class="vk">${VK[kind]}</span><h4>${title}</h4>${html}</div></div>`;}
 const ayah=(t,ref)=>`<span class="ayah">﴿${t}﴾</span><span class="ref">[${ref}]</span>`;
 
 /* ---------- generic multiple choice ---------- */
@@ -1099,7 +1100,8 @@ function formative(id){const st=STN[id];
 /* ---------- timer ---------- */
 const PLAN={};
 G.clock={run:false,el:0,len:45,st:{},nudged:{},last:performance.now()};
-const budget=id=>(PLAN[id]||0)*G.clock.len/45*60;
+const planSum=()=>Object.values(PLAN).reduce((a,b)=>a+b,0)||45;
+const budget=id=>(PLAN[id]||0)*G.clock.len/planSum()*60;
 const mmss=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
 const nextId=id=>{const o=order(),i=o.findIndex(x=>x.id===id);return o[i+1]?o[i+1].id:null;};
 function hideNudge(){const n=$('#nudge');if(n)n.hidden=true;}
@@ -1164,9 +1166,12 @@ function boot(meta){
   const dk=()=>{const r=document.documentElement,t=r.getAttribute('data-theme');return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;};
   const setAcc=()=>{const v=dk()?meta.accentDark:meta.accent;if(v)document.documentElement.style.setProperty('--accent',v);else document.documentElement.style.removeProperty('--accent');};setAcc();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',setAcc);}catch(e){}
   def('final',{n:'لوحة الإنجاز',icon:'<circle cx="40" cy="44" r="26" fill="currentColor"/><path d="M40 28l5 10 11 1-8 8 2 11-10-6-10 6 2-11-8-8 11-1z" fill="#fff"/><path d="M26 4h12l4 18H30zM42 4h12l-4 18h-8z" fill="currentColor" opacity=".6"/>',enter:renderFinal,reset(){$('#finalBox').innerHTML='';},explain:'<p>لوحة الإنجاز تلخص مفاهيم الدرس، وتعرض نقاط كل محطة ونتيجة التقويم التكويني والختامي، مع تقويم ذاتي لأهداف الدرس.</p>'});
+  DEFS.filter(d=>d.after).forEach(d=>{const i=DEFS.indexOf(d);DEFS.splice(i,1);const j=DEFS.findIndex(x=>x.id===d.after);DEFS.splice(j+1,0,d);});
   DEFS.forEach(d=>{if(d.plan)PLAN[d.id]=d.plan;});
   $('#stations').innerHTML=DEFS.map((d,i,l)=>sectionHTML(d,i,l)).join('');
   $$('[data-meta]').forEach(e=>{e.textContent=meta[e.dataset.meta]||'';});
+  $$('#stations .side').forEach(sd=>{if(!sd.children.length)sd.remove();});
+  $$('#stations .two, #stations .three').forEach(t=>{const n=[...t.children].length;if(n===1)t.style.gridTemplateColumns='minmax(0,1fr)';if(n===0)t.remove();});
   card=document.createElement('div');card.className='fx-card';card.hidden=true;card.setAttribute('aria-hidden','true');document.body.appendChild(card);
   card.addEventListener('pointerdown',hideCard);
   fxInit();
@@ -1553,8 +1558,7 @@ K.boot({chapter:'الفصل الثاني: الحركة والقوى والآلا
   {n:'السرعة الثابتة',t:'مسافات متساوية في أزمنة متساوية.',ic:'<path d="M4 36h44" stroke="var(--accent)" stroke-width="3"/><circle cx="10" cy="28" r="5" fill="var(--amber)"/><circle cx="26" cy="28" r="5" fill="var(--amber)"/><circle cx="42" cy="28" r="5" fill="var(--amber)"/>'},
   {n:'السرعة المتجهة',t:'مقدار السرعة واتجاه الحركة معًا.',ic:'<path d="M8 44L40 12M28 12h12v12" fill="none" stroke="var(--accent)" stroke-width="4"/>'},
   {n:'التسارع',t:'ت = (ع₂ − ع₁) ÷ ز؛ موجب عند التزايد، وسالب عند التناقص.',ic:'<path d="M6 46L46 6" stroke="var(--accent)" stroke-width="4"/>'},
-  {n:'المسافة',t:'ف = ع × ز.',ic:'<path d="M6 30h40M6 22v16M46 22v16" stroke="var(--accent)" stroke-width="4"/>'}],
- valuesSum:vcard('islam','الاعتدال وحفظ النفس','<p>﴿وَاقْصِدْ فِي مَشْيِكَ﴾ و﴿وَلَا تُلْقُوا بِأَيْدِيكُمْ إِلَى التَّهْلُكَةِ﴾.</p>')+vcard('nation','وطني في الحركة','<p>نظام «ساهر» يرصد السرعة اللحظية، وقطار الحرمين مثال حي على التسارع والسرعة الثابتة.</p>')+vcard('life','العلم في حياتي','<p>عدّاد السرعة، ومنحنيات الحركة، وحساب زمن الرحلة قبل السفر.</p>')});
+  {n:'المسافة',t:'ف = ع × ز.',ic:'<path d="M6 30h40M6 22v16M46 22v16" stroke="var(--accent)" stroke-width="4"/>'}]});
 })();
 
 </script>

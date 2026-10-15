@@ -591,7 +591,7 @@ img.auc-im,img.tf-im{max-height:190px;width:auto;max-width:100%;border-radius:12
       <button class="tbtn" type="button" id="bFx" aria-pressed="true">بطاقات الانتقال والحركة</button>
     </div></div>
     <div><h4>زمن الحصة</h4>
-      <div class="dgrid"><select id="periodLen" aria-label="مدة الحصة"><option value="40">40 دقيقة</option><option value="45" selected>45 دقيقة</option><option value="50">50 دقيقة</option></select><button class="tbtn" type="button" id="bTimer">ابدأ الحصة</button></div>
+      <div class="dgrid"><select id="periodLen" aria-label="مدة الحصة"><option value="40">40 دقيقة</option><option value="45" selected>45 دقيقة</option><option value="50">50 دقيقة</option><option value="90">حصتان (90 دقيقة)</option></select><button class="tbtn" type="button" id="bTimer">ابدأ الحصة</button></div>
       <div class="dgrid" style="margin-top:6px"><button class="tbtn" type="button" id="bTimerReset">تصفير المؤقت</button></div>
       <div id="planList" style="margin-top:8px"></div>
     </div>
@@ -724,7 +724,8 @@ const VI={
   life:'<svg class="vi" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="20" r="12" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18 36h12M20 42h8M24 8v-4M10 20H6M42 20h-4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
   safety:'<svg class="vi" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4l17 6v12c0 11-7 19-17 22C14 41 7 33 7 22V10z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M16 24l6 6 11-12" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>'};
 const VK={islam:'قيمة إسلامية',nation:'هويتي الوطنية',life:'العلم في حياتي',safety:'سلامتي'};
-function vcard(kind,title,html){return `<div class="vcard ${kind}">${VI[kind]}<div><span class="vk">${VK[kind]}</span><h4>${title}</h4>${html}</div></div>`;}
+const VCOUNT={};
+function vcard(kind,title,html){if(kind==='islam'||kind==='nation'){VCOUNT[kind]=(VCOUNT[kind]||0)+1;if(VCOUNT[kind]>1)return '';}return `<div class="vcard ${kind}">${VI[kind]}<div><span class="vk">${VK[kind]}</span><h4>${title}</h4>${html}</div></div>`;}
 const ayah=(t,ref)=>`<span class="ayah">﴿${t}﴾</span><span class="ref">[${ref}]</span>`;
 
 /* ---------- generic multiple choice ---------- */
@@ -1099,7 +1100,8 @@ function formative(id){const st=STN[id];
 /* ---------- timer ---------- */
 const PLAN={};
 G.clock={run:false,el:0,len:45,st:{},nudged:{},last:performance.now()};
-const budget=id=>(PLAN[id]||0)*G.clock.len/45*60;
+const planSum=()=>Object.values(PLAN).reduce((a,b)=>a+b,0)||45;
+const budget=id=>(PLAN[id]||0)*G.clock.len/planSum()*60;
 const mmss=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
 const nextId=id=>{const o=order(),i=o.findIndex(x=>x.id===id);return o[i+1]?o[i+1].id:null;};
 function hideNudge(){const n=$('#nudge');if(n)n.hidden=true;}
@@ -1164,9 +1166,12 @@ function boot(meta){
   const dk=()=>{const r=document.documentElement,t=r.getAttribute('data-theme');return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;};
   const setAcc=()=>{const v=dk()?meta.accentDark:meta.accent;if(v)document.documentElement.style.setProperty('--accent',v);else document.documentElement.style.removeProperty('--accent');};setAcc();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',setAcc);}catch(e){}
   def('final',{n:'لوحة الإنجاز',icon:'<circle cx="40" cy="44" r="26" fill="currentColor"/><path d="M40 28l5 10 11 1-8 8 2 11-10-6-10 6 2-11-8-8 11-1z" fill="#fff"/><path d="M26 4h12l4 18H30zM42 4h12l-4 18h-8z" fill="currentColor" opacity=".6"/>',enter:renderFinal,reset(){$('#finalBox').innerHTML='';},explain:'<p>لوحة الإنجاز تلخص مفاهيم الدرس، وتعرض نقاط كل محطة ونتيجة التقويم التكويني والختامي، مع تقويم ذاتي لأهداف الدرس.</p>'});
+  DEFS.filter(d=>d.after).forEach(d=>{const i=DEFS.indexOf(d);DEFS.splice(i,1);const j=DEFS.findIndex(x=>x.id===d.after);DEFS.splice(j+1,0,d);});
   DEFS.forEach(d=>{if(d.plan)PLAN[d.id]=d.plan;});
   $('#stations').innerHTML=DEFS.map((d,i,l)=>sectionHTML(d,i,l)).join('');
   $$('[data-meta]').forEach(e=>{e.textContent=meta[e.dataset.meta]||'';});
+  $$('#stations .side').forEach(sd=>{if(!sd.children.length)sd.remove();});
+  $$('#stations .two, #stations .three').forEach(t=>{const n=[...t.children].length;if(n===1)t.style.gridTemplateColumns='minmax(0,1fr)';if(n===0)t.remove();});
   card=document.createElement('div');card.className='fx-card';card.hidden=true;card.setAttribute('aria-hidden','true');document.body.appendChild(card);
   card.addEventListener('pointerdown',hideCard);
   fxInit();
@@ -1326,8 +1331,11 @@ def('s2',{n:'2 · القوة المحصلة',eyebrow:'المحطة 2',title:'س�
   function draw(){bg(c,W,H);c.fillStyle='#c9a66b';c.fillRect(0,214,W,86);const bx=W/2+S.x-60,by=104;
    c.fillStyle='#e8a33d';c.fillRect(bx,by,120,110);c.strokeStyle='#7a4a00';c.lineWidth=3;c.strokeRect(bx,by,120,110);c.beginPath();c.moveTo(bx,by);c.lineTo(bx+120,by+110);c.moveTo(bx+120,by);c.lineTo(bx,by+110);c.globalAlpha=.25;c.stroke();c.globalAlpha=1;
    const s=2.4,a1=+f1.value*s,a2=+f2.value*s;const start=d=>d>0?bx+120:bx;
-   if(a1)arrow(c,start(S.d1),by+30,start(S.d1)+S.d1*a1,by+30,'#1f6fd1',8,'القوة الأولى '+f1.value+' نيوتن',by+16);
-   if(a2)arrow(c,start(S.d2),by+80,start(S.d2)+S.d2*a2,by+80,'#d9483b',8,'القوة الثانية '+f2.value+' نيوتن',by+104);
+   if(a1)arrow(c,start(S.d1),by+30,start(S.d1)+S.d1*a1,by+30,'#1f6fd1',8);
+   if(a2)arrow(c,start(S.d2),by+80,start(S.d2)+S.d2*a2,by+80,'#d9483b',8);
+   c.font='700 15px "IBM Plex Sans Arabic"';c.direction='rtl';c.textAlign='center';
+   if(a1){c.fillStyle='#1f6fd1';c.fillText('القوة الأولى '+f1.value+' نيوتن',start(S.d1)+S.d1*a1/2,by-10);}
+   if(a2){c.fillStyle='#d9483b';c.fillText('القوة الثانية '+f2.value+' نيوتن',start(S.d2)+S.d2*a2/2,by+130);}c.direction='ltr';
    if(S.ok){const n=net();c.font='800 20px "Baloo Bhaijaan 2"';c.direction='rtl';c.textAlign='center';c.fillStyle='#7b3fa0';
     if(n)arrow(c,W/2,262,W/2+n*s,262,'#7b3fa0',9);c.fillText(n?'القوة المحصلة '+Math.abs(n)+' نيوتن نحو '+(n>0?'اليمين':'اليسار'):'القوة المحصلة = صفر (قوى متزنة)',W/2,n?294:270);c.direction='ltr';}
    c.font='700 14px "IBM Plex Sans Arabic"';c.direction='rtl';c.textAlign='right';c.fillStyle='#53656e';c.fillText('طول السهم يمثل مقدار القوة',W-14,24);c.direction='ltr';}
@@ -1530,8 +1538,7 @@ K.boot({chapter:'الفصل الثاني: الحركة والقوى والآلا
   {n:'القانون الأول',t:'لا تتغير الحالة الحركية ما لم تؤثر قوة محصلة. القصور الذاتي يزيد بزيادة الكتلة.',ic:'<circle cx="26" cy="26" r="10" fill="var(--accent)"/><path d="M2 26h10M40 26h10" stroke="var(--accent)" stroke-width="4" stroke-dasharray="3 3"/>'},
   {n:'الاحتكاك',t:'قوة ممانعة بين السطوح المتلامسة تعمل عكس اتجاه الحركة.',ic:'<path d="M4 38h44" stroke="var(--accent)" stroke-width="3"/><rect x="16" y="20" width="18" height="18" fill="var(--amber)"/>'},
   {n:'القانون الثاني',t:'ت = ق ÷ ك؛ التسارع في اتجاه القوة المحصلة.',ic:'<text x="26" y="32" text-anchor="middle" font-size="16" font-weight="700" fill="var(--accent)">ت=ق÷ك</text>'},
-  {n:'القانون الثالث',t:'لكل فعل رد فعل مساوٍ في المقدار ومعاكس في الاتجاه، يؤثران في جسمين مختلفين.',ic:'<path d="M26 26H6M26 26h20" stroke="var(--accent)" stroke-width="5"/><path d="M6 26l8-6v12zM46 26l-8-6v12z" fill="var(--accent)"/>'}],
- valuesSum:vcard('islam','التعاون قوة','<p>﴿وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَىٰ﴾ والمؤمن للمؤمن كالبنيان يشد بعضه بعضًا.</p>')+vcard('nation','وطني في الفضاء','<p>رائدا الفضاء السعوديان ريانة برناوي وعلي القرني: القانون الأول والثالث في رحلة حقيقية.</p>')+vcard('life','العلم في حياتي','<p>حزام الأمان يحميك من قصورك الذاتي عند التوقف المفاجئ.</p>')});
+  {n:'القانون الثالث',t:'لكل فعل رد فعل مساوٍ في المقدار ومعاكس في الاتجاه، يؤثران في جسمين مختلفين.',ic:'<path d="M26 26H6M26 26h20" stroke="var(--accent)" stroke-width="5"/><path d="M6 26l8-6v12zM46 26l-8-6v12z" fill="var(--accent)"/>'}]});
 })();
 
 </script>

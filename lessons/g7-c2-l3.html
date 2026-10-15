@@ -591,7 +591,7 @@ img.auc-im,img.tf-im{max-height:190px;width:auto;max-width:100%;border-radius:12
       <button class="tbtn" type="button" id="bFx" aria-pressed="true">بطاقات الانتقال والحركة</button>
     </div></div>
     <div><h4>زمن الحصة</h4>
-      <div class="dgrid"><select id="periodLen" aria-label="مدة الحصة"><option value="40">40 دقيقة</option><option value="45" selected>45 دقيقة</option><option value="50">50 دقيقة</option></select><button class="tbtn" type="button" id="bTimer">ابدأ الحصة</button></div>
+      <div class="dgrid"><select id="periodLen" aria-label="مدة الحصة"><option value="40">40 دقيقة</option><option value="45" selected>45 دقيقة</option><option value="50">50 دقيقة</option><option value="90">حصتان (90 دقيقة)</option></select><button class="tbtn" type="button" id="bTimer">ابدأ الحصة</button></div>
       <div class="dgrid" style="margin-top:6px"><button class="tbtn" type="button" id="bTimerReset">تصفير المؤقت</button></div>
       <div id="planList" style="margin-top:8px"></div>
     </div>
@@ -724,7 +724,8 @@ const VI={
   life:'<svg class="vi" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="20" r="12" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18 36h12M20 42h8M24 8v-4M10 20H6M42 20h-4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
   safety:'<svg class="vi" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4l17 6v12c0 11-7 19-17 22C14 41 7 33 7 22V10z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M16 24l6 6 11-12" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>'};
 const VK={islam:'قيمة إسلامية',nation:'هويتي الوطنية',life:'العلم في حياتي',safety:'سلامتي'};
-function vcard(kind,title,html){return `<div class="vcard ${kind}">${VI[kind]}<div><span class="vk">${VK[kind]}</span><h4>${title}</h4>${html}</div></div>`;}
+const VCOUNT={};
+function vcard(kind,title,html){if(kind==='islam'||kind==='nation'){VCOUNT[kind]=(VCOUNT[kind]||0)+1;if(VCOUNT[kind]>1)return '';}return `<div class="vcard ${kind}">${VI[kind]}<div><span class="vk">${VK[kind]}</span><h4>${title}</h4>${html}</div></div>`;}
 const ayah=(t,ref)=>`<span class="ayah">﴿${t}﴾</span><span class="ref">[${ref}]</span>`;
 
 /* ---------- generic multiple choice ---------- */
@@ -1099,7 +1100,8 @@ function formative(id){const st=STN[id];
 /* ---------- timer ---------- */
 const PLAN={};
 G.clock={run:false,el:0,len:45,st:{},nudged:{},last:performance.now()};
-const budget=id=>(PLAN[id]||0)*G.clock.len/45*60;
+const planSum=()=>Object.values(PLAN).reduce((a,b)=>a+b,0)||45;
+const budget=id=>(PLAN[id]||0)*G.clock.len/planSum()*60;
 const mmss=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
 const nextId=id=>{const o=order(),i=o.findIndex(x=>x.id===id);return o[i+1]?o[i+1].id:null;};
 function hideNudge(){const n=$('#nudge');if(n)n.hidden=true;}
@@ -1164,9 +1166,12 @@ function boot(meta){
   const dk=()=>{const r=document.documentElement,t=r.getAttribute('data-theme');return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;};
   const setAcc=()=>{const v=dk()?meta.accentDark:meta.accent;if(v)document.documentElement.style.setProperty('--accent',v);else document.documentElement.style.removeProperty('--accent');};setAcc();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',setAcc);}catch(e){}
   def('final',{n:'لوحة الإنجاز',icon:'<circle cx="40" cy="44" r="26" fill="currentColor"/><path d="M40 28l5 10 11 1-8 8 2 11-10-6-10 6 2-11-8-8 11-1z" fill="#fff"/><path d="M26 4h12l4 18H30zM42 4h12l-4 18h-8z" fill="currentColor" opacity=".6"/>',enter:renderFinal,reset(){$('#finalBox').innerHTML='';},explain:'<p>لوحة الإنجاز تلخص مفاهيم الدرس، وتعرض نقاط كل محطة ونتيجة التقويم التكويني والختامي، مع تقويم ذاتي لأهداف الدرس.</p>'});
+  DEFS.filter(d=>d.after).forEach(d=>{const i=DEFS.indexOf(d);DEFS.splice(i,1);const j=DEFS.findIndex(x=>x.id===d.after);DEFS.splice(j+1,0,d);});
   DEFS.forEach(d=>{if(d.plan)PLAN[d.id]=d.plan;});
   $('#stations').innerHTML=DEFS.map((d,i,l)=>sectionHTML(d,i,l)).join('');
   $$('[data-meta]').forEach(e=>{e.textContent=meta[e.dataset.meta]||'';});
+  $$('#stations .side').forEach(sd=>{if(!sd.children.length)sd.remove();});
+  $$('#stations .two, #stations .three').forEach(t=>{const n=[...t.children].length;if(n===1)t.style.gridTemplateColumns='minmax(0,1fr)';if(n===0)t.remove();});
   card=document.createElement('div');card.className='fx-card';card.hidden=true;card.setAttribute('aria-hidden','true');document.body.appendChild(card);
   card.addEventListener('pointerdown',hideCard);
   fxInit();
@@ -1544,8 +1549,7 @@ K.boot({chapter:'الفصل الثاني: الحركة والقوى والآلا
   {n:'الفائدة الآلية',t:'القوة الناتجة ÷ القوة المبذولة، وليس لها وحدة.',ic:'<path d="M10 26h32M26 12v6M26 34v6" stroke="var(--accent)" stroke-width="5"/>'},
   {n:'البكرات',t:'البكرة الواحدة تغيّر الاتجاه (فائدة 1)، ونظام البكرات يغيّر المقدار والاتجاه.',ic:'<circle cx="26" cy="16" r="10" fill="none" stroke="var(--accent)" stroke-width="4"/><path d="M16 16v28M36 16v18" stroke="var(--accent)" stroke-width="3"/>'},
   {n:'الروافع',t:'الأول: الارتكاز في المنتصف. الثاني: الحِمل في المنتصف. الثالث: الجهد في المنتصف.',ic:'<path d="M4 30l44-8" stroke="var(--accent)" stroke-width="5"/><path d="M26 28l-8 16h16z" fill="var(--amber)"/>'},
-  {n:'المستوى المائل وأقرباؤه',t:'الفائدة = الطول ÷ الارتفاع. الأسفين والبرغي سطوح مائلة.',ic:'<path d="M4 44L48 14V44z" fill="var(--accent)"/>'}],
- valuesSum:vcard('islam','العمل والتيسير','<p>﴿وَقُلِ اعْمَلُوا﴾ و﴿يُرِيدُ اللَّهُ بِكُمُ الْيُسْرَ﴾: نعمل بإتقان ونستعين بالآلات.</p>')+vcard('nation','تراث ووطن','<p>«المحّالة» على آبار الأجداد، وطريق الهدا الملتف، ورافعات مشاريع المملكة.</p>')+vcard('life','العلم في حياتي','<p>المقص، وفتاحة الزجاجات، ومقبض الباب، والدراجة: آلات تستعملها كل يوم.</p>')});
+  {n:'المستوى المائل وأقرباؤه',t:'الفائدة = الطول ÷ الارتفاع. الأسفين والبرغي سطوح مائلة.',ic:'<path d="M4 44L48 14V44z" fill="var(--accent)"/>'}]});
 })();
 
 </script>
