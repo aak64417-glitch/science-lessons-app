@@ -491,11 +491,79 @@ table.data td,table.data th{white-space:normal}
 .st-q .solve dd{line-height:1.7}
 html.kiosk .teacher-only{display:none!important}
 
+/* ===== chapter-3 components ===== */
+img.ph{display:block;width:100%;height:100%;object-fit:cover;border-radius:12px;background:var(--surface-2)}
+.sl{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:center;min-height:330px}
+@media (max-width:900px){.sl{grid-template-columns:minmax(0,1fr)}}
+.sl-media{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:8px;align-self:stretch}
+.sl-media figure{margin:0;position:relative;border-radius:14px;overflow:hidden;background:var(--surface-2);min-height:150px;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.sl-media figure img.ph{position:absolute;inset:0;border-radius:0}
+.sl-media figcaption{position:absolute;inset-inline:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.72));color:#fff;font-weight:700;padding:16px 10px 6px;font-size:.95rem;text-align:center}
+.sl-media svg{width:100%;height:auto}
+.sl-t{font-family:var(--f-display);font-weight:800;font-size:clamp(1.4rem,2.6vw,1.9rem);color:var(--accent);margin:2px 0 8px;line-height:1.3}
+.sl-text p{margin:0 0 10px;font-size:1.08rem;line-height:1.75}
+.sl-text .def{background:color-mix(in srgb,var(--amber) 16%,var(--surface));border-inline-start:6px solid var(--amber);border-radius:10px;padding:10px 12px;font-weight:700}
+.sl-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--line);background:var(--surface);padding:0;cursor:pointer}
+.dot.seen{background:color-mix(in srgb,var(--accent) 35%,var(--surface))}
+.dot.on{background:var(--accent);border-color:var(--accent);transform:scale(1.25)}
+.sl.in .sl-media figure{animation:kb 1.1s cubic-bezier(.2,.8,.2,1) both}
+.sl.in .sl-media figure:nth-child(2){animation-delay:.08s}.sl.in .sl-media figure:nth-child(3){animation-delay:.16s}.sl.in .sl-media figure:nth-child(4){animation-delay:.24s}
+.sl.in .sl-text>*{animation:upIn .5s both}.sl.in .sl-text>*:nth-child(2){animation-delay:.08s}.sl.in .sl-text>*:nth-child(3){animation-delay:.16s}.sl.in .sl-text>*:nth-child(4){animation-delay:.24s}
+@keyframes kb{from{opacity:0;transform:scale(1.08)}to{opacity:1;transform:none}}
+.ba-wrap{position:relative;width:100%;border-radius:14px;overflow:hidden;touch-action:none;cursor:ew-resize;background:var(--surface-2);user-select:none}
+.ba-layer{position:absolute;inset:0}.ba-layer>img,.ba-layer>svg{width:100%;height:100%;object-fit:cover;display:block}
+.ba-line{position:absolute;top:0;bottom:0;width:4px;background:#fff;transform:translateX(-50%);box-shadow:0 0 8px rgba(0,0,0,.4)}
+.ba-line span{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:800;color:var(--accent);box-shadow:0 2px 10px rgba(0,0,0,.3)}
+.ba-tag{position:absolute;top:10px;background:rgba(0,0,0,.65);color:#fff;border-radius:999px;padding:2px 12px;font-weight:700}
+.ba-tag.t1{left:10px}.ba-tag.t2{right:10px}
+.ba-range{width:100%;margin-top:6px;accent-color:var(--accent)}
+.gate{border:3px dashed var(--amber);border-radius:16px;padding:14px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.gate.ok{border-style:solid;border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+.gate.ok b{font-family:var(--f-display);font-size:1.4rem}
+.gate-top{width:100%;display:flex;gap:8px;align-items:center}
+.gate-ic svg{width:70px;height:70px}
+table.ag td,table.ag th{vertical-align:middle}
+.ag .agr{opacity:.35}.shown .ag .agr{opacity:1}
+.story-card{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px}
+@media (max-width:760px){.story-card{grid-template-columns:minmax(0,1fr)}}
+img.story-im{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;display:block}
+.esc{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:14px;align-items:center}
+@media (max-width:760px){.esc{grid-template-columns:minmax(0,1fr)}}
+.esc-door{position:relative;text-align:center}.door{width:100%;max-width:300px}
+.esc-time{font-family:var(--f-mono);font-size:1.8rem;color:var(--bad);font-weight:700}
+.bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.bank .who,.turn .who,.card .who{font-family:var(--f-display);font-weight:800;font-size:1.05rem;padding:3px 14px;border-radius:999px;color:#fff;display:inline-block}
+.auc{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.auc-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--surface-2);border-radius:12px;padding:8px}
+img.auc-im,img.tf-im{max-height:190px;width:auto;max-width:100%;border-radius:12px;margin:6px auto;display:block}
+.bingo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.bcell{font:inherit;font-family:var(--f-display);font-weight:800;font-size:1rem;min-height:74px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;padding:4px;line-height:1.3}
+.bcell.bad{border-color:var(--bad);background:var(--bad-bg)}
+.cboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cb{font:inherit;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:12px 8px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;min-height:110px}
+.cb-ic{font-size:1.6rem}.cb b{font-family:var(--f-display);font-size:1.02rem;line-height:1.3}.cb small{color:var(--muted)}
+.cb.sel{border-color:var(--accent)}.cb.done{background:var(--ok-bg);border-color:var(--ok)}
+.cb.done b::after{content:" ✓";color:var(--ok)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,170px),1fr));gap:10px}
+.gallery figure{margin:0;border-radius:12px;overflow:hidden;background:var(--surface);border:1px solid var(--line)}
+.gallery figure img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.gallery figcaption{padding:6px 8px;font-weight:700;text-align:center;font-size:.92rem}
+.chip img{width:44px;height:34px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-inline-end:6px}
+.hero-photo{position:relative;border-radius:16px;overflow:hidden;min-height:300px;background:#123}
+.hero-photo img.ph{position:absolute;inset:0;border-radius:0}
+.hero-photo .cap{position:absolute;inset-inline:0;bottom:0;padding:30px 16px 12px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font-weight:700}
+.sl-media figure img.ph{object-fit:contain;background:#fff}
+.sl-media figure{min-height:260px}
+.gallery figure img.ph{height:auto;aspect-ratio:4/3;border-radius:0}
+.ba-tag.t1{left:auto;right:10px}.ba-tag.t2{right:auto;left:10px}
+
 </style></head><body>
 <div class="app" dir="rtl" lang="ar">
   <header class="top">
     <div>
-      <span class="eyebrow">متوسطة أبي الدرداء · علوم أول متوسط · الفصل الثاني</span>
+      <span class="eyebrow">متوسطة أبي الدرداء · علوم أول متوسط · <span data-meta="chapterShort"></span></span>
       <h1 data-meta="title"></h1>
       <p class="lesson-name" data-meta="lesson"></p>
     </div>
@@ -542,7 +610,7 @@ html.kiosk .teacher-only{display:none!important}
   <button class="tbtn fs-btn" type="button" id="bFS" hidden>ملء الشاشة</button>
   <div class="start-screen" id="startScreen">
     <div class="start-card">
-      <span class="eyebrow">متوسطة أبي الدرداء · علوم أول متوسط · الفصل الثاني: الحركة والقوى والآلات البسيطة</span>
+      <span class="eyebrow">متوسطة أبي الدرداء · علوم أول متوسط · <span data-meta="chapter"></span></span>
       <h1 class="hero-h" data-meta="title"></h1>
       <p class="lesson-name big" data-meta="lesson"></p>
       <p class="riddle" style="margin:0" data-meta="hook"></p>
@@ -555,6 +623,7 @@ html.kiosk .teacher-only{display:none!important}
   <footer><span>متوسطة أبي الدرداء</span><span>معلم العلوم: علي طاهر البقاشي</span><span>العام الدراسي 1448هـ</span></footer>
 </div>
 <script>
+window.IMG={};
 /* ===== Chapter-2 lesson engine (design of «مختبر المادة العجيب») ===== */
 (function(){
 const $=(s,r)=>(r||document).querySelector(s), $$=(s,r)=>[...(r||document).querySelectorAll(s)];
@@ -743,13 +812,13 @@ function tfRound(el,items,st,opt){opt=opt||{};const SECS=opt.secs||10;let i=0,ri
   function ring(){const c=2*Math.PI*36;return `<svg class="ring" viewBox="0 0 84 84"><circle class="bg" cx="42" cy="42" r="36"/><circle class="fg" cx="42" cy="42" r="36" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-left/SECS)}"/><text x="42" y="44">${left}</text></svg>`;}
   function show(){answered=false;left=SECS;if(G.teams){G.team=i%G.teams.length;hud();}
     const it=list[i];el.innerHTML=`<div class="tf-stage"><div class="ch-top" style="width:100%"><span class="eyebrow">العبارة ${i+1} من ${list.length}${G.teams?' · دور '+G.teams[G.team].n:''}</span><div class="prog"><i style="width:${i/list.length*100}%"></i></div></div><div class="tfring">${ring()}</div><p class="tf-q">${it[0]}</p>
-      <div class="tf-btns"><button class="btn t" type="button" data-v="1">صح ✓</button><button class="btn f" type="button" data-v="0">خطأ ✗</button></div><div class="qfb" style="width:100%"></div><div class="row-actions" id="tfN"></div></div>`;
+      ${it[3]?`<div class="center">${pic(it[3],'','tf-im')}</div>`:''}<div class="tf-btns"><button class="btn t" type="button" data-v="1">${opt.tl||'صح ✓'}</button><button class="btn f" type="button" data-v="0">${opt.fl||'خطأ ✗'}</button></div><div class="qfb" style="width:100%"></div><div class="row-actions" id="tfN"></div></div>`;
     el.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>ans(+b.dataset.v===1));
     clearInterval(timer);timer=setInterval(()=>{if(G.paused||G.cur!==el.closest('.st').id.slice(3))return;left--;const r=el.querySelector('.tfring');if(r)r.innerHTML=ring();if(left<=3&&left>0)SFX.tick();if(left<=0)ans(null);},1000);}
   function ans(v){if(answered)return;answered=true;clearInterval(timer);const it=list[i],fb=el.querySelector('.qfb');
     el.querySelectorAll('[data-v]').forEach(b=>b.disabled=true);
     if(v===it[1]){right++;G.good();G.add(5,st);say(fb,'ok','صحيح! '+(it[2]||''));}
-    else{G.bad();say(fb,'bad',(v===null?'انتهى الوقت. ':'')+'العبارة '+(it[1]?'صحيحة':'خاطئة')+'. '+(it[2]||''));}
+    else{G.bad();say(fb,'bad',(v===null?'انتهى الوقت. ':'')+(opt.tl?'الإجابة: '+(it[1]?opt.tl:opt.fl):'العبارة '+(it[1]?'صحيحة':'خاطئة'))+'. '+(it[2]||''));}
     const last=i===list.length-1;el.querySelector('#tfN').innerHTML=`<button class="btn" type="button" id="tfNext">${last?'النتيجة':'العبارة التالية'}</button>`;
     el.querySelector('#tfNext').onclick=()=>{if(last)end();else{i++;show();}};}
   function end(){el.innerHTML=`<div class="tf-stage"><h3 style="font-size:1.6rem">انتهت الجولة الخاطفة</h3><span class="big-score">${right} / ${list.length}</span><p>${right===list.length?'أداء مثالي!':right>=list.length*.7?'أداء رائع!':'راجع العبارات التي أخطأت فيها.'}</p><button class="btn alt" type="button" id="tfAgain">جولة جديدة</button></div>`;
@@ -821,6 +890,134 @@ function race(el,cfg,st){
     el.querySelector('#rAgain').onclick=setup;}
   setup();return {reset:setup};
 }
+
+/* ---------- images ---------- */
+const img=n=>(window.IMG||{})[n]||'';
+const pic=(n,alt,cls)=>img(n)?`<img class="${cls||'ph'}" src="${img(n)}" alt="${alt||''}" loading="lazy">`:'';
+
+/* ---------- explanation slides (visual lesson content) ---------- */
+function slides(el,items,st,onAll){let i=0;const seen=new Set();
+  function render(){const it=items[i];seen.add(i);if(seen.size===items.length&&onAll)onAll();
+    el.innerHTML=`<div class="sl"><div class="sl-media">${(it.im||[]).map(n=>`<figure>${pic(n[0]||n,n[1]||'')}${n[1]?`<figcaption>${n[1]}</figcaption>`:''}</figure>`).join('')}${it.svg||''}</div>
+      <div class="sl-text"><span class="eyebrow">${it.k||''}</span><h3 class="sl-t">${it.t}</h3>${it.html}</div></div>
+      <div class="sl-nav"><button class="tbtn" type="button" data-p ${i===0?'disabled':''}>→ السابق</button><span class="dots">${items.map((_,k)=>`<button type="button" class="dot${k===i?' on':''}${seen.has(k)?' seen':''}" data-k="${k}" aria-label="شريحة ${k+1}"></button>`).join('')}</span><button class="btn" type="button" data-n ${i===items.length-1?'disabled':''}>التالي ←</button></div>`;
+    const sl=el.querySelector('.sl');if(!G.reduced){sl.classList.remove('in');void sl.offsetWidth;sl.classList.add('in');}
+    el.querySelector('[data-p]').onclick=()=>{if(i>0){i--;SFX.pop();render();}};
+    el.querySelector('[data-n]').onclick=()=>{if(i<items.length-1){i++;SFX.pop();render();}};
+    el.querySelectorAll('.dot').forEach(d=>d.onclick=()=>{i=+d.dataset.k;render();});}
+  render();return {reset(){i=0;seen.clear();render();}};}
+
+/* ---------- before / after slider ---------- */
+function beforeAfter(el,cfg){
+  el.innerHTML=`<div class="ba-wrap" style="aspect-ratio:${cfg.ratio||'16/10'}"><div class="ba-layer ba-b">${cfg.b}</div><div class="ba-layer ba-a">${cfg.a}</div><div class="ba-line"><span>⇆</span></div>
+    <span class="ba-tag t1">${cfg.la||'قبل'}</span><span class="ba-tag t2">${cfg.lb||'بعد'}</span></div><input type="range" min="0" max="100" value="50" class="ba-range" aria-label="اسحب للمقارنة">`;
+  const w=el.querySelector('.ba-wrap'),a=el.querySelector('.ba-a'),ln=el.querySelector('.ba-line'),r=el.querySelector('.ba-range');
+  const set=v=>{a.style.clipPath=`inset(0 0 0 ${v}%)`;ln.style.left=v+'%';r.value=v;};
+  r.oninput=()=>set(+r.value);
+  const mv=e=>{const b=w.getBoundingClientRect();set(Math.max(0,Math.min(100,(e.clientX-b.left)/b.width*100)));};
+  w.addEventListener('pointerdown',e=>{w.setPointerCapture(e.pointerId);mv(e);w.onpointermove=mv;});w.addEventListener('pointerup',()=>{w.onpointermove=null;});
+  set(50);}
+
+/* ---------- safety gate ---------- */
+function safety(el,items,onPass){let k=0;
+  function render(){if(k>=items.length){el.innerHTML=`<div class="gate ok"><b>✓ اجتزت فحص السلامة!</b><span>يمكنك دخول المختبر الآن.</span></div>`;SFX.stationDone();onPass&&onPass();return;}
+    const it=items[k];el.innerHTML=`<div class="gate"><div class="gate-top"><span class="eyebrow">فحص السلامة ${k+1} من ${items.length}</span><div class="prog"><i style="width:${k/items.length*100}%"></i></div></div>${it[2]?`<div class="gate-ic">${it[2]}</div>`:''}<p class="q">${it[0]}</p><div class="tf-btns"><button class="btn t" type="button" data-v="1">✓ تصرّف آمن</button><button class="btn f" type="button" data-v="0">✗ تصرّف خطر</button></div><div class="qfb"></div></div>`;
+    el.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{const v=+b.dataset.v===1,fb=el.querySelector('.qfb');
+      if(v===it[1]){G.good();G.add(3,G.cur);k++;setTimeout(render,550);say(fb,'ok','صحيح!');}
+      else{G.bad();say(fb,'bad',it[3]||'فكّر مرة أخرى في قواعد السلامة.');}});}
+  render();return {reset(){k=0;render();}};}
+
+/* ---------- anticipation guide (توجيه القراءة) ---------- */
+function anticip(el,items){const pick={};
+  el.innerHTML=`<div class="tablewrap"><table class="data ag"><thead><tr><th>العبارة</th><th>قبل القراءة</th><th class="agr">بعد القراءة</th></tr></thead><tbody>${items.map((it,i)=>`<tr><td>${i+1}. ${it[0]}</td><td><span class="seg" data-i="${i}"><button type="button" data-v="1">م</button><button type="button" data-v="0">غ</button></span></td><td class="agr" data-r="${i}">—</td></tr>`).join('')}</tbody></table></div>
+   <p class="step-text muted" style="font-size:.88rem">م = موافق، غ = غير موافق. سجّل رأيك قبل الدرس، ثم اكشف الإجابات بعد القراءة.</p><div class="row-actions"><button class="btn alt" type="button" data-show>اكشف الإجابات بعد القراءة</button></div>`;
+  el.querySelectorAll('.seg[data-i] button').forEach(b=>b.onclick=()=>{const i=+b.parentElement.dataset.i;pick[i]=+b.dataset.v;b.parentElement.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));G.tick();});
+  el.querySelector('[data-show]').onclick=()=>{let right=0;items.forEach((it,i)=>{const c=el.querySelector(`[data-r="${i}"]`);const ok=pick[i]===(it[1]?1:0);if(ok)right++;
+      c.innerHTML=`<b style="color:${it[1]?'var(--ok)':'var(--bad)'}">${it[1]?'م':'غ'}</b>${pick[i]==null?'':ok?' ✓':' ✗'}${it[2]?`<small class="muted" style="display:block">${it[2]}</small>`:''}`;});
+    el.classList.add('shown');G.tick();};}
+
+/* ---------- branching story ---------- */
+function story(el,nodes,start,st){let cur=start,path=[];
+  function render(){const n=nodes[cur];
+    el.innerHTML=`<div class="story-card">${n.im?pic(n.im,'','story-im'):''}<div class="story-body">${n.k?`<span class="eyebrow">${n.k}</span>`:''}<p class="lead">${n.text}</p>${n.end?`<div class="fb ${n.good?'ok':'info'}">${n.end}</div>`:''}
+      <div class="opts${n.choices&&n.choices.length>2?' cols2':''}">${(n.choices||[]).map((c,i)=>`<button type="button" class="opt" data-c="${i}">${c.t}</button>`).join('')}</div>
+      ${n.end?'<div class="row-actions"><button class="btn alt" type="button" data-r>ابدأ القصة من جديد</button></div>':''}</div></div>`;
+    el.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{const c=n.choices[+b.dataset.c];path.push(cur);if(c.pts){G.good();G.add(c.pts,st);}else SFX.pop();cur=c.to;render();});
+    const r=el.querySelector('[data-r]');if(r)r.onclick=()=>{cur=start;path=[];render();};
+    if(n.end&&n.good)G.complete&&0;}
+  render();return {reset(){cur=start;render();}};}
+
+/* ---------- escape room ---------- */
+function escape(el,cfg,st){let S;
+  function init(){S={got:[],k:0,start:0,left:cfg.secs||420,timer:null,open:false};}
+  function door(){const n=cfg.locks.length;let s=`<svg viewBox="0 0 300 220" class="door" aria-hidden="true"><rect x="70" y="10" width="160" height="205" rx="8" fill="#6b4226" stroke="#3b2414" stroke-width="5"/><rect x="88" y="28" width="124" height="80" rx="6" fill="#7d4f2e"/><rect x="88" y="120" width="124" height="80" rx="6" fill="#7d4f2e"/><circle cx="205" cy="120" r="7" fill="#f5c542"/>`;
+    for(let i=0;i<n;i++){const y=22+i*(176/n),g=S.got[i]!=null;s+=`<g transform="translate(150 ${y+16}) scale(${Math.min(1,4.2/n)})"><rect x="-22" y="-6" width="44" height="34" rx="6" fill="${g?'#1f7a45':'#9aa5ab'}"/><path d="M-12 -6v-8a12 12 0 0 1 24 0v${g?-14:8}" fill="none" stroke="${g?'#1f7a45':'#5b6870'}" stroke-width="5"/><text y="18" text-anchor="middle" font-size="16" font-weight="800" fill="#fff" font-family="Share Tech Mono">${g?S.got[i]:'?'}</text></g>`;}
+    return s+'</svg>';}
+  function mm(){const s=Math.max(0,S.left);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+  function intro(){el.innerHTML=`<div class="esc"><div class="esc-door">${door()}</div><div><h3>🔐 ${cfg.title}</h3><p class="lead">${cfg.story}</p><p class="muted">${cfg.locks.length} أقفال · كل إجابة صحيحة تكشف رقمًا من رمز الباب · الوقت ${Math.round((cfg.secs||420)/60)} دقائق</p><button class="btn" type="button" data-start>ابدأ المهمة</button></div></div>`;
+    el.querySelector('[data-start]').onclick=()=>{S.timer=setInterval(()=>{if(G.paused||G.cur!==st)return;S.left--;const t=el.querySelector('.esc-time');if(t)t.textContent=mm();if(S.left<=10&&S.left>0)SFX.tick();if(S.left<=0){clearInterval(S.timer);lose();}},1000);SFX.start();lock();};}
+  function lock(){const i=S.k;if(i>=cfg.locks.length){codeStep();return;}const q=cfg.locks[i];
+    el.innerHTML=`<div class="esc"><div class="esc-door">${door()}<div class="esc-time">${mm()}</div></div><div class="card"><span class="eyebrow">القفل ${i+1} من ${cfg.locks.length}</span><div class="esc-q"></div></div></div>`;
+    const box=el.querySelector('.esc-q');mcq(box,q,st,ok=>{if(ok){S.got[i]=q.code;SFX.correct();}else S.got[i]=null;
+      el.querySelector('.esc-door svg').outerHTML=door();const nav=document.createElement('div');nav.className='row-actions';
+      nav.innerHTML=ok?`<span class="status">🔓 فُتح القفل! الرقم: ${q.code}</span><button class="btn" type="button">التالي</button>`:`<button class="btn" type="button">حاول قفلًا آخر</button>`;box.appendChild(nav);
+      nav.querySelector('.btn').onclick=()=>{if(ok)S.k++;else{cfg.locks.push(cfg.locks.splice(i,1)[0]);S.got.splice(i,1);}lock();};});}
+  function codeStep(){el.innerHTML=`<div class="esc"><div class="esc-door">${door()}<div class="esc-time">${mm()}</div></div><div class="card"><h3>أدخل رمز الباب</h3><p class="step-text">${cfg.codeHint||'اكتب الأرقام بترتيب الأقفال من الأعلى إلى الأسفل.'}</p><form class="answer" autocomplete="off"><label><input inputmode="numeric" aria-label="الرمز"></label><button class="btn" type="submit">افتح الباب</button></form><div class="qfb"></div></div></div>`;
+    el.querySelector('form').onsubmit=e=>{e.preventDefault();const v=el.querySelector('input').value.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).trim();
+      if(v===cfg.locks.map(l=>l.code).join('')){clearInterval(S.timer);S.open=true;G.good();G.add(20,st);SFX.fanfare();rain(160);banner('فُتح الباب!','نجحتم في الهروب من '+cfg.title);G.complete(st);
+        el.innerHTML=`<div class="esc"><div class="esc-door"><svg viewBox="0 0 300 220" class="door"><rect x="70" y="10" width="160" height="205" rx="8" fill="#ffe9a8"/><path d="M70 10 L130 30 L130 205 L70 215z" fill="#6b4226"/></svg></div><div class="final-hero"><h2 style="font-size:1.8rem">🎉 خرجتم بنجاح!</h2><p>الوقت المتبقي: ${mm()}</p>${cfg.outro?`<p>${cfg.outro}</p>`:''}<button class="btn alt" type="button" data-again>العبوا من جديد</button></div></div>`;
+        el.querySelector('[data-again]').onclick=()=>{init();intro();};}
+      else{G.bad();say(el.querySelector('.qfb'),'bad','الرمز غير صحيح. تحقق من ترتيب الأرقام.');}};}
+  function lose(){el.innerHTML=`<div class="final-hero"><h2 style="font-size:1.6rem">⏰ انتهى الوقت!</h2><p>حاولوا مرة أخرى بسرعة أكبر.</p><button class="btn" type="button" data-again>إعادة المحاولة</button></div>`;el.querySelector('[data-again]').onclick=()=>{init();intro();};}
+  init();intro();return {reset(){clearInterval(S.timer);init();intro();},stop(){}};}
+
+/* ---------- statements auction ---------- */
+function auction(el,items,st){let R;const BIDS=[0,10,20,30,50];
+  function setup(){el.innerHTML=`<div class="race-setup"><label>عدد المجموعات:</label><select data-n><option>2</option><option>3</option><option selected>4</option><option>5</option></select><button class="btn" type="button" data-start>افتح المزاد 🔨</button></div><p class="hint-line">تبدأ كل مجموعة برصيد 100 نقطة. في كل جولة تقرر المجموعة: هل العبارة صحيحة أم خاطئة؟ وكم تزايد عليها؟ الإجابة الصحيحة تربح مبلغ المزايدة، والخاطئة تخسره.</p>`;
+    el.querySelector('[data-start]').onclick=()=>{const n=+el.querySelector('[data-n]').value;setTeams(n);R={n,bank:Array(n).fill(100),k:0,list:shuffle(items).slice(0,Math.min(6,items.length)),bid:[],cho:[]};SFX.start();round();};}
+  function bankRow(){return `<div class="bank">${R.bank.map((b,i)=>`<span class="who" style="background:${TEAMC[i]}">${TEAMN[i]}: ${b}</span>`).join('')}</div>`;}
+  function round(){if(R.k>=R.list.length){end();return;}const it=R.list[R.k];R.bid=Array(R.n).fill(10);R.cho=Array(R.n).fill(null);
+    el.innerHTML=`${bankRow()}<div class="card mt"><span class="eyebrow">الجولة ${R.k+1} من ${R.list.length}</span><p class="tf-q" style="text-align:center;margin:8px auto">${it[0]}</p>${it[3]?`<div class="center">${pic(it[3],'','auc-im')}</div>`:''}
+      <div class="auc">${Array.from({length:R.n},(_,i)=>`<div class="auc-row" data-t="${i}"><span class="who" style="background:${TEAMC[i]}">${TEAMN[i]}</span><span class="seg" data-c><button type="button" data-v="1">صحيحة</button><button type="button" data-v="0">خاطئة</button></span><span class="seg" data-b>${BIDS.map(b=>`<button type="button" data-v="${b}" class="${b===10?'on':''}">${b}</button>`).join('')}</span></div>`).join('')}</div>
+      <div class="row-actions"><button class="btn" type="button" data-rev>اكشف الإجابة 🔨</button></div><div class="qfb"></div></div>`;
+    el.querySelectorAll('.auc-row').forEach(r=>{const t=+r.dataset.t;r.querySelectorAll('[data-c] button').forEach(b=>b.onclick=()=>{R.cho[t]=+b.dataset.v;r.querySelectorAll('[data-c] button').forEach(x=>x.classList.toggle('on',x===b));G.tick();});
+      r.querySelectorAll('[data-b] button').forEach(b=>b.onclick=()=>{const v=Math.min(+b.dataset.v,Math.max(0,R.bank[t]));R.bid[t]=v;r.querySelectorAll('[data-b] button').forEach(x=>x.classList.toggle('on',x===b));G.tick();});});
+    el.querySelector('[data-rev]').onclick=()=>{if(R.cho.some(c=>c==null)){say(el.querySelector('.qfb'),'bad','على كل مجموعة أن تختار: صحيحة أم خاطئة.');return;}
+      const truth=it[1]?1:0;let msg=[];R.cho.forEach((c,i)=>{const d=c===truth?R.bid[i]:-R.bid[i];R.bank[i]+=d;G.teams[i].s+=Math.max(0,d);msg.push(`${TEAMN[i]} ${d>=0?'+':''}${d}`);});hud();
+      SFX.thud();say(el.querySelector('.qfb'),'ok',`العبارة <b>${it[1]?'صحيحة':'خاطئة'}</b>. ${it[2]||''}<br>${msg.join(' · ')}`);
+      el.querySelector('[data-rev]').outerHTML=`<button class="btn" type="button" data-nx>${R.k<R.list.length-1?'الجولة التالية':'النتيجة'}</button>`;el.querySelector('[data-nx]').onclick=()=>{R.k++;round();};
+      el.querySelector('.bank').outerHTML=bankRow();};}
+  function end(){const best=R.bank.indexOf(Math.max(...R.bank));SFX.fanfare();rain(140);banner('الفائز في المزاد: '+TEAMN[best],'أكبر رصيد: '+R.bank[best]);G.complete(st);
+    el.innerHTML=`${bankRow()}<div class="final-hero"><h2 style="font-size:1.7rem">🏆 ${TEAMN[best]}</h2><p>الثقة بالمعلومة الصحيحة تربح!</p><button class="btn alt" type="button" data-again>مزاد جديد</button></div>`;el.querySelector('[data-again]').onclick=setup;}
+  setup();return {reset:setup};}
+
+/* ---------- term bingo (shared board) ---------- */
+function bingo(el,pairs,st){let B;
+  function setup(){el.innerHTML=`<div class="race-setup"><label>عدد المجموعات:</label><select data-n><option>2</option><option>3</option><option selected>4</option></select><button class="btn" type="button" data-start>ابدأ البنغو 🎯</button></div><p class="hint-line">يظهر تعريف، وتختار المجموعة صاحبة الدور المصطلح المناسب من اللوحة. المربع الصحيح يُلوّن بلون المجموعة. أول مجموعة تكمل صفًّا أو عمودًا أو قطرًا تصرخ: بنغو!</p>`;
+    el.querySelector('[data-start]').onclick=()=>{const n=+el.querySelector('[data-n]').value;setTeams(n);const cells=shuffle(pairs).slice(0,16);B={n,cells,own:Array(16).fill(-1),order:shuffle([...Array(cells.length).keys()]),k:0,turn:0,win:null};SFX.start();render();};}
+  function line(t){const L=[];for(let r=0;r<4;r++)L.push([0,1,2,3].map(c=>r*4+c));for(let c=0;c<4;c++)L.push([0,1,2,3].map(r=>r*4+c));L.push([0,5,10,15],[3,6,9,12]);return L.some(l=>l.every(i=>B.own[i]===t));}
+  function render(){const q=B.cells[B.order[B.k]];G.team=B.turn;hud();
+    el.innerHTML=`<div class="two"><div class="bingo">${B.cells.map((c,i)=>`<button type="button" class="bcell" data-i="${i}" ${B.own[i]>=0?`style="background:${TEAMC[B.own[i]]};color:#fff" disabled`:''}>${c[0]}</button>`).join('')}</div>
+      <div class="card"><span class="who" style="background:${TEAMC[B.turn]}">دور ${TEAMN[B.turn]}</span><p class="eyebrow mt">التعريف:</p><p class="tf-q" style="font-size:1.3rem;text-align:start">${q[1]}</p><div class="qfb"></div></div></div>`;
+    el.querySelectorAll('.bcell').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,fb=el.querySelector('.qfb');
+      if(B.cells[i]===q){B.own[i]=B.turn;G.good();G.add(5,st);if(line(B.turn)){B.win=B.turn;SFX.fanfare();rain(160);banner('بنغو! '+TEAMN[B.turn],'أكملتم خطًّا كاملًا');G.complete(st);render();el.querySelector('.card').innerHTML=`<h2>🎯 بنغو! ${TEAMN[B.win]}</h2><button class="btn alt" type="button" data-again>لعبة جديدة</button>`;el.querySelector('[data-again]').onclick=setup;return;}
+        next();}
+      else{G.bad();b.classList.add('bad');say(fb,'bad',`ليس «${B.cells[i][0]}». الإجابة: ${q[0]}. ينتقل الدور.`);const j=B.cells.indexOf(q);setTimeout(()=>next(j),1500);}});}
+  function next(){B.k=(B.k+1)%B.order.length;let g=0;while(B.own[B.order[B.k]]>=0&&g++<20)B.k=(B.k+1)%B.order.length;B.turn=(B.turn+1)%B.n;if(B.own.every(o=>o>=0)){setup();return;}render();}
+  setup();return {reset:setup};}
+
+/* ---------- choice board 3x3 (differentiation) ---------- */
+function choiceBoard(el,tasks,st,onAll){const done=new Set();
+  function render(){el.innerHTML=`<p class="step-text">اختر ثلاث مهام تكوّن خطًّا (أفقيًا أو رأسيًا أو قطريًا) كما في لعبة «إكس-أو»، وأنجزها.</p><div class="cboard">${tasks.map((t,i)=>`<button type="button" class="cb${done.has(i)?' done':''}" data-i="${i}"><span class="cb-ic">${t.ic||'⭐'}</span><b>${t.t}</b><small>${t.kind}</small></button>`).join('')}</div><div class="cb-task mt"></div>`;
+    el.querySelectorAll('.cb').forEach(b=>b.onclick=()=>open(+b.dataset.i));}
+  const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  function mark(i){done.add(i);el.querySelector(`.cb[data-i="${i}"]`).classList.add('done');if(L.some(l=>l.every(k=>done.has(k)))&&onAll){onAll();banner('أكملت خطًّا في لوحة الخيارات!','أحسنت الاختيار والإنجاز');}}
+  function open(i){const t=tasks[i],box=el.querySelector('.cb-task');el.querySelectorAll('.cb').forEach(b=>b.classList.toggle('sel',+b.dataset.i===i));
+    box.innerHTML=`<div class="card"><h3>${t.ic||''} ${t.t}</h3><div class="cb-body"></div></div>`;const body=box.querySelector('.cb-body');
+    if(t.o)mcq(body,t,st,ok=>{if(ok)mark(i);});else if(t.v!=null)calcQ(body,t,st,ok=>{if(ok)mark(i);});
+    else{body.innerHTML=`<p class="step-text">${t.p}</p><div class="row-actions"><button class="btn alt" type="button">✓ أنجزت المهمة في دفتري</button></div>`;body.querySelector('.btn').onclick=()=>{G.add(5,st);G.good();mark(i);};}
+    try{box.scrollIntoView({behavior:'smooth',block:'nearest'});}catch(e){}}
+  render();return {reset(){done.clear();render();}};}
 
 /* ---------- self-test with model answers ---------- */
 function solutions(el,items,st,onAll){const shown=new Set();
@@ -1020,7 +1217,7 @@ function boot(meta){
   if(new URLSearchParams(location.search).has('skip'))$('#startScreen').hidden=true;
 }
 
-window.K={$,$$,G,STN,def,boot,mcq,calcQ,levels,flips,match,sortGame,tfRound,race,challenge,riddles,puzzle,solutions,vcard,ayah,modal,go,say,num,fmt,parseNum,shuffle,banner,rain,burst,SFX,note,TEAMC,TEAMN,css};
+window.K={$,$$,G,STN,def,boot,img,pic,slides,beforeAfter,safety,anticip,story,escape,auction,bingo,choiceBoard,setTeams,mcq,calcQ,levels,flips,match,sortGame,tfRound,race,challenge,riddles,puzzle,solutions,vcard,ayah,modal,go,say,num,fmt,parseNum,shuffle,banner,rain,burst,SFX,note,TEAMC,TEAMN,css};
 })();
 
 </script>
@@ -1338,7 +1535,7 @@ def('ch',{n:'تحدي العلماء',plan:2,icon:'<path d="M24 10h32v18a16 16 0
   {k:'التفكير الناقد',q:'لماذا يصعد الناس الجبال العالية عبر طرق ملتفة حولها بدل الصعود المستقيم؟',o:['لأن الطريق الملتف أقصر','لأنه أقل انحدارًا فيحتاج إلى قوة أقل رغم أن المسافة أطول','لأنه يقلل الشغل إلى الصفر','لأن السيارات لا تصعد إلا في دوائر'],a:1,why:'الطريق الجبلي الملتف يشبه البرغي: سطح مائل ملتف يقلل القوة ويزيد المسافة.'}],'ch');},
  reset(){STN.ch.c.reset();},explain:'<p>أسئلة التحدي مأخوذة من تقييمات العرض، وتغطي أهداف الدرس الخمسة.</p>'});
 
-K.boot({title:'ورشة الآلات',lesson:'الدرس الثالث: الشغل والآلات البسيطة',accent:'#a8323a',accentDark:'#f08a8f',hook:'كيف ترفع الثقيل بجهد قليل؟',
+K.boot({chapter:'الفصل الثاني: الحركة والقوى والآلات البسيطة',chapterShort:'الفصل الثاني',title:'ورشة الآلات',lesson:'الدرس الثالث: الشغل والآلات البسيطة',accent:'#a8323a',accentDark:'#f08a8f',hook:'كيف ترفع الثقيل بجهد قليل؟',
  riddle:'لتحميل عربة ثقيلة إلى صندوق سيارة: هل ترفعها مباشرة أم تدفعها على سطح مائل؟ أيهما يحتاج إلى قوة أقل؟',predict:{o:['الرفع المباشر يحتاج إلى قوة أقل','السطح المائل يحتاج إلى قوة أقل','تحتاج الطريقتان القوة نفسها'],a:1},
  answer:'السطح المائل يحتاج إلى قوة أقل، لكنك تدفع العربة مسافة أطول (طول السطح بدل الارتفاع). الآلات لا تقلل الشغل، لكنها تسهّله بتغيير مقدار القوة أو اتجاهها.',
  finalTitle:'مبارك! أصبحت مهندسًا للآلات البسيطة',goals:GOALS,

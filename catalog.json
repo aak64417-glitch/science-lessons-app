@@ -1,11 +1,13 @@
 {
-  "version": 2,
+  "version": 3,
   "items": [
     {"id":"g7-c1-l1","title":"العلم وعملياته","type":"lesson","grade":"7","no":1,"chapter":"الفصل الأول: طبيعة العلم","desc":"ملف القضية رقم ١: لغز العلبتين","color":"#F2545B","file":"lessons/g7-c1-l1.html","cover":"img/cover-g7-c1-l1.webp"},
     {"id":"g7-c1-l2","title":"النماذج العلمية","type":"lesson","grade":"7","no":2,"chapter":"الفصل الأول: طبيعة العلم","desc":"ملف القضية رقم ٢: لغز ما لا يُرى","color":"#7B6CF6","file":"lessons/g7-c1-l2.html","cover":"img/cover-g7-c1-l2.webp"},
     {"id":"g7-c1-l3","title":"تقويم التفسيرات العلمية","type":"lesson","grade":"7","no":3,"chapter":"الفصل الأول: طبيعة العلم","desc":"ملف القضية رقم ٣: صدّق أو لا تصدّق؟","color":"#16B5A6","file":"lessons/g7-c1-l3.html","cover":"img/cover-g7-c1-l3.webp"},
     {"id":"g7-c2-l1","title":"الحركة","type":"lesson","grade":"7","no":1,"chapter":"الفصل الثاني: الحركة والقوى والآلات البسيطة","desc":"سباق الحركة: السرعة والتسارع","color":"#0B6884","file":"lessons/g7-c2-l1.html","cover":"img/cover-g7-c2-l1.webp"},
     {"id":"g7-c2-l2","title":"قوانين نيوتن للحركة","type":"lesson","grade":"7","no":2,"chapter":"الفصل الثاني: الحركة والقوى والآلات البسيطة","desc":"ساحة نيوتن: القوة والقوانين الثلاثة","color":"#2E7031","file":"lessons/g7-c2-l2.html","cover":"img/cover-g7-c2-l2.webp"},
-    {"id":"g7-c2-l3","title":"الشغل والآلات البسيطة","type":"lesson","grade":"7","no":3,"chapter":"الفصل الثاني: الحركة والقوى والآلات البسيطة","desc":"ورشة الآلات: الشغل والفائدة الآلية","color":"#A8323A","file":"lessons/g7-c2-l3.html","cover":"img/cover-g7-c2-l3.webp"}
+    {"id":"g7-c2-l3","title":"الشغل والآلات البسيطة","type":"lesson","grade":"7","no":3,"chapter":"الفصل الثاني: الحركة والقوى والآلات البسيطة","desc":"ورشة الآلات: الشغل والفائدة الآلية","color":"#A8323A","file":"lessons/g7-c2-l3.html","cover":"img/cover-g7-c2-l3.webp"},
+    {"id":"g7-c3-l1","title":"الخواص والتغيرات الفيزيائية","type":"lesson","grade":"7","no":1,"chapter":"الفصل الثالث: المادة وتغيراتها","desc":"جولة في سوق المواد","color":"#C2410C","file":"lessons/g7-c3-l1.html","cover":"img/cover-g7-c3-l1.webp"},
+    {"id":"g7-c3-l2","title":"الخواص والتغيرات الكيميائية","type":"lesson","grade":"7","no":2,"chapter":"الفصل الثالث: المادة وتغيراتها","desc":"مختبر التحوّلات","color":"#6D28D9","file":"lessons/g7-c3-l2.html","cover":"img/cover-g7-c3-l2.webp"}
   ]
 }
