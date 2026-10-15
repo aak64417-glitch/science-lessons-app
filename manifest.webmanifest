@@ -1,0 +1,19 @@
+{
+  "name": "منصة دروس العلوم التفاعلية",
+  "short_name": "دروس العلوم",
+  "description": "دروس العلوم التفاعلية للمرحلة المتوسطة — إعداد أ. علي طاهر البقاشي",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen","standalone"],
+  "orientation": "any",
+  "background_color": "#EAF1FB",
+  "theme_color": "#0F2A6B",
+  "icons": [
+    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png"},
+    {"src":"icons/maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+  ]
+}

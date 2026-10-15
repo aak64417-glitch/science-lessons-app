@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "items": [
+    {"id":"g7-c1-l1","title":"العلم وعملياته","type":"lesson","grade":"7","no":1,"chapter":"الفصل الأول: طبيعة العلم","desc":"ملف القضية رقم ١: لغز العلبتين","color":"#F2545B","file":"lessons/g7-c1-l1.html","cover":"img/cover-g7-c1-l1.webp"},
+    {"id":"g7-c1-l2","title":"النماذج العلمية","type":"lesson","grade":"7","no":2,"chapter":"الفصل الأول: طبيعة العلم","desc":"ملف القضية رقم ٢: لغز ما لا يُرى","color":"#7B6CF6","file":"lessons/g7-c1-l2.html","cover":"img/cover-g7-c1-l2.webp"},
+    {"id":"g7-c1-l3","title":"تقويم التفسيرات العلمية","type":"lesson","grade":"7","no":3,"chapter":"الفصل الأول: طبيعة العلم","desc":"ملف القضية رقم ٣: صدّق أو لا تصدّق؟","color":"#16B5A6","file":"lessons/g7-c1-l3.html","cover":"img/cover-g7-c1-l3.webp"}
+  ]
+}
