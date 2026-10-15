@@ -1,5 +1,5 @@
 /* يحفظ التطبيق ودروسه على الجهاز ليعمل دون إنترنت، ويحدّثها عند توفر الاتصال */
-const CACHE='science-app-v1';
+const CACHE='science-app-v2';
 const SHELL=['./','index.html','catalog.json','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png',
  'fonts/lalezar.woff2','fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2','fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2','fonts/ibm-plex-sans-arabic-latin-400-normal.woff2','fonts/ibm-plex-sans-arabic-latin-600-normal.woff2',
  'img/scene.webp','img/g7.webp','img/g8.webp','img/g9.webp','img/flask.webp','img/books.webp',
@@ -10,7 +10,7 @@ self.addEventListener('message',e=>{ if(e.data&&e.data.cache){ caches.open(CACHE
 self.addEventListener('fetch',e=>{
   const req=e.request; if(req.method!=='GET'||new URL(req.url).origin!==location.origin) return;
   /* الفهرس والصفحة الرئيسية: الشبكة أولًا ثم النسخة المحفوظة؛ بقية الملفات: المحفوظ أولًا مع تحديث في الخلفية */
-  const fresh=/catalog\.json$|\/$|index\.html$/.test(new URL(req.url).pathname);
+  const fresh=/catalog\.json$|\/$|index\.html$|manifest\.webmanifest$|sw\.js$/.test(new URL(req.url).pathname);
   e.respondWith(caches.open(CACHE).then(async c=>{
     const hit=await c.match(req,{ignoreSearch:true});
     const net=fetch(req).then(r=>{ if(r&&r.ok) c.put(req,r.clone()); return r }).catch(()=>null);
