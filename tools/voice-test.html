@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>اختبار الصوت</title><link rel="stylesheet" href="kit.css">
+<style>
+.vt{max-width:820px;margin:0 auto;padding:18px 16px 60px}
+.vt .panel{margin-top:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.st{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:15px}
+.st b{color:var(--navy)}
+.ok{color:#0E6B3A;font-weight:700}.no{color:#8E1F24;font-weight:700}
+#log{background:#0F2A6B;color:#dfe8ff;border-radius:14px;padding:12px;font-family:monospace;font-size:13px;min-height:90px;white-space:pre-wrap;direction:ltr;text-align:left}
+#ans{font-size:17px;line-height:1.8}
+select{font:inherit;padding:8px;border-radius:10px;border:1.5px solid var(--line);max-width:100%}
+</style></head><body>
+<main class="vt">
+<header class="hero"><span class="kick">أداة تشخيص</span><h1>اختبار الصوت</h1><p>تكشف هذه الصفحة هل المشكلة من الجهاز أم من العرض. اضغط الأزرار بالترتيب، ثم صوّر الشاشة.</p></header>
+<section class="panel"><h2>١) معلومات الجهاز</h2><div class="st" id="info"></div></section>
+<section class="panel"><h2>٢) جرّب النطق</h2>
+ <div class="row" style="margin:6px 0 12px"><label>الصوت العربي: <select id="sel"></select></label></div>
+ <div class="row"><button class="b p" id="t1">🔊 نطق عربي</button><button class="b" id="t2">🔊 English test</button><button class="b" id="t3">🔊 نطق بالصوت الافتراضي</button><button class="b" id="st">⏹ إيقاف</button></div>
+ <p class="muted">بعد كل زر: هل سمعت صوتًا؟</p>
+ <div class="row"><button class="b" data-h="ar">سمعت العربي ✓</button><button class="b" data-h="en">سمعت الإنجليزي فقط</button><button class="b" data-h="none">لم أسمع شيئًا</button></div>
+ <div id="ans" class="fb" hidden></div>
+</section>
+<section class="panel"><h2>٣) سجل الأحداث</h2><div id="log"></div></section>
+</main>
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)},L=$('#log');
+function log(m){L.textContent+=new Date().toLocaleTimeString('en-GB')+'  '+m+'\n'}
+var has='speechSynthesis' in window&&'SpeechSynthesisUtterance' in window;
+var ua=navigator.userAgent,wv=/; wv\)|Version\/[\d.]+ Chrome\/[\d.]+ Mobile/.test(ua)&&/Android/.test(ua);
+var ios=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+var inFrame=window.top!==window.self;
+function voices(){try{return speechSynthesis.getVoices()||[]}catch(e){return []}}
+function info(){var vs=voices(),ar=vs.filter(function(v){return /^ar/i.test(v.lang)});
+ $('#info').innerHTML='<b>دعم النطق في المتصفح</b><span class="'+(has?'ok':'no')+'">'+(has?'مدعوم':'غير مدعوم')+'</span>'+
+ '<b>نوع التطبيق</b><span>'+(wv?'<span class="no">تطبيق أندرويد (WebView)</span>':ios?'iPad / iPhone':/Android/.test(ua)?'متصفح أندرويد':'متصفح')+(inFrame?' · داخل نافذة المنصة':'')+'</span>'+
+ '<b>عدد الأصوات</b><span>'+vs.length+'</span>'+
+ '<b>الأصوات العربية</b><span class="'+(ar.length?'ok':'no')+'">'+(ar.length?ar.map(function(v){return v.name+' ('+v.lang+')'+(v.localService?'':' · إنترنت')}).join('<br>'):'لا يوجد')+'</span>';
+ $('#sel').innerHTML=ar.length?ar.map(function(v,i){return '<option value="'+i+'">'+v.name+' ('+v.lang+')</option>'}).join(''):'<option value="">— لا يوجد صوت عربي —</option>';
+ return ar}
+var AR=[];
+if(has){AR=info();try{speechSynthesis.addEventListener('voiceschanged',function(){AR=info();log('voiceschanged: '+voices().length)})}catch(e){}}else info();
+log('UA: '+ua);
+function speak(text,lang,voice){if(!has){log('speechSynthesis غير موجود');return}
+ try{if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel()}catch(e){}
+ var u=new SpeechSynthesisUtterance(text);u.lang=lang;if(voice)u.voice=voice;u.volume=1;u.rate=1;
+ var t0=Date.now(),st=false;
+ u.onstart=function(){st=true;log('start ('+(Date.now()-t0)+'ms) '+(voice?voice.name:lang))};
+ u.onend=function(){log('end ('+(Date.now()-t0)+'ms)'+((Date.now()-t0)<400?'  ← انتهى بسرعة غير طبيعية: المحرك لم ينطق فعليًا':''))};
+ u.onerror=function(e){log('error: '+(e.error||'?'))};
+ try{speechSynthesis.speak(u);log('speak() called')}catch(e){log('exception: '+e.message)}
+ setTimeout(function(){if(!st)log('لم يبدأ النطق خلال 3 ثوانٍ')},3000)}
+$('#t1').onclick=function(){var v=AR[+$('#sel').value]||null;speak('مرحبًا، هذا اختبار للقراءة الصوتية في منصة دروس العلوم.','ar-SA',v)};
+$('#t2').onclick=function(){speak('Hello, this is a voice test.','en-US',null)};
+$('#t3').onclick=function(){speak('مرحبًا، هذا اختبار بالصوت الافتراضي.','ar-SA',null)};
+$('#st').onclick=function(){try{speechSynthesis.cancel()}catch(e){}log('cancel')};
+document.querySelectorAll('[data-h]').forEach(function(b){b.onclick=function(){var h=b.dataset.h,a=$('#ans'),m;
+ if(h==='ar')m='<b>الجهاز سليم.</b> إن لم يعمل الصوت في العرض، أرسل صورة هذه الصفحة.';
+ else if(h==='en')m='<b>المشكلة من الجهاز: لا يوجد صوت عربي يعمل.</b><br>أندرويد: الإعدادات ← الإدارة العامة (أو النظام) ← تحويل النص إلى كلام ← اختر «محرك Google» ← الإعدادات ← تثبيت بيانات الصوت ← العربية.<br>آيباد: الإعدادات ← تسهيلات الاستخدام ← المحتوى المنطوق ← الأصوات ← العربية ← نزّل صوتًا.';
+ else m='<b>المحرك لا يُخرج أي صوت.</b><br>'+(wv?'أنت تستخدم تطبيق أندرويد، وكثير من أجهزة أندرويد لا تدعم النطق داخل التطبيقات. افتح المنصة من متصفح <b>Chrome</b> وجرّب مرة أخرى.<br>':'')+'تأكد من رفع صوت الوسائط (وليس صوت الرنين)، وإلغاء الوضع الصامت، وفصل سماعات البلوتوث، ثم أعد التشغيل.'+(ios?'<br>في الآيباد: افتح مركز التحكم وتأكد أن زر الصامت (الجرس) غير مفعّل.':'');
+ a.innerHTML=m;a.hidden=false;a.className='fb '+(h==='ar'?'ok':'no')}});
+})();
+</script></body></html>

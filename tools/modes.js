@@ -170,31 +170,33 @@ function video(K){
   });
   S.push({k:'end',dur:6,h:'<div class="sv cover"><span class="kk">انتهى العرض</span><h1>أحسنت المتابعة!</h1><p>راجع ورقة العمل وحل أسئلة التقويم لتثبيت ما تعلمته.</p></div>',say:'انتهى العرض. أحسنت المتابعة.'});
   var i=0,play=true,tm=null,spd=1,voice=false,el;
-  document.body.innerHTML='<div class="vp" id="vp"><div class="vbg" id="vbg"></div><div class="segs" id="segs">'+S.map(function(){return '<span><i></i></span>'}).join('')+'</div><div class="vs" id="vs"></div><div class="vc"><button class="b" id="pv">→ السابق</button><button class="b p" id="pl">⏸ إيقاف</button><button class="b" id="nx">التالي ←</button><button class="b" id="sp">السرعة ١×</button><button class="b" id="vo" aria-pressed="false">🗣 قراءة صوتية</button><button class="b" id="fs2">⛶</button><span class="cnt" id="cn"></span></div></div>';
+  document.body.innerHTML='<div class="vp" id="vp"><div class="vbg" id="vbg"></div><div class="segs" id="segs">'+S.map(function(){return '<span><i></i></span>'}).join('')+'</div><div class="vs" id="vs"></div><div class="vc"><button class="b" id="pv">→ السابق</button><button class="b p" id="pl">⏸ إيقاف</button><button class="b" id="nx">التالي ←</button><button class="b" id="sp">السرعة ١×</button><button class="b" id="vo" aria-pressed="false">🗣 قراءة صوتية</button><select class="b vsel" id="vsel" hidden aria-label="اختيار الصوت"></select><a class="b" href="voice-test.html">🔧 اختبار الصوت</a><button class="b" id="fs2">⛶</button><span class="cnt" id="cn"></span></div></div>';
   var segs=K.$$('#segs span i');
   var hasTTS='speechSynthesis' in window;if(!hasTTS)K.$('#vo').hidden=true;
   /* ---- القراءة الصوتية ---- */
   var VO=null,tok=0,warned=false;
-  function pickVoice(){try{var vs=speechSynthesis.getVoices()||[],ar=vs.filter(function(v){return /^ar/i.test(v.lang)});VO=ar.filter(function(v){return /SA/i.test(v.lang)})[0]||ar.filter(function(v){return v.localService})[0]||ar[0]||null}catch(e){}}
+  function pickVoice(){try{var vs=speechSynthesis.getVoices()||[],ar=vs.filter(function(v){return /^ar/i.test(v.lang)});var keep=VO&&ar.filter(function(v){return v.name===VO.name})[0];var pref=null;try{pref=localStorage.getItem('kit-voice')}catch(e){}var pv=pref&&ar.filter(function(v){return v.name===pref})[0];
+    VO=pv||keep||ar.filter(function(v){return v.localService&&/SA/i.test(v.lang)})[0]||ar.filter(function(v){return v.localService})[0]||ar.filter(function(v){return /SA/i.test(v.lang)})[0]||ar[0]||null;
+    var sel=K.$('#vsel');if(sel){sel.innerHTML=ar.length?ar.map(function(v){return '<option value="'+esc(v.name)+'"'+(VO&&v.name===VO.name?' selected':'')+'>'+esc(v.name)+' ('+esc(v.lang)+')'+(v.localService?'':' · إنترنت')+'</option>'}).join(''):'<option>لا يوجد صوت عربي</option>';sel.hidden=!voice}}catch(e){}}
   if(hasTTS){pickVoice();try{speechSynthesis.addEventListener('voiceschanged',pickVoice)}catch(e){speechSynthesis.onvoiceschanged=pickVoice}}
   function chunks(t){var out=[],buf='';String(t).split(/([.،:؛!؟?\n])/).forEach(function(x){buf+=x;if(/[.،:؛!؟?\n]/.test(x)&&buf.trim().length>40){out.push(buf.trim());buf=''}});if(buf.trim())out.push(buf.trim());
     var r=[];out.forEach(function(c){while(c.length>200){var k=c.lastIndexOf(' ',200);if(k<60)k=200;r.push(c.slice(0,k));c=c.slice(k)}if(c.trim())r.push(c)});return r}
   function warn(){if(warned)return;warned=true;var ar=VO||(speechSynthesis.getVoices()||[]).some(function(v){return /^ar/i.test(v.lang)});
     var tt=document.createElement('div');tt.className='toast';tt.style.cssText='bottom:90px;max-width:620px;line-height:1.7';tt.textContent=(ar?'لم يصدر صوت. ارفع مستوى الصوت في الجهاز، أو افتح العرض من متصفح Chrome أو Safari.':'لا يوجد صوت عربي مثبّت على هذا الجهاز. ثبّته من إعدادات الجهاز (تحويل النص إلى كلام)، أو افتح العرض من متصفح Chrome أو Safari.');document.body.appendChild(tt);setTimeout(function(){tt.remove()},9000)}
-  function say(t,done){if(!voice||!hasTTS){done&&done(false);return}
-    var my=++tok,parts=chunks(t),k=0,started=false;
-    try{speechSynthesis.cancel()}catch(e){}
+  function say(t,done,now){if(!voice||!hasTTS){done&&done(false);return}
+    var my=++tok,parts=chunks(t),k=0,started=false,busy0=false;
+    try{busy0=speechSynthesis.speaking||speechSynthesis.pending;if(busy0)speechSynthesis.cancel()}catch(e){}
     function next(){if(my!==tok)return;if(k>=parts.length){done&&done(true);return}
       var u=new SpeechSynthesisUtterance(parts[k++]);u.lang=VO?VO.lang:'ar-SA';if(VO)u.voice=VO;u.rate=Math.min(1.6,0.95*spd);u.pitch=1;
       u.onstart=function(){started=true};u.onend=function(){setTimeout(next,120)};u.onerror=function(e){if(my!==tok)return;if(e&&(e.error==='interrupted'||e.error==='canceled'))return;warn();done&&done(false)};
-      try{speechSynthesis.resume();speechSynthesis.speak(u)}catch(e){warn();done&&done(false)}}
-    setTimeout(next,180);
+      u.volume=1;try{if(speechSynthesis.paused)speechSynthesis.resume();speechSynthesis.speak(u)}catch(e){warn();done&&done(false)}}
+    if(now&&!busy0)next();else setTimeout(next,busy0?250:30);
     setTimeout(function(){if(my===tok&&!started&&voice){warn();done&&done(false);done=null}},3500)}
-  function show(){var s=S[i];clearTimeout(tm);K.$('#vs').innerHTML=s.h;K.$('#vs').firstChild.classList.add('in');
+  function show(now){var s=S[i];clearTimeout(tm);K.$('#vs').innerHTML=s.h;K.$('#vs').firstChild.classList.add('in');
     K.$('#vbg').style.backgroundImage=s.img?'url('+s.img+')':'';K.$('#vbg').className='vbg'+(s.img?' on':'');
     segs.forEach(function(g,j){g.style.transition='none';g.style.width=j<i?'100%':'0%'});
     K.$('#cn').textContent=n(i+1)+' / '+n(S.length);
-    var cur=i;if(voice&&hasTTS)say(s.say,function(ok){if(cur!==i||!ok)return;if(s.reveal){var r=K.$('.qo .r');if(r)r.classList.add('show')}if(play){clearTimeout(tm);tm=setTimeout(advance,s.reveal?2500:900)}});
+    var cur=i;if(voice&&hasTTS)say(s.say,function(ok){if(cur!==i||!ok)return;if(s.reveal){var r=K.$('.qo .r');if(r)r.classList.add('show')}if(play){clearTimeout(tm);tm=setTimeout(advance,s.reveal?2500:900)}},now);
     if(s.reveal&&!voice)setTimeout(function(){var r=K.$('.qo .r');if(r)r.classList.add('show')},s.dur*600/spd);
     if(play)run()}
   function advance(){if(i<S.length-1){i++;show()}else{play=false;K.$('#pl').textContent='▶ تشغيل'}}
@@ -204,10 +206,10 @@ function video(K){
   K.$('#pv').onclick=function(){if(i>0){i--;show()}};
   K.$('#sp').onclick=function(){spd=spd===1?1.5:spd===1.5?0.75:1;this.textContent='السرعة '+(spd===1?'١':spd===1.5?'١٫٥':'٠٫٧٥')+'×';show()};
   K.$('#vo').onclick=function(){voice=!voice;this.setAttribute('aria-pressed',voice);this.textContent=voice?'🗣 القراءة تعمل':'🗣 قراءة صوتية';
-    if(!voice){tok++;try{speechSynthesis.cancel()}catch(e){}show();return}
-    /* فتح الصوت بلمسة المستخدم (ضروري في iPad وبعض أجهزة أندرويد) */
-    try{var w=new SpeechSynthesisUtterance('مرحبًا');w.lang=VO?VO.lang:'ar-SA';if(VO)w.voice=VO;w.volume=0.01;speechSynthesis.speak(w)}catch(e){}
-    pickVoice();warned=false;show()};
+    if(!voice){tok++;try{speechSynthesis.cancel()}catch(e){}var vs0=K.$('#vsel');if(vs0)vs0.hidden=true;show();return}
+    /* النطق يبدأ مباشرة داخل لمسة المستخدم (ضروري في iPad وبعض أجهزة أندرويد) */
+    pickVoice();warned=false;show(true)};
+  var vsel=K.$('#vsel');if(vsel)vsel.onchange=function(){var v=(speechSynthesis.getVoices()||[]).filter(function(x){return x.name===vsel.value})[0];if(v){VO=v;try{localStorage.setItem('kit-voice',v.name)}catch(e){}tok++;try{speechSynthesis.cancel()}catch(e){}show(true)}};
   K.$('#fs2').onclick=fs;
   document.addEventListener('keydown',function(e){if(e.key==='ArrowLeft')K.$('#nx').click();else if(e.key==='ArrowRight')K.$('#pv').click();else if(e.key===' '){e.preventDefault();K.$('#pl').click()}});
   show();
