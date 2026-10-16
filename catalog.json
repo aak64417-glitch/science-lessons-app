@@ -1,5 +1,5 @@
 {
- "version": 5,
+ "version": 6,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -307,8 +307,8 @@
    "grade": "7",
    "no": 0,
    "chapter": "الفصل الأول: طبيعة العلم",
-   "title": "لوحة التحدي بين الفرق",
-   "desc": "مسابقة للفرق: لوحة نقاط لكل درس، ومؤقت، وسؤال الحظ، ومنصة تتويج.",
+   "title": "مسابقة مراجعة الفصل",
+   "desc": "لوحة تحدٍّ للفرق تجمع أسئلة دروس الفصل كلها: نقاط ومؤقت وسؤال الحظ ومنصة تتويج.",
    "color": "#2F7BF6",
    "file": "tools/g7-c1-contest.html",
    "cover": "img/cover-g7-c1-contest.webp"
@@ -367,8 +367,8 @@
    "grade": "7",
    "no": 0,
    "chapter": "الفصل الثاني: الحركة والقوى والآلات البسيطة",
-   "title": "لوحة التحدي بين الفرق",
-   "desc": "مسابقة للفرق: لوحة نقاط لكل درس، ومؤقت، وسؤال الحظ، ومنصة تتويج.",
+   "title": "مسابقة مراجعة الفصل",
+   "desc": "لوحة تحدٍّ للفرق تجمع أسئلة دروس الفصل كلها: نقاط ومؤقت وسؤال الحظ ومنصة تتويج.",
    "color": "#E2662B",
    "file": "tools/g7-c2-contest.html",
    "cover": "img/cover-g7-c2-contest.webp"
@@ -427,8 +427,8 @@
    "grade": "7",
    "no": 0,
    "chapter": "الفصل الثالث: المادة وتغيراتها",
-   "title": "لوحة التحدي بين الفرق",
-   "desc": "مسابقة للفرق: لوحة نقاط لكل درس، ومؤقت، وسؤال الحظ، ومنصة تتويج.",
+   "title": "مسابقة مراجعة الفصل",
+   "desc": "لوحة تحدٍّ للفرق تجمع أسئلة دروس الفصل كلها: نقاط ومؤقت وسؤال الحظ ومنصة تتويج.",
    "color": "#0F9D78",
    "file": "tools/g7-c3-contest.html",
    "cover": "img/cover-g7-c3-contest.webp"
@@ -468,6 +468,102 @@
    "color": "#0F9D78",
    "file": "tools/g7-c3-extra.html",
    "cover": "img/cover-g7-c3-extra.webp"
+  },
+  {
+   "id": "contest-g7-c1-l1",
+   "type": "contest",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل الأول: طبيعة العلم",
+   "title": "تسلّق القمة: العلم وعملياته",
+   "desc": "🧗 كل إجابة صحيحة خطوة نحو القمة، وثلاث متتالية تمنح حبل الإنقاذ.",
+   "color": "#2F7BF6",
+   "file": "tools/contest-g7-c1-l1.html",
+   "cover": "img/cover-contest-g7-c1-l1.webp"
+  },
+  {
+   "id": "contest-g7-c1-l2",
+   "type": "contest",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل الأول: طبيعة العلم",
+   "title": "برج النماذج: النماذج العلمية",
+   "desc": "🏗 ابنِ برج فريقك بالإجابات الصحيحة، واحذر سقوط الطابق الأعلى.",
+   "color": "#2F7BF6",
+   "file": "tools/contest-g7-c1-l2.html",
+   "cover": "img/cover-contest-g7-c1-l2.webp"
+  },
+  {
+   "id": "contest-g7-c1-l3",
+   "type": "contest",
+   "grade": "7",
+   "no": 3,
+   "chapter": "الفصل الأول: طبيعة العلم",
+   "title": "مزاد الأدلة: تقويم التفسيرات العلمية",
+   "desc": "🔨 راهن بنقاطك بحسب ثقتك بالإجابة قبل ظهور الخيارات.",
+   "color": "#2F7BF6",
+   "file": "tools/contest-g7-c1-l3.html",
+   "cover": "img/cover-contest-g7-c1-l3.webp"
+  },
+  {
+   "id": "contest-g7-c2-l1",
+   "type": "contest",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل الثاني: الحركة والقوى والآلات البسيطة",
+   "title": "عجلة الحظ: الحركة",
+   "desc": "🎡 أدر العجلة لتحدد قيمة سؤالك، ومنها سؤال مضاعف.",
+   "color": "#E2662B",
+   "file": "tools/contest-g7-c2-l1.html",
+   "cover": "img/cover-contest-g7-c2-l1.webp"
+  },
+  {
+   "id": "contest-g7-c2-l2",
+   "type": "contest",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل الثاني: الحركة والقوى والآلات البسيطة",
+   "title": "إكس-أو العلمي: قوانين نيوتن للحركة",
+   "desc": "❌⭕ لعبة إكس-أو لفريقين: المربع لا يُكسب إلا بإجابة صحيحة.",
+   "color": "#E2662B",
+   "file": "tools/contest-g7-c2-l2.html",
+   "cover": "img/cover-contest-g7-c2-l2.webp"
+  },
+  {
+   "id": "contest-g7-c2-l3",
+   "type": "contest",
+   "grade": "7",
+   "no": 3,
+   "chapter": "الفصل الثاني: الحركة والقوى والآلات البسيطة",
+   "title": "سلّم المليون: الشغل والآلات البسيطة",
+   "desc": "💰 عشرة أسئلة متدرجة بوسائل مساعدة ومحطات أمان.",
+   "color": "#E2662B",
+   "file": "tools/contest-g7-c2-l3.html",
+   "cover": "img/cover-contest-g7-c2-l3.webp"
+  },
+  {
+   "id": "contest-g7-c3-l1",
+   "type": "contest",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل الثالث: المادة وتغيراتها",
+   "title": "سباق المواد: الخواص والتغيرات الفيزيائية",
+   "desc": "🏎 سباق سيارات بين الفرق مع تيربو للإجابات المتتالية.",
+   "color": "#0F9D78",
+   "file": "tools/contest-g7-c3-l1.html",
+   "cover": "img/cover-contest-g7-c3-l1.webp"
+  },
+  {
+   "id": "contest-g7-c3-l2",
+   "type": "contest",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل الثالث: المادة وتغيراتها",
+   "title": "شدّ الحبل: الخواص والتغيرات الكيميائية",
+   "desc": "💪 فريقان على طرفي الحبل، مع فرصة سرقة عند الخطأ.",
+   "color": "#0F9D78",
+   "file": "tools/contest-g7-c3-l2.html",
+   "cover": "img/cover-contest-g7-c3-l2.webp"
   }
  ]
 }

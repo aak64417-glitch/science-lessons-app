@@ -166,26 +166,48 @@ function video(K){
     S.push({k:'title',dur:6,img:L.cover,h:'<div class="sv ttl"><span class="kk">الدرس '+n(L.no)+'</span><h1>'+esc(L.title)+'</h1><p>'+esc(L.summary)+'</p></div>',say:'الدرس '+L.no+'. '+L.title+'. '+L.summary});
     S.push({k:'goals',dur:8,h:'<div class="sv goals"><h2>🎯 ماذا سنتعلم؟</h2><ol>'+L.goals.map(function(g,i){return '<li style="--d:'+(i*.45+.3)+'s">'+esc(g)+'</li>'}).join('')+'</ol></div>',say:'أهداف الدرس: '+L.goals.join('، ')});
     var cs=L.concepts;for(var i=0;i<cs.length;i+=3){var grp=cs.slice(i,i+3);S.push({k:'con',dur:7+grp.length*2,h:'<div class="sv cons"><h2>💡 '+esc(L.title)+'</h2><div class="cg">'+grp.map(function(c,j){var f=/[=÷×]/.test(c.t);return '<div class="cc'+(f?' f':'')+'" style="--d:'+(j*.7+.3)+'s"><b>'+esc(c.n)+'</b><span>'+esc(c.t)+'</span></div>'}).join('')+'</div></div>',say:grp.map(function(c){return c.n+': '+c.t}).join('. ')})}
-    var q=L.qs[0]?mixQ(K,L.qs[0]):null;if(q){S.push({k:'quiz',dur:12,h:'<div class="sv quiz"><h2>🤔 هل تتذكر؟</h2><p class="qq">'+esc(q.q)+'</p><div class="qo">'+q.o.map(function(o,j){return '<span class="'+(j===q.a?'r':'')+'">'+K.KL[j]+') '+esc(o)+'</span>'}).join('')+'</div></div>',say:q.q,reveal:1})}
+    var q=L.qs[0]?mixQ(K,L.qs[0]):null;if(q){S.push({k:'quiz',dur:12,h:'<div class="sv quiz"><h2>🤔 هل تتذكر؟</h2><p class="qq">'+esc(q.q)+'</p><div class="qo">'+q.o.map(function(o,j){return '<span class="'+(j===q.a?'r':'')+'">'+K.KL[j]+') '+esc(o)+'</span>'}).join('')+'</div></div>',say:'هل تتذكر؟ '+q.q+' '+q.o.map(function(o,j){return K.KL[j]+': '+o}).join('. ')+'. الإجابة الصحيحة: '+q.o[q.a],reveal:1})}
   });
   S.push({k:'end',dur:6,h:'<div class="sv cover"><span class="kk">انتهى العرض</span><h1>أحسنت المتابعة!</h1><p>راجع ورقة العمل وحل أسئلة التقويم لتثبيت ما تعلمته.</p></div>',say:'انتهى العرض. أحسنت المتابعة.'});
   var i=0,play=true,tm=null,spd=1,voice=false,el;
   document.body.innerHTML='<div class="vp" id="vp"><div class="vbg" id="vbg"></div><div class="segs" id="segs">'+S.map(function(){return '<span><i></i></span>'}).join('')+'</div><div class="vs" id="vs"></div><div class="vc"><button class="b" id="pv">→ السابق</button><button class="b p" id="pl">⏸ إيقاف</button><button class="b" id="nx">التالي ←</button><button class="b" id="sp">السرعة ١×</button><button class="b" id="vo" aria-pressed="false">🗣 قراءة صوتية</button><button class="b" id="fs2">⛶</button><span class="cnt" id="cn"></span></div></div>';
   var segs=K.$$('#segs span i');
   var hasTTS='speechSynthesis' in window;if(!hasTTS)K.$('#vo').hidden=true;
-  function say(t){if(!voice||!hasTTS)return;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang='ar-SA';u.rate=0.95*spd;var v=speechSynthesis.getVoices().filter(function(v){return /^ar/i.test(v.lang)})[0];if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
+  /* ---- القراءة الصوتية ---- */
+  var VO=null,tok=0,warned=false;
+  function pickVoice(){try{var vs=speechSynthesis.getVoices()||[],ar=vs.filter(function(v){return /^ar/i.test(v.lang)});VO=ar.filter(function(v){return /SA/i.test(v.lang)})[0]||ar.filter(function(v){return v.localService})[0]||ar[0]||null}catch(e){}}
+  if(hasTTS){pickVoice();try{speechSynthesis.addEventListener('voiceschanged',pickVoice)}catch(e){speechSynthesis.onvoiceschanged=pickVoice}}
+  function chunks(t){var out=[],buf='';String(t).split(/([.،:؛!؟?\n])/).forEach(function(x){buf+=x;if(/[.،:؛!؟?\n]/.test(x)&&buf.trim().length>40){out.push(buf.trim());buf=''}});if(buf.trim())out.push(buf.trim());
+    var r=[];out.forEach(function(c){while(c.length>200){var k=c.lastIndexOf(' ',200);if(k<60)k=200;r.push(c.slice(0,k));c=c.slice(k)}if(c.trim())r.push(c)});return r}
+  function warn(){if(warned)return;warned=true;var ar=VO||(speechSynthesis.getVoices()||[]).some(function(v){return /^ar/i.test(v.lang)});
+    var tt=document.createElement('div');tt.className='toast';tt.style.cssText='bottom:90px;max-width:620px;line-height:1.7';tt.textContent=(ar?'لم يصدر صوت. ارفع مستوى الصوت في الجهاز، أو افتح العرض من متصفح Chrome أو Safari.':'لا يوجد صوت عربي مثبّت على هذا الجهاز. ثبّته من إعدادات الجهاز (تحويل النص إلى كلام)، أو افتح العرض من متصفح Chrome أو Safari.');document.body.appendChild(tt);setTimeout(function(){tt.remove()},9000)}
+  function say(t,done){if(!voice||!hasTTS){done&&done(false);return}
+    var my=++tok,parts=chunks(t),k=0,started=false;
+    try{speechSynthesis.cancel()}catch(e){}
+    function next(){if(my!==tok)return;if(k>=parts.length){done&&done(true);return}
+      var u=new SpeechSynthesisUtterance(parts[k++]);u.lang=VO?VO.lang:'ar-SA';if(VO)u.voice=VO;u.rate=Math.min(1.6,0.95*spd);u.pitch=1;
+      u.onstart=function(){started=true};u.onend=function(){setTimeout(next,120)};u.onerror=function(e){if(my!==tok)return;if(e&&(e.error==='interrupted'||e.error==='canceled'))return;warn();done&&done(false)};
+      try{speechSynthesis.resume();speechSynthesis.speak(u)}catch(e){warn();done&&done(false)}}
+    setTimeout(next,180);
+    setTimeout(function(){if(my===tok&&!started&&voice){warn();done&&done(false);done=null}},3500)}
   function show(){var s=S[i];clearTimeout(tm);K.$('#vs').innerHTML=s.h;K.$('#vs').firstChild.classList.add('in');
     K.$('#vbg').style.backgroundImage=s.img?'url('+s.img+')':'';K.$('#vbg').className='vbg'+(s.img?' on':'');
     segs.forEach(function(g,j){g.style.transition='none';g.style.width=j<i?'100%':'0%'});
-    K.$('#cn').textContent=n(i+1)+' / '+n(S.length);say(s.say);
-    if(s.reveal)setTimeout(function(){var r=K.$('.qo .r');if(r)r.classList.add('show')},s.dur*600/spd);
+    K.$('#cn').textContent=n(i+1)+' / '+n(S.length);
+    var cur=i;if(voice&&hasTTS)say(s.say,function(ok){if(cur!==i||!ok)return;if(s.reveal){var r=K.$('.qo .r');if(r)r.classList.add('show')}if(play){clearTimeout(tm);tm=setTimeout(advance,s.reveal?2500:900)}});
+    if(s.reveal&&!voice)setTimeout(function(){var r=K.$('.qo .r');if(r)r.classList.add('show')},s.dur*600/spd);
     if(play)run()}
-  function run(){var s=S[i],g=segs[i],d=s.dur/spd;requestAnimationFrame(function(){g.style.transition='width '+d+'s linear';g.style.width='100%'});tm=setTimeout(function(){if(i<S.length-1){i++;show()}else{play=false;K.$('#pl').textContent='▶ تشغيل'}},d*1000)}
-  K.$('#pl').onclick=function(){play=!play;this.textContent=play?'⏸ إيقاف':'▶ تشغيل';if(play){if(i>=S.length-1)i=0;show()}else{clearTimeout(tm);var g=segs[i];var w=getComputedStyle(g).width;g.style.transition='none';g.style.width=w;if(hasTTS)speechSynthesis.cancel()}};
+  function advance(){if(i<S.length-1){i++;show()}else{play=false;K.$('#pl').textContent='▶ تشغيل'}}
+  function run(){var s=S[i],g=segs[i],d=s.dur/spd;if(voice&&hasTTS&&!warned)d=Math.max(d,String(s.say).length*0.085/spd+2);requestAnimationFrame(function(){g.style.transition='width '+d+'s linear';g.style.width='100%'});tm=setTimeout(advance,(voice&&hasTTS&&!warned?d*1.6:d)*1000)}
+  K.$('#pl').onclick=function(){play=!play;this.textContent=play?'⏸ إيقاف':'▶ تشغيل';if(play){if(i>=S.length-1)i=0;show()}else{clearTimeout(tm);var g=segs[i];var w=getComputedStyle(g).width;g.style.transition='none';g.style.width=w;if(hasTTS){tok++;speechSynthesis.cancel()}}};
   K.$('#nx').onclick=function(){if(i<S.length-1){i++;show()}};
   K.$('#pv').onclick=function(){if(i>0){i--;show()}};
   K.$('#sp').onclick=function(){spd=spd===1?1.5:spd===1.5?0.75:1;this.textContent='السرعة '+(spd===1?'١':spd===1.5?'١٫٥':'٠٫٧٥')+'×';show()};
-  K.$('#vo').onclick=function(){voice=!voice;this.setAttribute('aria-pressed',voice);if(!voice&&hasTTS)speechSynthesis.cancel();else say(S[i].say)};
+  K.$('#vo').onclick=function(){voice=!voice;this.setAttribute('aria-pressed',voice);this.textContent=voice?'🗣 القراءة تعمل':'🗣 قراءة صوتية';
+    if(!voice){tok++;try{speechSynthesis.cancel()}catch(e){}show();return}
+    /* فتح الصوت بلمسة المستخدم (ضروري في iPad وبعض أجهزة أندرويد) */
+    try{var w=new SpeechSynthesisUtterance('مرحبًا');w.lang=VO?VO.lang:'ar-SA';if(VO)w.voice=VO;w.volume=0.01;speechSynthesis.speak(w)}catch(e){}
+    pickVoice();warned=false;show()};
   K.$('#fs2').onclick=fs;
   document.addEventListener('keydown',function(e){if(e.key==='ArrowLeft')K.$('#nx').click();else if(e.key==='ArrowRight')K.$('#pv').click();else if(e.key===' '){e.preventDefault();K.$('#pl').click()}});
   show();
