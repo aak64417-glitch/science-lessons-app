@@ -40,7 +40,7 @@ function sheet(){
       var sh=shuffle(a.items.map(function(t,i){return [t,i]}),31);
       body='<div class="order">'+sh.map(function(x){return '<div><span class="box">'+blank()+'</span><span>'+esc(x[0])+' <span class="ans">('+n(x[1]+1)+')</span></span></div>'}).join('')+'</div>';
     }else if(a.type==='calc'){
-      body='<div class="calc">'+a.items.map(function(it,i){return '<div class="crow"><div class="pr"><span class="n">'+n(i+1)+'.</span>'+esc(it.q)+'</div><div class="steps3"><div>المعطيات<textarea aria-label="المعطيات"></textarea></div><div>القانون<textarea aria-label="القانون"></textarea></div><div>الحل والوحدة<textarea aria-label="الحل"></textarea><span class="ans ov">'+esc(it.a)+'</span></div></div></div>'}).join('')+'</div>';
+      body='<div class="calc">'+a.items.map(function(it,i){return '<div class="crow"><div class="pr"><span class="n">'+n(i+1)+'.</span>'+esc(it.q)+'</div><div class="steps3"><div><em>المعطيات</em><textarea aria-label="المعطيات"></textarea></div><div><em>القانون</em><textarea aria-label="القانون"></textarea></div><div><em>الحل مع الوحدة</em><textarea aria-label="الحل"></textarea><span class="ans ov">'+esc(it.a)+'</span></div></div></div>'}).join('')+'</div>';
     }else if(a.type==='list'){
       body='<p style="margin:0 0 1mm;font-size:9.4pt;font-weight:700">'+esc(a.q)+'</p><div class="order">'+a.ans.map(function(){return '<div><span style="flex:1">'+blank()+'</span></div>'}).join('')+'</div><span class="ans ov2">من الإجابات: '+esc(a.ans.join('، '))+'</span>';
     }
@@ -48,25 +48,26 @@ function sheet(){
   });
   // صح أم خطأ / فكّر
   if(S.tf&&S.tf.length){
-    h+=sec('ضع علامة ✓ أمام العبارة الصحيحة و ✗ أمام الخاطئة','('+n(S.tf.length)+' درجات)','<ul class="tf">'+S.tf.map(function(t,i){return '<li><span class="pick"><button data-g="t'+i+'" class="'+(t[1]?'ok':'')+'">✓</button><button data-g="t'+i+'" class="'+(t[1]?'':'ok')+'">✗</button></span><span>'+esc(t[0])+(t[1]||!t[2]?'':' <span class="ans">— '+esc(t[2])+'</span>')+'</span></li>'}).join('')+'</ul>');
+    h+=sec('اكتب كلمة (صح) أمام العبارة الصحيحة، وكلمة (خطأ) أمام العبارة الخاطئة','('+n(S.tf.length)+' درجات)','<ul class="tf">'+S.tf.map(function(t,i){return '<li><button class="par" data-tf="'+i+'" aria-label="اكتب صح أو خطأ"><span class="pv"></span><span class="ans">'+(t[1]?'صح':'خطأ')+'</span></button><span class="tx">'+esc(t[0])+(t[1]||!t[2]?'':' <span class="ans">— '+esc(t[2])+'</span>')+'</span></li>'}).join('')+'</ul>');
   }
   if(S.think){
-    h+=sec('فكّر وفسّر','(درجتان)','<div class="think"><p>'+esc(S.think.q)+'</p><div class="lines"><textarea aria-label="الإجابة"></textarea><span class="ans ov3">'+esc(S.think.a)+'</span></div></div>');
+    h+=sec('فكّر وفسّر','(درجتان)','<div class="think"><p>'+esc(S.think.q)+'</p><div class="lines l3"><textarea aria-label="الإجابة"></textarea><span class="ans ov3">'+esc(S.think.a)+'</span></div></div>');
   }
   // التقويم الذاتي
-  h+='<section class="sec"><h2><i>★</i>قيّم نفسك: أستطيع أن…<em class="h" style="display:flex;gap:3.4mm"><span>😀 أتقنت</span><span>🙂 تقريبًا</span><span>🤔 أحتاج مراجعة</span></em></h2><div class="self">'+L.goals.slice(0,S.goalsN||L.goals.length).map(function(g,i){return '<span>'+esc(g.replace(/\.$/,''))+'</span><span class="faces">'+['😀','🙂','🤔'].map(function(f){return '<button data-g="s'+i+'" aria-label="'+f+'">'+f+'</button>'}).join('')+'</span>'}).join('')+'</div></section>';
+  h+='<section class="sec"><h2><i>★</i>قيّم نفسك: أستطيع أن…<em class="h" style="display:flex;gap:3.4mm"><span>😀 أتقنت</span><span>🙂 تقريبًا</span><span>🤔 أحتاج مراجعة</span></em></h2><div class="self">'+L.goals.slice(0,3).map(function(g,i){return '<span>'+esc(g.replace(/\.$/,''))+'</span><span class="faces">'+['😀','🙂','🤔'].map(function(f){return '<button data-g="s'+i+'" aria-label="'+f+'">'+f+'</button>'}).join('')+'</span>'}).join('')+'</div></section>';
   h+='<footer class="ft"><span>منصة دروس العلوم التفاعلية · <b>أ. علي طاهر البقاشي</b></span><span>'+esc(L.chapter)+'</span></footer>';
   h+='</div></article></div></div>';
   document.body.innerHTML=h;
   // تفاعل
   document.addEventListener('click',function(e){var b=e.target.closest('button[data-g]');if(!b)return;var g=b.dataset.g;$$('button[data-g="'+g+'"]').forEach(function(x){x.classList.toggle('on',x===b&&!x.classList.contains('on'))});});
+  $$('.par').forEach(function(b){b.onclick=function(){var v=b.querySelector('.pv'),x=v.textContent;v.textContent=x===''?'صح':x==='صح'?'خطأ':''}});
   $('#pr').onclick=function(){window.print()};
   $('#an').onclick=function(){var on=document.body.classList.toggle('show-ans');this.setAttribute('aria-pressed',on)};
-  $('#cl').onclick=function(){$$('input,textarea').forEach(function(i){i.value=''});$$('.on').forEach(function(x){x.classList.remove('on')});toast('مُسحت الإجابات')};
+  $('#cl').onclick=function(){$$('input,textarea').forEach(function(i){i.value=''});$$('.on').forEach(function(x){x.classList.remove('on')});$$('.pv').forEach(function(x){x.textContent=''});toast('مُسحت الإجابات')};
   function fit(){var zm=$('#zm'),pg=$('#pg');var k=Math.min(1.25,(window.innerWidth-24)/pg.offsetWidth);zm.style.zoom=k}
   /* ضمان صفحة واحدة: تصغير المحتوى قليلًا عند الحاجة */
   function shrink(){var inn=$('#inn'),pg=$('#pg'),z=1;inn.style.zoom=1;inn.style.width='';inn.style.minHeight='0';var room=pg.clientHeight-parseFloat(getComputedStyle(pg).paddingTop)-parseFloat(getComputedStyle(pg).paddingBottom);
-    while(inn.scrollHeight*z>room+1&&z>0.7){z-=0.01;inn.style.zoom=z;}
+    while(inn.scrollHeight*z>room+1&&z>0.6){z-=0.01;inn.style.zoom=z;}
     inn.style.minHeight=(room/z)+'px';window.__z=z}
   addEventListener('resize',fit);fit();
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(shrink);shrink();
