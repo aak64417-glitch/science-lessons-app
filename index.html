@@ -102,8 +102,20 @@ body.stu .tonly{display:none!important}
 .ch .tt span{font-size:13.5px;color:var(--fg2)}
 .ch .arr{flex:0 0 auto;width:38px;height:38px;border-radius:50%;background:var(--paper2);display:grid;place-items:center;font-size:18px;color:var(--fg2);transition:transform .25s;transform:rotate(90deg)}
 .chap.open .ch .arr{transform:none;background:var(--cc);color:#fff}
-.chap .grid{display:none;padding:6px 18px 20px}
-.chap.open .grid{display:grid}
+.chap .cbody{display:none;padding:6px 18px 20px}
+.chap.open .cbody{display:block}
+.cbody .sub{margin:14px 0 10px;font-size:15px;font-weight:700;color:var(--fg2);display:flex;align-items:center;gap:8px}
+.cbody .sub:first-child{margin-top:4px}
+.cbody .sub img{width:26px;height:26px;border-radius:8px}
+.cbody .sub::after{content:"";flex:1;height:1px;background:var(--line)}
+.secb{display:flex;align-items:center;gap:18px;border-radius:24px;padding:18px 22px;margin-bottom:16px;color:#fff;background:linear-gradient(120deg,var(--sc),color-mix(in srgb,var(--sc) 45%,#0F2A6B));box-shadow:0 14px 30px var(--shadow);position:relative;overflow:hidden}
+.secb::after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.1);inset:auto auto -110px -60px}
+.secb img{width:78px;height:78px;border-radius:20px;flex:0 0 auto;box-shadow:0 8px 18px rgba(0,0,0,.18);background:#fff}
+.secb b{display:block;font-family:var(--f-disp);font-weight:400;font-size:28px;line-height:1.2}
+.secb p{margin:4px 0 0;opacity:.95;max-width:70ch}
+.secb .st{margin-inline-start:auto;text-align:center;background:rgba(255,255,255,.16);border-radius:18px;padding:8px 16px;flex:0 0 auto}
+.secb .st strong{display:block;font-family:var(--f-disp);font-weight:400;font-size:30px;line-height:1}
+@media (max-width:700px){.secb{flex-wrap:wrap}.secb img{width:58px;height:58px}.secb .st{margin-inline-start:0}}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
 .card{background:#fff;color:var(--ink);border-radius:22px;overflow:hidden;box-shadow:0 12px 26px var(--shadow);display:flex;flex-direction:column;min-width:0;transition:transform .25s}
 .card:hover{transform:translateY(-4px)}
@@ -212,6 +224,11 @@ var NAV=[['home','🏠','الرئيسية',null],['lesson','📘','الدروس'
 var GR={7:'الأول المتوسط',8:'الثاني المتوسط',9:'الثالث المتوسط'};
 function kindOf(f){ return /\.html?$/i.test(f)?'html':/\.pdf$/i.test(f)?'pdf':/\.(mp4|webm)$/i.test(f)?'video':/\.(png|jpe?g|webp)$/i.test(f)?'image':'html' }
 var KIND={html:'درس تفاعلي',pdf:'ملف PDF',video:'فيديو',image:'صورة'};
+var TYO=['lesson','sheet','activity','contest','assess','video','extra','lab'];
+var TYM={lesson:'درس تفاعلي',lab:'تجربة ثلاثية الأبعاد',sheet:'ورقة عمل · صفحة واحدة',activity:'أنشطة تفاعلية',contest:'مسابقة للفرق',assess:'اختبار ذكي',video:'عرض مرئي متحرك',extra:'حقيبة مراجعة'};
+var TYB={lesson:'ابدأ المغامرة',sheet:'افتح الورقة',activity:'ابدأ النشاط',contest:'ابدأ المسابقة',assess:'ابدأ الاختبار',video:'شغّل العرض',extra:'افتح الحقيبة',lab:'ابدأ التجربة'};
+var TYC={lesson:'#1F4FB8',sheet:'#D93F6A',activity:'#E08A00',contest:'#2F7BF6',assess:'#18A058',video:'#E2552B',extra:'#7B5CE0',lab:'#0F766E'};
+var TYD={lesson:'الدروس التفاعلية مرتبة داخل فصولها.',sheet:'ورقة عمل لكل درس في صفحة واحدة: تُطبع أو تُحل على الشاشة، ومعها مفتاح الإجابات للمعلم.',activity:'أنشطة قصيرة لكل فصل تراجع المصطلحات والمفاهيم باللعب: ذاكرة البطاقات، والفرز، وأكمل التعريف، وصح أم خطأ.',contest:'لوحة تحدٍّ للفرق داخل الصف لكل فصل: نقاط ومؤقت وسؤال حظ ومنصة تتويج.',assess:'اختبار ذكي لكل فصل يقيس إتقان كل درس، ويشرح الإجابات الخاطئة، ويعيد الأسئلة التي أخطأت فيها.',video:'عروض مرئية متحركة تلخص أهداف كل فصل ومفاهيمه، مع قراءة صوتية اختيارية.',extra:'حقيبة لكل فصل: مسرد المصطلحات، وبطاقة القوانين، وقائمة المراجعة، وروابط الدروس والتجارب.',lab:'تجارب ثلاثية الأبعاد من المختبر الافتراضي الذكي.'};
 var S={open:{},rows:[],grade:'all',types:null,typeLabel:'',nav:'home',q:'',loaded:false};
 function toast(m){ var t=document.createElement('div'); t.className='toast'; t.textContent=m; document.body.appendChild(t); setTimeout(function(){t.remove()},3000) }
 function cw(c,one,two,few,many){ return c===1?one:c===2?two:n(c)+' '+(c>2&&c<11?few:many) }
@@ -239,12 +256,15 @@ function render(){
   var by={}, keys=[]; rows.forEach(function(r){ var k=r.grade+'|'+(r.chapter||'محتوى عام'); if(!by[k]){by[k]=[];keys.push(k)} by[k].push(r) });
   keys.sort(function(a,b){ var A=a.split('|'),B=b.split('|'); return A[0]-B[0]||chNo(A[1])-chNo(B[1])||A[1].localeCompare(B[1],'ar') });
   var auto=!!q||keys.length===1, g0='', html='';
+  if(S.types){ var k0=S.types[0], one=S.types.length===1; html+='<div class="secb" style="--sc:'+(TYC[k0]||'#1F4FB8')+'"><img src="'+TY[k0][1]+'" alt=""><div><b>'+esc(S.typeLabel||TY[k0][0])+'</b><p>'+esc(one?TYD[k0]:S.types.map(function(t){return TY[t][0]}).join(' · '))+'</p></div><span class="st"><strong>'+n(rows.length)+'</strong>'+(rows.length>2&&rows.length<11?'عناصر':'عنصرًا')+'</span></div>' }
   keys.forEach(function(k,ix){ var p=k.split('|'), cn=chNo(p[1]), list=by[k].slice().sort(function(a,b){return (a.type==='lab')-(b.type==='lab')||(a.no||99)-(b.no||99)||a.title.localeCompare(b.title,'ar')});
     if(p[0]!==g0){ g0=p[0]; html+='<h3 class="ghd">الصف '+esc(GR[p[0]]||'')+'</h3>' }
-    var m=p[1].match(/^(الفصل\s+\S+)\s*[:：-]\s*(.+)$/), lab=list.filter(function(r){return r.type==='lab'}).length, les=list.length-lab;
-    var cnt=[les?plural(les):'', lab?cw(lab,'تجربة افتراضية','تجربتان افتراضيتان','تجارب افتراضية','تجربة افتراضية'):''].filter(Boolean).join(' · ');
+    var m=p[1].match(/^(الفصل\s+\S+)\s*[:：-]\s*(.+)$/), cnt0=function(t){return list.filter(function(r){return r.type===t}).length};
+    var les=cnt0('lesson'), lab=cnt0('lab'), sh=cnt0('sheet'), oth=list.length-les-lab-sh;
+    var cnt=[les?plural(les):'', sh?cw(sh,'ورقة عمل','ورقتا عمل','أوراق عمل','ورقة عمل'):'', oth?cw(oth,'أداة تعلّم','أداتا تعلّم','أدوات تعلّم','أداة تعلّم'):'', lab?cw(lab,'تجربة افتراضية','تجربتان افتراضيتان','تجارب افتراضية','تجربة افتراضية'):''].filter(Boolean).join(' · ');
+    var tg=TYO.filter(function(t){return cnt0(t)}), body=tg.length>1?tg.map(function(t){return '<h5 class="sub"><img src="'+TY[t][1]+'" alt="">'+esc(TY[t][0])+'</h5><div class="grid">'+list.filter(function(r){return r.type===t}).map(card).join('')+'</div>'}).join(''):'<div class="grid">'+list.map(card).join('')+'</div>';
     var open=auto||!!S.open[k], col=CHC[(cn<90?cn-1:ix)%CHC.length];
-    html+='<section class="chap'+(open?' open':'')+'" style="--cc:'+col+'"><button class="ch" data-chap="'+esc(k)+'" aria-expanded="'+open+'"><span class="num" aria-hidden="true">'+(cn<90?n(cn):(list[0].type==='lab'?'⚗️':'📚'))+'</span><span class="tt">'+(m?'<small>'+esc(m[1])+'</small><b>'+esc(m[2])+'</b>':'<b>'+esc(p[1])+'</b>')+'<span>'+cnt+'</span></span><span class="arr" aria-hidden="true">▾</span></button><div class="grid">'+list.map(card).join('')+'</div></section>' });
+    html+='<section class="chap'+(open?' open':'')+'" style="--cc:'+col+'"><button class="ch" data-chap="'+esc(k)+'" aria-expanded="'+open+'"><span class="num" aria-hidden="true">'+(cn<90?n(cn):(list[0].type==='lab'?'⚗️':'📚'))+'</span><span class="tt">'+(m?'<small>'+esc(m[1])+'</small><b>'+esc(m[2])+'</b>':'<b>'+esc(p[1])+'</b>')+'<span>'+cnt+'</span></span><span class="arr" aria-hidden="true">▾</span></button><div class="cbody">'+body+'</div></section>' });
   L.innerHTML=html }
 var CHC=['#2F7BF6','#E2662B','#0F9D78','#8E44AD','#D93F6A','#B7860B'];
 var ORD={'الأول':1,'الثاني':2,'الثالث':3,'الرابع':4,'الخامس':5,'السادس':6,'السابع':7,'الثامن':8};
@@ -252,7 +272,7 @@ function chNo(t){ var m=String(t).match(/^الفصل\s+([^\s:：-]+)/); return m
 function card(r){ var id=esc(r.id), T=TY[r.type]||TY.lesson;
   var cov=r.cover?'<img src="'+esc(r.cover)+'" alt="" loading="lazy" onerror="this.remove()">':'<span class="pat"></span><span class="ic"><img src="'+T[1]+'" alt=""></span>';
   return '<article class="card" style="--fc:'+esc(r.color)+'"><button class="cv" data-open="'+id+'" aria-label="افتح '+esc(r.title)+'">'+cov+'<span class="no">'+(r.no?'الدرس '+n(r.no):esc(T[0]))+'</span>'+(r.type!=='lesson'?'<span class="ty">'+esc(T[0])+'</span>':'')+'<span class="gl">'+esc(GR[r.grade]||'')+'</span><span class="play">'+svg('play')+'</span></button>'+
-    '<div class="bd"><h4>'+esc(r.title)+'</h4>'+(r.desc?'<p class="desc">'+esc(r.desc)+'</p>':'')+'<div class="meta"><i></i>'+esc(r.type==='lab'?'تجربة ثلاثية الأبعاد':(KIND[r.kind]||''))+'</div><div class="acts"><button class="btn sm" data-open="'+id+'">'+svg('play')+' '+(r.kind==='html'?'ابدأ المغامرة':'افتح')+'</button></div></div></article>' }
+    '<div class="bd"><h4>'+esc(r.title)+'</h4>'+(r.desc?'<p class="desc">'+esc(r.desc)+'</p>':'')+'<div class="meta"><i></i>'+esc(r.kind==='html'?(TYM[r.type]||KIND.html):(KIND[r.kind]||''))+'</div><div class="acts"><button class="btn sm" data-open="'+id+'">'+svg('play')+' '+(r.kind==='html'?(TYB[r.type]||'ابدأ'):'افتح')+'</button></div></div></article>' }
 
 function toLib(){ $('#libS').scrollIntoView({behavior:RM?'auto':'smooth'}) }
 document.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return;
