@@ -255,7 +255,7 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!$('#playe
 function online(){ var o=$('.offl'); if(navigator.onLine){ if(o) o.remove() } else if(!o){ o=document.createElement('div'); o.className='offl'; o.textContent='تعمل الآن دون إنترنت'; document.body.appendChild(o) } }
 addEventListener('online',online); addEventListener('offline',online); online();
 render();
-fetch('catalog.json',{cache:'no-cache'}).then(function(r){return r.json()}).then(function(c){
+fetch('catalog-v4.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(c){
   S.rows=(c.items||[]).map(function(x){ return {id:String(x.id),title:String(x.title||''),type:TY[x.type]?x.type:'lesson',grade:String(x.grade||'7'),no:Number(x.no)||0,chapter:String(x.chapter||''),desc:String(x.desc||''),color:/^#[0-9a-fA-F]{6}$/.test(x.color)?x.color:'#2F7BF6',file:String(x.file||''),cover:String(x.cover||''),kind:kindOf(String(x.file||''))} });
   S.loaded=true; render();
   if(navigator.serviceWorker&&navigator.serviceWorker.controller){ var urls=[]; S.rows.forEach(function(r){ if(r.file&&r.file.indexOf('../')!==0) urls.push(r.file); if(r.cover) urls.push(r.cover) }); navigator.serviceWorker.controller.postMessage({cache:urls}) }

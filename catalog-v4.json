@@ -1,0 +1,21 @@
+{
+  "version": 4,
+  "items": [
+    {"id":"g7-c1-l1","title":"العلم وعملياته","type":"lesson","grade":"7","no":1,"chapter":"الفصل الأول: طبيعة العلم","desc":"ملف القضية رقم ١: لغز العلبتين","color":"#F2545B","file":"lessons/g7-c1-l1.html","cover":"img/cover-g7-c1-l1.webp"},
+    {"id":"g7-c1-l2","title":"النماذج العلمية","type":"lesson","grade":"7","no":2,"chapter":"الفصل الأول: طبيعة العلم","desc":"ملف القضية رقم ٢: لغز ما لا يُرى","color":"#7B6CF6","file":"lessons/g7-c1-l2.html","cover":"img/cover-g7-c1-l2.webp"},
+    {"id":"g7-c1-l3","title":"تقويم التفسيرات العلمية","type":"lesson","grade":"7","no":3,"chapter":"الفصل الأول: طبيعة العلم","desc":"ملف القضية رقم ٣: صدّق أو لا تصدّق؟","color":"#16B5A6","file":"lessons/g7-c1-l3.html","cover":"img/cover-g7-c1-l3.webp"},
+    {"id":"g7-c2-l1","title":"الحركة","type":"lesson","grade":"7","no":1,"chapter":"الفصل الثاني: الحركة والقوى والآلات البسيطة","desc":"سباق الحركة: السرعة والتسارع","color":"#0B6884","file":"lessons/g7-c2-l1.html","cover":"img/cover-g7-c2-l1.webp"},
+    {"id":"g7-c2-l2","title":"قوانين نيوتن للحركة","type":"lesson","grade":"7","no":2,"chapter":"الفصل الثاني: الحركة والقوى والآلات البسيطة","desc":"ساحة نيوتن: القوة والقوانين الثلاثة","color":"#2E7031","file":"lessons/g7-c2-l2.html","cover":"img/cover-g7-c2-l2.webp"},
+    {"id":"g7-c2-l3","title":"الشغل والآلات البسيطة","type":"lesson","grade":"7","no":3,"chapter":"الفصل الثاني: الحركة والقوى والآلات البسيطة","desc":"ورشة الآلات: الشغل والفائدة الآلية","color":"#A8323A","file":"lessons/g7-c2-l3.html","cover":"img/cover-g7-c2-l3.webp"},
+    {"id":"g7-c3-l1","title":"الخواص والتغيرات الفيزيائية","type":"lesson","grade":"7","no":1,"chapter":"الفصل الثالث: المادة وتغيراتها","desc":"جولة في سوق المواد","color":"#C2410C","file":"lessons/g7-c3-l1.html","cover":"img/cover-g7-c3-l1.webp"},
+    {"id":"g7-c3-l2","title":"الخواص والتغيرات الكيميائية","type":"lesson","grade":"7","no":2,"chapter":"الفصل الثالث: المادة وتغيراتها","desc":"مختبر التحوّلات","color":"#6D28D9","file":"lessons/g7-c3-l2.html","cover":"img/cover-g7-c3-l2.webp"},
+    {"id":"lab-all","title":"المختبر الافتراضي الذكي: كل التجارب","type":"lab","grade":"7","no":0,"chapter":"تجارب المختبر الافتراضي","desc":"مكتبة التجارب ثلاثية الأبعاد كاملة","color":"#0F766E","file":"../science-unified-hub/lab/","cover":"img/cover-lab-ph.webp"},
+    {"id":"lab-ph","title":"الأحماض والقواعد وقياس pH","type":"lab","grade":"7","no":0,"chapter":"تجارب المختبر الافتراضي","desc":"مختبر ثلاثي الأبعاد: الكواشف وجهاز pH","color":"#0F766E","file":"../science-unified-hub/lab/#ph","cover":"img/cover-lab-ph.webp"},
+    {"id":"lab-chg-7","title":"تجربة: التغيرات الفيزيائية والكيميائية","type":"lab","grade":"7","no":0,"chapter":"الفصل الثالث: المادة وتغيراتها","desc":"مختبر ثلاثي الأبعاد: ست تجارب وأدلتها","color":"#0F766E","file":"../science-unified-hub/lab/#chg","cover":"img/cover-lab-chg.webp"},
+    {"id":"lab-chg","title":"التغيرات الفيزيائية والكيميائية","type":"lab","grade":"8","no":0,"chapter":"تجارب المختبر الافتراضي","desc":"مختبر ثلاثي الأبعاد: ست تجارب وأدلتها","color":"#0F766E","file":"../science-unified-hub/lab/#chg","cover":"img/cover-lab-chg.webp"},
+    {"id":"lab-osmo","title":"الانتشار والخاصية الأسموزية","type":"lab","grade":"9","no":0,"chapter":"أنشطة الخلية","desc":"مختبر ثلاثي الأبعاد","color":"#0F766E","file":"../science-unified-hub/lab/#osmo","cover":"img/cover-lab-osmo.webp"},
+    {"id":"lab-photo","title":"البناء الضوئي في نبات الإيلوديا","type":"lab","grade":"9","no":0,"chapter":"أنشطة الخلية","desc":"مختبر ثلاثي الأبعاد","color":"#0F766E","file":"../science-unified-hub/lab/#photo","cover":"img/cover-lab-photo.webp"},
+    {"id":"lab-yeast","title":"التنفس الخلوي والتخمر في الخميرة","type":"lab","grade":"9","no":0,"chapter":"أنشطة الخلية","desc":"مختبر ثلاثي الأبعاد","color":"#0F766E","file":"../science-unified-hub/lab/#yeast","cover":"img/cover-lab-yeast.webp"},
+    {"id":"lab-trans","title":"النقل عبر الغشاء البلازمي","type":"lab","grade":"9","no":0,"chapter":"أنشطة الخلية","desc":"مختبر ثلاثي الأبعاد","color":"#0F766E","file":"../science-unified-hub/lab/#trans","cover":"img/cover-lab-trans.webp"}
+  ]
+}
