@@ -10,7 +10,7 @@ self.addEventListener('message',e=>{ if(e.data&&e.data.cache){ caches.open(CACHE
 self.addEventListener('fetch',e=>{
   const req=e.request; if(req.method!=='GET'||new URL(req.url).origin!==location.origin) return;
   /* الفهرس والصفحة الرئيسية: الشبكة أولًا ثم النسخة المحفوظة؛ بقية الملفات: المحفوظ أولًا مع تحديث في الخلفية */
-  const fresh=/catalog\.json$|\/$|index\.html$|manifest\.webmanifest$|sw\.js$/.test(new URL(req.url).pathname);
+  const fresh=/catalog(-v4)?\.json$|\/$|index\.html$|manifest\.webmanifest$|sw\.js$/.test(new URL(req.url).pathname);
   e.respondWith(caches.open(CACHE).then(async c=>{
     const hit=await c.match(req,{ignoreSearch:true});
     const net=fetch(req).then(r=>{ if(r&&r.ok) c.put(req,r.clone()); return r }).catch(()=>null);
