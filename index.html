@@ -229,7 +229,7 @@ function render(){
 function card(r){ var id=esc(r.id), T=TY[r.type]||TY.lesson;
   var cov=r.cover?'<img src="'+esc(r.cover)+'" alt="" loading="lazy" onerror="this.remove()">':'<span class="pat"></span><span class="ic"><img src="'+T[1]+'" alt=""></span>';
   return '<article class="card" style="--fc:'+esc(r.color)+'"><button class="cv" data-open="'+id+'" aria-label="افتح '+esc(r.title)+'">'+cov+'<span class="no">'+(r.no?'الدرس '+n(r.no):esc(T[0]))+'</span>'+(r.type!=='lesson'?'<span class="ty">'+esc(T[0])+'</span>':'')+'<span class="gl">'+esc(GR[r.grade]||'')+'</span><span class="play">'+svg('play')+'</span></button>'+
-    '<div class="bd"><h4>'+esc(r.title)+'</h4>'+(r.desc?'<p class="desc">'+esc(r.desc)+'</p>':'')+'<div class="meta"><i></i>'+esc(KIND[r.kind]||'')+'</div><div class="acts"><button class="btn sm" data-open="'+id+'">'+svg('play')+' '+(r.kind==='html'?'ابدأ المغامرة':'افتح')+'</button></div></div></article>' }
+    '<div class="bd"><h4>'+esc(r.title)+'</h4>'+(r.desc?'<p class="desc">'+esc(r.desc)+'</p>':'')+'<div class="meta"><i></i>'+esc(r.type==='lab'?'تجربة ثلاثية الأبعاد':(KIND[r.kind]||''))+'</div><div class="acts"><button class="btn sm" data-open="'+id+'">'+svg('play')+' '+(r.kind==='html'?'ابدأ المغامرة':'افتح')+'</button></div></div></article>' }
 
 function toLib(){ $('#libS').scrollIntoView({behavior:RM?'auto':'smooth'}) }
 document.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return;
@@ -258,9 +258,9 @@ render();
 fetch('catalog.json',{cache:'no-cache'}).then(function(r){return r.json()}).then(function(c){
   S.rows=(c.items||[]).map(function(x){ return {id:String(x.id),title:String(x.title||''),type:TY[x.type]?x.type:'lesson',grade:String(x.grade||'7'),no:Number(x.no)||0,chapter:String(x.chapter||''),desc:String(x.desc||''),color:/^#[0-9a-fA-F]{6}$/.test(x.color)?x.color:'#2F7BF6',file:String(x.file||''),cover:String(x.cover||''),kind:kindOf(String(x.file||''))} });
   S.loaded=true; render();
-  if(navigator.serviceWorker&&navigator.serviceWorker.controller){ var urls=[]; S.rows.forEach(function(r){ if(r.file) urls.push(r.file); if(r.cover) urls.push(r.cover) }); navigator.serviceWorker.controller.postMessage({cache:urls}) }
+  if(navigator.serviceWorker&&navigator.serviceWorker.controller){ var urls=[]; S.rows.forEach(function(r){ if(r.file&&r.file.indexOf('../')!==0) urls.push(r.file); if(r.cover) urls.push(r.cover) }); navigator.serviceWorker.controller.postMessage({cache:urls}) }
 }).catch(function(){ S.loaded=true; $('#list').innerHTML='<div class="notice">تعذّر تحميل قائمة الدروس. اتصل بالإنترنت مرة واحدة على الأقل ثم أعد فتح التطبيق.</div>' });
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').then(function(){ return navigator.serviceWorker.ready }).then(function(reg){ if(S.loaded&&reg.active){ var urls=[]; S.rows.forEach(function(r){ if(r.file) urls.push(r.file); if(r.cover) urls.push(r.cover) }); reg.active.postMessage({cache:urls}) } }).catch(function(){}) }
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').then(function(){ return navigator.serviceWorker.ready }).then(function(reg){ if(S.loaded&&reg.active){ var urls=[]; S.rows.forEach(function(r){ if(r.file&&r.file.indexOf('../')!==0) urls.push(r.file); if(r.cover) urls.push(r.cover) }); reg.active.postMessage({cache:urls}) } }).catch(function(){}) }
 })();
 </script>
 </body>
