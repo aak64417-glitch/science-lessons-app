@@ -239,10 +239,11 @@ fact(); setInterval(fact,9000);
 var ROT=['لغز ينتظر من يحلّه','محاكاة تجرّب فيها بنفسك','سباق بين الفرق','سرّ من أسرار الطبيعة','تحدٍّ يختبر ذكاءك'], ri=0;
 setInterval(function(){ var e=$('#rot'); e.classList.add('out'); setTimeout(function(){ ri=(ri+1)%ROT.length; e.textContent=ROT[ri]; e.classList.remove('out') },350) },3000);
 
-function vis(){ return S.rows.filter(function(r){ return (S.grade==='all'||r.grade===S.grade)&&(!S.types||S.types.indexOf(r.type)>=0) }) }
+function inView(r){ return S.types?S.types.indexOf(r.type)>=0:(r.type==='lesson'||r.type==='lab') }
+function vis(){ return S.rows.filter(function(r){ return (S.grade==='all'||r.grade===S.grade)&&inView(r) }) }
 function chrome(){
   $('#nav').innerHTML=NAV.map(function(x){ return '<button data-nav="'+x[0]+'" aria-current="'+(S.nav===x[0])+'"><span class="ni" aria-hidden="true">'+x[1]+'</span>'+x[2]+'</button>' }).join('');
-  var gc={}; S.rows.forEach(function(r){ if(!S.types||S.types.indexOf(r.type)>=0) gc[r.grade]=(gc[r.grade]||0)+1 });
+  var gc={}; S.rows.forEach(function(r){ if(inView(r)) gc[r.grade]=(gc[r.grade]||0)+1 });
   $('#shelf').innerHTML=['7','8','9'].map(function(k){ return '<button class="gr" data-g="'+k+'" aria-pressed="'+(S.grade===k)+'" aria-label="دروس الصف '+GR[k]+'"><img src="img/g'+k+'.webp" alt=""><span class="cnt">'+(gc[k]?plural(gc[k]):'قريبًا')+'</span></button>' }).join('');
   var tc={}; S.rows.forEach(function(r){ if(S.grade==='all'||r.grade===S.grade) tc[r.type]=(tc[r.type]||0)+1 });
   $('#tools').innerHTML=TOOLS.map(function(k){ var on=!!(S.types&&S.types.length===1&&S.types[0]===k); return '<button class="tl" data-t="'+k+'" aria-pressed="'+on+'"><span class="c'+(tc[k]?' on':'')+'">'+n(tc[k]||0)+'</span><img src="'+TY[k][1]+'" alt=""><b>'+TY[k][0]+'</b></button>' }).join('');

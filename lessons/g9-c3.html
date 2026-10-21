@@ -239,6 +239,26 @@ canvas.sim{object-fit:contain}
 #iq table.tb{font-size:16px}#iq table.tb th{font-size:15px;padding:6px}#iq table.tb input{font-size:17px;padding:5px}
 .cine .cap{font-size:50px;padding:0 70px;bottom:170px;line-height:1.35}
 #stage{position:absolute!important;left:50%;top:50%;transform-origin:center center}
+
+/* انتقالات سينمائية بين المحطات */
+.scr{clip-path:circle(0% at 50% 55%);transition:opacity .5s,transform .9s cubic-bezier(.2,.8,.2,1),clip-path .95s cubic-bezier(.65,0,.35,1)}
+.scr.on{clip-path:circle(150% at 50% 55%)}
+.scr.out{clip-path:circle(150% at 50% 55%);opacity:0;transform:scale(1.04)}
+.rise{animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(26px) scale(.97)}}
+body.paused .scr .rise{animation-play-state:running!important}
+#sttl{position:absolute;inset:0;z-index:15;pointer-events:none;display:grid;place-items:center;opacity:0}
+#sttl.go{animation:sttl 1.35s ease both}
+#sttl .band{position:absolute;inset:38% 0;background:linear-gradient(90deg,transparent,rgba(56,214,255,.28),rgba(139,108,255,.32),transparent);transform:scaleX(0);transform-origin:right}
+#sttl.go .band{animation:band 1.35s cubic-bezier(.65,0,.35,1) both}
+#sttl .tx{position:relative;text-align:center;font-family:var(--disp);text-shadow:0 4px 30px rgba(0,0,0,.6)}
+#sttl small{display:block;font-size:26px;color:var(--au);letter-spacing:2px}
+#sttl b{font-size:64px;color:#fff}
+@keyframes sttl{0%{opacity:0;transform:scale(1.08)}18%{opacity:1;transform:none}70%{opacity:1}100%{opacity:0;transform:translateY(-30px)}}
+@keyframes band{0%{transform:scaleX(0)}35%{transform:scaleX(1)}75%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+@media (prefers-reduced-motion:reduce){.scr{clip-path:none!important;transition:opacity .3s}.rise{animation:none}#sttl{display:none}}
+canvas.sim.lab{background:linear-gradient(#e8eef0 50%,#26333a 50%);border-color:#cbd6db}
+#sttl{background:radial-gradient(circle,rgba(2,6,15,.72),rgba(2,6,15,.45))}
 /* هوية «رحلة داخل الخلية»: مختبر حيوي مستقبلي (أزرق داكن، فيروزي حيوي، بنفسجي، ذهبي) */
 :root{--bg0:#03111c;--bg1:#062033;--bg2:#0a2f45;--cy:#2fe3c4;--cy2:#8ff5e2;--vi:#a07cff;--vi2:#c9b6ff;--line:rgba(110,240,215,.22);--line2:rgba(110,240,215,.45)}
 #viewport{background:radial-gradient(circle at 50% 40%,#08283a,#010a10 70%)}
@@ -1374,7 +1394,7 @@ E.boot=function(){
    '<footer id="ctl"><button class="cb" id="bMenu" title="القائمة الرئيسية">☰ القائمة</button><button class="cb" id="bHome" title="الصفحة الرئيسية">⌂</button><span class="sep"></span>'+
    '<button class="cb" id="bPrev">→ السابق</button><button class="cb" id="bReplay" title="إعادة تشغيل المحطة">↻ إعادة</button><button class="cb" id="bPause" aria-pressed="false" title="إيقاف الحركة">⏸ إيقاف الحركة</button><button class="cb gold" id="bReveal">💡 كشف التفسير</button><button class="cb cy" id="bNext">التالي ←</button><span class="sep"></span>'+
    '<div id="timer"><b class="num" id="tv">٠١:٠٠</b><button id="tPlay" title="تشغيل المؤقت">▶</button><button id="tReset" title="إعادة المؤقت">↺</button></div><button class="cb" id="bMute" title="الصوت">🔊</button><button class="cb" id="bFs" title="ملء الشاشة">⛶</button></footer>'+
-   '<div class="scrim" id="scrim"></div><aside id="drawer" aria-label="لوحة المعلم"><header><b>لوحة المعلم</b><button class="cb" id="dClose">✕</button></header><div class="body" id="dBody"></div></aside>'+
+   '<div id="sttl" aria-hidden="true"></div><div class="scrim" id="scrim"></div><aside id="drawer" aria-label="لوحة المعلم"><header><b>لوحة المعلم</b><button class="cb" id="dClose">✕</button></header><div class="body" id="dBody"></div></aside>'+
    '<div id="win"><canvas id="wcv"></canvas><div class="wbox"><div class="trophy">🏆</div><h2 id="wName"></h2><p id="wSub"></p><div class="teams4" id="wTeams" style="width:1000px;margin:20px auto"></div><button class="btn gold" id="wClose">متابعة العرض</button></div></div>'+
    '</div></div>';
   stage=$('#stage');screens=$('#screens');layout();addEventListener('resize',layout);
@@ -1416,12 +1436,14 @@ function leave(){var s=E.curSt();if(s&&s.api&&s.api.leave)try{s.api.leave()}catc
 E.go=function(i,instant){var L=E.curL();if(!L)return;if(i<0||i>=L.stations.length)return;var old=E.curSt();if(old&&i===E.idx)return;
   leave();if(old&&old.el){var oe=old.el;oe.classList.remove('on');oe.classList.add('out');setTimeout(function(){oe.classList.remove('out')},700)}
   E.idx=i;var s=L.stations[i];if(!s.el)build(s);
-  requestAnimationFrame(function(){s.el.classList.add('on')});
-  if(!instant)SFX.whoosh();
+  requestAnimationFrame(function(){s.el.classList.add('on');stagger(s.el)});
+  if(!instant){SFX.whoosh();if(!s.full)titleCard(i,s)}
   if(s.api.enter)try{s.api.enter()}catch(e){console.error(e)}
   ST.last[E.cur]=i;markDone(s.id);save();progUI();E.drawerFill();
   history.replaceState(null,'','#'+E.cur+'-'+i);
   $('#bPrev').disabled=i===0;$('#bNext').disabled=i===L.stations.length-1;if(E.paused)E.setPaused(true)};
+function stagger(el){var k=0;$$('.eyebrow,h1.t,.lead,.lcdrow,.card,.q,canvas.sim,.labview,.three,.wq,.goal,.teams4,.chips,.tb',el).filter(function(e){return !e.closest('.q .q')&&e.offsetParent!==null}).slice(0,16).forEach(function(e){e.classList.remove('rise');void e.offsetWidth;e.style.animationDelay=(0.18+k*0.07)+'s';e.classList.add('rise');k++})}
+function titleCard(i,s){var t=$('#sttl');if(!t)return;var m=s.name.match(/^م(\S+)\s+(.+)$/);t.innerHTML='<div class="band"></div><div class="tx"><small>'+(m?'المحطة '+m[1]:'')+'</small><b>'+esc(m?m[2]:s.name)+'</b></div>';t.classList.remove('go');void t.offsetWidth;t.classList.add('go')}
 E.replay=function(){var s=E.curSt();if(!s)return;leave();if(s.el)s.el.remove();build(s);s.el.classList.add('on');if(s.api.enter)s.api.enter();E.toast('أُعيد تشغيل المحطة')};
 E.reveal=function(){var s=E.curSt();if(!s||!s.el)return;if(s.api&&s.api.reveal&&s.api.reveal()!==false)return;var r=$$('.reveal:not(.shown)',s.el);if(!r.length){E.toast('لا يوجد تفسير إضافي في هذه الشاشة');return}r[0].classList.add('shown');SFX.pop();r[0].scrollIntoView&&r[0].scrollIntoView({block:'nearest',behavior:'smooth'})};
 function markDone(id){var d=ST.done[E.cur]=ST.done[E.cur]||{};d[id]=1}
@@ -1556,6 +1578,9 @@ E.mat=function(color,o){o=o||{};var THREE=window.THREE;return new THREE.MeshStan
 E.glowTex=function(color){var c=document.createElement('canvas');c.width=c.height=128;var x=c.getContext('2d');var g=x.createRadialGradient(64,64,0,64,64,64);g.addColorStop(0,color);g.addColorStop(.25,color);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,128,128);var t=new THREE.CanvasTexture(c);return t};
 E.textSprite=function(txt,o){o=o||{};var c=document.createElement('canvas');var fs=o.fs||64;var x=c.getContext('2d');x.font='700 '+fs+'px "Readex Pro","IBM Plex Sans Arabic",sans-serif';var w=Math.ceil(x.measureText(txt).width)+fs;c.width=w;c.height=fs*1.6;x=c.getContext('2d');x.font='700 '+fs+'px "Readex Pro","IBM Plex Sans Arabic",sans-serif';x.direction='rtl';x.textAlign='center';x.textBaseline='middle';if(o.bg){x.fillStyle=o.bg;var rr=fs*.4;x.beginPath();x.roundRect?x.roundRect(2,2,w-4,c.height-4,rr):x.rect(2,2,w-4,c.height-4);x.fill()}x.fillStyle=o.color||'#fff';x.fillText(txt,w/2,c.height/2+2);var t=new THREE.CanvasTexture(c);var s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:o.depthTest!==false}));var sc=o.size||1;s.scale.set(sc*w/c.height,sc,1);return s};
 
+/* خلفية مختبر واضحة: جدار فاتح وطاولة عمل */
+E.labBg=function(x,W,H,by){x.fillStyle='#e8eef0';x.fillRect(0,0,W,H);x.strokeStyle='rgba(120,140,150,.18)';x.lineWidth=1;for(var gx=0;gx<W;gx+=50){x.beginPath();x.moveTo(gx,0);x.lineTo(gx,by);x.stroke()}for(var gy=0;gy<by;gy+=50){x.beginPath();x.moveTo(0,gy);x.lineTo(W,gy);x.stroke()}
+  x.fillStyle='#384952';x.fillRect(0,by,W,14);x.fillStyle='#26333a';x.fillRect(0,by+14,W,H-by-14);x.fillStyle='rgba(255,255,255,.18)';x.fillRect(0,by,W,3)};
 /* ================= شاشات قياسية ================= */
 E.intro=function(el,cfg){/* cfg: {build(T), dur, caps:[{t,at,end,sub}], final:'...'} */
   el.innerHTML='<div class="cine"><div class="three" style="position:absolute;inset:0;border:0;border-radius:0;background:radial-gradient(circle at 50% 45%,#0f2457,#02060f 75%)"></div><div class="vign"></div><div class="sub"></div><div class="cap"></div><div class="tbar"><i></i></div><button class="cb skip">⏭ تخطَّ المشهد</button><button class="cb" style="position:absolute;left:250px;bottom:96px;z-index:3" data-rp>↻ أعد المشهد</button></div>';
