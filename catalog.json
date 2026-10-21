@@ -1,5 +1,5 @@
 {
- "version": 7,
+ "version": 8,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -146,12 +146,36 @@
    "cover": "img/cover-lab-chg.webp"
   },
   {
+   "id": "g9-c3-l1",
+   "type": "lesson",
+   "grade": "9",
+   "no": 1,
+   "chapter": "الفصل الثالث: أنشطة وعمليات في الخلية",
+   "title": "انقسام الخلية والانقسام المتساوي",
+   "desc": "رحلة داخل الخلية: دورة الخلية والكروموسومات، ومختبر تفاعلي لأطوار الانقسام المتساوي في الخلية الحيوانية والنباتية.",
+   "color": "#0f9d8a",
+   "file": "lessons/g9-c3.html#l1",
+   "cover": "img/cover-g9-c3-l1.webp"
+  },
+  {
+   "id": "g9-c3-l2",
+   "type": "lesson",
+   "grade": "9",
+   "no": 2,
+   "chapter": "الفصل الثالث: أنشطة وعمليات في الخلية",
+   "title": "التكاثر والانقسام المنصف",
+   "desc": "التكاثر اللاجنسي والجنسي، والإخصاب، والخلايا الأحادية والثنائية، ومختبر أطوار الانقسام المنصف الثمانية.",
+   "color": "#7c4ddb",
+   "file": "lessons/g9-c3.html#l2",
+   "cover": "img/cover-g9-c3-l2.webp"
+  },
+  {
    "id": "lab-osmo",
    "title": "الانتشار والخاصية الأسموزية",
    "type": "lab",
    "grade": "9",
    "no": 0,
-   "chapter": "أنشطة الخلية",
+   "chapter": "الفصل الثالث: أنشطة وعمليات في الخلية",
    "desc": "مختبر ثلاثي الأبعاد",
    "color": "#0F766E",
    "file": "../science-unified-hub/lab/#osmo",
@@ -163,7 +187,7 @@
    "type": "lab",
    "grade": "9",
    "no": 0,
-   "chapter": "أنشطة الخلية",
+   "chapter": "الفصل الثالث: أنشطة وعمليات في الخلية",
    "desc": "مختبر ثلاثي الأبعاد",
    "color": "#0F766E",
    "file": "../science-unified-hub/lab/#photo",
@@ -175,7 +199,7 @@
    "type": "lab",
    "grade": "9",
    "no": 0,
-   "chapter": "أنشطة الخلية",
+   "chapter": "الفصل الثالث: أنشطة وعمليات في الخلية",
    "desc": "مختبر ثلاثي الأبعاد",
    "color": "#0F766E",
    "file": "../science-unified-hub/lab/#yeast",
@@ -187,7 +211,7 @@
    "type": "lab",
    "grade": "9",
    "no": 0,
-   "chapter": "أنشطة الخلية",
+   "chapter": "الفصل الثالث: أنشطة وعمليات في الخلية",
    "desc": "مختبر ثلاثي الأبعاد",
    "color": "#0F766E",
    "file": "../science-unified-hub/lab/#trans",
