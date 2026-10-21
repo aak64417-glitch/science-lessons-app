@@ -1,5 +1,5 @@
 {
- "version": 6,
+ "version": 7,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -564,6 +564,30 @@
    "color": "#0F9D78",
    "file": "tools/contest-g7-c3-l2.html",
    "cover": "img/cover-contest-g7-c3-l2.webp"
+  },
+  {
+   "id": "g7-c4-l1",
+   "type": "lesson",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل الرابع: الذرات والعناصر والجدول الدوري",
+   "title": "تركيب المادة",
+   "desc": "رحلة إلى عالم الذرات: من قطرة ماء إلى داخل الذرة، ومختبر رذرفورد، وبناء الذرة.",
+   "color": "#6a4be0",
+   "file": "lessons/g7-c4.html#l1",
+   "cover": "img/cover-g7-c4-l1.webp"
+  },
+  {
+   "id": "g7-c4-l2",
+   "type": "lesson",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل الرابع: الذرات والعناصر والجدول الدوري",
+   "title": "العناصر والمركبات والمخاليط",
+   "desc": "الجدول الدوري التفاعلي، والنظائر، ومصنع المركبات، ومختبر المخاليط، وغرفة الهروب.",
+   "color": "#6a4be0",
+   "file": "lessons/g7-c4.html#l2",
+   "cover": "img/cover-g7-c4-l2.webp"
   }
  ]
 }
