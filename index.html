@@ -305,7 +305,7 @@ fetch('catalog-v4.json?t='+Date.now(),{cache:'no-store'}).then(function(r){retur
   S.loaded=true; render();
   if(navigator.serviceWorker&&navigator.serviceWorker.controller){ var urls=[]; S.rows.forEach(function(r){ if(r.file&&r.file.indexOf('../')!==0) urls.push(r.file); if(r.cover) urls.push(r.cover) }); navigator.serviceWorker.controller.postMessage({cache:urls}) }
 }).catch(function(){ S.loaded=true; $('#list').innerHTML='<div class="notice">تعذّر تحميل قائمة الدروس. اتصل بالإنترنت مرة واحدة على الأقل ثم أعد فتح التطبيق.</div>' });
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').then(function(){ return navigator.serviceWorker.ready }).then(function(reg){ if(S.loaded&&reg.active){ var urls=[]; S.rows.forEach(function(r){ if(r.file&&r.file.indexOf('../')!==0) urls.push(r.file); if(r.cover) urls.push(r.cover) }); reg.active.postMessage({cache:urls}) } }).catch(function(){}) }
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(function(r){ try{r.update()}catch(e){} return navigator.serviceWorker.ready }).then(function(reg){ if(S.loaded&&reg.active){ var urls=[]; S.rows.forEach(function(r){ if(r.file&&r.file.indexOf('../')!==0) urls.push(r.file); if(r.cover) urls.push(r.cover) }); reg.active.postMessage({cache:urls}) } }).catch(function(){}) }
 })();
 </script>
 </body>
