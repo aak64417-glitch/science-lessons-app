@@ -326,6 +326,67 @@ canvas.sim,.labview{background:#f4f8fa!important;border:3px solid #cbd6db!import
 .spec{animation:rise .7s both}.flip{animation:flipin .8s both}@keyframes flipin{from{transform:rotateY(80deg);opacity:0}}
 .bub{animation:bub 1.2s ease-in infinite}@keyframes bub{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-40px);opacity:0}}
 .sl{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-size:20px;flex:1}.sl input{flex:1;accent-color:var(--au);height:30px}
+/* ================================================================
+   هوية «كنوز الأرض» المستقلة: محطة جيولوجية ميدانية
+   بازلت داكن دافئ · حمم برتقالية · يشم أخضر · ذهب · ألواح حجرية وطبقات صخرية
+   ================================================================ */
+:root{--bg0:#120b08;--bg1:#22150e;--bg2:#2e1d13;--panel:rgba(44,28,19,.86);--panel2:rgba(60,38,25,.8);
+  --cy:#ff7a2f;--cy2:#ffb27a;--vi:#36c995;--vi2:#8be8c4;--au:#ffc65c;--au2:#ffe0a1;--ink:#fff3e6;--ink2:#d9bfa6;
+  --line:rgba(255,170,110,.22);--line2:rgba(255,170,110,.42);--strata:linear-gradient(90deg,#7a4a2c 0 18%,#c98b52 18% 34%,#5e3a26 34% 50%,#e0b276 50% 64%,#8a5a3a 64% 82%,#3fb58a 82%)}
+#viewport{background:radial-gradient(circle at 50% 40%,#2a1810,#070403 72%)}
+#stage{background:radial-gradient(900px 520px at 85% 0%,rgba(255,110,40,.20),transparent 62%),radial-gradient(800px 500px at 0% 100%,rgba(54,201,149,.12),transparent 60%),linear-gradient(170deg,#24160e,#120b08 70%)}
+#stage::before{opacity:.55;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='300'%3E%3Cg fill='none' stroke='%23ffb27a' stroke-opacity='.10' stroke-width='1.2'%3E%3Cpath d='M-20 60 C80 20 160 100 260 60 S400 40 440 80'/%3E%3Cpath d='M-20 100 C90 60 170 140 270 100 S400 80 440 120'/%3E%3Cpath d='M-20 140 C100 100 180 180 280 140 S400 120 440 160'/%3E%3Cpath d='M-20 190 C110 150 190 230 290 190 S410 170 440 210'/%3E%3Cpath d='M-20 240 C120 200 200 280 300 240 S410 220 440 260'/%3E%3Cellipse cx='330' cy='70' rx='40' ry='22'/%3E%3Cellipse cx='330' cy='70' rx='22' ry='11'/%3E%3C/g%3E%3C/svg%3E");background-size:420px 300px;-webkit-mask-image:none;mask-image:none}
+#stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;background:var(--strata);opacity:.85;z-index:21;pointer-events:none}
+/* الشريط العلوي والتقدم كطبقات صخرية */
+#top{background:linear-gradient(rgba(18,11,8,.95),rgba(18,11,8,0))}
+#top .brand i{border-radius:10px;background:linear-gradient(135deg,#ff7a2f,#ffc65c);box-shadow:0 0 18px rgba(255,122,47,.55);transform:rotate(45deg)}
+#top .brand i>*{transform:rotate(-45deg)}
+#prog{gap:3px}#prog button::before{inset:11px 0;border-radius:3px;background:rgba(255,170,110,.14)}
+#prog button.done::before{background:var(--strata);background-size:400% 100%}
+#prog button:nth-child(3n+1).done::before{background:#c98b52}#prog button:nth-child(3n+2).done::before{background:#8a5a3a}#prog button:nth-child(3n).done::before{background:#e0b276}
+#prog button.cur::before{background:#ff7a2f;box-shadow:0 0 14px #ff7a2f,0 0 2px #ffe0a1 inset}
+/* شريط التحكم */
+#ctl{background:linear-gradient(rgba(18,11,8,0),rgba(18,11,8,.94) 45%)}
+.cb{border-radius:10px;background:rgba(52,33,22,.85);border-color:rgba(255,170,110,.35)}
+.cb:hover{background:rgba(80,50,32,.9)}
+.cb.cy{background:linear-gradient(135deg,#ff7a2f,#e04f12);color:#fff}.cb.gold{background:linear-gradient(135deg,#ffc65c,#e89a2a)}
+.cb[aria-pressed=true]{background:#36c995;color:#062a1c;border-color:#8be8c4}
+/* العناوين: نقش على الحجر */
+.eyebrow{color:#ffb27a;letter-spacing:1px}.eyebrow::before{width:34px;height:8px;border-radius:2px;background:var(--strata);box-shadow:none}
+h1.t{background:linear-gradient(180deg,#fff3e6 10%,#ffc65c 60%,#ff7a2f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 rgba(0,0,0,.45))}
+/* الألواح الحجرية */
+.card,.q,.goal,.wq,.team,.lcard,.bin{border-radius:12px;background:linear-gradient(160deg,rgba(62,40,27,.92),rgba(36,23,16,.92));border:1px solid rgba(255,170,110,.24);box-shadow:inset 0 1px 0 rgba(255,230,200,.10),inset 0 -3px 0 rgba(0,0,0,.25),0 14px 34px rgba(0,0,0,.35)}
+.card,.q{position:relative}.card::before,.q::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;border-radius:12px 12px 0 0;background:var(--strata);opacity:.75}
+.labview,canvas.sim{border-radius:12px!important;border:4px solid #5e3a26!important;box-shadow:0 0 0 2px #c98b52,0 14px 34px rgba(0,0,0,.45)!important}
+.card h3{color:#ffc65c}
+.tag{border-radius:6px;background:rgba(255,122,47,.14);color:#ffb27a;border-color:rgba(255,122,47,.35)}
+.tag.gold{background:rgba(255,198,92,.14);color:#ffe0a1;border-color:rgba(255,198,92,.4)}
+.tag.vi{background:rgba(54,201,149,.14);color:#8be8c4;border-color:rgba(54,201,149,.4)}
+.btn{border-radius:10px;background:linear-gradient(135deg,#ff7a2f,#e04f12);color:#fff;box-shadow:0 6px 0 #8a2e08,0 10px 22px rgba(255,90,20,.25)}
+.btn:active{transform:translateY(3px);box-shadow:0 3px 0 #8a2e08}
+.btn.gold{background:linear-gradient(135deg,#ffc65c,#e89a2a);color:#2a1600;box-shadow:0 6px 0 #8a5a10}
+.btn.ghost{background:rgba(255,255,255,.05);color:var(--ink);box-shadow:none;border:1px solid rgba(255,170,110,.4)}
+.btn.vi{background:linear-gradient(135deg,#36c995,#1f9a6e);color:#04241a;box-shadow:0 6px 0 #0e5a3e}
+.chip{border-radius:8px}.chip[aria-pressed=true]{background:#ff7a2f;color:#fff;border-color:#ffb27a}
+.opt{border-radius:10px}.opt i{border-radius:6px;background:rgba(255,122,47,.18);color:#ffb27a}
+.opt:hover:not(:disabled){border-color:#ff7a2f;background:rgba(255,122,47,.08)}
+.tok{border-radius:8px;background:linear-gradient(135deg,rgba(201,139,82,.35),rgba(94,58,38,.5));border-color:rgba(255,198,92,.45)}
+.goal .gi,.wq .ic{border-radius:14px;background:radial-gradient(circle at 35% 30%,rgba(255,198,92,.28),rgba(255,122,47,.10));border-color:rgba(255,170,110,.45);transform:rotate(45deg)}
+.goal .gi>*,.wq .ic>*{transform:rotate(-45deg)}
+.wq{border-top:6px solid #ff7a2f}
+.lcard .orb{background:radial-gradient(circle at 35% 35%,rgba(255,122,47,.65),rgba(255,198,92,.18) 60%,transparent 70%)}
+.lcard:hover{box-shadow:0 30px 60px rgba(255,122,47,.18)}
+#drawer{background:rgba(26,16,11,.97)}#drawer h4{color:#ffb27a}
+.cine .sub{color:#ffc65c}.cine .tbar i{background:linear-gradient(90deg,#ff7a2f,#ffc65c)}
+.lcd{background:#1a0f08;border-color:#5e3a26;border-radius:8px}.lcd small{color:#c9a07a}.lcd b{color:#ffb27a}.lcd.am b{color:#8be8c4}
+.phl button[aria-current="true"]{background:linear-gradient(90deg,rgba(255,122,47,.3),rgba(54,201,149,.2));border-color:#ff7a2f}
+/* انتقال المحطات: صدع صخري بدل الدائرة */
+.scr{clip-path:polygon(48% 0,52% 0,54% 18%,50% 36%,55% 55%,51% 74%,53% 100%,49% 100%,47% 76%,51% 56%,46% 36%,50% 18%);transition:opacity .5s,transform .9s cubic-bezier(.2,.8,.2,1),clip-path .9s cubic-bezier(.7,0,.3,1)}
+.scr.on{clip-path:polygon(-60% -10%,160% -10%,160% 18%,160% 36%,160% 55%,160% 74%,160% 110%,-60% 110%,-60% 76%,-60% 56%,-60% 36%,-60% 18%)}
+.scr.out{clip-path:polygon(-60% -10%,160% -10%,160% 18%,160% 36%,160% 55%,160% 74%,160% 110%,-60% 110%,-60% 76%,-60% 56%,-60% 36%,-60% 18%);opacity:0;transform:translateY(30px) scale(.98)}
+#sttl .band{inset:40% 0;background:var(--strata);opacity:.85;transform-origin:center}
+#sttl small{color:#ffc65c}#sttl b{color:#fff3e6;text-shadow:0 4px 0 #5e3a26,0 10px 30px rgba(0,0,0,.7)}
+@keyframes rise{from{opacity:0;transform:translateY(34px) rotate(-1.2deg)}}
 </style></head><body><script>/**
  * @license
  * Copyright 2010-2021 Three.js Authors
