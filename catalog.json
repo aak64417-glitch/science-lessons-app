@@ -1,5 +1,5 @@
 {
- "version": 8,
+ "version": 9,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -612,6 +612,42 @@
    "color": "#6a4be0",
    "file": "lessons/g7-c4.html#l2",
    "cover": "img/cover-g7-c4-l2.webp"
+  },
+  {
+   "id": "g7-c5-l1",
+   "type": "lesson",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل الخامس: الصخور والمعادن",
+   "title": "المعادن – جواهر الأرض",
+   "desc": "كهف البلورات: مختبر فحص المعادن باللون والمخدش والبريق والقساوة والانفصام، ومقياس موهس، ومنجم الجواهر.",
+   "color": "#9b5de5",
+   "file": "lessons/g7-c5.html#l1",
+   "cover": "img/cover-g7-c5-l1.webp"
+  },
+  {
+   "id": "g7-c5-l2",
+   "type": "lesson",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل الخامس: الصخور والمعادن",
+   "title": "أنواع الصخور",
+   "desc": "مختبر التبلور، وطبقات الرسوبيات، ومكبس التحول، ورحلة الجرانيت في دورة الصخور، وتحدي البركان.",
+   "color": "#e2662b",
+   "file": "lessons/g7-c5.html#l2",
+   "cover": "img/cover-g7-c5-l2.webp"
+  },
+  {
+   "id": "lab-minr-7",
+   "title": "تجربة: تعرّف المعادن",
+   "type": "lab",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل الخامس: الصخور والمعادن",
+   "desc": "من المختبر الافتراضي: القساوة والمخدش والبريق والمغناطيسية والتفاعل مع الحمض.",
+   "color": "#0F766E",
+   "file": "../science-unified-hub/lab/#minr",
+   "cover": "img/cover-lab-minr.webp"
   }
  ]
 }
