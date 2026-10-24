@@ -57,6 +57,14 @@ body.stu .tonly{display:none!important}
 .scene .rot{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(10,30,80,.72);color:#fff;border-radius:999px;padding:4px 18px;font-weight:700;font-size:15px;white-space:nowrap;backdrop-filter:blur(4px)}
 #rot{color:var(--amber);display:inline-block;transition:opacity .35s,transform .35s}
 #rot.out{opacity:0;transform:translateY(6px)}
+.terms{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.term{display:flex;align-items:center;gap:14px;border:2px solid transparent;border-radius:20px;padding:12px 18px;background:#fff;box-shadow:0 10px 22px var(--shadow);font:inherit;color:var(--ink);text-align:start;transition:transform .2s,border-color .2s}
+.term:hover{transform:translateY(-2px)}
+.term .tn{width:54px;height:54px;flex:0 0 auto;border-radius:16px;display:grid;place-items:center;font-size:28px;font-weight:800;color:#fff;background:linear-gradient(135deg,#2F7BF6,#1F4FB8)}
+.term[data-term="2"] .tn{background:linear-gradient(135deg,#0F9D78,#0B6F56)}
+.term .tt{display:flex;flex-direction:column}.term b{font-size:20px}.term small{font-size:14px;opacity:.7}
+.term[aria-pressed="true"]{border-color:var(--amber);background:linear-gradient(135deg,#fff,#fff7e6)}
+@media (max-width:700px){.terms{gap:8px}.term{padding:8px 10px;gap:8px}.term .tn{width:40px;height:40px;font-size:20px}.term b{font-size:15px}}
 .grades{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
 .gr{position:relative;border:0;padding:0;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 12px 26px var(--shadow);transition:transform .2s;outline:4px solid transparent;outline-offset:3px;aspect-ratio:485/228}
 .gr:hover{transform:translateY(-3px)}
@@ -196,6 +204,7 @@ body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset
     <button class="gear" id="gear" aria-label="ملء الشاشة"><span id="gIc"></span></button>
   </header>
   <section class="scene" id="home"><img src="img/scene.webp" alt="معلم العلوم في الفصل بجانب سبورة منصة دروس العلوم"><span class="rot">في كل درس <span id="rot">لغز ينتظر من يحلّه</span></span></section>
+  <div class="terms" id="terms" role="group" aria-label="اختيار الفصل الدراسي"></div>
   <div class="grades" id="shelf" role="group" aria-label="اختيار الصف"></div>
   <div class="tools" id="tools" role="group" aria-label="أنواع المحتوى"></div>
   <div class="quote"><img class="r" src="img/books.webp" alt=""><div class="q">العلم ليس مجرد معرفة .. بل رحلة ممتعة لاكتشاف أسرار العالم من حولنا 🌱</div><img class="l" src="img/flask.webp" alt=""></div>
@@ -229,7 +238,9 @@ var TYM={lesson:'درس تفاعلي',lab:'تجربة ثلاثية الأبعا�
 var TYB={lesson:'ابدأ المغامرة',sheet:'افتح الورقة',activity:'ابدأ النشاط',contest:'ابدأ المسابقة',assess:'ابدأ الاختبار',video:'شغّل العرض',extra:'افتح الحقيبة',lab:'ابدأ التجربة'};
 var TYC={lesson:'#1F4FB8',sheet:'#D93F6A',activity:'#E08A00',contest:'#2F7BF6',assess:'#18A058',video:'#E2552B',extra:'#7B5CE0',lab:'#0F766E'};
 var TYD={lesson:'الدروس التفاعلية مرتبة داخل فصولها.',sheet:'ورقة عمل لكل درس في صفحة واحدة: تُطبع أو تُحل على الشاشة، ومعها مفتاح الإجابات للمعلم.',activity:'أنشطة قصيرة لكل فصل تراجع المصطلحات والمفاهيم باللعب: ذاكرة البطاقات، والفرز، وأكمل التعريف، وصح أم خطأ.',contest:'لوحة تحدٍّ للفرق داخل الصف لكل فصل: نقاط ومؤقت وسؤال حظ ومنصة تتويج.',assess:'اختبار ذكي لكل فصل يقيس إتقان كل درس، ويشرح الإجابات الخاطئة، ويعيد الأسئلة التي أخطأت فيها.',video:'عروض مرئية متحركة تلخص أهداف كل فصل ومفاهيمه، مع قراءة صوتية اختيارية.',extra:'حقيبة لكل فصل: مسرد المصطلحات، وبطاقة القوانين، وقائمة المراجعة، وروابط الدروس والتجارب.',lab:'تجارب ثلاثية الأبعاد من المختبر الافتراضي الذكي.'};
-var S={open:{},rows:[],grade:'all',types:null,typeLabel:'',nav:'home',q:'',loaded:false};
+var S={open:{},rows:[],grade:'all',types:null,typeLabel:'',nav:'home',q:'',loaded:false,term:'1'};
+try{ var tm=localStorage.getItem('sci-term'); if(tm==='1'||tm==='2') S.term=tm }catch(e){}
+var TERM={'1':'الفصل الدراسي الأول','2':'الفصل الدراسي الثاني'};
 function toast(m){ var t=document.createElement('div'); t.className='toast'; t.textContent=m; document.body.appendChild(t); setTimeout(function(){t.remove()},3000) }
 function cw(c,one,two,few,many){ return c===1?one:c===2?two:n(c)+' '+(c>2&&c<11?few:many) }
 function plural(c){ return cw(c,'درس واحد','درسان','دروس','درسًا') }
@@ -239,15 +250,17 @@ fact(); setInterval(fact,9000);
 var ROT=['لغز ينتظر من يحلّه','محاكاة تجرّب فيها بنفسك','سباق بين الفرق','سرّ من أسرار الطبيعة','تحدٍّ يختبر ذكاءك'], ri=0;
 setInterval(function(){ var e=$('#rot'); e.classList.add('out'); setTimeout(function(){ ri=(ri+1)%ROT.length; e.textContent=ROT[ri]; e.classList.remove('out') },350) },3000);
 
-function inView(r){ return S.types?S.types.indexOf(r.type)>=0:(r.type==='lesson'||r.type==='lab') }
+function inView(r){ return r.term===S.term&&(S.types?S.types.indexOf(r.type)>=0:(r.type==='lesson'||r.type==='lab')) }
 function vis(){ return S.rows.filter(function(r){ return (S.grade==='all'||r.grade===S.grade)&&inView(r) }) }
 function chrome(){
   $('#nav').innerHTML=NAV.map(function(x){ return '<button data-nav="'+x[0]+'" aria-current="'+(S.nav===x[0])+'"><span class="ni" aria-hidden="true">'+x[1]+'</span>'+x[2]+'</button>' }).join('');
+  var tmc={}; S.rows.forEach(function(r){ if(r.type==='lesson') tmc[r.term]=(tmc[r.term]||0)+1 });
+  $('#terms').innerHTML=['1','2'].map(function(k){ return '<button class="term" data-term="'+k+'" aria-pressed="'+(S.term===k)+'"><span class="tn">'+(k==='1'?'١':'٢')+'</span><span class="tt"><b>'+TERM[k]+'</b><small>'+(tmc[k]?plural(tmc[k]):'قريبًا')+'</small></span></button>' }).join('');
   var gc={}; S.rows.forEach(function(r){ if(inView(r)) gc[r.grade]=(gc[r.grade]||0)+1 });
   $('#shelf').innerHTML=['7','8','9'].map(function(k){ return '<button class="gr" data-g="'+k+'" aria-pressed="'+(S.grade===k)+'" aria-label="دروس الصف '+GR[k]+'"><img src="img/g'+k+'.webp" alt=""><span class="cnt">'+(gc[k]?plural(gc[k]):'قريبًا')+'</span></button>' }).join('');
-  var tc={}; S.rows.forEach(function(r){ if(S.grade==='all'||r.grade===S.grade) tc[r.type]=(tc[r.type]||0)+1 });
+  var tc={}; S.rows.forEach(function(r){ if(r.term===S.term&&(S.grade==='all'||r.grade===S.grade)) tc[r.type]=(tc[r.type]||0)+1 });
   $('#tools').innerHTML=TOOLS.map(function(k){ var on=!!(S.types&&S.types.length===1&&S.types[0]===k); return '<button class="tl" data-t="'+k+'" aria-pressed="'+on+'"><span class="c'+(tc[k]?' on':'')+'">'+n(tc[k]||0)+'</span><img src="'+TY[k][1]+'" alt=""><b>'+TY[k][0]+'</b></button>' }).join('');
-  var t=S.typeLabel||'كل الدروس والمحتوى'; if(S.grade!=='all') t+=' · '+GR[S.grade]; $('#secT').textContent=t;
+  var t=S.typeLabel||'كل الدروس والمحتوى'; t+=' · '+TERM[S.term]; if(S.grade!=='all') t+=' · '+GR[S.grade]; $('#secT').textContent=t;
   $('#clr').hidden=S.grade==='all'&&!S.types }
 function render(){
   chrome(); var L=$('#list'); if(!S.loaded) return;
@@ -280,6 +293,7 @@ document.addEventListener('click',function(e){ var b=e.target.closest('button');
   if(b.id==='gear'){ fs(document.documentElement); return }
   if(b.dataset.nav){ var x=NAV.filter(function(y){return y[0]===b.dataset.nav})[0]; S.nav=x[0];
     if(x[0]==='home'){ S.types=null; S.typeLabel=''; S.grade='all'; render(); window.scrollTo({top:0,behavior:RM?'auto':'smooth'}) } else { S.types=x[3]; S.typeLabel=x[2]; render(); toLib() } return }
+  if(b.dataset.term){ S.term=b.dataset.term; try{localStorage.setItem('sci-term',S.term)}catch(e){} S.open={}; render(); return }
   if(b.dataset.g){ S.grade=S.grade===b.dataset.g?'all':b.dataset.g; render(); toLib(); return }
   if(b.dataset.t){ var k=b.dataset.t; if(S.types&&S.types.length===1&&S.types[0]===k){ S.types=null; S.typeLabel='' } else { S.types=[k]; S.typeLabel=TY[k][0] } S.nav='none'; render(); toLib(); return }
   if(b.id==='clr'){ S.types=null; S.typeLabel=''; S.grade='all'; S.nav='home'; render(); return }
@@ -301,7 +315,7 @@ function online(){ var o=$('.offl'); if(navigator.onLine){ if(o) o.remove() } el
 addEventListener('online',online); addEventListener('offline',online); online();
 render();
 fetch('catalog-v4.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(c){
-  S.rows=(c.items||[]).map(function(x){ return {id:String(x.id),title:String(x.title||''),type:TY[x.type]?x.type:'lesson',grade:String(x.grade||'7'),no:Number(x.no)||0,chapter:String(x.chapter||''),desc:String(x.desc||''),color:/^#[0-9a-fA-F]{6}$/.test(x.color)?x.color:'#2F7BF6',file:String(x.file||''),cover:String(x.cover||''),kind:kindOf(String(x.file||''))} });
+  S.rows=(c.items||[]).map(function(x){ return {id:String(x.id),title:String(x.title||''),type:TY[x.type]?x.type:'lesson',grade:String(x.grade||'7'),no:Number(x.no)||0,chapter:String(x.chapter||''),desc:String(x.desc||''),color:/^#[0-9a-fA-F]{6}$/.test(x.color)?x.color:'#2F7BF6',file:String(x.file||''),cover:String(x.cover||''),term:String(x.term||'1'),kind:kindOf(String(x.file||''))} });
   S.loaded=true; render();
   if(navigator.serviceWorker&&navigator.serviceWorker.controller){ var urls=[]; S.rows.forEach(function(r){ if(r.file&&r.file.indexOf('../')!==0) urls.push(r.file); if(r.cover) urls.push(r.cover) }); navigator.serviceWorker.controller.postMessage({cache:urls}) }
 }).catch(function(){ S.loaded=true; $('#list').innerHTML='<div class="notice">تعذّر تحميل قائمة الدروس. اتصل بالإنترنت مرة واحدة على الأقل ثم أعد فتح التطبيق.</div>' });
