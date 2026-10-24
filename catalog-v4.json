@@ -1,5 +1,5 @@
 {
- "version": 13,
+ "version": 14,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -614,6 +614,114 @@
    "cover": "img/cover-g7-c4-l2.webp"
   },
   {
+   "id": "sheet-g7-c4-l1",
+   "type": "sheet",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل الرابع: الذرات والعناصر والجدول الدوري",
+   "title": "ورقة عمل: تركيب المادة",
+   "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
+   "color": "#6D4BE0",
+   "file": "tools/sheet-g7-c4-l1.html",
+   "cover": "img/cover-sheet-g7-c4-l1.webp"
+  },
+  {
+   "id": "sheet-g7-c4-l2",
+   "type": "sheet",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل الرابع: الذرات والعناصر والجدول الدوري",
+   "title": "ورقة عمل: العناصر والمركبات والمخاليط",
+   "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
+   "color": "#6D4BE0",
+   "file": "tools/sheet-g7-c4-l2.html",
+   "cover": "img/cover-sheet-g7-c4-l2.webp"
+  },
+  {
+   "id": "g7-c4-activity",
+   "type": "activity",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل الرابع: الذرات والعناصر والجدول الدوري",
+   "title": "مختبر الأنشطة",
+   "desc": "ذاكرة المصطلحات، وفرز البطاقات، وأكمل التعريف، وصح أم خطأ.",
+   "color": "#6D4BE0",
+   "file": "tools/g7-c4-activity.html",
+   "cover": "img/cover-g7-c4-activity.webp"
+  },
+  {
+   "id": "g7-c4-contest",
+   "type": "contest",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل الرابع: الذرات والعناصر والجدول الدوري",
+   "title": "مسابقة مراجعة الفصل",
+   "desc": "لوحة تحدٍّ للفرق تجمع أسئلة دروس الفصل كلها: نقاط ومؤقت وسؤال الحظ ومنصة تتويج.",
+   "color": "#6D4BE0",
+   "file": "tools/g7-c4-contest.html",
+   "cover": "img/cover-g7-c4-contest.webp"
+  },
+  {
+   "id": "g7-c4-assess",
+   "type": "assess",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل الرابع: الذرات والعناصر والجدول الدوري",
+   "title": "اختبار الفصل الذكي",
+   "desc": "اختبار قصير بإتقان كل درس، مع مراجعة الأخطاء وشرح الإجابات.",
+   "color": "#6D4BE0",
+   "file": "tools/g7-c4-assess.html",
+   "cover": "img/cover-g7-c4-assess.webp"
+  },
+  {
+   "id": "g7-c4-video",
+   "type": "video",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل الرابع: الذرات والعناصر والجدول الدوري",
+   "title": "الملخص المرئي المتحرك",
+   "desc": "عرض متحرك يلخص الأهداف والمفاهيم، مع قراءة صوتية اختيارية.",
+   "color": "#6D4BE0",
+   "file": "tools/g7-c4-video.html",
+   "cover": "img/cover-g7-c4-video.webp"
+  },
+  {
+   "id": "g7-c4-extra",
+   "type": "extra",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل الرابع: الذرات والعناصر والجدول الدوري",
+   "title": "حقيبة الفصل",
+   "desc": "مسرد المصطلحات، وبطاقة القوانين، وقائمة المراجعة، وروابط الفصل.",
+   "color": "#6D4BE0",
+   "file": "tools/g7-c4-extra.html",
+   "cover": "img/cover-g7-c4-extra.webp"
+  },
+  {
+   "id": "contest-g7-c4-l1",
+   "type": "contest",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل الرابع: الذرات والعناصر والجدول الدوري",
+   "title": "سباق الذرات: تركيب المادة",
+   "desc": "🏎 سباق بين الفرق: كل إجابة صحيحة خطوة نحو خط النهاية.",
+   "color": "#6D4BE0",
+   "file": "tools/contest-g7-c4-l1.html",
+   "cover": "img/cover-contest-g7-c4-l1.webp"
+  },
+  {
+   "id": "contest-g7-c4-l2",
+   "type": "contest",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل الرابع: الذرات والعناصر والجدول الدوري",
+   "title": "برج العناصر: العناصر والمركبات والمخاليط",
+   "desc": "🏗 ابنِ برج فريقك طابقًا طابقًا بالإجابات الصحيحة.",
+   "color": "#6D4BE0",
+   "file": "tools/contest-g7-c4-l2.html",
+   "cover": "img/cover-contest-g7-c4-l2.webp"
+  },
+  {
    "id": "g7-c5-l1",
    "type": "lesson",
    "grade": "7",
@@ -648,6 +756,114 @@
    "color": "#0F766E",
    "file": "../science-unified-hub/lab/#minr",
    "cover": "img/cover-lab-minr.webp"
+  },
+  {
+   "id": "sheet-g7-c5-l1",
+   "type": "sheet",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل الخامس: الصخور والمعادن",
+   "title": "ورقة عمل: المعادن – جواهر الأرض",
+   "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
+   "color": "#B4530A",
+   "file": "tools/sheet-g7-c5-l1.html",
+   "cover": "img/cover-sheet-g7-c5-l1.webp"
+  },
+  {
+   "id": "sheet-g7-c5-l2",
+   "type": "sheet",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل الخامس: الصخور والمعادن",
+   "title": "ورقة عمل: أنواع الصخور",
+   "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
+   "color": "#B4530A",
+   "file": "tools/sheet-g7-c5-l2.html",
+   "cover": "img/cover-sheet-g7-c5-l2.webp"
+  },
+  {
+   "id": "g7-c5-activity",
+   "type": "activity",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل الخامس: الصخور والمعادن",
+   "title": "مختبر الأنشطة",
+   "desc": "ذاكرة المصطلحات، وفرز البطاقات، وأكمل التعريف، وصح أم خطأ.",
+   "color": "#B4530A",
+   "file": "tools/g7-c5-activity.html",
+   "cover": "img/cover-g7-c5-activity.webp"
+  },
+  {
+   "id": "g7-c5-contest",
+   "type": "contest",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل الخامس: الصخور والمعادن",
+   "title": "مسابقة مراجعة الفصل",
+   "desc": "لوحة تحدٍّ للفرق تجمع أسئلة دروس الفصل كلها: نقاط ومؤقت وسؤال الحظ ومنصة تتويج.",
+   "color": "#B4530A",
+   "file": "tools/g7-c5-contest.html",
+   "cover": "img/cover-g7-c5-contest.webp"
+  },
+  {
+   "id": "g7-c5-assess",
+   "type": "assess",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل الخامس: الصخور والمعادن",
+   "title": "اختبار الفصل الذكي",
+   "desc": "اختبار قصير بإتقان كل درس، مع مراجعة الأخطاء وشرح الإجابات.",
+   "color": "#B4530A",
+   "file": "tools/g7-c5-assess.html",
+   "cover": "img/cover-g7-c5-assess.webp"
+  },
+  {
+   "id": "g7-c5-video",
+   "type": "video",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل الخامس: الصخور والمعادن",
+   "title": "الملخص المرئي المتحرك",
+   "desc": "عرض متحرك يلخص الأهداف والمفاهيم، مع قراءة صوتية اختيارية.",
+   "color": "#B4530A",
+   "file": "tools/g7-c5-video.html",
+   "cover": "img/cover-g7-c5-video.webp"
+  },
+  {
+   "id": "g7-c5-extra",
+   "type": "extra",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل الخامس: الصخور والمعادن",
+   "title": "حقيبة الفصل",
+   "desc": "مسرد المصطلحات، وبطاقة القوانين، وقائمة المراجعة، وروابط الفصل.",
+   "color": "#B4530A",
+   "file": "tools/g7-c5-extra.html",
+   "cover": "img/cover-g7-c5-extra.webp"
+  },
+  {
+   "id": "contest-g7-c5-l1",
+   "type": "contest",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل الخامس: الصخور والمعادن",
+   "title": "تسلّق جبل المعادن: المعادن – جواهر الأرض",
+   "desc": "🧗 كل إجابة صحيحة خطوة نحو القمة. من يصل أولًا؟",
+   "color": "#B4530A",
+   "file": "tools/contest-g7-c5-l1.html",
+   "cover": "img/cover-contest-g7-c5-l1.webp"
+  },
+  {
+   "id": "contest-g7-c5-l2",
+   "type": "contest",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل الخامس: الصخور والمعادن",
+   "title": "شدّ الحبل: أنواع الصخور",
+   "desc": "💪 فريقان على طرفي الحبل، مع فرصة سرقة عند الخطأ.",
+   "color": "#B4530A",
+   "file": "tools/contest-g7-c5-l2.html",
+   "cover": "img/cover-contest-g7-c5-l2.webp"
   }
  ]
 }
