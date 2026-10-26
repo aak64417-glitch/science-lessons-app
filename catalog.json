@@ -1,5 +1,5 @@
 {
- "version": 16,
+ "version": 17,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -240,6 +240,114 @@
    "color": "#e23e64",
    "file": "lessons/g9-c4.html#l2",
    "cover": "img/cover-g9-c4-l2.webp"
+  },
+  {
+   "id": "sheet-g9-c4-l1",
+   "type": "sheet",
+   "grade": "9",
+   "no": 1,
+   "chapter": "الفصل الرابع: الوراثة",
+   "title": "ورقة عمل: مادة الوراثة DNA",
+   "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
+   "color": "#6c3fd1",
+   "file": "tools/sheet-g9-c4-l1.html",
+   "cover": "img/cover-sheet-g9-c4-l1.webp"
+  },
+  {
+   "id": "sheet-g9-c4-l2",
+   "type": "sheet",
+   "grade": "9",
+   "no": 2,
+   "chapter": "الفصل الرابع: الوراثة",
+   "title": "ورقة عمل: علم الوراثة",
+   "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
+   "color": "#6c3fd1",
+   "file": "tools/sheet-g9-c4-l2.html",
+   "cover": "img/cover-sheet-g9-c4-l2.webp"
+  },
+  {
+   "id": "g9-c4-activity",
+   "type": "activity",
+   "grade": "9",
+   "no": 0,
+   "chapter": "الفصل الرابع: الوراثة",
+   "title": "مختبر الأنشطة",
+   "desc": "ذاكرة المصطلحات، وفرز البطاقات، وأكمل التعريف، وصح أم خطأ.",
+   "color": "#6c3fd1",
+   "file": "tools/g9-c4-activity.html",
+   "cover": "img/cover-g9-c4-activity.webp"
+  },
+  {
+   "id": "g9-c4-contest",
+   "type": "contest",
+   "grade": "9",
+   "no": 0,
+   "chapter": "الفصل الرابع: الوراثة",
+   "title": "مسابقة مراجعة الفصل",
+   "desc": "لوحة تحدٍّ للفرق تجمع أسئلة دروس الفصل كلها: نقاط ومؤقت وسؤال الحظ ومنصة تتويج.",
+   "color": "#6c3fd1",
+   "file": "tools/g9-c4-contest.html",
+   "cover": "img/cover-g9-c4-contest.webp"
+  },
+  {
+   "id": "g9-c4-assess",
+   "type": "assess",
+   "grade": "9",
+   "no": 0,
+   "chapter": "الفصل الرابع: الوراثة",
+   "title": "اختبار الفصل الذكي",
+   "desc": "اختبار قصير بإتقان كل درس، مع مراجعة الأخطاء وشرح الإجابات.",
+   "color": "#6c3fd1",
+   "file": "tools/g9-c4-assess.html",
+   "cover": "img/cover-g9-c4-assess.webp"
+  },
+  {
+   "id": "g9-c4-video",
+   "type": "video",
+   "grade": "9",
+   "no": 0,
+   "chapter": "الفصل الرابع: الوراثة",
+   "title": "الملخص المرئي المتحرك",
+   "desc": "عرض متحرك يلخص الأهداف والمفاهيم، مع قراءة صوتية اختيارية.",
+   "color": "#6c3fd1",
+   "file": "tools/g9-c4-video.html",
+   "cover": "img/cover-g9-c4-video.webp"
+  },
+  {
+   "id": "g9-c4-extra",
+   "type": "extra",
+   "grade": "9",
+   "no": 0,
+   "chapter": "الفصل الرابع: الوراثة",
+   "title": "حقيبة الفصل",
+   "desc": "مسرد المصطلحات، وبطاقة القوانين، وقائمة المراجعة، وروابط الفصل.",
+   "color": "#6c3fd1",
+   "file": "tools/g9-c4-extra.html",
+   "cover": "img/cover-g9-c4-extra.webp"
+  },
+  {
+   "id": "contest-g9-c4-l1",
+   "type": "contest",
+   "grade": "9",
+   "no": 1,
+   "chapter": "الفصل الرابع: الوراثة",
+   "title": "سباق الجينات: مادة الوراثة DNA",
+   "desc": "🏎 سباق بين الفرق: كل إجابة صحيحة خطوة نحو خط النهاية.",
+   "color": "#6c3fd1",
+   "file": "tools/contest-g9-c4-l1.html",
+   "cover": "img/cover-contest-g9-c4-l1.webp"
+  },
+  {
+   "id": "contest-g9-c4-l2",
+   "type": "contest",
+   "grade": "9",
+   "no": 2,
+   "chapter": "الفصل الرابع: الوراثة",
+   "title": "شدّ الحبل: علم الوراثة",
+   "desc": "💪 فريقان على طرفي الحبل: كل إجابة صحيحة تسحب العلامة نحوك.",
+   "color": "#6c3fd1",
+   "file": "tools/contest-g9-c4-l2.html",
+   "cover": "img/cover-contest-g9-c4-l2.webp"
   },
   {
    "id": "sheet-g7-c1-l1",

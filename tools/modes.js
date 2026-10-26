@@ -161,7 +161,7 @@ function assess(K){
 /* ================= العرض المرئي ================= */
 function video(K){
   var P=K.P,n=K.n,esc=K.esc,S=[],C=P.chapter;
-  S.push({k:'cover',dur:6,h:'<div class="sv cover"><span class="kk">عرض مرئي</span><h1>'+esc(C.title.split(':')[1]||C.title)+'</h1><p>'+esc(C.short)+' · علوم الأول المتوسط</p><div class="lsn">'+P.lessons.map(function(L){return '<span>'+n(L.no)+'. '+esc(L.title)+'</span>'}).join('')+'</div></div>',say:C.title});
+  S.push({k:'cover',dur:6,h:'<div class="sv cover"><span class="kk">عرض مرئي</span><h1>'+esc(C.title.split(':')[1]||C.title)+'</h1><p>'+esc(C.short)+' · '+esc(C.grade||'علوم الأول المتوسط')+'</p><div class="lsn">'+P.lessons.map(function(L){return '<span>'+n(L.no)+'. '+esc(L.title)+'</span>'}).join('')+'</div></div>',say:C.title});
   P.lessons.forEach(function(L){
     S.push({k:'title',dur:6,img:L.cover,h:'<div class="sv ttl"><span class="kk">الدرس '+n(L.no)+'</span><h1>'+esc(L.title)+'</h1><p>'+esc(L.summary)+'</p></div>',say:'الدرس '+L.no+'. '+L.title+'. '+L.summary});
     S.push({k:'goals',dur:8,h:'<div class="sv goals"><h2>🎯 ماذا سنتعلم؟</h2><ol>'+L.goals.map(function(g,i){return '<li style="--d:'+(i*.45+.3)+'s">'+esc(g)+'</li>'}).join('')+'</ol></div>',say:'أهداف الدرس: '+L.goals.join('، ')});

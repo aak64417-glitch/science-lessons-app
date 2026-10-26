@@ -22,7 +22,7 @@ function sheet(){
   function blank(w){return '<input class="blank" aria-label="إجابة"'+(w?' style="width:'+w+'"':'')+'>'}
   var h='<div class="bar"><span class="t">ورقة عمل · '+esc(L.title)+'</span><button class="b p" id="pr">🖨 طباعة</button><button class="b" id="an" aria-pressed="false">✓ مفتاح الإجابات</button><button class="b" id="cl">↺ مسح</button></div>';
   h+='<div class="sheetwrap"><div class="zoomer" id="zm"><article class="page" id="pg"><div class="inner" id="inn"><span class="stamp">نموذج الإجابة</span>';
-  h+='<header class="hd"><div class="ttl"><span class="kick">ورقة عمل · '+esc(L.chapter)+'</span><h1>'+esc(L.title)+'<small>علوم الأول المتوسط</small></h1></div><div class="badge"><span>الدرس</span><b>'+n(L.no)+'</b><span>'+esc(L.chapterShort)+'</span></div></header>';
+  h+='<header class="hd"><div class="ttl"><span class="kick">ورقة عمل · '+esc(L.chapter)+'</span><h1>'+esc(L.title)+'<small>'+esc(L.grade||'علوم الأول المتوسط')+'</small></h1></div><div class="badge"><span>الدرس</span><b>'+n(L.no)+'</b><span>'+esc(L.chapterShort)+'</span></div></header>';
   h+='<div class="who"><label>اسم الطالب: <input aria-label="اسم الطالب"></label><label>الفصل: <input aria-label="الفصل"></label><label>التاريخ: <input aria-label="التاريخ"></label><label>الدرجة: <input aria-label="الدرجة"> / '+n(S.total)+'</label></div>';
   h+='<div class="idea"><b>الفكرة</b><span>'+esc(S.idea)+'</span></div>';
   var sn=0; function sec(title,hint,body,extra){sn++;return '<section class="sec'+(extra||'')+'"><h2><i>'+n(sn)+'</i>'+title+(hint?'<em>'+hint+'</em>':'')+'</h2>'+body+'</section>'}
