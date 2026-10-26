@@ -1,5 +1,5 @@
 {
- "version": 15,
+ "version": 16,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -216,6 +216,30 @@
    "color": "#0F766E",
    "file": "../science-unified-hub/lab/#trans",
    "cover": "img/cover-lab-trans.webp"
+  },
+  {
+   "id": "g9-c4-l1",
+   "type": "lesson",
+   "grade": "9",
+   "no": 1,
+   "chapter": "الفصل الرابع: الوراثة",
+   "title": "مادة الوراثة DNA",
+   "desc": "«شيفرة الحياة»: قصة اكتشاف DNA، واستخلاصه من الفراولة، وبناء نموذجه، وآلة تضاعفه، ومصنع البروتين وأنواع RNA، ومختبر الطفرات.",
+   "color": "#6c3fd1",
+   "file": "lessons/g9-c4.html#l1",
+   "cover": "img/cover-g9-c4-l1.webp"
+  },
+  {
+   "id": "g9-c4-l2",
+   "type": "lesson",
+   "grade": "9",
+   "no": 2,
+   "chapter": "الفصل الرابع: الوراثة",
+   "title": "علم الوراثة",
+   "desc": "رحلة الجينات المتقابلة، وحديقة مندل، ومختبر التلقيح، والسائد والمتنحي، ومختبر العملتين للاحتمالات، وورشة مربع بانيت.",
+   "color": "#e23e64",
+   "file": "lessons/g9-c4.html#l2",
+   "cover": "img/cover-g9-c4-l2.webp"
   },
   {
    "id": "sheet-g7-c1-l1",
