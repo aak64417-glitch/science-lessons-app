@@ -1,5 +1,5 @@
 {
- "version": 14,
+ "version": 15,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -864,6 +864,138 @@
    "color": "#B4530A",
    "file": "tools/contest-g7-c5-l2.html",
    "cover": "img/cover-contest-g7-c5-l2.webp"
+  },
+  {
+   "id": "g7-c6-l1",
+   "type": "lesson",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل السادس: القوى المشكلة للأرض",
+   "title": "صفائح الأرض المتحركة",
+   "desc": "بعثة إلى باطن الأرض: مختبر الموجات الزلزالية، ونموذج الطين، وحدود الصفائح، وتيارات الحمل، وورشة صناعة الجبال، ومختبر التوازن.",
+   "color": "#8A5A2B",
+   "file": "lessons/g7-c6.html#l1",
+   "cover": "img/cover-g7-c6-l1.webp"
+  },
+  {
+   "id": "g7-c6-l2",
+   "type": "lesson",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل السادس: القوى المشكلة للأرض",
+   "title": "التجوية والتعرية وأثرهما",
+   "desc": "من شقّ في صخرة إلى دلتا: التجمد والجذور، ومختبر الأحماض، ومقياس المناخ، والتربة، ومنحدر الجاذبية، والجليديات والرياح، وحوض الجريان.",
+   "color": "#8A5A2B",
+   "file": "lessons/g7-c6.html#l2",
+   "cover": "img/cover-g7-c6-l2.webp"
+  },
+  {
+   "id": "sheet-g7-c6-l1",
+   "type": "sheet",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل السادس: القوى المشكلة للأرض",
+   "title": "ورقة عمل: صفائح الأرض المتحركة",
+   "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
+   "color": "#8A5A2B",
+   "file": "tools/sheet-g7-c6-l1.html",
+   "cover": "img/cover-sheet-g7-c6-l1.webp"
+  },
+  {
+   "id": "sheet-g7-c6-l2",
+   "type": "sheet",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل السادس: القوى المشكلة للأرض",
+   "title": "ورقة عمل: التجوية والتعرية وأثرهما",
+   "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
+   "color": "#8A5A2B",
+   "file": "tools/sheet-g7-c6-l2.html",
+   "cover": "img/cover-sheet-g7-c6-l2.webp"
+  },
+  {
+   "id": "g7-c6-activity",
+   "type": "activity",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل السادس: القوى المشكلة للأرض",
+   "title": "مختبر الأنشطة",
+   "desc": "ذاكرة المصطلحات، وفرز البطاقات، وأكمل التعريف، وصح أم خطأ.",
+   "color": "#8A5A2B",
+   "file": "tools/g7-c6-activity.html",
+   "cover": "img/cover-g7-c6-activity.webp"
+  },
+  {
+   "id": "g7-c6-contest",
+   "type": "contest",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل السادس: القوى المشكلة للأرض",
+   "title": "مسابقة مراجعة الفصل",
+   "desc": "لوحة تحدٍّ للفرق تجمع أسئلة دروس الفصل كلها: نقاط ومؤقت وسؤال الحظ ومنصة تتويج.",
+   "color": "#8A5A2B",
+   "file": "tools/g7-c6-contest.html",
+   "cover": "img/cover-g7-c6-contest.webp"
+  },
+  {
+   "id": "g7-c6-assess",
+   "type": "assess",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل السادس: القوى المشكلة للأرض",
+   "title": "اختبار الفصل الذكي",
+   "desc": "اختبار قصير بإتقان كل درس، مع مراجعة الأخطاء وشرح الإجابات.",
+   "color": "#8A5A2B",
+   "file": "tools/g7-c6-assess.html",
+   "cover": "img/cover-g7-c6-assess.webp"
+  },
+  {
+   "id": "g7-c6-video",
+   "type": "video",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل السادس: القوى المشكلة للأرض",
+   "title": "الملخص المرئي المتحرك",
+   "desc": "عرض متحرك يلخص الأهداف والمفاهيم، مع قراءة صوتية اختيارية.",
+   "color": "#8A5A2B",
+   "file": "tools/g7-c6-video.html",
+   "cover": "img/cover-g7-c6-video.webp"
+  },
+  {
+   "id": "g7-c6-extra",
+   "type": "extra",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل السادس: القوى المشكلة للأرض",
+   "title": "حقيبة الفصل",
+   "desc": "مسرد المصطلحات، وبطاقة القوانين، وقائمة المراجعة، وروابط الفصل.",
+   "color": "#8A5A2B",
+   "file": "tools/g7-c6-extra.html",
+   "cover": "img/cover-g7-c6-extra.webp"
+  },
+  {
+   "id": "contest-g7-c6-l1",
+   "type": "contest",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل السادس: القوى المشكلة للأرض",
+   "title": "إكس-أو البراكين: صفائح الأرض المتحركة",
+   "desc": "❌ لعبة إكس-أو بين فريقين: لا تحصل على المربع إلا بإجابة صحيحة.",
+   "color": "#8A5A2B",
+   "file": "tools/contest-g7-c6-l1.html",
+   "cover": "img/cover-contest-g7-c6-l1.webp"
+  },
+  {
+   "id": "contest-g7-c6-l2",
+   "type": "contest",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل السادس: القوى المشكلة للأرض",
+   "title": "سلّم التعرية: التجوية والتعرية وأثرهما",
+   "desc": "🪜 اصعد سلّم الأسئلة العشرة بوسائل المساعدة ومحطات الأمان.",
+   "color": "#8A5A2B",
+   "file": "tools/contest-g7-c6-l2.html",
+   "cover": "img/cover-contest-g7-c6-l2.webp"
   }
  ]
 }
