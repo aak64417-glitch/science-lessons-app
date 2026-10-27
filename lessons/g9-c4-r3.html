@@ -619,7 +619,7 @@ S({id:'model',name:'م٣ ورشة بناء نموذج DNA',ic:'🪜',manual:true
   $('#mck',el).onclick=function(){if(slots.some(function(s){return !s.dataset.v})){G.toast('أكملوا جميع الدرجات أولًا');return}var bad=0;slots.forEach(function(s,i){var ok=s.dataset.v===PAIR[STR[i]];s.style.outline=ok?'4px solid #16a34a':'4px solid #e2483d';if(!ok)bad++});
     if(bad){G.sfx.no();$('#mfb',el).innerHTML='<div class="fb no">'+n(bad)+' درجات غير صحيحة. تذكّر: A مع T، وG مع C.</div>';return}
     G.sfx.ok();$('#mfb',el).innerHTML='<div class="fb ok"><b>✔ نموذج صحيح!</b> اكتمل السلم الحلزوني.</div>';var all=STR+STR.split('').map(function(b){return PAIR[b]}).join(''),cnt=function(b){return all.split(b).length-1};['A','T','C','G'].forEach(function(b,i){tb.fill(i,[n(cnt(b))])});$('#mEx',el).classList.add('shown');G.done('model')};
-  var q=$('#mq',el);G.mcq(q,{id:'l1-at',goal:3,lvl:1,q:'في جزيء DNA يرتبط الأدنين دائمًا مع:',o:['اليوراسيل','الثايمين','الجوانين','السايتوسين'],a:1,ex:'A مع T.',keep:true});
+  var q=$('#mq',el);
   G.mcq(q,{id:'l1-side',goal:1,lvl:1,q:'يتكوّن جانبا سلم DNA من:',o:['السكر والفوسفات','القواعد النيتروجينية','الأحماض الأمينية','البروتينات'],a:0,ex:'أما الدرجات فمن القواعد النيتروجينية.'});
   return {}}});
 
@@ -647,7 +647,7 @@ S({id:'rep',name:'م٤ آلة تضاعف DNA',ic:'🖨',manual:true,build:functi
       G.pill(x,'جزيء ١',80,100,'#fff','#4a249e',16);G.pill(x,'جزيء ٢',80,445,'#fff','#4a249e',16);if(k>.6)G.pill(x,'جزيئان متطابقان: في كل منهما سلسلة أصلية وأخرى جديدة',500,270,'#1b1336','#fff',18)}
     if(st>=0&&k>=1&&!tb.has(st)){tb.fill(st,[RS[st][2]]);G.sfx.ok();if(tb.count()===3){$('#rEx',el).classList.add('shown');G.done('rep')}}});
   G.tools($('#rt',el),RS.map(function(r){return [r[0],r[1]]}),function(i,b,w){if(i>0&&!tb.has(i-1)){G.toast('شغّلوا الآلة خطوة خطوة بالترتيب');G.sfx.no();return}st=i;k=0;$$('.tool',w).forEach(function(z,j){z.classList.toggle('on',j===i)});G.sfx.pop()});
-  var q=$('#rq',el);G.mcq(q,{id:'l1-gc',goal:2,lvl:2,q:'ما ترتيب القواعد في سلسلة DNA المقابلة إذا كان ترتيبها في السلسلة الأخرى <span class="ltr">GCTAAG</span>؟',o:['<span class="ltr">ATAGGA</span>','<span class="ltr">CGAUUC</span>','<span class="ltr">CGATTC</span>','<span class="ltr">GCTAAG</span>'],a:2,ex:'G↔C و A↔T، ولا يوجد U في DNA.',keep:true});
+  var q=$('#rq',el);
   G.mcq(q,{id:'l1-copy',goal:2,lvl:1,q:'عندما يتضاعف DNA تكون النسخة الجديدة:',o:['مماثلة للنسخة الأصلية','مختلفة تمامًا عن الأصلية','نصف النسخة الأصلية','مكوّنة من RNA'],a:0,ex:'من الخلاصة: عندما يتضاعف DNA تكون النسخة الجديدة مماثلة للنسخة الأصلية.'});
   return {enter:function(){sim.start()},leave:function(){sim.stop()}}}});
 
@@ -663,8 +663,8 @@ S({id:'gene',name:'م٥ من الجين إلى الصفة',ic:'📍',manual:true
   $$('[data-g]',chr).forEach(function(b){b.onclick=function(){var g=G1[+b.dataset.g];seen[b.dataset.g]=1;$('#gv',el).innerHTML='<div style="margin-bottom:10px">'+B('ATGCCA')+'</div><div style="font-size:26px;font-family:var(--disp);color:'+g[0]+'">'+g[1]+'</div><div style="font-size:40px">⬇</div><div style="font-size:22px">يُصنع البروتين في الرايبوسوم</div><div style="font-size:40px">⬇</div><div style="font-size:60px">'+g[2]+'</div><b style="font-size:22px">'+g[3]+'</b>';G.sfx.ok();if(Object.keys(seen).length===4)G.done('gene')}});
   var pr=$('#pr',el);PR.forEach(function(p){pr.appendChild(h('<div style="text-align:center">'+img(p[0],'width:100%;height:100px;object-fit:contain;background:#fff')+'<b style="display:block;font-family:var(--disp);margin-top:4px">'+p[1]+'</b><small class="hint">'+p[2]+'</small></div>'))});
   $('[data-rv]',el).onclick=function(){$('#gEx',el).classList.add('shown');G.sfx.pop()};
-  var q=$('#gq',el);G.mcq(q,{id:'l1-aa',goal:1,lvl:1,q:'تتكوّن البروتينات من وحدات بنائية ترتبط معًا وتسمى:',o:['رايبوسومات','أحماض أمينية','مريكزات','أحماض دهنية'],a:1,ex:'البروتين مركب عضوي ضخم يتكوّن من الأحماض الأمينية.',keep:true});
-  G.tf(q,{id:'l1-tfp',goal:1,lvl:1,q:'البروتينات هي المسؤولة عن تحديد الصفات المختلفة للشخص، كطوله ولون عينيه ولون شعره.',v:true,ex:'صحيح.'});
+  var q=$('#gq',el);
+  
   return {}}});
 
 /* ===== ١١) م٦ مصنع البروتين ===== */
@@ -690,9 +690,9 @@ S({id:'prot',name:'م٦ مصنع البروتين',ic:'🏭',manual:true,build:f
     if(st>=0&&k>=1&&!fl[st]){fl[st]=1;if(st===0)st0=1;else if(st===1){tb.fill(0,['الرسول','نسخة من DNA تنتقل بين النواة والرايبوسوم حاملة شفرة تصنيع البروتين'])}else{tb.fill(1,['الناقل','يحمل الأحماض الأمينية ويربطها حسب الشفرة التي يحملها الرسول']);tb.fill(2,['الرايبوسومي','يوجد في الرايبوسومات ويربط الأحماض الأمينية في سلسلة عديد الببتيد'])}G.sfx.ok();if(tb.count()===3){$('#pEx',el).classList.add('shown');G.done('prot')}}});
   var st0=0,fl={};
   G.tools($('#pt',el),PF.map(function(r){return [r[0],r[1]]}),function(i,b,w){if(i===1&&!st0){G.toast('انسخوا الشفرة أولًا');G.sfx.no();return}if(i===2&&!tb.has(0)){G.toast('أرسلوا الرسول أولًا');G.sfx.no();return}st=i;k=0;$$('.tool',w).forEach(function(z,j){z.classList.toggle('on',j===i)});G.sfx.pop()});
-  var q=$('#pq',el);G.mcq(q,{id:'l1-m',goal:4,lvl:1,q:'تُنقل الشفرة الخاصة بصنع بروتين إلى الرايبوسومات بواسطة:',o:['RNA','RNA الناقل','RNA الرايبوسومي','RNA الرسول'],a:3,ex:'mRNA الرسول.',keep:true});
-  G.mcq(q,{id:'l1-u',goal:3,lvl:1,q:'أي القواعد النيتروجينية التالية لا توجد في DNA؟',o:['الثايمين','اليوراسيل','السايتوسين','الجوانين'],a:1,ex:'اليوراسيل يوجد في RNA بدلًا من الثايمين.',keep:true});
-  G.tf(q,{id:'l1-tfr',goal:4,lvl:1,q:'RNA الرايبوسومي يكوّن الرايبوسومات حيث يتم بناء البروتينات.',v:true,ex:'صحيح.'});
+  var q=$('#pq',el);
+  
+  
   return {enter:function(){sim.start()},leave:function(){sim.stop()}}}});
 
 /* ===== ١٢) م٧ مختبر الطفرات ===== */
@@ -715,7 +715,7 @@ S({id:'mut',name:'م٧ مختبر الطفرات',ic:'🦜',manual:true,build:fu
   $('#rs',el).onclick=function(){g=GENE.split('');changed=-1;draw();G.sfx.pop()};
   $('[data-rp]',el).onclick=function(){$('#parA',el).classList.add('shown');G.sfx.pop()};$('[data-rf]',el).onclick=function(){$('#flA',el).classList.add('shown');G.sfx.pop()};
   $$('[data-c]',el).forEach(function(b){b.onclick=function(){$('#cr',el).innerHTML=b.dataset.c==='0'?'<div class="fb ok"><b>خلية جسمية:</b> قد تؤثر الطفرة في الفرد نفسه (في النسيج الذي حدثت فيه)، لكنها <b>لا تنتقل إلى الأبناء</b>.</div>':'<div class="fb no"><b>خلية جنسية:</b> يمكن أن <b>تنتقل الطفرة إلى الأبناء</b> فتظهر آثارها في الجيل التالي.</div>';G.sfx.pop()}});
-  var q=$('#mq',el);G.mcq(q,{id:'l1-mut',goal:3,lvl:1,q:'أي تغيّر دائم في تسلسل DNA في جين أو كروموسوم الخلية يسمى:',o:['التهجين','الإخصاب','التخمر','الطفرة الوراثية'],a:3,ex:'الطفرة.',keep:true});
+  var q=$('#mq',el);
   G.mcq(q,{id:'l1-cause',goal:3,lvl:1,q:'من العوامل التي تسبب الطفرات:',o:['الأشعة السينية','الماء النقي','الهواء النقي','النوم'],a:0,ex:'ومنها أيضًا ضوء الشمس وبعض المواد الكيميائية.'});
   return {}}});
 
@@ -723,10 +723,22 @@ S({id:'mut',name:'م٧ مختبر الطفرات',ic:'🦜',manual:true,build:fu
 S({id:'qa',name:'م٨ التقويم وحل أسئلة الكتاب',ic:'✍',build:function(el){
   el.innerHTML='<div class="ey">المحطة ٨ · تقويم الدرس الأول</div><h1 class="t">تقويم متنوع… وحلول أسئلة الكتاب</h1><div class="row grow"><div class="col scroll" id="qL" style="flex:1"></div><div class="col scroll" id="qR" style="flex:1"><div class="cd tape"><h3 style="margin:0">📗 حلول «اختبر نفسك» وأسئلة العرض</h3></div></div></div>';
   var L=$('#qL',el);
+  L.insertAdjacentHTML('beforeend','<div class="cd tape"><h3 style="margin:0">📝 أسئلة العرض: السؤال ١ والسؤال ٢</h3></div>');
+  G.mcq(L,{id:'l1-m',goal:4,lvl:1,kind:'السؤال ١ · فقرة ١',q:'تُنقل الشفرة الخاصة بصنع بروتين إلى الرايبوسومات بواسطة:',o:['RNA','RNA الناقل','RNA الرايبوسومي','RNA الرسول'],a:3,ex:'RNA الرسول (mRNA).',keep:true});
+  G.mcq(L,{id:'l1-mut',goal:3,lvl:1,kind:'السؤال ١ · فقرة ٢',q:'أي تغيّر دائم في تسلسل DNA في جين أو كروموسوم الخلية:',o:['التهجين','الإخصاب','التخمر','الطفرة الوراثية'],a:3,ex:'الطفرة.',keep:true});
+  G.mcq(L,{id:'l1-u',goal:3,lvl:1,kind:'السؤال ١ · فقرة ٣',q:'أي القواعد النيتروجينية لا توجد في DNA؟',o:['الثايمين','اليوراسيل','السايتوسين','الجوانين'],a:1,ex:'اليوراسيل يوجد في RNA بدلًا من الثايمين.',keep:true});
+  G.mcq(L,{id:'l1-gc',goal:2,lvl:2,kind:'السؤال ١ · فقرة ٤',q:'ما ترتيب القواعد النيتروجينية في سلسلة DNA إذا كان ترتيبها في السلسلة الأخرى <span class="ltr">GCTAAG</span>؟',o:['<span class="ltr">ATAGGA</span>','<span class="ltr">CGAUUC</span>','<span class="ltr">CGATTC</span>','<span class="ltr">GCTAAG</span>'],a:2,ex:'G↔C و A↔T، ولا يوجد U في DNA.',keep:true});
+  G.mcq(L,{id:'l1-aa',goal:1,lvl:1,kind:'السؤال ١ · فقرة ٥',q:'تتكوّن البروتينات من وحدات بنائية ترتبط معًا وتسمى:',o:['رايبوسومات','أحماض أمينية','مريكزات','أحماض دهنية'],a:1,ex:'البروتين مركب عضوي ضخم يتكوّن من الأحماض الأمينية.',keep:true});
+  G.mcq(L,{id:'l1-at',goal:3,lvl:1,kind:'السؤال ١ · فقرة ٦',q:'في جزيء DNA يرتبط الأدنين دائمًا مع:',o:['الثايمين','اليوراسيل','السايتوسين','الجوانين'],a:0,ex:'A مع T.',keep:true});
+  G.tf(L,{id:'l1-tfr',goal:4,lvl:1,q:'(أ) RNA الرايبوسومي يكوّن الرايبوسومات، حيث يتم بناء البروتينات.',v:true,ex:'صحيح.'});
+  G.tf(L,{id:'l1-tf1',goal:1,lvl:1,q:'(ب) في DNA يتكوّن جانبا السلم من جزيئات السكر والفوسفات.',v:true,ex:'صحيح.'});
+  G.tf(L,{id:'l1-tf2',goal:3,lvl:2,q:'(ج) لا يتأثر المخلوق الحي إذا حدثت الطفرة في الخلايا الجنسية.',v:false,ex:'الطفرة في الخلايا الجنسية تنتقل إلى الأبناء فتظهر آثارها فيهم.'});
+  G.tf(L,{id:'l1-tfp',goal:1,lvl:1,q:'(د) البروتينات هي المسؤولة عن تحديد الصفات المختلفة للشخص كطوله ولون عينيه ولون الشعر.',v:true,ex:'صحيح.'});
+  L.insertAdjacentHTML('beforeend','<div class="cd tape"><h3 style="margin:0">✍ تقويم إضافي</h3></div>');
   G.cloze(L,{id:'l1-cl',goal:1,lvl:1,text:'يتكوّن جانبا سلم DNA من [[السكر]] و[[الفوسفات]]، أما الدرجات فمن [[القواعد النيتروجينية]]. وينقل RNA [[الرسول]] شفرة البروتين إلى [[الرايبوسوم]].',extra:['النواة','الناقل']});
   G.sort(L,{id:'l1-sr',goal:3,lvl:2,q:'صنّف كل خاصية: DNA أم RNA؟',bins:['DNA','RNA'],items:[['سلسلتان',0],['سلسلة واحدة',1],['يحتوي الثايمين T',0],['يحتوي اليوراسيل U',1],['يبقى في النواة',0],['ينتقل إلى الرايبوسوم',1]]});
-  G.tf(L,{id:'l1-tf1',goal:1,lvl:1,q:'في DNA يتكوّن جانبا السلم من جزيئات السكر والفوسفات.',v:true,ex:'صحيح.'});
-  G.tf(L,{id:'l1-tf2',goal:3,lvl:2,q:'الطفرة في الخلايا الجنسية لا تنتقل إلى الأبناء.',v:false,ex:'الطفرة في الخلايا الجنسية يمكن أن تنتقل إلى الأبناء، أما الطفرة في الخلايا الجسمية فلا تنتقل.'});
+  
+  
   G.mcq(L,{id:'l1-t',goal:4,lvl:2,q:'ما دور tRNA؟',o:['يحمل الأحماض الأمينية ويربطها حسب شفرة الرسول','ينسخ DNA في النواة','يكوّن غشاء الخلية','يفصل سلسلتي DNA'],a:0,ex:'الناقل.'});
   G.solutions($('#qR',el),[
    {src:'اختبر نفسك ١',q:'صف كيف تحدث عملية تضاعف DNA؟',a:'١) يفصل إنزيم معيّن سلسلتي DNA إحداهما عن الأخرى.<br>٢) ترتبط قواعد نيتروجينية جديدة بالقواعد الأصلية في كل سلسلة: A مع T، وC مع G.<br>٣) ينتج جزيئان جديدان متطابقان من DNA، كل منهما مماثل للأصل. وتحدث في الطور البيني قبل الانقسام.'},
@@ -761,10 +773,15 @@ var BANK=[MQ(1,'تُنقل شفرة صنع البروتين إلى الرايب�
  MQ(3,'في جزيء DNA عدد قواعد C يساوي ٤٠، فكم عدد قواعد G؟',['٤٠','٢٠','٨٠','١٠'],0,'كمية C تساوي كمية G.'),MQ(3,'بعض الطفرات تكون مفيدة لإنتاج سلالات نباتية ذات صفات مرغوب فيها.',TF,0,'صحيح.')];
 BANK.forEach(function(q,i){q.id='g9c4a-'+(i+1);if(/^[ACGTU]+$/.test(q.o[0]))q.o=q.o.map(function(s){return '<span class="ltr">'+s+'</span>'})});
 BANK.forEach(function(q){q.q=q.q.replace(/\b([ACGTU]{5,})\b/g,'<span class="ltr">$1</span>')});
-S({id:'contest',name:'م٩ سباق اللولب المزدوج',ic:'🏁',manual:true,build:function(el){return G.contest(el,{ey:'المحطة ٩ · مسابقة الفرق الأربعة',title:'سباق اللولب المزدوج: مادة الوراثة',bank:BANK})}});
+
+/* ===== الخلاصة (كما في العرض) ===== */
+S({id:'sum',name:'م٩ الخلاصة',ic:'📌',build:function(el){var SEC=[['ما مادة الوراثة؟',['يتكوّن جانبا السلم المكوّن لـ DNA من جزيئات السكر والفوسفات، أما الدرجات فتتكوّن من القواعد النيتروجينية.','عندما يتضاعف DNA تكون النسخ الجديدة مماثلة للنسخة الأصلية.']],['الجينات',['تحمل الجينات داخل نواة الخلية طريقة تصنيع البروتينات حسب نوعها، حيث تُصنع البروتينات في الرايبوسومات الموجودة في السيتوبلازم.','هناك ثلاثة أنواع من RNA، هي: mRNA وtRNA وrRNA.']],['الطفرة',['إذا لم يُنسخ DNA كما هو بالأصل تنتج الطفرة التي تؤدي إلى تصنيع بروتين بطريقة غير سليمة.']]];
+  el.innerHTML='<div class="ey">المحطة ٩ · الخلاصة ص ١٢٧</div><h1 class="t">الخلاصة</h1><div class="col scroll grow"><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-content:start">'+SEC.map(function(s,i){return '<div class="cd'+(i?' reveal':'')+'"><h3>'+s[0]+'</h3><ul style="margin:0;font-size:18px;line-height:1.8">'+s[1].map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul></div>'}).join('')+'</div><p class="hint" style="margin:6px 0 0">اضغط «كشف» لإظهار القسم التالي.</p></div>';
+  return {enter:function(){G.done('sum')},reveal:function(){var r=$$('.reveal:not(.shown)',el);if(r.length){r[0].classList.add('shown');return true}return false}}}});
+S({id:'contest',name:'م١٠ سباق اللولب المزدوج (إثرائي)',ic:'🏁',manual:true,build:function(el){return G.contest(el,{ey:'المحطة ١٠ · إثرائي: مسابقة الفرق الأربعة',title:'سباق اللولب المزدوج: مادة الوراثة',bank:BANK})}});
 
 /* ===== ١٥) الختام ===== */
-S({id:'review',name:'م١٠ الختام وبطاقة الخروج',ic:'🎟',build:function(el){return G.review(el,{antKey:'l1',ant:ANT,goals:[
+S({id:'review',name:'م١١ الختام وبطاقة الخروج',ic:'🎟',build:function(el){return G.review(el,{antKey:'l1',ant:ANT,goals:[
   {t:GO[0],how:'استخلصنا DNA وتتبعنا قصة اكتشافه',st:['disc','extract'],q:['l1-tl','l1-fr','l1-ex']},
   {t:GO[1],how:'شغّلنا آلة التضاعف خطوة خطوة',st:['rep'],q:['l1-gc','l1-copy']},
   {t:GO[2],how:'بنينا نموذج السلم الحلزوني',st:['model'],q:['l1-at','l1-side']},
@@ -861,7 +878,7 @@ S({id:'alle',name:'م١ رحلة الجينات المتقابلة',ic:'🔀',ma
     if(kid){cellD(x,930,270,60,'#f1ebff');chrom(x,912,270,kid[0],'#1f84cc');chrom(x,948,270,kid[1],'#e23e64');G.pill(x,'الابن: '+gt(kid[0],kid[1]),930,355,'#1b1336','#fff',18)}
     if(ph<1)G.pill(x,'المس «انقسام منصف»',600,270,'#fff','#4a249e',20)});
   G.tools($('#at',el),[['✂','انقسام منصف'],['💞','إخصاب'],['↺','ابدأ من جديد']],function(i){if(i===0){ph=1;k=0;G.sfx.page()}else if(i===1){if(ph<1){G.toast('ابدؤوا بالانقسام المنصف');return}if(sp<0||eg<0){G.toast('اختاروا حيوانًا منويًّا وبويضة أولًا بلمسهما');return}kid=[SPm[sp][2],EGm[eg][2]];var g=gt(kid[0],kid[1]),row=g==='DD'?0:g==='Dd'?1:2;tb.fill(row,['<span class="ltr">'+kid[0]+' + '+kid[1]+' = '+g+'</span>',row===1?'غير متماثل (هجين)':'متماثل (نقي)']);G.sfx.ok();found[row]=1;if(Object.keys(found).length===3){$('#aEx',el).classList.add('shown');G.done('alle')}sp=eg=-1}else{ph=0;kid=null;sp=eg=-1}});
-  var q=$('#aq',el);G.tf(q,{id:'l2-gam',goal:1,lvl:1,q:'تحتوي كل خلية جنسية على جين متقابل واحد لكل صفة.',v:true,ex:'لأن زوج الجينات ينفصل خلال الانقسام المنصف.'});
+  var q=$('#aq',el);
   G.mcq(q,{id:'l2-her',goal:1,lvl:1,q:'انتقال الصفات الوراثية من الآباء إلى الأبناء يسمى:',o:['الوراثة','الطفرة','التخمر','الانتشار'],a:0,ex:'الوراثة.'});
   return {enter:function(){sim.start()},leave:function(){sim.stop()}}}});
 
@@ -879,7 +896,7 @@ S({id:'mendel',name:'م٢ مندل وحديقة البازلاء',ic:'🌱',manu
   W.forEach(function(w,i){var b=h('<button class="tool" style="min-height:110px"><span>❔</span><b>السبب '+n(i+1)+'</b></button>');$('#why',el).appendChild(b);b.onclick=function(){$('span',b).textContent=w[0];$('b',b).textContent=w[1];b.classList.add('on');wo[i]=1;G.sfx.pop();chk()}});
   TR.forEach(function(t,i){var b=h('<button class="tk">'+t[0]+'</button>');$('#trb',el).appendChild(b);b.onclick=function(){$$('.tk',$('#trb',el)).forEach(function(z){z.classList.toggle('sel',z===b)});tv[i]=1;$('#trv',el).innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="fb ok" style="margin:0;text-align:center"><small>الصفة السائدة</small><br><b style="font-size:26px">'+t[1]+'</b></div><div class="fb" style="margin:0;text-align:center;background:#f6f2ff;border:1.5px solid #dcd6ee"><small>الصفة المتنحية</small><br><b style="font-size:26px">'+t[2]+'</b></div></div>';G.sfx.pop();chk()}});
   function chk(){if(Object.keys(wo).length===4&&Object.keys(tv).length>=3)G.done('mendel')}
-  var q=$('#mq',el);G.mcq(q,{id:'l2-men',goal:2,lvl:1,q:'أول من استخدم حساب الاحتمالات لتفسير الوراثة وتتبع الصفات في عدة أجيال:',o:['نيوتن','روزاليند فرانكلين','واطسون','مندل'],a:3,ex:'مندل.',keep:true});
+  var q=$('#mq',el);
   G.order(q,{id:'l2-mo',goal:2,lvl:2,q:'رتّب الأحداث زمنيًّا:',items:['مندل يبدأ تجاربه على البازلاء (١٨٥٦م)','يدرس نتائجه ثماني سنوات','ثلاثة علماء يصلون إلى النتائج نفسها (١٩٠٠م)']});
   return {reveal:function(){var b=$$('#why .tool:not(.on)',el)[0];if(b){b.click();return true}return false}}}});
 
@@ -904,7 +921,7 @@ S({id:'cross',name:'م٣ مختبر التلقيح في الحديقة',ic:'🌼
     else if(i<3){if(!tb.has(0)){G.toast('لقّحوا الآباء أولًا');G.sfx.no();return}gen=2;k=0;var N=i===1?100:1000,r=grow(N);tb.fill(i,['🟢 '+n(r.g)+' أخضر · 🟡 '+n(r.y)+' أصفر (≈ '+n(Math.round(r.y/N*100))+'٪ أصفر)']);G.sfx.ok();if(tb.count()===3){$('#cEx',el).classList.add('shown');G.done('cross')}}
     else{gen=0;pl=[]}});
   $('[data-p1]',el).onclick=function(){$('#pA',el).classList.add('shown');G.sfx.pop()};$('[data-p2]',el).onclick=function(){$('#pB',el).classList.add('shown');G.sfx.pop()};
-  var q=$('#cq',el);G.mcq(q,{id:'l2-hyb',goal:1,lvl:1,q:'هو الفرد الذي يحمل جينين متقابلين مختلفين لصفة واحدة:',o:['متماثل الجينات','نقي','غير متماثل الجينات','سائد'],a:2,ex:'غير متماثل الجينات (هجين).',keep:true});
+  var q=$('#cq',el);
   return {enter:function(){sim.start()},leave:function(){sim.stop()}}}});
 
 /* ===== ٩) م٤ مختبر السائد والمتنحي ===== */
@@ -920,7 +937,7 @@ S({id:'domrec',name:'م٤ مختبر السائد والمتنحي',ic:'🔠',ma
     $('#stem',el).style.height=(tall?260:90)+'px';tb.fill(row,[hom?'متماثل (نقي)':'غير متماثل (هجين)',tall?'طويل':'قصير']);seen[row]=1;if(Object.keys(seen).length===3)G.done('domrec')}
   draw();
   var q=$('#dq',el);G.sort(q,{id:'l2-hom',goal:4,lvl:2,q:'صنّف الطرز الجينية:',bins:['متماثل الجينات','غير متماثل الجينات'],items:[[E('AA'),0],[E('aa'),0],[E('Aa'),1],[E('Bb'),1],[E('rr'),0],[E('Rr'),1]]});
-  G.mcq(q,{id:'l2-wr',goal:4,lvl:2,q:'أي العبارات التالية <b>غير</b> صحيحة؟',o:['الجين السائد يمنع ظهور الصفة الأخرى','الجين المتنحي تبدو صفته كأنها مختفية','الحرف الكبير دائمًا يمثّل جين الصفة المتنحية','يأخذ الهجين معلومات جينية مختلفة لصفة ما من كلا أبويه'],a:2,ex:'الحرف الكبير يمثّل الجين السائد.',keep:true});
+  
   return {}}});
 
 /* ===== ١٠) م٥ مختبر الاحتمالات ===== */
@@ -970,7 +987,7 @@ var PR=[['🔗','تتحكم الجينات المتقابلة المحمولة �
 S({id:'princ',name:'م٧ مبادئ علم الوراثة',ic:'📜',build:function(el){
   var R=lay(el,'المحطة ٧ · مبادئ علم الوراثة ص ١٣٤','ثلاثة مبادئ وضعها مندل',
    cd('','<p class="big" style="margin:0">نجح العالم مندل في تفسير كيفية انتقال الصفات من الآباء إلى الأبناء <b class="hl">وتمثيلها رياضيًّا</b>، وأدرك وجود بعض العوامل في نبات البازلاء تسبب ظهور صفات وراثية محددة.</p>')+'<div id="pl" class="col"></div><div class="acts"><button class="b" data-nx>المبدأ التالي ←</button></div>',
-   '<div class="cd tape"><h3>الخلاصة</h3><p style="margin:0;font-size:17px;line-height:1.8">• <b>الوراثة:</b> انتقال الصفات من الآباء إلى الأبناء.<br>• <b>علم الوراثة:</b> دراسة كيفية انتقال الصفات الوراثية وتفاعل الجينات المتقابلة بعضها مع بعض.<br>• في عام ١٨٥٦م بدأ مندل تجاربه على البازلاء مستعملًا المنهج العلمي الدقيق، وكان أول من تتبع انتقال الصفة الواحدة عبر عدة أجيال.<br>• <b>التهجين:</b> انتقال معلومات وراثية مختلفة للصفة الواحدة من الآباء.<br>• تتضمن الوراثة عوامل سائدة وأخرى متنحية، ويُستعمل مربع بانيت لتوقع نتائج التزاوج.</p></div><div id="pc"></div>',1.2);
+   '<div id="pc"></div>',1.2);
   var k=0;function show(){if(k>=PR.length)return false;$('#pl',el).appendChild(h('<div class="gli in" style="font-size:21px"><span class="gn">'+n(k+1)+'</span><span class="gi">'+PR[k][0]+'</span><span>'+PR[k][1]+'</span></div>'));k++;G.sfx.pop();return true}
   $('[data-nx]',el).onclick=show;
   G.cloze($('#pc',el),{id:'l2-pcl',goal:1,lvl:2,text:'تتحكم الجينات [[المتقابلة]] المحمولة على [[الكروموسومات]] في الصفات الوراثية، ويكون تأثيرها [[سائدًا]] أو متنحيًا، وتنفصل خلال الانقسام [[المنصف]].',extra:['المتساوي','البروتينات']});
@@ -980,11 +997,20 @@ S({id:'princ',name:'م٧ مبادئ علم الوراثة',ic:'📜',build:funct
 S({id:'qa',name:'م٨ التقويم وحل أسئلة الكتاب',ic:'✍',build:function(el){
   el.innerHTML='<div class="ey">المحطة ٨ · تقويم الدرس الثاني</div><h1 class="t">تقويم متنوع… وحلول أسئلة الكتاب</h1><div class="row grow"><div class="col scroll" id="qL" style="flex:1"></div><div class="col scroll" id="qR" style="flex:1"><div class="cd tape"><h3 style="margin:0">📗 حلول «اختبر نفسك» وتطبيق الرياضيات</h3></div></div></div>';
   var L=$('#qL',el);
+  L.insertAdjacentHTML('beforeend','<div class="cd tape"><h3 style="margin:0">📝 أسئلة العرض: السؤال ١ والسؤال ٢ والسؤال ٣</h3></div>');
+  G.mcq(L,{id:'l2-hyb',goal:1,lvl:1,kind:'السؤال ١ · فقرة ١',q:'هو الفرد الذي يحمل جينين متقابلين مختلفين لصفة واحدة:',o:['متماثل الجينات','نقي','غير متماثل الجينات','سائد'],a:2,ex:'غير متماثل الجينات (هجين).',keep:true});
+  G.mcq(L,{id:'l2-men',goal:2,lvl:1,kind:'السؤال ١ · فقرة ٢',q:'أول من استخدم حساب الاحتمالات لتفسير الوراثة وتتبع الصفات في عدة أجيال:',o:['نيوتن','روزاليند فرانكلين','واطسون','مندل'],a:3,ex:'مندل.',keep:true});
+  G.mcq(L,{id:'l2-sci',goal:1,lvl:1,kind:'السؤال ١ · فقرة ٣',q:'العلم الذي يدرس كيفية توارث الصفات يسمى:',o:['علم البيئة','علم الوراثة','علم الحياة','علم الاجتماع'],a:1,ex:'علم الوراثة.',keep:true});
+  G.mcq(L,{id:'l2-wr',goal:4,lvl:2,kind:'السؤال ١ · فقرة ٤',q:'أي العبارات التالية <b>غير</b> صحيحة؟',o:['الجين السائد يمنع ظهور الصفة الأخرى','الجين المتنحي تبدو الصفة كأنها مختفية','الحرف الكبير دائمًا يمثّل جين الصفة المتنحية','يأخذ الهجين معلومات جينية مختلفة لصفة ما من كلا أبويه'],a:2,ex:'الحرف الكبير يمثّل الجين السائد.',keep:true});
+  G.tf(L,{id:'l2-tf1',goal:3,lvl:1,q:'(أ) مربع بانيت يمكنه مساعدتك على توقع صفات الأبناء.',v:true,ex:'صحيح.'});
+  G.tf(L,{id:'l2-gam',goal:1,lvl:1,q:'(ب) تحتوي كل خلية جنسية على جين متقابل واحد لكل صفة.',v:true,ex:'لأن زوج الجينات ينفصل خلال الانقسام المنصف.'});
+  G.tf(L,{id:'l2-tf2',goal:4,lvl:1,q:'(ج) متماثل الجينات هو الفرد الذي يحمل جينين متقابلين مختلفين لصفة واحدة.',v:false,ex:'هذا تعريف غير متماثل الجينات (الهجين).'});
+  G.tf(L,{id:'l2-tf3',goal:1,lvl:1,q:'(د) الوراثة هي نقل الصفات من الآباء إلى الأبناء.',v:true,ex:'صحيح.'});
   G.cloze(L,{id:'l2-match',goal:4,lvl:2,q:'اقرن كل عبارة بالمصطلح المناسب (المس المصطلح ثم الفراغ):',text:'١. انتقال الصفات الوراثية من الآباء إلى الأبناء ← [[الوراثة]]<br>٢. أزواج الجينات المسؤولة عن صفة محددة ← [[الجينات المتقابلة]]<br>٣. المخلوق الذي يكون فيه الجينان المتقابلان مختلفين ← [[هجين]]<br>٤. الصفة التي تسود وتخفي الصفة الأخرى ← [[الصفة السائدة]]<br>٥. الصفة التي لا تظهر إلا إذا كانت الجينات المتقابلة متماثلة ← [[الصفة المتنحية]]<br>٦. الصفة المظهرية الناتجة عن الطراز الجيني ← [[الطرز الشكلية]]<br>٧. التركيب الوراثي المحدد للطراز الشكلي ← [[الطرز الجينية]]<br>٨. محمولة على الكروموسومات وتتحكم في شكل المخلوق ووظائفه ← [[الجينات]]'});
-  G.mcq(L,{id:'l2-sci',goal:1,lvl:1,q:'العلم الذي يدرس كيفية توارث الصفات يسمى:',o:['علم البيئة','علم الوراثة','علم الحياة','علم الاجتماع'],a:1,ex:'علم الوراثة.',keep:true});
-  G.tf(L,{id:'l2-tf1',goal:3,lvl:1,q:'مربع بانيت يمكنه مساعدتك على توقع صفات الأبناء.',v:true,ex:'صحيح.'});
-  G.tf(L,{id:'l2-tf2',goal:4,lvl:1,q:'متماثل الجينات هو الفرد الذي يحمل جينين متقابلين مختلفين لصفة واحدة.',v:false,ex:'هذا تعريف غير متماثل الجينات (الهجين).'});
-  G.tf(L,{id:'l2-tf3',goal:1,lvl:1,q:'الوراثة هي نقل الصفات من الآباء إلى الأبناء.',v:true,ex:'صحيح.'});
+  
+  
+  
+  
   G.mcq(L,{id:'l2-p50',goal:3,lvl:3,q:'تزاوج '+E('Tt')+' مع '+E('tt')+'. ما احتمال ظهور الصفة المتنحية في الأبناء؟',o:['٥٠٪','٢٥٪','٧٥٪','١٠٠٪'],a:0,ex:E('Tt, Tt, tt, tt')+' ← نصف الأبناء '+E('tt')+'.'});
   G.solutions($('#qR',el),[
    {src:'اختبر نفسك ١',q:'قارن بين الجينات المتقابلة السائدة والجينات المتقابلة المتنحية.',a:'<b>السائد:</b> تظهر صفته، ويخفي صفة الجين الآخر، ويُرمز له بحرف كبير، ويوجد في صورتين ('+E('AA')+' أو '+E('Aa')+').<br><b>المتنحي:</b> تختفي صفته عند التقائه بالسائد، ويُرمز له بحرف صغير، ولا تظهر صفته إلا في صورة واحدة ('+E('aa')+').'},
@@ -1018,10 +1044,15 @@ var BANK=[MQ(1,'الفرد الذي يحمل جينين متقابلين مخت�
  MQ(3,'Ww × ww: نسبة الأبناء قصيري الجناح (W سائد):',['٥٠٪','٢٥٪','٧٥٪','صفر٪'],0,'٢ ww من ٤.'),MQ(3,'نبات قصير الساق (القصر متنحٍ)، طرازه الجيني:',['tt','TT','Tt','لا يمكن معرفته'],0,'المتنحي لا يظهر إلا متماثلًا.'),
  MQ(3,'لماذا كانت نتائج مندل دقيقة جدًّا؟',['لأنه درس أعدادًا كبيرة من النباتات','لأنه درس نبتة واحدة','لأنه درس الحيوانات','لأنه لم يستعمل الرياضيات'],0,'نحو ٣٠٠٠٠ نبتة في ٨ سنوات.'),MQ(3,'نبات طويل الساق قد يكون طرازه TT أو Tt.',TF,0,'الصفة السائدة لها صورتان.')];
 BANK.forEach(function(q,i){q.id='g9c4b-'+(i+1);q.q=q.q.replace(/\b([A-Za-z]{2}(?: × [A-Za-z]{2})?)\b/g,'<span class="ltr">$1</span>');if(/^[A-Za-z]{2}/.test(q.o[0]))q.o=q.o.map(function(s){return s.replace(/^([A-Za-z]{2})/,'<span class="ltr">$1</span>')})});
-S({id:'contest',name:'م٩ سباق اللولب المزدوج',ic:'🏁',manual:true,build:function(el){return G.contest(el,{ey:'المحطة ٩ · مسابقة الفرق الأربعة',title:'سباق اللولب المزدوج: علم الوراثة',bank:BANK})}});
+
+/* ===== الخلاصة (كما في العرض) ===== */
+S({id:'sum',name:'م٩ الخلاصة',ic:'📌',build:function(el){var SEC=[['الصفات الوراثية',['الوراثة: انتقال الصفات من الآباء إلى الأبناء.','علم الوراثة: دراسة كيفية انتقال الصفات الوراثية وتفاعل الجينات المتقابلة بعضها مع بعض.']],['مندل · مؤسس علم الوراثة',['في عام ١٨٥٦م بدأ مندل تجاربه على نبات البازلاء مستعملًا المنهج العلمي الدقيق.','كان مندل أول من تتبع انتقال الصفة الوراثية الواحدة عبر عدة أجيال.','في عام ١٩٠٠م توصل ثلاثة علماء، كلٌّ على حدة، إلى النتائج نفسها التي توصل إليها مندل.']],['الوراثة الحديثة',['التهجين: انتقال معلومات وراثية مختلفة للصفة الواحدة من الآباء.','تتضمن الوراثة عوامل سائدة وأخرى متنحية.','يُستعمل مربع بانيت لتوقع نتائج التزاوج.','أدت نتائج مندل إلى وضع مبادئ علم الوراثة.']]];
+  el.innerHTML='<div class="ey">المحطة ٩ · الخلاصة ص ١٣٥</div><h1 class="t">الخلاصة</h1><div class="col scroll grow"><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-content:start">'+SEC.map(function(s,i){return '<div class="cd'+(i?' reveal':'')+'"><h3>'+s[0]+'</h3><ul style="margin:0;font-size:18px;line-height:1.8">'+s[1].map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul></div>'}).join('')+'</div><p class="hint" style="margin:6px 0 0">اضغط «كشف» لإظهار القسم التالي.</p></div>';
+  return {enter:function(){G.done('sum')},reveal:function(){var r=$$('.reveal:not(.shown)',el);if(r.length){r[0].classList.add('shown');return true}return false}}}});
+S({id:'contest',name:'م١٠ سباق اللولب المزدوج (إثرائي)',ic:'🏁',manual:true,build:function(el){return G.contest(el,{ey:'المحطة ١٠ · إثرائي: مسابقة الفرق الأربعة',title:'سباق اللولب المزدوج: علم الوراثة',bank:BANK})}});
 
 /* ===== ١٥) الختام ===== */
-S({id:'review',name:'م١٠ الختام وبطاقة الخروج',ic:'🎟',build:function(el){return G.review(el,{antKey:'l2',ant:ANT,goals:[
+S({id:'review',name:'م١١ الختام وبطاقة الخروج',ic:'🎟',build:function(el){return G.review(el,{antKey:'l2',ant:ANT,goals:[
   {t:GO[0],how:'تتبعنا الجينات المتقابلة من الأبوين إلى الابن، ولقّحنا البازلاء',st:['alle','cross'],q:['l2-gam','l2-her','l2-hyb']},
   {t:GO[1],how:'زرنا حديقة مندل وعرفنا لماذا اختار البازلاء',st:['mendel','princ'],q:['l2-men','l2-mo']},
   {t:GO[2],how:'رمينا العملتين وحللنا مسائل مربع بانيت',st:['prob','pun'],q:['l2-pr','l2-p50']},
