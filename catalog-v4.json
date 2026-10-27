@@ -1,5 +1,5 @@
 {
- "version": 23,
+ "version": 24,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -46,7 +46,7 @@
    "chapter": "الفصل الثاني: الحركة والقوى والآلات البسيطة",
    "desc": "سباق الحركة: السرعة والتسارع",
    "color": "#0B6884",
-   "file": "lessons/g7-c2-l1.html",
+   "file": "lessons/g7-c2-l1-r2.html",
    "cover": "img/cover-g7-c2-l1.webp"
   },
   {
@@ -58,7 +58,7 @@
    "chapter": "الفصل الثاني: الحركة والقوى والآلات البسيطة",
    "desc": "ساحة نيوتن: القوة والقوانين الثلاثة",
    "color": "#2E7031",
-   "file": "lessons/g7-c2-l2.html",
+   "file": "lessons/g7-c2-l2-r2.html",
    "cover": "img/cover-g7-c2-l2.webp"
   },
   {
@@ -70,7 +70,7 @@
    "chapter": "الفصل الثاني: الحركة والقوى والآلات البسيطة",
    "desc": "ورشة الآلات: الشغل والفائدة الآلية",
    "color": "#A8323A",
-   "file": "lessons/g7-c2-l3.html",
+   "file": "lessons/g7-c2-l3-r2.html",
    "cover": "img/cover-g7-c2-l3.webp"
   },
   {
@@ -394,7 +394,7 @@
    "title": "ورقة عمل: الحركة",
    "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
    "color": "#E2662B",
-   "file": "tools/sheet-g7-c2-l1.html",
+   "file": "tools/sheet-g7-c2-l1-r2.html",
    "cover": "img/cover-sheet-g7-c2-l1.webp"
   },
   {
@@ -406,7 +406,7 @@
    "title": "ورقة عمل: قوانين نيوتن للحركة",
    "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
    "color": "#E2662B",
-   "file": "tools/sheet-g7-c2-l2.html",
+   "file": "tools/sheet-g7-c2-l2-r2.html",
    "cover": "img/cover-sheet-g7-c2-l2.webp"
   },
   {
@@ -418,7 +418,7 @@
    "title": "ورقة عمل: الشغل والآلات البسيطة",
    "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
    "color": "#E2662B",
-   "file": "tools/sheet-g7-c2-l3.html",
+   "file": "tools/sheet-g7-c2-l3-r2.html",
    "cover": "img/cover-sheet-g7-c2-l3.webp"
   },
   {
@@ -670,7 +670,7 @@
    "title": "عجلة الحظ: الحركة",
    "desc": "🎡 أدر العجلة لتحدد قيمة سؤالك، ومنها سؤال مضاعف.",
    "color": "#E2662B",
-   "file": "tools/contest-g7-c2-l1.html",
+   "file": "tools/contest-g7-c2-l1-r2.html",
    "cover": "img/cover-contest-g7-c2-l1.webp"
   },
   {
@@ -682,7 +682,7 @@
    "title": "إكس-أو العلمي: قوانين نيوتن للحركة",
    "desc": "❌⭕ لعبة إكس-أو لفريقين: المربع لا يُكسب إلا بإجابة صحيحة.",
    "color": "#E2662B",
-   "file": "tools/contest-g7-c2-l2.html",
+   "file": "tools/contest-g7-c2-l2-r2.html",
    "cover": "img/cover-contest-g7-c2-l2.webp"
   },
   {
@@ -694,7 +694,7 @@
    "title": "سلّم المليون: الشغل والآلات البسيطة",
    "desc": "💰 عشرة أسئلة متدرجة بوسائل مساعدة ومحطات أمان.",
    "color": "#E2662B",
-   "file": "tools/contest-g7-c2-l3.html",
+   "file": "tools/contest-g7-c2-l3-r2.html",
    "cover": "img/cover-contest-g7-c2-l3.webp"
   },
   {
