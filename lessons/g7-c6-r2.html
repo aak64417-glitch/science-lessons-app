@@ -439,11 +439,11 @@ S({id:'goals',name:'أهداف الدرس',ic:'🎯',build:function(el){return G
 
 /* ===== ٤) التهيئة ===== */
 S({id:'prior',name:'تهيئة البعثة',ic:'🧭',build:function(el){var R=lay(el,'تهيئة · ص ١٦٠–١٦١','هل هي جبال قديمة أم حديثة؟',
-  '<div class="cd tape" style="display:flex;gap:14px;align-items:center">'+img('p_young','width:300px;height:220px')+'<p class="big" style="margin:0">هذه الجبال الرائعة المغطاة بالثلج لا تزال في مراحل تكوينها الأولى، وسوف تحتاج قممها الحادة إلى <b class="hl">مئات ملايين السنين</b> من الحتّ حتى تصبح ملساء.</p></div><div id="pp"></div>'+
+  '<div class="cd tape" style="display:flex;gap:14px;align-items:center">'+img('p_young','width:300px;height:220px')+'<p class="big" style="margin:0">هذه الجبال الرائعة المغطاة بالثلج لا تزال في مراحل تكوينها الأولى، وسوف تحتاج قممها الحادة إلى <b class="hl">مئات ملايين السنين</b> من الحتّ حتى تصبح ملساء.</p></div>'+
   cd('📒 دفتر العلوم','<p style="margin:0;font-size:19px">اكتب فقرة قصيرة تصف فيها ما تتوقع أن يحدث لهذه الجبال بعد مرور ألف عام.</p>'),
-  cd('📖 توجيه القراءة: قبل القراءة','<p class="hint" style="margin:0 0 6px">اختر «موافق» أو «غير موافق» لكل عبارة، وسنعود إليها في نهاية الدرس.</p><div id="an"></div>'),1.05);
+  '<div id="pp"></div>',1.05);
   G.poll($('#pp',el),{q:'ماذا تتوقع أن يحدث لهذه الجبال بعد ملايين السنين؟',o:['تزداد ارتفاعًا ووعورة','تقل ارتفاعًا وتصبح قممها ملساء بالحتّ','لا يحدث لها أي تغيير']});
-  G.anticip($('#an',el),{key:'l1',items:ANT});return {}}});
+  return {}}});
 
 /* ===== ٥) المصطلحات ===== */
 var TERMS=[{ic:'🧱',t:'القشرة',d:'أرق نطاقات الأرض، وتشبه قشرة ثمرة الخوخ.'},{ic:'🟫',t:'الستار (الوشاح)',d:'أكبر نطاقات الأرض، صلب يتحرك ببطء شديد كالمعجون.'},{ic:'🟠',t:'اللب الخارجي',d:'نطاق سائل يتكوّن من عناصر منصهرة.'},{ic:'🟡',t:'اللب الداخلي',d:'نطاق صلب في مركز الأرض، معظمه حديد، ودرجة حرارته نحو ٥٠٠٠°س.'},
@@ -502,7 +502,7 @@ S({id:'layers',name:'م٢ نموذج طبقات الأرض',ic:'🍑',manual:tru
   var ST=['١ اللب الداخلي','٢ اللب الخارجي','٣ الستار','٤ القشرة','✂ اقطع النموذج'];
   G.tools($('#lt',el),ST.map(function(s,i){return [i<4?'🟤':'🔪',s]}),function(i,b){if(i!==step){G.toast(step>=5?'قُطع النموذج؛ المس الطبقات لتسجيل خصائصها':'اتبعوا الترتيب: الخطوة '+n(step+1)+' أولًا');G.sfx.no();return}step++;b.classList.add('on');G.sfx.pop();if(i===4){cutT=1;G.sfx.page()}});
   c.addEventListener('click',function(e){if(cut<.95)return;var r=c.getBoundingClientRect(),X=(e.clientX-r.left)/r.width*1000,Y=(e.clientY-r.top)/r.height*560,d=Math.hypot(X-(430+130),Y-250);if(X<430+130)return;var i=d<RS[0]?0:d<RS[1]?1:d<RS[2]?2:d<RS[3]?3:-1;if(i<0)return;sel=i;var row=3-i;tb.fill(row,[LAYI[i][2],LAYI[i][3]]);G.sfx.ok();if(tb.count()===4)G.done('layers')});
-  var q=$('#lq',el);G.mcq(q,{id:'l1-big',goal:1,lvl:1,q:'أيّ أجزاء الأرض أكبر؟',o:['القشرة','الستار','اللب الخارجي','اللب الداخلي'],a:1,ex:'الستار أكبر النطاقات.'});
+  var q=$('#lq',el);
   G.order(q,{id:'l1-dens',goal:1,lvl:3,q:'رتّب طبقات الأرض من الأكثر كثافة إلى الأقل كثافة:',items:['اللب الداخلي','اللب الخارجي','الستار','القشرة'],ex:'تزداد الكثافة كلما اتجهنا نحو مركز الأرض.'});
   return {enter:function(){sim.start()},leave:function(){sim.stop()}}}});
 
@@ -524,7 +524,7 @@ S({id:'litho',name:'م٣ الغلاف الصخري والصفائح',ic:'🗺',m
     x.strokeStyle='#2f2416';x.lineWidth=3;x.setLineDash([8,6]);x.beginPath();x.moveTo(20,112);x.lineTo(20,272);x.stroke();x.setLineDash([]);G.pill(x,'الغلاف الصخري = صفيحة',150,90,'#fffaf0','#c4512f',16);
     G.pill(x,'الغلاف اللدن',500,330,'#fffaf0','#b45d1c',18);[[-1,240-off],[1,760+off]].forEach(function(a){x.fillStyle='#c4512f';x.beginPath();x.moveTo(a[1]+a[0]*90,60);x.lineTo(a[1]+a[0]*60,46);x.lineTo(a[1]+a[0]*60,74);x.closePath();x.fill();x.fillRect(Math.min(a[1],a[1]+a[0]*60),56,60,8)});
     G.pill(x,'تتحرك الصفائح فوق الغلاف اللدن',500,24,'#fffaf0','#2f2416',16)});
-  G.mcq($('#pq',el),{id:'l1-lith',goal:2,lvl:1,q:'صفائح الأرض هي قطع من:',o:['الغلاف الصخري','الغلاف اللدن','اللب الداخلي','الستار (الوشاح)'],a:0,ex:'الصفيحة قطعة من الغلاف الصخري.'});
+  
   G.mcq($('#pq',el),{id:'l1-math',goal:2,lvl:2,q:'تتحرك صفيحة بمعدل ٢ سم في السنة. ما المسافة التي تقطعها في ١٠٠٠ سنة؟',o:['٢٠ م','٢ م','٢٠٠ م','٢٠٠٠ م'],a:0,ex:'٢ × ١٠٠٠ = ٢٠٠٠ سم = ٢٠ م. جرّبوها بالمنزلقين!'});
   return {enter:function(){sim.start()},leave:function(){sim.stop()}}}});
 
@@ -554,8 +554,8 @@ S({id:'bound',name:'م٤ مختبر حدود الصفائح',ic:'🧩',manual:tr
     G.pill(x,['تباعد: قوى شدّ','تقارب: قوى ضغط','تحاذٍ: قوى قصّ'][mode]+' · مثال: '+V[mode][2],500,535,'#fffaf0','#c4512f',17)});
   G.tools($('#bt',el),[['↔','قوى شدّ (تباعد)'],['→←','قوى ضغط (تقارب)'],['⇅','قوى قصّ (تحاذٍ)']],function(i,b,w){mode=i;k=0;$$('.tool',w).forEach(function(z){z.classList.toggle('on',z===b)});G.sfx.rumble()});
   var q=$('#bq',el);G.sort(q,{id:'l1-candy',goal:5,lvl:2,q:'تحليل تجربة الحلوى: صنّف كل عبارة:',bins:['شدّ','تضاغط'],items:[['سحب القطعة من الجانبين',0],['الضغط على القطعة بكلتا اليدين',1],['الصفائح المتباعدة',0],['الصفائح المتقاربة',1]],ex:'السحب شدّ كما في الصفائح المتباعدة، والضغط تضاغط كما في الصفائح المتقاربة.'});
-  G.mcq(q,{id:'l1-div',goal:5,lvl:1,q:'أيّ القوى تسبب تباعد الصفائح؟',o:['الشدّ','الضغط','القصّ','التوازن'],a:0,ex:'قوى الشد.'});
-  G.mcq(q,{id:'l1-tr',goal:2,lvl:2,q:'أيّ حركة للصفائح تحدث عند الحدود التحويلية؟',o:['تقارب الصفائح','تباعد الصفائح','غوص الصفائح','انزلاق الصفائح بعضها بجانب بعض'],a:3,ex:'الصفائح المتحاذية تنزلق بعضها بجانب بعض.'});
+  
+  
   return {enter:function(){sim.start()},leave:function(){sim.stop()}}}});
 
 /* ===== ١٠) م٥ تيارات الحمل ===== */
@@ -672,7 +672,7 @@ var BANK=[MQ(1,'أيّ أجزاء الأرض أكبر؟',['الستار','الق
  MQ(3,'أحدث سلسلة جبال بين: الأبلاش، روكي، الهملايا:',['الهملايا','الأبلاش','روكي','جميعها بالعمر نفسه'],0,'الأكثر وعورة أحدث.'),MQ(3,'ماذا يحدث لقشرة الأرض عند انصهار جليديات ضخمة فوقها؟',['ترتفع','تنخفض','تنقسم','لا تتغير'],0,'يقل الوزن فترتفع.'),
  MQ(3,'لماذا الجبال القديمة أقل ارتفاعًا ووعورة؟',['بسبب الحتّ عبر ملايين السنين','لأنها تكوّنت من لابة','لأنها في البحر','لأنها مطوية'],0,'الحت يجعل القمم ملساء.')];
 BANK.forEach(function(q,i){q.id='g6a-'+(i+1)});
-S({id:'contest',name:'م٩ سباق البراكين',ic:'🌋',manual:true,build:function(el){return G.contest(el,{ey:'المحطة ٩ · مسابقة الفرق الأربعة',title:'سباق البراكين',bank:BANK})}});
+S({id:'contest',name:'م سباق البراكين (إثرائي)',ic:'🌋',manual:true,build:function(el){return G.contest(el,{ey:'المحطة ٩ · مسابقة الفرق الأربعة',title:'سباق البراكين',bank:BANK})}});
 
 /* ===== ١٥) ختام البعثة ===== */
 S({id:'review',name:'م١٠ ختام البعثة',ic:'🏁',build:function(el){return G.review(el,{antKey:'l1',ant:ANT,goals:[
@@ -685,6 +685,26 @@ S({id:'review',name:'م١٠ ختام البعثة',ic:'🏁',build:function(el){
   hw:['خريطة مفاهيم: اعمل خريطة مفاهيم لسلسلة أحداث تصف تكوّن الجبال المطوية.','انسخ جدول «أنواع الجبال الأربعة» في دفترك، وأكمله بالمثال والسبب.']})}});
 
 TV=G.termSetup(L,TERMS,[{id:'layers',pg:'ص ١٦٣',i:[0,1,2,3]},{id:'litho',pg:'ص ١٦٤',i:[4,5,6]},{id:'bound',pg:'ص ١٦٥–١٦٦',i:[7]},{id:'conv',pg:'ص ١٦٧',i:[8]},{id:'mount',pg:'ص ١٦٨–١٧١',i:[9,10]},{id:'iso',pg:'ص ١٧٠–١٧١',i:[11]}]);
+
+/* ===== أدوات مطابقة العرض ===== */
+function evalSt(id,ey,title,qs){return {id:id,name:'م '+title,ic:'📝',build:function(el){el.innerHTML='<div class="ey">'+ey+'</div><h1 class="t">'+title+'</h1><div class="col scroll grow"><div id="ev" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start"></div></div>';var c=$('#ev',el);qs.forEach(function(q){q.keep=true;var d=h('<div></div>');c.appendChild(d);G.mcq(d,q)});return {enter:function(){G.done(id)}}}}}
+function sumSt(ey,sec){return {id:'sum',name:'م الخلاصة',ic:'📌',build:function(el){el.innerHTML='<div class="ey">'+ey+'</div><h1 class="t">الخلاصة</h1><div class="col scroll grow"><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-content:start">'+sec.map(function(s,i){return '<div class="cd'+(i?' reveal':'')+'"><h3>'+s[0]+'</h3><ul style="margin:0;font-size:18px;line-height:1.8">'+s[1].map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul></div>'}).join('')+'</div><p class="hint" style="margin:6px 0 0">اضغط «كشف» لإظهار القسم التالي.</p></div>';return {enter:function(){G.done('sum')},reveal:function(){var r=$$('.reveal:not(.shown)',el);if(r.length){r[0].classList.add('shown');return true}return false}}}}}
+function orderSt(L,ORD,skip){L.stations.sort(function(a,b){return ORD.indexOf(a.id)-ORD.indexOf(b.id)});var k=0;L.stations.forEach(function(st){if(skip.indexOf(st.id)>=0)return;k++;st.name='م'+n(k)+' '+st.name.replace(/^م\S*\s+/,'');var kk=k,b=st.build;st.build=function(el,ctx){var r=b(el,ctx);var ey=$('.ey',el);if(ey&&ey.firstChild&&ey.firstChild.nodeType===3)ey.firstChild.textContent=ey.firstChild.textContent.replace(/^المحطة\s*[٠-٩]*/,'المحطة '+n(kk));return r}})}
+
+S({id:'starter',name:'التجربة الاستهلالية',ic:'🧪',build:function(el){el.innerHTML='<div class="ey">تجربة استهلالية · ص ١٦١</div><h1 class="t">عمل نموذج لباطن الأرض</h1><div class="row grow"><div class="col scroll" style="flex:1.2">'+cd('','<p class="big" style="margin:0">يعرف الجيولوجيون معلومات كثيرة عن باطن الأرض، مع أن عمق مركزها يزيد على <b class="hl">٦٠٠٠ كم</b>. استخدم طين التشكيل لعمل نموذج لباطن الأرض.</p>')+cd('خطوات التجربة','<ol style="margin:0;font-size:19px;line-height:1.8"><li>احصل على أربع قطع من الطين بألوان مختلفة.</li><li>اصنع كرة من قطعة طين، وهذا يمثل اللب الداخلي.</li><li>غلّف الكرة الأولى بغلاف طيني مستخدمًا قطعة أخرى من الطين لتمثل اللب الخارجي.</li><li>كرر الخطوة الثالثة مستخدمًا قطعة الطين الثالثة لتمثل الستار (الوشاح). غلّف النموذج بطبقة رقيقة من قطعة الطين الرابعة التي تمثل القشرة.</li><li>استخدم سكينًا بلاستيكية لتقطع كرة الطين نصفين.</li><li>التفكير الناقد: ارسم صورة تمثل النموذج الذي عملته، واكتب على كل طبقة اسمها.</li></ol>')+'</div><div class="col" style="flex:.8">'+cd('🧱 جرّبوها تفاعليًّا','<p style="margin:0;font-size:19px">سنبني هذا النموذج خطوة خطوة في محطة «نموذج طبقات الأرض» بعد دراسة دلائل باطن الأرض.</p>')+'</div></div>';return {}}});
+S({id:'fold',name:'المطويات وتوجيه القراءة',ic:'📂',build:function(el){el.innerHTML='<div class="ey">تهيئة · المطويات وتوجيه القراءة وتركيزها</div><h1 class="t">المطويات… وتوجيه القراءة</h1><div class="row grow"><div class="col scroll" style="flex:1">'+cd('📂 المطويات: باطن الأرض وسطحها','<p style="margin:0 0 6px;font-size:18px">اعمل المطوية التالية لتساعدك على فهم العلاقة بين باطن الأرض وسطحها. · التسليم يوم الأحد القادم.</p><ol style="margin:0;font-size:18px;line-height:1.8"><li>أحضر ورقتين، وضع إحداهما فوق الأخرى، بحيث تكون حافة الأولى أخفض ٢٫٥ سم من حافة الثانية.</li><li>اطوِ الورقتين لتشكّلا أربعة ألسنة متساوية.</li><li>ألصق حافة المطوية جهة الطي، ثم عنوِن الألسنة.</li></ol><p class="hint" style="margin:6px 0 0">★ السبب والنتيجة: أثناء قراءتك للفصل سجّل المعلومات عن كل طبقة وعلاقتها بالطبقات الأخرى تحت اللسان الخاص بها.</p>')+'</div><div class="col scroll" style="flex:1.2">'+cd('📖 توجيه القراءة: قبل القراءة','<p class="hint" style="margin:0 0 6px">اختر «موافق» أو «غير موافق» لكل عبارة، وسنعود إليها في نهاية الدرس.</p><div id="an"></div>')+'</div></div>';G.anticip($('#an',el),{key:'l1',items:ANT});return {}}});
+S({id:'coop',name:'كيف سنبدأ؟',ic:'👥',build:function(el){el.innerHTML='<div class="ey">تهيئة · طريقة التدريس: التعلم التعاوني</div><h1 class="t">كيف سنبدأ؟</h1><div class="grow" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-content:start">'+[['👑','قائد المجموعة','الطالب الذي يتولى قيادة المجموعة ويوجهها، ويتابع عمل أفرادها، وينسّق فيما بينهم.'],['✍','المقرر','الطالب الذي يكتب كل ما توصلت إليه المجموعة.'],['📝','الملخّص (الكاتب)','الطالب الذي يلخّص ما توصلت إليه المجموعة.'],['🔎','الباحثون','بقية أفراد المجموعة، وهم الذين يجهّزون المصادر والمواد للمجموعة.']].map(function(r){return '<div class="cd" style="text-align:center"><div style="font-size:54px">'+r[0]+'</div><h3>'+r[1]+'</h3><p style="margin:0;font-size:18px">'+r[2]+'</p></div>'}).join('')+'</div><div class="row" style="gap:12px;margin-top:12px">'+['سنترتب في مجموعات','كل (٦) طلاب في مجموعة واحدة','سنعيّن أفراد المجموعة','نستمع لتوجيهات المعلم لبدء الدرس'].map(function(x,i){return '<div class="cd grow" style="text-align:center"><b>'+n(i+1)+'</b> '+x+'</div>'}).join('')+'</div>';return {}}});
+
+S(evalSt('eval1','المحطة · تقييم الدرس الأول','تقييم: صفائح الأرض المتحركة',[
+ {id:'l1-big',goal:1,lvl:1,kind:'السؤال ١ من ٤',q:'أيّ أجزاء الأرض أكبر؟',o:['القشرة','الستار','اللب الخارجي','اللب الداخلي'],a:1,ex:'الستار أكبر نطاقات الأرض.'},
+ {id:'l1-lith',goal:2,lvl:1,kind:'السؤال ٢ من ٤',q:'صفائح الأرض هي قطع من:',o:['الغلاف الصخري','الغلاف اللدن','اللب الداخلي','الستار (الوشاح)'],a:0,ex:'الغلاف الصخري مجزّأ إلى صفائح.'},
+ {id:'l1-div',goal:5,lvl:1,kind:'السؤال ٣ من ٤',q:'أيّ القوى تسبب تباعد الصفائح؟',o:['الشدّ','الضغط','القصّ','التوازن'],a:0,ex:'قوى الشد.'},
+ {id:'l1-tr',goal:2,lvl:2,kind:'السؤال ٤ من ٤',q:'أيّ حركة للصفائح تحدث عند الحدود التحويلية؟',o:['تقارب الصفائح','تباعد الصفائح','غوص الصفائح','انزلاق الصفائح بعضها بجانب بعض'],a:3,ex:'تنزلق الصفائح بعضها بجانب بعض (صفائح متحاذية).'}]));
+S(sumSt('المحطة · الخلاصة',[
+ ['باطن الأرض وطبقاته',['تم استكشاف باطن الأرض بدراسة الصخور والأمواج الزلزالية.','يتكوّن باطن الأرض من: اللب الداخلي، واللب الخارجي، والستار، والقشرة الأرضية.']],
+ ['حدود الصفائح',['تتحرك الصفائح إما متباعدة أو متقاربة أو متحاذية.','تتحرك الصفائح بفعل تيارات الحمل وعوامل أخرى.']],
+ ['تكوّن الجبال',['تُقسم الجبال إلى أربعة أنواع: الكتل المتصدعة، والمطوية، والبركانية، والناهضة.','تتميز الجبال الحديثة بعلوها ووعورتها وشدة انحدار قممها، أما القديمة فأقل ارتفاعًا ووعورة.','يمكن أن تتكوّن الجبال البركانية على اليابسة أو في قيعان المحيطات.']]]));
+orderSt(L,['intro','wonder','prior','starter','fold','coop','goals','terms','seis','layers','litho','bound','conv','mount','iso','eval1','qa','sum','contest','review'],['intro','wonder','prior','starter','fold','coop','goals','terms']);
 G.lesson('l1',L);
 })();
 </script>
@@ -789,7 +809,7 @@ S({id:'chem',name:'م٢ مختبر الأحماض',ic:'🧪',manual:true,build:f
   G.tools($('#at',el),O.map(function(o){return [o[3]?'🧪':'🫙',o[0]+' على '+o[1]]}),function(i,b){var o=O[i];acid[o[2]]=o[3];t0[o[2]]=now;b.classList.add('on');G.sfx.pop();
     setTimeout(function(){var row=o[2],col=o[3];var cur=[tb.has(row)?'':''];var v=col?'فقاعات كثيرة وتفاعل سريع':'فقاعات قليلة وتفاعل بطيء';var tr=$('tr[data-r="'+row+'"]',el);var vals=[tr.children[1].classList.contains('q')?'؟':tr.children[1].innerHTML,tr.children[2].classList.contains('q')?'؟':tr.children[2].innerHTML];vals[col]=v;
       var td=tr.children[col+1];td.innerHTML=v;td.classList.remove('q');td.classList.add('nw');tb.upd();G.sfx.ok();if(tb.count()===2){G.done('chem');$('#aEx',el).classList.add('shown')}},2500)});
-  var q=$('#aq',el);G.mcq(q,{id:'l2-carb',goal:2,lvl:1,q:'عندما يتحد ثاني أكسيد الكربون مع الماء يتكوّن:',o:['كربونات الكالسيوم','حمض الكربونيك','حمض التنيك','حمض الهيدروكلوريك'],a:1,ex:'حمض الكربونيك يذيب الحجر الجيري.'});
+  var q=$('#aq',el);
   G.sort(q,{id:'l2-mc',goal:2,lvl:2,q:'صنّف: تجوية ميكانيكية أم كيميائية؟',bins:['ميكانيكية','كيميائية'],items:[['تجمد الماء في الشقوق',0],['نمو الجذور في الشقوق',0],['الحيوانات التي تحفر الأرض',0],['حمض الكربونيك',1],['أحماض النباتات',1],['تفاعل الأكسجين مع الحديد',1]]});
   return {enter:function(){sim.start()},leave:function(){sim.stop()}}}});
 
@@ -814,7 +834,7 @@ S({id:'climate',name:'م٣ المناخ ومعدل التجوية',ic:'🌦',man
     var a=Math.PI+nd*Math.PI*.95;x.strokeStyle='#c4512f';x.lineWidth=6;x.beginPath();x.moveTo(gx,gy);x.lineTo(gx+Math.cos(a)*120,gy+Math.sin(a)*120);x.stroke();x.fillStyle='#2f2416';x.beginPath();x.arc(gx,gy,10,0,7);x.fill();G.T(x,'معدل التجوية الكيميائية',gx,gy+40,17,'#2f2416');
     G.pill(x,'المناخ: '+CL[cur][1],320,40,'#fffaf0','#c4512f',19)});
   G.tools($('#kt',el),CL.map(function(c){return [c[0],c[1]]}),function(i,b,w){cur=i;rock=1;$$('.tool',w).forEach(function(z){z.classList.toggle('on',z===b)});G.sfx.pop();setTimeout(function(){tb.fill(i,[CL[i][2]]);G.sfx.ok();if(tb.count()===4)G.done('climate')},1500)});
-  G.mcq($('#kq',el),{id:'l2-trop',goal:2,lvl:1,q:'أين تكون التجوية الكيميائية أكثر نشاطًا؟',o:['الصحارى','الجبال','المناطق القطبية','المناطق الاستوائية'],a:3,ex:'المناطق الاستوائية الحارة الرطبة.'});
+  
   return {enter:function(){sim.start()},leave:function(){sim.stop()}}}});
 
 /* ===== ٩) م٤ التربة ===== */
@@ -880,8 +900,8 @@ S({id:'icewind',name:'م٦ الجليديات والرياح',ic:'🏔',manual:t
       x.fillStyle='#1f6f8b';G.T(x,'💨 اتجاه الرياح ←',140,120,20,'#1f6f8b')}
     if(m>=0&&k>=1&&!tb.has(m)){tb.fill(m,[V[m]]);G.sfx.ok();if(tb.count()===4)G.done('icewind')}});
   G.tools($('#wt',el),[['🏔','أرسل جليدية في الوادي'],['💨','رياح على تربة مفككة'],['🏜','رياح محمّلة بالرمال'],['🏝','ترسيب الرمال']],function(i,b,w){m=i;k=0;G2=[];$$('.tool',w).forEach(function(z){z.classList.toggle('on',z===b)});G.sfx.page()});
-  var q=$('#wq',el);G.mcq(q,{id:'l2-u',goal:5,lvl:1,q:'أيّ عوامل التعرية يكوّن وديانًا على شكل حرف U؟',o:['الرياح','المياه','الجليد','الجاذبية'],a:2,ex:'الجليديات.'});
-  G.mcq(q,{id:'l2-dune',goal:5,lvl:1,q:'أيّ عوامل التعرية يكوّن الكثبان الرملية؟',o:['الرياح','المياه','الجاذبية','الجليد'],a:0,ex:'ترسيب الرياح للرمال.'});
+  var q=$('#wq',el);
+  
   return {enter:function(){sim.start()},leave:function(){sim.stop()}}}});
 
 /* ===== ١٢) م٧ الماء وأثر التعرية: حوض الجريان ===== */
@@ -999,7 +1019,7 @@ var BANK=[MQ(1,'أيّ عوامل التعرية يكوّن وديانًا عل�
  MQ(3,'أي التفاعلين أسرع في تجربة الأحماض؟',['حمض الهيدروكلوريك المخفف مع الحجر الجيري','الخل مع الحجر الجيري','الماء مع الحجر الجيري','لا يحدث تفاعل'],0,'حمض الهيدروكلوريك أسرع.'),
  MQ(3,'لماذا تُعرّى الطبقة العلوية الداكنة من التربة أولًا؟',['لأنها الطبقة الظاهرة على السطح','لأنها الأعمق','لأنها صخرية','لأنها لا تحتوي على مواد عضوية'],0,'وهي غنية بالمواد العضوية.'),MQ(3,'التجوية الميكانيكية لا تغيّر التركيب الكيميائي للصخر.',TF,0,'تكسره إلى قطع أصغر فقط.')];
 BANK.forEach(function(q,i){q.id='g6b-'+(i+1)});
-S({id:'contest',name:'م١٠ سباق البراكين',ic:'🌋',manual:true,build:function(el){return G.contest(el,{ey:'المحطة ١٠ · مسابقة الفرق الأربعة',title:'سباق البراكين: التجوية والتعرية',bank:BANK})}});
+S({id:'contest',name:'م سباق البراكين (إثرائي)',ic:'🌋',manual:true,build:function(el){return G.contest(el,{ey:'المحطة ١٠ · مسابقة الفرق الأربعة',title:'سباق البراكين: التجوية والتعرية',bank:BANK})}});
 
 /* ===== ١٥) ختام البعثة ===== */
 S({id:'review',name:'م١١ ختام البعثة',ic:'🏁',build:function(el){return G.review(el,{antKey:'l2',ant:ANT,goals:[
@@ -1012,6 +1032,22 @@ S({id:'review',name:'م١١ ختام البعثة',ic:'🏁',build:function(el){
   hw:['وضّح متى تقوم الأنهار بترسيب الرسوبيات؟ ومتى تقوم بحتّ الصخور؟','ارسم مخططًا لجبل بركاني وآخر مطوي وحدّد أجزاء كلٍّ منهما (سؤال ٢٢ ص ١٩٥).']})}});
 
 TV=G.termSetup(L,TERMS,[{id:'mech',pg:'ص ١٧٥–١٧٦',i:[0,1]},{id:'chem',pg:'ص ١٧٧',i:[2,3]},{id:'soil',pg:'ص ١٧٩–١٨٠',i:[4,5]},{id:'mass',pg:'ص ١٨١–١٨٢',i:[6,7]},{id:'icewind',pg:'ص ١٨٣–١٨٥',i:[8,9]},{id:'water',pg:'ص ١٨٦–١٨٨',i:[10,11]}]);
+
+/* ===== أدوات مطابقة العرض ===== */
+function evalSt(id,ey,title,qs){return {id:id,name:'م '+title,ic:'📝',build:function(el){el.innerHTML='<div class="ey">'+ey+'</div><h1 class="t">'+title+'</h1><div class="col scroll grow"><div id="ev" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start"></div></div>';var c=$('#ev',el);qs.forEach(function(q){q.keep=true;var d=h('<div></div>');c.appendChild(d);G.mcq(d,q)});return {enter:function(){G.done(id)}}}}}
+function sumSt(ey,sec){return {id:'sum',name:'م الخلاصة',ic:'📌',build:function(el){el.innerHTML='<div class="ey">'+ey+'</div><h1 class="t">الخلاصة</h1><div class="col scroll grow"><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-content:start">'+sec.map(function(s,i){return '<div class="cd'+(i?' reveal':'')+'"><h3>'+s[0]+'</h3><ul style="margin:0;font-size:18px;line-height:1.8">'+s[1].map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul></div>'}).join('')+'</div><p class="hint" style="margin:6px 0 0">اضغط «كشف» لإظهار القسم التالي.</p></div>';return {enter:function(){G.done('sum')},reveal:function(){var r=$$('.reveal:not(.shown)',el);if(r.length){r[0].classList.add('shown');return true}return false}}}}}
+function orderSt(L,ORD,skip){L.stations.sort(function(a,b){return ORD.indexOf(a.id)-ORD.indexOf(b.id)});var k=0;L.stations.forEach(function(st){if(skip.indexOf(st.id)>=0)return;k++;st.name='م'+n(k)+' '+st.name.replace(/^م\S*\s+/,'');var kk=k,b=st.build;st.build=function(el,ctx){var r=b(el,ctx);var ey=$('.ey',el);if(ey&&ey.firstChild&&ey.firstChild.nodeType===3)ey.firstChild.textContent=ey.firstChild.textContent.replace(/^المحطة\s*[٠-٩]*/,'المحطة '+n(kk));return r}})}
+
+S(evalSt('eval1','المحطة · تقييم الدرس الثاني','تقييم: التجوية والتعرية وأثرهما',[
+ {id:'l2-u',goal:5,lvl:1,kind:'السؤال ١ من ٤',q:'أيّ عوامل التعرية يكوّن وديانًا على شكل حرف U؟',o:['الرياح','المياه','الجليد','الجاذبية'],a:2,ex:'الجليديات تحتّ القاع فتجعل الوديان على شكل حرف U.'},
+ {id:'l2-trop',goal:2,lvl:1,kind:'السؤال ٢ من ٤',q:'أين تكون التجوية الكيميائية أكثر نشاطًا؟',o:['الصحارى','الجبال','المناطق القطبية','المناطق الاستوائية'],a:3,ex:'في المناطق الاستوائية الحارة الرطبة.'},
+ {id:'l2-carb',goal:2,lvl:1,kind:'السؤال ٣ من ٤',q:'عندما يتحد ثاني أكسيد الكربون مع الماء يتكوّن:',o:['كربونات الكالسيوم','حمض الكربونيك','حمض التنيك','حمض الهيدروكلوريك'],a:1,ex:'حمض الكربونيك.'},
+ {id:'l2-dune',goal:5,lvl:1,kind:'السؤال ٤ من ٤',q:'أيّ عوامل التعرية يكوّن الكثبان الرملية؟',o:['الرياح','المياه','الجاذبية','الجليد'],a:0,ex:'الرياح.'}]));
+S(sumSt('المحطة · الخلاصة',[
+ ['التجوية الميكانيكية',['تؤدي دورة التجمد والانصهار إلى تآكل الصخور وتفتتها.','تؤدي جذور النباتات والحيوانات التي تحفر الأرض إلى تفتت الصخور.']],
+ ['الجليديات والرياح والماء',['تتحرك الجليديات فتعري المواد وترسّبها في مكان آخر.','البرْي والحتّ نوعان من التعرية ينجمان عن الرياح.','تنجم التعرية عن جريان الماء، وقد تنشأ عنها الوديان والأخاديد.']],
+ ['التجوية الكيميائية',['تتفاعل بعض الصخور مع الأحماض الطبيعية.','تؤثر في التربة عوامل مختلفة هي: نوع الصخر الأصلي، ودرجة ميل السطح، والمناخ، والزمن، والمخلوقات الحية.']]]));
+orderSt(L,['intro','wonder','goals','prior','terms','mech','chem','climate','soil','mass','icewind','water','eval1','qa','sum','chrev','contest','review'],['intro','wonder','goals','prior','terms']);
 G.lesson('l2',L);
 })();
 </script>
