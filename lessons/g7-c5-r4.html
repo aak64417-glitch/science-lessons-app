@@ -1455,7 +1455,7 @@ var KL=['أ','ب','ج','د','هـ','و'];
 var CFG=window.CFG||{};var KEY=CFG.key||'atoms-g7c4-v1';var TN=CFG.teams||['فريق الذرة','فريق النواة','فريق الإلكترون','فريق الجزيء'];var SUBT=CFG.sub||'العلوم · الأول المتوسط · الفصل الرابع';
 var ST={teams:[{n:TN[0],s:0,c:'#38d6ff'},{n:TN[1],s:0,c:'#ff5d6c'},{n:TN[2],s:0,c:'#f5c451'},{n:TN[3],s:0,c:'#8b6cff'}],done:{},last:{},res:{},given:{},mute:false};
 try{var sv=JSON.parse(localStorage.getItem(KEY)||'null');if(sv){for(var k in sv)ST[k]=sv[k]}}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(ST))}catch(e){}}
+function save(){ST.at=Date.now();try{localStorage.setItem(KEY,JSON.stringify(ST))}catch(e){}}
 
 /* ================= الصوت ================= */
 var AC=null;function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
@@ -1502,12 +1502,21 @@ E.boot=function(){
   $('#bMute').onclick=function(){ST.mute=!ST.mute;save();muteUI();if(ST.mute)stopMusic()};muteUI();
   $('#bFs').onclick=function(){var d=document.documentElement;if(document.fullscreenElement)document.exitFullscreen().catch(function(){});else if(d.requestFullscreen)d.requestFullscreen().catch(function(){});else if(d.webkitRequestFullscreen)d.webkitRequestFullscreen()};
   $('#wClose').onclick=function(){$('#win').classList.remove('on')};
-  timerInit();scoreUI();
+  timerInit();scoreUI();sessionCheck();
   document.addEventListener('keydown',function(e){if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.key==='ArrowLeft'||e.key==='PageDown'){E.go(E.idx+1);e.preventDefault()}else if(e.key==='ArrowRight'||e.key==='PageUp'){E.go(E.idx-1);e.preventDefault()}else if(e.key===' '){E.reveal();e.preventDefault()}else if(e.key==='Escape')E.drawer(false)});
   document.addEventListener('pointerdown',function(){ac()},{once:true});
   function fromHash(){var m=location.hash.match(/l(\d)(?:-(\d+))?/);if(m&&E.lessons['l'+m[1]]){var id='l'+m[1],i=m[2]?+m[2]:null;if(E.cur===id&&i!=null)E.go(i);else E.open(id,i)}else E.home()}
   addEventListener('hashchange',fromHash);fromHash();
 };
+
+/* ================= حصة جديدة: لا تنتقل نتائج الفرق من فصل إلى آخر ================= */
+function newSession(){ST.teams.forEach(function(t){t.s=0});ST.given={};ST.res={};ST.done={};ST.last={};save();scoreUI();try{refreshAwards()}catch(e){}}
+E.newSession=newSession;
+function sessionCheck(){var any=ST.teams.some(function(t){return t.s>0})||Object.keys(ST.res||{}).length>0;if(!any)return;
+  var mins=Math.round((Date.now()-(ST.at||0))/60000);
+  if(!ST.at||mins>180){newSession();setTimeout(function(){E.toast('🏫 بدأت حصة جديدة: صُفّرت نتائج الفرق والإجابات',3200)},600);return}
+  var ov=h('<div class="sess" style="position:absolute;inset:0;z-index:90;display:grid;place-items:center;background:rgba(2,6,15,.72)"><div class="card" style="max-width:820px;padding:28px 34px;text-align:center"><div style="font-size:56px">🏫</div><h2 style="margin:6px 0 10px;font-family:var(--disp)">هل هذه حصة لفصل جديد؟</h2><p class="big" style="margin:0 0 6px">توجد نتائج محفوظة للفرق من حصة سابقة'+(mins>0?' (منذ '+n(mins)+' دقيقة)':'')+'. إذا بدأت مع فصل آخر فاختر «حصة جديدة»:</p><div class="teams4" style="margin:12px auto">'+teamsHTML()+'</div><div class="qa" style="justify-content:center;gap:14px;margin-top:14px"><button class="btn gold" data-ns>✨ حصة جديدة: تصفير النتائج</button><button class="btn ghost" data-keep>متابعة الحصة نفسها</button></div></div></div>');
+  stage.appendChild(ov);$('[data-ns]',ov).onclick=function(){newSession();ov.remove();E.toast('صُفّرت نتائج الفرق والإجابات',2200)};$('[data-keep]',ov).onclick=function(){ov.remove()}}
 function muteUI(){$('#bMute').textContent=ST.mute?'🔇':'🔊'}
 E.toast=function(m,ms){var t=h('<div class="toast">'+m+'</div>');stage.appendChild(t);setTimeout(function(){t.remove()},ms||2400)};
 E.setPaused=function(on){E.paused=on;document.body.classList.toggle('paused',on);$('#bPause').setAttribute('aria-pressed',on);$('#bPause').innerHTML=on?'▶ تشغيل الحركة':'⏸ إيقاف الحركة';var s=E.curSt();if(s&&s.api&&s.api.pause)s.api.pause(on)};
@@ -1555,7 +1564,7 @@ E.drawerFill=function(){var b=$('#dBody');if(!b)return;var L=E.curL(),d=E.cur&&S
   Object.keys(E.lessons).forEach(function(k,li){var X=E.lessons[k];html+='<h4>الدرس '+n(li+1)+': '+esc(X.title)+'</h4><div class="stlist">'+X.stations.map(function(s,i){var dn=(ST.done[k]||{})[s.id];return '<button data-l="'+k+'" data-i="'+i+'" class="'+(k===E.cur&&i===E.idx?'cur':'')+(dn?' done':'')+'"><i>'+(dn?'✓':n(i+1))+'</i>'+esc(s.name)+'</button>'}).join('')+'</div>'});
   html+='<h4>التحكم السريع</h4><div class="chips"><button class="chip" id="qGoals">🎯 العودة إلى الأهداف</button><button class="chip" id="qReveal">💡 كشف الحل والتفسير</button><button class="chip" id="qSim">⏯ تشغيل/إيقاف المحاكاة</button><button class="chip" id="qWin">🏆 إعلان الفائز</button></div>';
   html+='<h4>المؤقت</h4><div class="chips">'+[30,60,90,120,180].map(function(s){return '<button class="chip" data-tm="'+s+'"'+(T.len===s?' aria-pressed="true"':'')+'>'+n(s)+' ث</button>'}).join('')+'<button class="chip" id="qTm">⏯ تشغيل/إيقاف</button></div>';
-  html+='<h4>الفرق والنقاط</h4><div class="tgrid">'+ST.teams.map(function(t,i){return '<div class="tedit" style="--tc:'+t.c+'"><input data-tn="'+i+'" value="'+esc(t.n)+'" aria-label="اسم الفريق"><button data-ts="'+i+'" data-d="-10">−</button><b class="num">'+n(t.s)+'</b><button data-ts="'+i+'" data-d="10">+</button></div>'}).join('')+'</div><div class="chips" style="margin-top:10px"><button class="chip" id="qReset">↺ تصفير النقاط</button><button class="chip" id="qProg">🗑 مسح تقدم الحصة</button></div>';
+  html+='<h4>الفرق والنقاط</h4><div class="tgrid">'+ST.teams.map(function(t,i){return '<div class="tedit" style="--tc:'+t.c+'"><input data-tn="'+i+'" value="'+esc(t.n)+'" aria-label="اسم الفريق"><button data-ts="'+i+'" data-d="-10">−</button><b class="num">'+n(t.s)+'</b><button data-ts="'+i+'" data-d="10">+</button></div>'}).join('')+'</div><div class="chips" style="margin-top:10px"><button class="chip" id="qNew">🏫 حصة جديدة (تصفير كل النتائج)</button><button class="chip" id="qReset">↺ تصفير النقاط</button><button class="chip" id="qProg">🗑 مسح تقدم الحصة</button></div>';
   html+='<p class="hint" style="margin-top:14px">يعمل العرض دون حسابات للطلاب. تُحفظ النقاط والتقدم على هذا الجهاز فقط.</p>';
   b.innerHTML=html;
   $$('[data-l]',b).forEach(function(x){x.onclick=function(){if(x.dataset.l!==E.cur)E.open(x.dataset.l,+x.dataset.i);else E.go(+x.dataset.i);E.drawer(false)}});
@@ -1567,6 +1576,7 @@ E.drawerFill=function(){var b=$('#dBody');if(!b)return;var L=E.curL(),d=E.cur&&S
   $('#qTm',b).onclick=function(){E.timer.toggle()};
   $$('[data-tn]',b).forEach(function(x){x.oninput=function(){ST.teams[+x.dataset.tn].n=x.value||('الفريق '+n(+x.dataset.tn+1));save();scoreUI()}});
   $$('[data-ts]',b).forEach(function(x){x.onclick=function(){E.addScore(+x.dataset.ts,+x.dataset.d);E.drawerFill()}});
+  $('#qNew',b).onclick=function(){if(!confirm('بدء حصة جديدة لفصل آخر؟ ستُصفَّر نقاط الفرق والإجابات وتقدم المحطات.'))return;newSession();E.drawerFill();E.toast('صُفّرت نتائج الفرق والإجابات',2200)};
   $('#qReset',b).onclick=function(){if(!confirm('تصفير نقاط الفرق الأربعة؟'))return;ST.teams.forEach(function(t){t.s=0});ST.given={};save();scoreUI();E.drawerFill();refreshAwards()};
   $('#qProg',b).onclick=function(){if(!confirm('مسح تقدم المحطات والإجابات المحفوظة؟'))return;ST.done={};ST.res={};ST.given={};save();progUI();E.drawerFill();refreshAwards()};
 };
