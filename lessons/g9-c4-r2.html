@@ -494,7 +494,7 @@ G.termSetup=function(L,TERMS,MAP){
 "use strict";
 var G=window.G,$=G.$,$$=G.$$,n=G.n,h=G.h,img=G.img;
 function cd(t,b,st){return '<div class="cd" style="'+(st||'')+'">'+(t?'<h3>'+t+'</h3>':'')+b+'</div>'}
-function lay(el,ey,title,left,right,lf){el.innerHTML='<div class="ey">'+ey+'</div><h1 class="t">'+title+'</h1><div class="row grow"><div class="col" style="flex:'+(lf||1.35)+'">'+left+'</div><div class="col scroll grow" id="R">'+right+'</div></div>';return $('#R',el)}
+function lay(el,ey,title,left,right,lf){el.innerHTML='<div class="ey">'+ey+'</div><h1 class="t">'+title+'</h1><div class="row grow"><div class="col'+(left.indexOf('<canvas')<0?' scroll':'')+'" style="flex:'+(lf||1.35)+'">'+left+'</div><div class="col scroll grow" id="R">'+right+'</div></div>';return $('#R',el)}
 function B(s){return '<span class="seq">'+s.split('').map(function(c){return '<span class="base '+c+'">'+c+'</span>'}).join('')+'</span>'}
 function L_(s){return '<span class="ltr">'+s+'</span>'}
 var BC={A:'#0f9a72',T:'#e23e64',C:'#1f84cc',G:'#e6a100',U:'#8b5cf6'},PAIR={A:'T',T:'A',C:'G',G:'C'};
@@ -781,7 +781,7 @@ G.lesson('l1',L);
 "use strict";
 var G=window.G,$=G.$,$$=G.$$,n=G.n,h=G.h,img=G.img;
 function cd(t,b,st){return '<div class="cd" style="'+(st||'')+'">'+(t?'<h3>'+t+'</h3>':'')+b+'</div>'}
-function lay(el,ey,title,left,right,lf){el.innerHTML='<div class="ey">'+ey+'</div><h1 class="t">'+title+'</h1><div class="row grow"><div class="col" style="flex:'+(lf||1.35)+'">'+left+'</div><div class="col scroll grow" id="R">'+right+'</div></div>';return $('#R',el)}
+function lay(el,ey,title,left,right,lf){el.innerHTML='<div class="ey">'+ey+'</div><h1 class="t">'+title+'</h1><div class="row grow"><div class="col'+(left.indexOf('<canvas')<0?' scroll':'')+'" style="flex:'+(lf||1.35)+'">'+left+'</div><div class="col scroll grow" id="R">'+right+'</div></div>';return $('#R',el)}
 function E(s){return '<span class="ltr">'+s+'</span>'}
 function gt(a,b){return a<b?a+b:b+a} /* الحرف الكبير أولًا */
 var GO=['أن يفسر الطالب كيف تورث الصفات.','أن يتعرف الطالب دور العالم مندل في علم الوراثة.','أن يستعمل الطالب مربع بانيت لتوقع نتائج التزاوج.','أن يميز الطالب بين الطرز الجينية والطرز الشكلية.'];
@@ -820,8 +820,8 @@ S({id:'goals',name:'أهداف الدرس',ic:'🎯',build:function(el){return G
 
 /* ===== ٤) التهيئة ===== */
 S({id:'prior',name:'تهيئة: هل تشبه والديك؟',ic:'👪',build:function(el){var R=lay(el,'تهيئة · ص ١٢٨','هل تشبه أحد والديك أم جديك؟',
-  '<div class="cd tape" style="display:flex;gap:12px;align-items:center">'+img('b_fam','width:260px;height:190px')+img('b_eyes','width:220px;height:190px;object-fit:contain;background:#fff')+'<p class="big" style="margin:0">وهل عيناك تشبهان عيني أبيك؟<br><span class="hint">تأمّل الصورتين، ثم صوّت.</span></p></div><div id="pp"></div>'+
-  cd('🔁 مراجعة المفردات','<p style="margin:0;font-size:19px;line-height:1.7"><b class="hl">الانقسام المنصف:</b> عملية حيوية ينتج عنها أربع خلايا أحادية المجموعة الكروموسومية من خلية واحدة ثنائية المجموعة الكروموسومية.</p>'),
+  '<div class="cd tape" style="display:flex;gap:12px;align-items:center">'+img('b_fam','width:260px;height:190px')+img('b_eyes','width:220px;height:190px;object-fit:contain;background:#fff')+'<p class="big" style="margin:0">وهل عيناك تشبهان عيني أبيك؟<br><span class="hint">تأمّل الصورتين، ثم صوّت.</span></p></div>'+
+  cd('🔁 مراجعة المفردات','<p style="margin:0;font-size:19px;line-height:1.7"><b class="hl">الانقسام المنصف:</b> عملية حيوية ينتج عنها أربع خلايا أحادية المجموعة الكروموسومية من خلية واحدة ثنائية المجموعة الكروموسومية.</p>')+'<div id="pp"></div>',
   cd('📖 توجيه القراءة: قبل القراءة','<p class="hint" style="margin:0 0 6px">اختر «موافق» أو «غير موافق» لكل عبارة، وسنعود إليها في نهاية الدرس.</p><div id="an"></div>'),1.1);
   G.poll($('#pp',el),{q:'بمن تشبه أكثر في لون عينيك؟',o:['بأبي','بأمي','بأحد أجدادي','لا أشبه أحدًا منهم']});
   G.anticip($('#an',el),{key:'l2',items:ANT});return {}}});
