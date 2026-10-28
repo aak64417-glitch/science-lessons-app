@@ -1,5 +1,5 @@
 {
- "version": 27,
+ "version": 28,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -456,6 +456,138 @@
    "color": "#6c3fd1",
    "file": "tools/contest-g9-c4-l2.html",
    "cover": "img/cover-contest-g9-c4-l2.webp"
+  },
+  {
+   "id": "g9-c5-l1",
+   "type": "lesson",
+   "grade": "9",
+   "no": 1,
+   "chapter": "الفصل الخامس: تركيب الذرة",
+   "title": "نماذج الذرة",
+   "desc": "«آلة الزمن الذرية»: من فلاسفة الإغريق إلى السحابة الإلكترونية؛ مختبر كروكس، ومدفع جسيمات ألفا على صفيحة الذهب، ومحكمة نموذج طومسون، وتحدي الأبطال والصندوق الغامض واكتشف الخطأ.",
+   "color": "#3d2bd4",
+   "file": "lessons/g9-c5-v1.html#l11",
+   "cover": "img/cover-g9-c5-l1.webp"
+  },
+  {
+   "id": "g9-c5-l2",
+   "type": "lesson",
+   "grade": "9",
+   "no": 2,
+   "chapter": "الفصل الخامس: تركيب الذرة",
+   "title": "النواة",
+   "desc": "«مفاعل الأسرار»: باني الأنوية والنظائر، وأقفال شيفرة النظير، وآلة تحلل ألفا وبيتا، ومحاكي عمر النصف، ومحقق الأحافير بالكربون-١٤، وتطبيقات الإشعاع.",
+   "color": "#b8002e",
+   "file": "lessons/g9-c5-v1.html#l12",
+   "cover": "img/cover-g9-c5-l2.webp"
+  },
+  {
+   "id": "sheet-g9-c5-l1",
+   "type": "sheet",
+   "grade": "9",
+   "no": 1,
+   "chapter": "الفصل الخامس: تركيب الذرة",
+   "title": "ورقة عمل: نماذج الذرة",
+   "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
+   "color": "#4f2fc9",
+   "file": "tools/sheet-g9-c5-l1.html",
+   "cover": "img/cover-sheet-g9-c5-l1.webp"
+  },
+  {
+   "id": "sheet-g9-c5-l2",
+   "type": "sheet",
+   "grade": "9",
+   "no": 2,
+   "chapter": "الفصل الخامس: تركيب الذرة",
+   "title": "ورقة عمل: النواة",
+   "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
+   "color": "#4f2fc9",
+   "file": "tools/sheet-g9-c5-l2.html",
+   "cover": "img/cover-sheet-g9-c5-l2.webp"
+  },
+  {
+   "id": "g9-c5-activity",
+   "type": "activity",
+   "grade": "9",
+   "no": 0,
+   "chapter": "الفصل الخامس: تركيب الذرة",
+   "title": "مختبر الأنشطة",
+   "desc": "ذاكرة المصطلحات، وفرز البطاقات، وأكمل التعريف، وصح أم خطأ.",
+   "color": "#4f2fc9",
+   "file": "tools/g9-c5-activity.html",
+   "cover": "img/cover-g9-c5-activity.webp"
+  },
+  {
+   "id": "g9-c5-contest",
+   "type": "contest",
+   "grade": "9",
+   "no": 0,
+   "chapter": "الفصل الخامس: تركيب الذرة",
+   "title": "مسابقة مراجعة الفصل",
+   "desc": "لوحة تحدٍّ للفرق تجمع أسئلة دروس الفصل كلها: نقاط ومؤقت وسؤال الحظ ومنصة تتويج.",
+   "color": "#4f2fc9",
+   "file": "tools/g9-c5-contest.html",
+   "cover": "img/cover-g9-c5-contest.webp"
+  },
+  {
+   "id": "g9-c5-assess",
+   "type": "assess",
+   "grade": "9",
+   "no": 0,
+   "chapter": "الفصل الخامس: تركيب الذرة",
+   "title": "اختبار الفصل الذكي",
+   "desc": "اختبار قصير بإتقان كل درس، مع مراجعة الأخطاء وشرح الإجابات.",
+   "color": "#4f2fc9",
+   "file": "tools/g9-c5-assess.html",
+   "cover": "img/cover-g9-c5-assess.webp"
+  },
+  {
+   "id": "g9-c5-video",
+   "type": "video",
+   "grade": "9",
+   "no": 0,
+   "chapter": "الفصل الخامس: تركيب الذرة",
+   "title": "الملخص المرئي المتحرك",
+   "desc": "عرض متحرك يلخص الأهداف والمفاهيم، مع قراءة صوتية اختيارية.",
+   "color": "#4f2fc9",
+   "file": "tools/g9-c5-video.html",
+   "cover": "img/cover-g9-c5-video.webp"
+  },
+  {
+   "id": "g9-c5-extra",
+   "type": "extra",
+   "grade": "9",
+   "no": 0,
+   "chapter": "الفصل الخامس: تركيب الذرة",
+   "title": "حقيبة الفصل",
+   "desc": "مسرد المصطلحات، وبطاقة القوانين، وقائمة المراجعة، وروابط الفصل.",
+   "color": "#4f2fc9",
+   "file": "tools/g9-c5-extra.html",
+   "cover": "img/cover-g9-c5-extra.webp"
+  },
+  {
+   "id": "contest-g9-c5-l1",
+   "type": "contest",
+   "grade": "9",
+   "no": 1,
+   "chapter": "الفصل الخامس: تركيب الذرة",
+   "title": "سباق النماذج الذرية: نماذج الذرة",
+   "desc": "🏎 سباق بين الفرق: كل إجابة صحيحة خطوة نحو خط النهاية.",
+   "color": "#4f2fc9",
+   "file": "tools/contest-g9-c5-l1.html",
+   "cover": "img/cover-contest-g9-c5-l1.webp"
+  },
+  {
+   "id": "contest-g9-c5-l2",
+   "type": "contest",
+   "grade": "9",
+   "no": 2,
+   "chapter": "الفصل الخامس: تركيب الذرة",
+   "title": "شدّ الحبل: النواة",
+   "desc": "💪 فريقان على طرفي الحبل: كل إجابة صحيحة تسحب العلامة نحوك.",
+   "color": "#4f2fc9",
+   "file": "tools/contest-g9-c5-l2.html",
+   "cover": "img/cover-contest-g9-c5-l2.webp"
   },
   {
    "id": "sheet-g7-c1-l1",
