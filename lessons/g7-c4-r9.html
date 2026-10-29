@@ -2014,20 +2014,22 @@ S({id:'thomson',name:'م٥ نموذج طومسون ومختبره',build:functio
    '<div class="card" style="padding:14px 18px"><h3>ماذا فعل طومسون؟</h3><p style="margin:0;font-size:19px;line-height:1.7">تمكّن العالم طومسون عن طريق التجربة أن يثبت وجود جسيمات مشحونة بشحنة سالبة في الذرة، وأطلق عليها اسم <b class="gl">إلكترونات</b>. واشتهرت تجربته باسم <b class="gl">تجربة الأشعة المهبطية</b>.</p></div>'+
    '<div class="card reveal" id="thEx" style="padding:14px 18px"><h3>الاستنتاج</h3><div class="row" style="gap:12px;align-items:center"><div style="background:#030a1c;border-radius:18px;padding:4px">'+E.svgModel('thomson',150)+'</div><div class="explain" style="flex:1">لاحظ طومسون أنه عند وضع مغناطيس في مسار الأشعة المهبطية فإنها <b>تنحرف</b>؛ مما يعني أنها <b>جسيمات مشحونة</b>. واقترح أن الذرة كرة متجانسة موجبة الشحنة تتوزع فيها إلكترونات سالبة الشحنة.</div></div></div><div id="thq"></div></div></div>';
   var c=$('#thc',el),x=c.getContext('2d'),on=false,mag=0,tm=0,run=false,raf=0,P=[];
-  var TY=250,X0=170,X1=850,CA=215,AN=300;
+  var TY=250,X0=170,X1=850,CA=X0+34,AN=X1-40;
   function draw(){var by=470;E.labBg(x,1000,560,by);
     /* مصدر الكهرباء */x.fillStyle='#2d3a40';LK.rr(x,60,by-110,170,110,14);x.fill();x.fillStyle=on?'#3ee08f':'#5b6b73';x.beginPath();x.arc(100,by-70,14,0,7);x.fill();x.fillStyle='#ffc23d';LK.rr(x,140,by-84,60,28,6);x.fill();LK.T(x,on?'تشغيل':'إيقاف',170,by-70,15,'#1b2a3a');LK.T(x,'مصدر كهرباء',145,by-24,15,'#fff');
-    x.strokeStyle='#d9453b';x.lineWidth=4;x.beginPath();x.moveTo(200,by-110);x.quadraticCurveTo(200,TY+40,CA,TY+30);x.stroke();x.strokeStyle='#1b2a3a';x.beginPath();x.moveTo(120,by-110);x.quadraticCurveTo(140,TY+110,AN,TY+40);x.stroke();
+    /* الأسلاك: السالب إلى المهبط (بداية الأنبوب) والموجب إلى المصعد (نهايته) */x.lineWidth=4;x.strokeStyle='#1b2a3a';x.beginPath();x.moveTo(120,by-110);x.quadraticCurveTo(110,TY+40,CA,TY+44);x.stroke();x.strokeStyle='#d9453b';x.beginPath();x.moveTo(205,by-110);x.quadraticCurveTo(600,by-20,AN+8,TY+52);x.stroke();
+    LK.T(x,'−',100,by-124,22,'#1b2a3a',800);LK.T(x,'+',210,by-124,22,'#d9453b',800);
     /* الحامل */x.fillStyle='#55707c';x.fillRect(330,TY+70,14,by-TY-70);x.fillRect(700,TY+70,14,by-TY-70);
-    /* الأنبوب الزجاجي */x.fillStyle='rgba(205,232,242,.55)';LK.rr(x,X0,TY-70,X1-X0,140,70);x.fill();x.strokeStyle='#4f6f7c';x.lineWidth=5;x.stroke();x.fillStyle='rgba(255,255,255,.4)';LK.rr(x,X0+40,TY-58,X1-X0-90,10,5);x.fill();
-    /* الشاشة */var hit=TY-mag*95;x.fillStyle='#173b2a';LK.rr(x,X1-34,TY-62,22,124,8);x.fill();if(on){var g=x.createRadialGradient(X1-24,hit,0,X1-24,hit,30);g.addColorStop(0,'rgba(120,255,160,1)');g.addColorStop(1,'rgba(120,255,160,0)');x.fillStyle=g;x.fillRect(X1-60,hit-30,70,60)}
-    /* المهبط والمصعد */x.fillStyle='#6f8796';x.fillRect(CA-6,TY-34,12,68);x.fillRect(AN-5,TY-40,10,32);x.fillRect(AN-5,TY+8,10,32);
-    LK.T(x,'المهبط',CA,TY-90,16,'#1b2a3a');LK.T(x,'المصعد',AN,TY-90,16,'#1b2a3a');LK.T(x,'شاشة متوهجة',X1-24,TY-90,16,'#1b2a3a');
-    /* الأشعة */if(on){x.save();x.shadowColor='rgba(80,200,255,.9)';x.shadowBlur=16;x.strokeStyle='rgba(120,220,255,.9)';x.lineWidth=5;x.beginPath();x.moveTo(CA+6,TY);x.lineTo(AN+20,TY);x.quadraticCurveTo(560,TY,X1-30,hit);x.stroke();x.restore();
-      P.forEach(function(p){var t=p.t,pxx,pyy;if(t<.15){pxx=CA+6+(AN+20-CA-6)*(t/.15);pyy=TY}else{var u=(t-.15)/.85,ax=AN+20,ay=TY,cx2=560,cy2=TY,bx=X1-30,by2=hit;pxx=(1-u)*(1-u)*ax+2*(1-u)*u*cx2+u*u*bx;pyy=(1-u)*(1-u)*ay+2*(1-u)*u*cy2+u*u*by2}x.fillStyle='#1f5fd0';x.beginPath();x.arc(pxx,pyy,5,0,7);x.fill();LK.T(x,'−',pxx,pyy-12,14,'#1f5fd0',800)})}
+    /* الأنبوب الزجاجي */x.fillStyle=on?'rgba(150,255,180,.32)':'rgba(205,232,242,.55)';LK.rr(x,X0,TY-70,X1-X0,140,70);x.fill();x.strokeStyle='#4f6f7c';x.lineWidth=5;x.stroke();x.fillStyle='rgba(255,255,255,.4)';LK.rr(x,X0+40,TY-58,X1-X0-90,10,5);x.fill();
+    /* المهبط (−) في بداية الأنبوب والمصعد (+) في نهايته */var hit=TY-mag*48;x.fillStyle='#6f8796';x.fillRect(CA-7,TY-44,14,88);x.fillRect(AN-7,TY-44,14,88);
+    if(on){var g=x.createRadialGradient(AN-8,hit,0,AN-8,hit,46);g.addColorStop(0,'rgba(120,255,140,1)');g.addColorStop(1,'rgba(120,255,140,0)');x.fillStyle=g;x.fillRect(AN-60,hit-46,70,92)}
+    LK.T(x,'المهبط (الكاثود) −',CA+20,TY-92,17,'#1b2a3a',700);LK.T(x,'المصعد (الأنود) +',AN-30,TY-92,17,'#b02a22',700);
+    /* الأشعة الخضراء */if(on){x.save();x.shadowColor='rgba(80,255,120,.95)';x.shadowBlur=18;x.strokeStyle='rgba(90,240,120,.95)';x.lineWidth=7;x.beginPath();x.moveTo(CA+8,TY);x.quadraticCurveTo(540,TY,AN-8,hit);x.stroke();x.restore();
+      P.forEach(function(p){var u=p.t,ax=CA+8,ay=TY,cx2=540,cy2=TY,bx=AN-8,by2=hit,pxx=(1-u)*(1-u)*ax+2*(1-u)*u*cx2+u*u*bx,pyy=(1-u)*(1-u)*ay+2*(1-u)*u*cy2+u*u*by2;x.fillStyle='#0f7a3a';x.beginPath();x.arc(pxx,pyy,5,0,7);x.fill();LK.T(x,'−',pxx,pyy-12,14,'#0f5a2a',800)});
+      LK.T(x,'وهج أخضر',540,TY+58,17,'#0f6a32',700)}
     /* المغناطيس */var my=TY-170+70*mag,mx=560;x.save();x.globalAlpha=.35+.65*mag;x.fillStyle='#d9453b';LK.rr(x,mx-90,my-26,90,52,8);x.fill();x.fillStyle='#2f73c9';LK.rr(x,mx,my-26,90,52,8);x.fill();LK.T(x,'N',mx-45,my,26,'#fff',800);LK.T(x,'S',mx+45,my,26,'#fff',800);x.restore();LK.T(x,mag>.5?'المغناطيس قريب من الأشعة':'المغناطيس بعيد',mx,my-44,16,'#1b2a3a');
     LK.plate(x,'أنبوب الأشعة المهبطية',510,515);
-    if(on)LK.pill(x,mag>.5?'↶ انحرفت الأشعة عن مسارها':'→ تسير الأشعة في خط مستقيم',510,40,'#fff','#1b2a3a',19)}
+    if(on)LK.pill(x,mag>.5?'↶ انحرفت الأشعة الخضراء عن مسارها':'← تسير الأشعة من المهبط إلى المصعد في خط مستقيم',510,40,'#fff','#1b2a3a',19)}
   var lk='';function check(){if(!on||Math.abs(mag-tm)>.01)return;var k=tm>.5?'1':'0';if(k===lk)return;lk=k;tb.fill(+k,[k==='1'?'تنحرف الأشعة عن مسارها':'تسير في خط مستقيم نحو الشاشة',k==='1'?'الأشعة جسيمات مشحونة':'—']);E.sfx.ok();if(tb.count()===2){E.complete('thomson');$('#thEx',el).classList.add('shown')}}
   function loop(){if(!run)return;raf=requestAnimationFrame(loop);if(!E.paused){mag+=(tm-mag)*.06;if(on){if(P.length<10&&Math.random()<.2)P.push({t:0});P.forEach(function(p){p.t+=.012});P=P.filter(function(p){return p.t<1})}check()}draw()}
   LK.tools($('#tht',el),[['🔌','شغّل الجهاز / أوقفه'],['🧲','قرّب المغناطيس'],['↩','أبعد المغناطيس']],function(i){if(i===0){on=!on;lk=on?'':lk;P=[];if(on)lk='';E.sfx.pop()}else{if(!on){E.toast('شغّلوا الجهاز أولًا');return}tm=i===1?1:0;E.sfx.whoosh()}});
@@ -2050,12 +2052,12 @@ S({id:'rutherford',name:'م٦ نموذج رذرفورد وتجربته',build:fu
   function cls(th){var a=Math.abs(th);return a<0.09?0:(a<Math.PI/2?1:2)}
   function draw(){x.clearRect(0,0,W,H);var g=x.createRadialGradient(FX,FY,10,FX,FY,600);g.addColorStop(0,'#0f2457');g.addColorStop(1,'#030a1c');x.fillStyle=g;x.fillRect(0,0,W,H);
     /* الشاشة الكاشفة */
-    x.strokeStyle='rgba(62,224,143,.35)';x.lineWidth=14;x.beginPath();x.arc(FX,FY,RING,0,Math.PI*2);x.stroke();
-    hits.forEach(function(hh){x.fillStyle='rgba(180,255,210,'+hh.a+')';x.beginPath();x.arc(FX+Math.cos(hh.ang)*RING,FY+Math.sin(hh.ang)*RING,4,0,7);x.fill()});
+    x.strokeStyle='rgba(62,224,143,.55)';x.lineWidth=20;x.beginPath();x.arc(FX,FY,RING,0,Math.PI*2);x.stroke();x.strokeStyle='rgba(160,255,200,.9)';x.lineWidth=2;x.beginPath();x.arc(FX,FY,RING-10,0,Math.PI*2);x.stroke();
+    hits.forEach(function(hh){var hx=FX+Math.cos(hh.ang)*RING,hy=FY+Math.sin(hh.ang)*RING,col=hh.c===2?'255,90,90':hh.c===1?'255,214,70':'150,255,170';if(hh.f>0){var gr=x.createRadialGradient(hx,hy,0,hx,hy,30*hh.f+8);gr.addColorStop(0,'rgba(255,255,255,'+hh.f+')');gr.addColorStop(.35,'rgba('+col+','+hh.f+')');gr.addColorStop(1,'rgba('+col+',0)');x.fillStyle=gr;x.beginPath();x.arc(hx,hy,30*hh.f+8,0,7);x.fill()}x.fillStyle='rgba('+col+','+hh.a+')';x.beginPath();x.arc(hx,hy,6,0,7);x.fill()});
     /* المصدر */
     x.fillStyle='#4a5670';x.fillRect(40,FY-40,70,80);x.fillStyle='#ffcc4d';x.fillRect(106,FY-10,10,20);x.font='600 17px "IBM Plex Sans Arabic"';x.fillStyle='#a9bddf';x.textAlign='center';x.fillText('مصدر جسيمات ألفا',95,FY-52);
     /* صفيحة الذهب */
-    var gg=x.createLinearGradient(FX-6,0,FX+6,0);gg.addColorStop(0,'#b88a1f');gg.addColorStop(.5,'#ffe29a');gg.addColorStop(1,'#b88a1f');x.fillStyle=gg;x.fillRect(FX-5,FY-150,10,300);x.fillStyle='#f5c451';x.fillText('صفيحة ذهب رقيقة',FX,FY-162);x.fillStyle='rgba(62,224,143,.8)';x.fillText('شاشة كاشفة',FX+RING-20,FY-RING+20);
+    var gg=x.createLinearGradient(FX-6,0,FX+6,0);gg.addColorStop(0,'#b88a1f');gg.addColorStop(.5,'#ffe29a');gg.addColorStop(1,'#b88a1f');x.fillStyle=gg;x.fillRect(FX-5,FY-150,10,300);x.fillStyle='#f5c451';x.fillText('صفيحة ذهب رقيقة',FX,FY-162);x.font='700 18px "Readex Pro"';x.fillStyle='#7dffb0';x.fillText('شاشة فلورسنتية تتوهج عند سقوط الجسيمات',FX,FY+RING+32);x.font='600 15px "IBM Plex Sans Arabic"';[['150,255,170','نفذت'],['255,214,70','انحرفت'],['255,90,90','ارتدّت']].forEach(function(l,i){x.fillStyle='rgb('+l[0]+')';x.beginPath();x.arc(60+i*110,H-26,8,0,7);x.fill();x.fillStyle='#dfe8ff';x.textAlign='left';x.fillText(l[1],74+i*110,H-21)});x.textAlign='center';
     /* الجسيمات */
     P.forEach(function(p){x.strokeStyle='rgba(255,140,90,.35)';x.lineWidth=2;x.beginPath();p.trail.forEach(function(q,i){i?x.lineTo(q[0],q[1]):x.moveTo(q[0],q[1])});x.stroke();x.fillStyle='#ff8a5c';x.beginPath();x.arc(p.x,p.y,4,0,7);x.fill()});
     if(zoom>0.02)drawZoom()}
@@ -2065,8 +2067,8 @@ S({id:'rutherford',name:'م٦ نموذج رذرفورد وتجربته',build:fu
     var t=performance.now()/1000;for(var i=0;i<6;i++){var u=(t*.35+i/6)%1;var yy=zy-90+i*36;var px=zx-R+u*R*2;if(Math.hypot(px-zx,yy-zy)<R){x.fillStyle='#ff8a5c';x.beginPath();x.arc(px,yy,3,0,7);x.fill()}}
     x.restore()}
   function step(){P.forEach(function(p){if(!p.hit&&p.x>=FX){p.hit=true;var v=9;p.vx=Math.cos(p.th)*v;p.vy=Math.sin(p.th)*v}p.x+=p.vx;p.y+=p.vy;p.trail.push([p.x,p.y]);if(p.trail.length>40)p.trail.shift();
-      if(p.hit&&Math.hypot(p.x-FX,p.y-FY)>=RING-6){var c=cls(p.th);C[c]++;hits.push({ang:Math.atan2(p.y-FY,p.x-FX),a:.9});p.dead=true}if(!p.hit&&p.x<0)p.dead=true});
-    P=P.filter(function(p){return !p.dead});hits.forEach(function(hh){hh.a=Math.max(.25,hh.a-.002)});if(hits.length>700)hits.splice(0,hits.length-700);
+      if(p.hit&&Math.hypot(p.x-FX,p.y-FY)>=RING-6){var c=cls(p.th);C[c]++;hits.push({ang:Math.atan2(p.y-FY,p.x-FX),a:1,f:1,c:c});p.dead=true}if(!p.hit&&p.x<0)p.dead=true});
+    P=P.filter(function(p){return !p.dead});hits.forEach(function(hh){hh.a=Math.max(.55,hh.a-.002);hh.f=Math.max(0,(hh.f||0)-.03)});if(hits.length>700)hits.splice(0,hits.length-700);
     if(queue>0){var k=Math.min(queue,4);for(var i=0;i<k;i++)spawn();queue-=k}if(stream&&Math.random()<.7)spawn();
     $('#c0',el).textContent=n(C[0]);$('#c1',el).textContent=n(C[1]);$('#c2',el).textContent=n(C[2]);$('#rTot',el).textContent='مجموع الجسيمات: '+n(C[0]+C[1]+C[2])}
   function loop(){if(!run)return;raf=requestAnimationFrame(loop);if(!E.paused)step();zoom+=((el._z?1:0)-zoom)*.1;draw()}
@@ -2170,7 +2172,7 @@ S({id:'bohr',name:'م نموذج بور',build:function(el){
   return {}}});
 
 S({id:'modern',name:'م النموذج الذري الحديث',build:function(el){
-  el.innerHTML='<div class="eyebrow">المحطة · النموذج الذري الحديث ص ١٠٧</div><h1 class="t">النموذج الذري الحديث: نموذج السحابة الإلكترونية</h1><div class="row grow" style="min-height:0"><div class="col grow"><div class="card"><p class="big" style="margin:0">نتيجة الأبحاث المستمرة، توصّل العلماء إلى أن للإلكترونات <b class="cyt">خصائص موجية</b> و<b class="cyt">خصائص مادية</b>، وأن مستويات الطاقة غير محددة، وأن <b class="neg">الإلكترونات</b> توجد حول النواة على شكل <b class="gl">سحابة إلكترونية</b>.</p></div><div class="card"><h3>🔎 استنتج</h3><p class="big" style="margin:0">علامَ تدل كثافة اللون بالقرب من النواة؟</p><div class="qa"><button class="btn ghost" data-rv>اعرض الإجابة</button></div><div class="explain reveal" id="mdA">تدل على أن احتمال وجود الإلكترونات بالقرب من النواة <b>أكبر</b>.</div></div><div id="mnq"></div></div><div class="col" style="flex:.9"><div class="card" style="text-align:center">'+img('c_cloud','width:100%;height:420px;object-fit:contain;background:#fff;border-radius:14px')+'</div></div></div>';
+  el.innerHTML='<div class="eyebrow">المحطة · النموذج الذري الحديث ص ١٠٨</div><h1 class="t">النموذج الذري الحديث: نموذج السحابة الإلكترونية</h1><div class="row grow" style="min-height:0"><div class="col grow"><div class="card"><p class="big" style="margin:0">نتيجة الأبحاث المستمرة، توصّل العلماء إلى أن للإلكترونات <b class="cyt">خصائص موجية</b> و<b class="cyt">خصائص مادية</b>، وأن مستويات الطاقة غير محددة، وأن <b class="neg">الإلكترونات</b> توجد حول النواة على شكل <b class="gl">سحابة إلكترونية</b>.</p></div><div class="card"><h3>🔎 استنتج</h3><p class="big" style="margin:0">علامَ تدل كثافة اللون بالقرب من النواة؟</p><div class="qa"><button class="btn ghost" data-rv>اعرض الإجابة</button></div><div class="explain reveal" id="mdA">تدل على أن احتمال وجود الإلكترونات بالقرب من النواة <b>أكبر</b>.</div></div><div id="mnq"></div></div><div class="col" style="flex:.9"><div class="card" style="text-align:center">'+img('c_cloud','width:100%;height:420px;object-fit:contain;background:#fff;border-radius:14px')+'</div></div></div>';
   $('[data-rv]',el).onclick=function(){$('#mdA',el).classList.add('shown');E.sfx.pop()};
   E.mcq($('#mnq',el),{id:'l1-cloud-q',goal:3,lvl:1,q:'مستويات الطاقة غير محددة، وتوجد الإلكترونات حول النواة على شكل…',o:['أشعة','ضوء','سحابة إلكترونية','طاقة'],a:2,cols:2,keep:1,ex:'النموذج الذري الحديث.'});
   return {reveal:function(){var r=$('#mdA',el);if(!r.classList.contains('shown')){r.classList.add('shown');return true}return false}}}});
