@@ -310,6 +310,12 @@ function closeP(){ $('#player').hidden=true; $('#pStage').innerHTML=''; document
 $('#pClose').addEventListener('click',closeP);
 $('#pFull').addEventListener('click',function(){ fs($('#player')) });
 document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&!$('#player').hidden&&!document.fullscreenElement) closeP() });
+/* أزرار «الفصل» و«الدروس» داخل دروس الفصل الدراسي الثاني: تغلق المشغّل وتعرض الفصل أو قائمة الدروس */
+window.addEventListener('message',function(e){ var d=e.data; if(!d||d.type!=='durus-nav'||$('#player').hidden) return;
+  if(document.fullscreenElement) document.exitFullscreen().catch(function(){});
+  closeP(); var k=null; S.rows.forEach(function(r){ if(!k&&r.chapter===d.chapter) k=r.grade+'|'+r.chapter });
+  if(d.to==='chapter'&&k){ S.open={}; S.open[k]=true } render();
+  setTimeout(function(){ var t=null; if(d.to==='chapter'&&k) document.querySelectorAll('[data-chap]').forEach(function(b){ if(b.dataset.chap===k) t=b.parentNode }); (t||$('#libS')).scrollIntoView({behavior:RM?'auto':'smooth'}) },60) });
 
 function online(){ var o=$('.offl'); if(navigator.onLine){ if(o) o.remove() } else if(!o){ o=document.createElement('div'); o.className='offl'; o.textContent='تعمل الآن دون إنترنت'; document.body.appendChild(o) } }
 addEventListener('online',online); addEventListener('offline',online); online();

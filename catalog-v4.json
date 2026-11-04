@@ -1,5 +1,5 @@
 {
- "version": 37,
+ "version": 38,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -1872,6 +1872,45 @@
    "color": "#8A5A2B",
    "file": "tools/contest-g7-c6-l2.html",
    "cover": "img/cover-contest-g7-c6-l2.webp"
+  },
+  {
+   "id": "g7s2-c7-l1",
+   "title": "الغلاف الجوي والطقس",
+   "type": "lesson",
+   "grade": "7",
+   "no": 1,
+   "chapter": "الفصل السابع: الغلاف الجوي المتحرك",
+   "term": "2",
+   "desc": "مهمة في طبقات السماء: الطبقات ودورة الماء والرياح",
+   "color": "#0E7490",
+   "file": "lessons/g7s2-c7-l1.html",
+   "cover": "img/cover-g7s2-c7-l1.webp"
+  },
+  {
+   "id": "g7s2-c7-l2",
+   "title": "الكتل والجبهات الهوائية",
+   "type": "lesson",
+   "grade": "7",
+   "no": 2,
+   "chapter": "الفصل السابع: الغلاف الجوي المتحرك",
+   "term": "2",
+   "desc": "غرفة عمليات الأرصاد: الجبهات والعواصف والأعاصير",
+   "color": "#B4461A",
+   "file": "lessons/g7s2-c7-l2.html",
+   "cover": "img/cover-g7s2-c7-l2.webp"
+  },
+  {
+   "id": "g7s2-c7-rv",
+   "title": "مراجعة الفصل السابع وأسئلته",
+   "type": "lesson",
+   "grade": "7",
+   "no": 0,
+   "chapter": "الفصل السابع: الغلاف الجوي المتحرك",
+   "term": "2",
+   "desc": "حلول أسئلة مراجعة الفصل والتحدي الشامل",
+   "color": "#6D28D9",
+   "file": "lessons/g7s2-c7-review.html",
+   "cover": "img/cover-g7s2-c7-rv.webp"
   }
  ]
 }
