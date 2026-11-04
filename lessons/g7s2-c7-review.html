@@ -163,8 +163,11 @@ input[type=range]{width:min(420px,70vw);height:44px;accent-color:var(--acc)}
 .blank{border:3px dashed var(--c1);border-radius:16px;min-width:200px;min-height:60px;background:#FFFBEB;padding:6px 14px;font-size:calc(var(--tx) - 2px);font-weight:800}
 .blank.ok{border-style:solid;border-color:var(--good);background:var(--goodbg)}
 /* شريط الذكريات */
-.strip{display:flex;gap:16px;overflow-x:auto;padding:6px 4px 14px;scroll-snap-type:x mandatory}
-.strip .flip{flex:0 0 280px;scroll-snap-align:start}
+.strip{display:flex;gap:14px;overflow-x:auto;padding:34px 18px;scroll-snap-type:x mandatory;background:#111;border-radius:14px;position:relative;
+ background-image:repeating-linear-gradient(90deg,#f5f5f5 0 16px,transparent 16px 34px),repeating-linear-gradient(90deg,#f5f5f5 0 16px,transparent 16px 34px);
+ background-size:100% 14px,100% 14px;background-position:0 10px,0 calc(100% - 10px);background-repeat:repeat-x;background-color:#111}
+.strip .fa img{width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:8px}
+.strip .flip{flex:0 0 280px;scroll-snap-align:start;min-height:300px}.strip .flip .in{min-height:300px}
 .strip .end{flex:0 0 320px;border-radius:22px;background:var(--acc);display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;font-size:calc(var(--tx) - 2px)}
 /* إنجاز */
 .badge{display:flex;align-items:center;gap:22px;background:linear-gradient(135deg,#FEF3C7,#FFFFFF);border:4px solid #F59E0B;border-radius:28px;padding:22px}
@@ -696,7 +699,7 @@ window.SIMS = (function () {
     var s = el('div', 'strip'); c.appendChild(s);
     var cols = ['#0E7490', '#7C3AED', '#C2410C', '#15803D', '#B91C1C', '#1D4ED8'];
     b.items.forEach(function (it, i) {
-      var f = el('button', 'flip', '<div class="in"><div class="fa" style="--cc:' + cols[i % 6] + '"><small>ذكرى ' + n(i + 1) + '</small>' + it.q + '</div><div class="fb2" style="--cc:' + cols[i % 6] + '">' + it.a + '</div></div>');
+      var f = el('button', 'flip', '<div class="in"><div class="fa" style="--cc:' + cols[i % 6] + '">' + (it.img ? '<img src="' + (window.IMG && IMG[it.img] || '') + '" alt="">' : '') + '<small>ذكرى ' + n(i + 1) + '</small>' + it.q + '</div><div class="fb2" style="--cc:' + cols[i % 6] + '">' + it.a + '</div></div>');
       f.onclick = function () { f.classList.toggle('on'); }; s.appendChild(f);
     });
     s.appendChild(el('div', 'end', '🔗 ' + b.end));
