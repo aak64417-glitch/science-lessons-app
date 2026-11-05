@@ -24,8 +24,12 @@ function activity(K){
   var RUN={
    mem:function(){
      var pick=K.shuffle(T).slice(0,6), cards=[];pick.forEach(function(t,i){cards.push({k:i,txt:t.t,term:1},{k:i,txt:t.d,term:0})});cards=K.shuffle(cards);
-     var open=[],done=0,moves=0,t0=Date.now(),lock=false;
-     stage.innerHTML='<div class="sh"><h2>🃏 ذاكرة المصطلحات</h2><span class="muted">المحاولات: <b id="mv">٠</b> · المطابقات: <b id="mt">٠</b> / ٦</span><button class="b" data-a="mem">↺ جولة جديدة</button></div><div class="mem">'+cards.map(function(c,i){return '<button class="mc'+(c.term?' term':'')+'" data-i="'+i+'" aria-label="بطاقة"><span class="bk">؟</span><span class="fr">'+esc(c.txt)+'</span></button>'}).join('')+'</div>';
+     var open=[],done=0,moves=0,t0=Date.now(),lock=true,left=15;
+     // تظهر البطاقات كلها مكشوفة أولًا للحفظ، ثم تُخفى وتظهر بأرقامها
+     stage.innerHTML='<div class="sh"><h2>🃏 ذاكرة المصطلحات</h2><span class="muted">المحاولات: <b id="mv">٠</b> · المطابقات: <b id="mt">٠</b> / ٦</span><button class="b" data-a="mem">↺ جولة جديدة</button></div><div class="fb" id="mprev" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><span>👀 احفظوا أماكن المصطلحات وتعريفاتها… تُخفى البطاقات بعد <b id="mcd">'+n(left)+'</b> ثانية</span><button class="b c" id="mgo">ابدأ الآن ←</button></div><div class="mem">'+cards.map(function(c,i){return '<button class="mc up'+(c.term?' term':'')+'" data-i="'+i+'" aria-label="بطاقة رقم '+n(i+1)+'"><span class="bk">'+n(i+1)+'</span><span class="fr">'+esc(c.txt)+'</span></button>'}).join('')+'</div>';
+     var cd=setInterval(function(){left--;var e=K.$('#mcd');if(!e){clearInterval(cd);return}e.textContent=n(left);if(left<=0)hide()},1000);
+     function hide(){clearInterval(cd);var p=K.$('#mprev');if(!p)return;p.outerHTML='<div class="fb">🔢 اختر رقمين: مصطلحًا وتعريفه المطابق.</div>';K.$$('.mc',stage).forEach(function(x){x.classList.remove('up')});setTimeout(function(){lock=false;t0=Date.now()},450)}
+     K.$('#mgo').onclick=hide;
      K.$$('.mc',stage).forEach(function(el){el.onclick=function(){if(lock||el.classList.contains('up'))return;el.classList.add('up');K.sfx.tick();open.push(el);if(open.length<2)return;moves++;K.$('#mv').textContent=n(moves);var a=cards[open[0].dataset.i],b=cards[open[1].dataset.i];
        if(a.k===b.k&&a.term!==b.term){open.forEach(function(x){x.classList.add('ok')});open=[];done++;K.$('#mt').textContent=n(done);K.sfx.ok();if(done===6){K.sfx.win();confetti();var s=Math.round((Date.now()-t0)/1000);stage.insertAdjacentHTML('beforeend','<div class="fb ok">أحسنت! أنهيت المطابقة في '+n(moves)+' محاولة خلال '+n(s)+' ثانية.</div>')}}
        else{lock=true;K.sfx.no();setTimeout(function(){open.forEach(function(x){x.classList.remove('up')});open=[];lock=false},950)}}});
