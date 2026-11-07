@@ -1791,7 +1791,7 @@ window.STU = (function () {
     bar.querySelector('.qpb').onclick=function(e){e.stopPropagation();if(window.STU)STU.who(box)};
     bar.querySelector('.qpc').onclick=function(e){e.stopPropagation();if(window.STU)STU.open('cls')};return bar}
   function deco(){var L=document.querySelectorAll(SEL);for(var i=0;i<L.length;i++){var o=L[i];if(o.getAttribute('data-qp')||o.closest('.stu-bg'))continue;o.setAttribute('data-qp','1');o.parentNode.insertBefore(mk(o.parentNode),o)}
-    var B=document.querySelectorAll('button');for(var j=0;j<B.length;j++){var bt=B[j];if(bt.getAttribute('data-qp')||!/تحق/.test(bt.textContent)||bt.closest('.stu-bg,.qpbar'))continue;bt.setAttribute('data-qp','1');
+    var B=document.querySelectorAll('button');for(var j=0;j<B.length;j++){var bt=B[j];if(bt.getAttribute('data-qp')||!/^[\s✓✔]*تحق/.test(bt.textContent)||bt.textContent.length>40||bt.closest('.stu-bg,.qpbar'))continue;bt.setAttribute('data-qp','1');
       var blk=bt.closest('form,.qa,.row-actions'),box,ref;if(blk&&blk.parentElement){box=blk.parentElement;ref=blk}else{box=bt.parentElement;ref=bt}
       if(!box||box.querySelector('.qpbar'))continue;box.insertBefore(mk(box),ref)}}
   var tm=0;new MutationObserver(function(){if(!tm)tm=setTimeout(function(){tm=0;deco()},80)}).observe(document.body,{childList:true,subtree:true});setTimeout(deco,300);
