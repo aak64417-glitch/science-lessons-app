@@ -1629,6 +1629,79 @@ K.boot({chapter:'الفصل الثاني: الحركة والقوى والآلا
 </style>
 <script>
 /* استراتيجيات أسماء الطلاب: الشعب والأسماء، عجلة الأسماء، سحب القرعة، الكرسي الساخن، المجموعات العشوائية، لوحة الشرف، و«من يجيب؟» */
+
+/* ===== كشف الطلاب الموحّد لكل المنصة (الدروس والأنشطة والمسابقات وأوراق العمل) — durus-classes ===== */
+window.DROS = window.DROS || (function () {
+  var AR = '٠١٢٣٤٥٦٧٨٩', KEY = 'durus-classes', API = 'https://script.google.com/macros/s/AKfycbxp-t4JgGO5WiK6hoacjTyBqFnG-9bSWClplOpVV4VDuTV7T4tY0swB1Ll36kr_djJ7nQ/exec';
+  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/3', '2/3', '3/3', '4/3']];
+  function kz(k) { return String(k == null ? '' : k).replace(/\s/g, '').replace(/\d/g, function (d) { return AR[d]; }); }
+  function nz(s) { return String(s).replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+بن\s+/g, ' ').replace(/\s+/g, ' ').trim(); }
+  function ld() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) return { cur: s.cur || '', classes: s.classes || {}, stars: s.stars || {}, moves: s.moves || {} }; } catch (e) {} return { cur: '', classes: {}, stars: {}, moves: {} }; }
+  function sv(D) { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) {} }
+  function flag(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} return null; }
+  function findKey(D, k) { var ks = Object.keys(D.classes); for (var i = 0; i < ks.length; i++) if (kz(ks[i]) === kz(k)) return ks[i]; return null; }
+  function move(D, nm, from, to) {
+    var a = D.classes[from] || [], i = a.indexOf(nm); if (i < 0 || from === to) return false;
+    a.splice(i, 1); D.classes[to] = D.classes[to] || []; if (D.classes[to].indexOf(nm) < 0) D.classes[to].push(nm);
+    var s1 = D.stars[from + '|' + nm]; if (s1) { D.stars[to + '|' + nm] = (D.stars[to + '|' + nm] || 0) + s1; delete D.stars[from + '|' + nm]; }
+    return true;
+  }
+  // تطبيق عمليات النقل المحفوظة (حتى لا يرجع الطالب لشعبته القديمة عند تحميل الكشوف من جديد)
+  function applyMoves(D) {
+    var ch = false, rule = !flag('durus-rule-off');
+    Object.keys(D.classes).forEach(function (from) {
+      (D.classes[from] || []).slice().forEach(function (nm) {
+        var to = D.moves[nz(nm)];
+        // طلب المعلم: محمد سامي الدليم من ١/١ إلى ٣/١
+        if (!to && rule && kz(from) === '١/١') { var z = nz(nm); if (z.indexOf('محمد سامي') === 0 && z.indexOf('الدليم') > 0) to = '٣/١'; }
+        if (to) { to = findKey(D, to) || kz(to); if (to !== from && move(D, nm, from, to)) ch = true; }
+      });
+    });
+    return ch;
+  }
+  // دمج الأسماء التي حُمّلت سابقًا داخل الدروس (مرة واحدة)
+  function bootstrap(D) {
+    if (flag('durus-roster-merged')) return false; var ch = false;
+    LISTS.forEach(function (L) {
+      var C = null; try { C = JSON.parse(localStorage.getItem('strat-roster-' + L.join('_') + '-classes') || 'null'); } catch (e) {}
+      (C || []).forEach(function (x) { if (x && x.s && x.s.length) { var k = kz(x.n); if (!findKey(D, k)) { D.classes[k] = x.s.slice(); ch = true; } } });
+    });
+    if (applyMoves(D)) ch = true;
+    flag('durus-roster-merged', '1'); return ch;
+  }
+  function load() { var D = ld(); if (bootstrap(D)) sv(D); if (D.cur && !D.classes[D.cur]) D.cur = Object.keys(D.classes)[0] || ''; if (!D.cur) D.cur = Object.keys(D.classes)[0] || ''; return D; }
+  function jsonp(params, cb) {
+    var name = 'drosCb_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8), sc = document.createElement('script'), fin = false;
+    var q = Object.keys(params).map(function (k) { return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]); }).join('&') + '&callback=' + name + '&_=' + Date.now();
+    function end(r) { if (fin) return; fin = true; clearTimeout(t); try { sc.remove(); } catch (e) {} try { delete window[name]; } catch (e) {} cb(r); }
+    var t = setTimeout(function () { end(null); }, 30000); window[name] = function (d) { end(d); }; sc.onerror = function () { end(null); }; sc.src = API + '?' + q; document.head.appendChild(sc);
+  }
+  // تحميل كشوف الفصول من منصة رحلة العلوم لكل الصفوف
+  function importAll(cb) {
+    var all = LISTS[0].concat(LISTS[1]), G = {}, done = 0, okc = 0;
+    all.forEach(function (k) {
+      jsonp({ action: 'getStudents', className: k }, function (r) {
+        if (r && r.ok) okc++;
+        var ok = r && r.ok && Array.isArray(r.students) && (r.className == null || String(r.className) === String(k));
+        var arr = ok ? r.students.filter(Boolean) : [], cf = function (x) { return x.className != null ? x.className : x['class']; };
+        var mine = arr.filter(function (x) { return cf(x) != null && String(cf(x)) === String(k); });
+        var ss = (mine.length ? mine : arr).map(function (x) { return String(x.name || '').trim(); }).filter(Boolean);
+        if (ss.length) G[k] = ss;
+        if (++done === all.length) {
+          var got = all.filter(function (k) { return G[k]; });
+          if (got.length) {
+            var D = ld();
+            got.forEach(function (k) { var ex = findKey(D, k); if (ex && ex !== kz(k)) delete D.classes[ex]; D.classes[kz(k)] = G[k].slice(); });
+            applyMoves(D); if (!D.cur || !D.classes[D.cur]) D.cur = kz(got[0]); sv(D); flag('durus-roster-merged', '1'); flag('durus-roster-at', String(Date.now()));
+          }
+          cb(got.map(function (k) { return kz(k) + ' (' + kz(G[k].length) + ')'; }), okc > 0);
+        }
+      });
+    });
+  }
+  return { kz: kz, nz: nz, load: load, save: sv, move: move, findKey: findKey, applyMoves: applyMoves, importAll: importAll, flag: flag, LISTS: LISTS };
+})();
+
 window.STU = (function () {
   var AR = '٠١٢٣٤٥٦٧٨٩';
   function n(x) { return String(x).replace(/\d/g, function (d) { return AR[d]; }); }
@@ -1636,28 +1709,13 @@ window.STU = (function () {
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
   var KEY = 'durus-classes';
-  var D = { cur: '', classes: {}, stars: {} };
-  try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) D = Object.assign(D, s); } catch (e) {}
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) {} }
-  function sync() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) D = { cur: s.cur || '', classes: s.classes || {}, stars: s.stars || {} }; } catch (e) {} }
-  function kz(k) { return String(k).replace(/\s/g, '').replace(/\d/g, function (d) { return AR[d]; }); }
-  function nz(s) { return String(s).replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+بن\s+/g, ' ').replace(/\s+/g, ' ').trim(); }
-  function findKey(list) { var ks = Object.keys(D.classes); for (var i = 0; i < ks.length; i++) if (list.indexOf(kz(ks[i])) >= 0) return ks[i]; return null; }
-  function moveStudent(nm, from, to) {
-    var a = D.classes[from] || [], i = a.indexOf(nm); if (i < 0 || from === to) return false;
-    a.splice(i, 1); D.classes[to] = D.classes[to] || []; if (D.classes[to].indexOf(nm) < 0) D.classes[to].push(nm);
-    var s1 = D.stars[from + '|' + nm]; if (s1) { D.stars[to + '|' + nm] = (D.stars[to + '|' + nm] || 0) + s1; delete D.stars[from + '|' + nm]; }
-    return true;
-  }
-  // نقل لمرة واحدة بطلب المعلم: محمد سامي الدليم من ١/١ إلى ٣/١
-  function migrate() {
-    try { if (localStorage.getItem('durus-mig-dulaim')) return; } catch (e) { return; }
-    var isHim = function (x) { var z = nz(x); return z.indexOf('محمد سامي') === 0 && z.indexOf('الدليم') > 0; };
-    var to = findKey(['٣/١', '١/٣']), from = findKey(['١/١']), done = false;
-    if (to && (D.classes[to] || []).some(isHim)) done = true;
-    if (from) (D.classes[from] || []).filter(isHim).forEach(function (nm) { if (!to) to = '٣/١'; if (moveStudent(nm, from, to)) done = true; });
-    if (done) { save(); try { localStorage.setItem('durus-mig-dulaim', '1'); } catch (e) {} }
-  }
+  var D = DROS.load();
+  function save() { DROS.save(D); }
+  function sync() { D = DROS.load(); }
+  var kz = DROS.kz;
+  function findKey(list) { for (var i = 0; i < list.length; i++) { var k = DROS.findKey(D, list[i]); if (k) return k; } return null; }
+  function moveStudent(nm, from, to) { var ok = DROS.move(D, nm, from, to); if (ok) D.moves[DROS.nz(nm)] = to; return ok; }
+  function migrate() { if (DROS.applyMoves(D)) save(); }
   migrate();
   function names() { sync(); return (D.classes[D.cur] || []).slice(); }
   var pool = [], groups = null, onGroups = null;
@@ -1665,7 +1723,7 @@ window.STU = (function () {
   function star(nm, d) { sync(); var k = D.cur + '|' + nm; D.stars[k] = Math.max(0, (D.stars[k] || 0) + d); save(); }
   function stars(nm) { return D.stars[D.cur + '|' + nm] || 0; }
   function arm(btn, label, fn) { btn.onclick = function () { if (btn.dataset.arm) { fn(); return; } var o = btn.textContent; btn.dataset.arm = '1'; btn.textContent = label; btn.style.background = '#DC2626'; btn.style.color = '#fff'; setTimeout(function () { if (btn.isConnected && btn.dataset.arm) { delete btn.dataset.arm; btn.textContent = o; btn.style.background = ''; btn.style.color = ''; } }, 4000); }; }
-  var msg = '';
+  var msg = '', autoTried = false;
   var COLS = ['#DC2626', '#2563EB', '#16A34A', '#CA8A04', '#7C3AED', '#0891B2'];
 
   // ---------- النافذة ----------
@@ -1695,13 +1753,17 @@ window.STU = (function () {
   var R = {
     cls: function (body, show) {
       var ks = Object.keys(D.classes);
-      body.innerHTML = '<div class="stu-row"><label>الشعبة: <select class="stu-sel">' + ks.map(function (k) { return '<option' + (k === D.cur ? ' selected' : '') + '>' + esc(k) + '</option>'; }).join('') + '<option value="__new">➕ شعبة جديدة…</option></select></label><input class="stu-new" placeholder="مثال: ٤/١" hidden><button class="b stu-del">🗑 حذف الشعبة</button></div>' +
+      body.innerHTML = '<div class="stu-row"><label>الشعبة: <select class="stu-sel">' + ks.map(function (k) { return '<option' + (k === D.cur ? ' selected' : '') + '>' + esc(k) + '</option>'; }).join('') + '<option value="__new">➕ شعبة جديدة…</option></select></label><input class="stu-new" placeholder="مثال: ٤/١" hidden><button class="b stu-del">🗑 حذف الشعبة</button><button class="b c stu-imp">⬇ تحميل كشوف الفصول من المنصة</button></div><p class="stu-impm stu-note" style="margin:0"></p>' +
         '<label class="stu-lab">أسماء الطلاب (اسم في كل سطر):</label><textarea class="stu-ta" rows="9" placeholder="أحمد محمد&#10;خالد علي&#10;…"></textarea><div class="stu-row"><button class="b c stu-save">💾 حفظ الأسماء</button><span class="stu-cnt"></span></div>' +
         '<div class="stu-row stu-mv"' + (names().length ? '' : ' hidden') + ' style="background:#F1F5F9;border-radius:12px;padding:8px 10px"><label>🔀 نقل طالب: <select class="stu-mn">' + names().map(function (x) { return '<option>' + esc(x) + '</option>'; }).join('') + '</select></label><label>إلى الشعبة: <select class="stu-mt">' + ks.filter(function (k) { return k !== D.cur; }).map(function (k) { return '<option>' + esc(k) + '</option>'; }).join('') + '<option value="__new">➕ شعبة جديدة…</option></select></label><input class="stu-mtn" placeholder="مثال: ٣/١" hidden><button class="b c stu-mvb">نقل</button></div>' +
         '<p class="stu-note">تُحفظ الأسماء في هذا الجهاز فقط، وتظهر في جميع الدروس والأنشطة والمسابقات. لحذف طالب: احذف سطره ثم «حفظ الأسماء».</p>' +
         '<div class="stu-row" style="border-top:2px dashed var(--line);padding-top:10px"><button class="b stu-year">🗓 سنة دراسية جديدة: حذف جميع الشعب والأسماء</button></div>';
       var sel = body.querySelector('.stu-sel'), nw = body.querySelector('.stu-new'), ta = body.querySelector('.stu-ta');
       function load() { ta.value = (D.classes[D.cur] || []).join('\n'); body.querySelector('.stu-cnt').textContent = (D.cur ? n((D.classes[D.cur] || []).length) + ' طالبًا' : '') + (msg ? '  ' + msg : ''); msg = ''; }
+      var imb = body.querySelector('.stu-imp'), imm = body.querySelector('.stu-impm');
+      function doImp() { imb.disabled = true; imm.textContent = 'جاري تحميل الكشوف…'; DROS.importAll(function (got, ok) { sync(); pool = []; msg = got.length ? '✓ تم تحميل: ' + got.join('، ') : (ok ? 'لا توجد أسماء مسجلة في المنصة بعد.' : 'تعذّر التحميل، تأكد من الاتصال بالإنترنت.'); if (imb.isConnected) show('cls'); }); }
+      imb.onclick = doImp;
+      if (!ks.length && !DROS.flag('durus-roster-at') && !autoTried) { autoTried = true; doImp(); }
       var mt = body.querySelector('.stu-mt'), mtn = body.querySelector('.stu-mtn');
       if (mt.value === '__new') mtn.hidden = false;
       mt.onchange = function () { mtn.hidden = mt.value !== '__new'; if (!mtn.hidden) mtn.focus(); };
@@ -1711,7 +1773,7 @@ window.STU = (function () {
         if (moveStudent(nm, D.cur, to)) { save(); pool = []; msg = '✓ نُقل «' + nm + '» إلى الشعبة ' + to; }
         show('cls');
       };
-      arm(body.querySelector('.stu-year'), '⚠ اضغط مرة أخرى للتأكيد: سيُحذف كل شيء', function () { D = { cur: '', classes: {}, stars: {} }; pool = []; groups = null; save(); msg = '✓ بدأت سنة جديدة، أضف الشعب الجديدة'; show('cls'); });
+      arm(body.querySelector('.stu-year'), '⚠ اضغط مرة أخرى للتأكيد: سيُحذف كل شيء', function () { D = { cur: '', classes: {}, stars: {}, moves: {} }; try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf('strat-roster-') === 0 && /-classes$|-curName$|-usedN$/.test(k)) localStorage.removeItem(k); }); localStorage.removeItem('durus-roster-at'); } catch (e) {} DROS.flag('durus-roster-merged', '1'); DROS.flag('durus-rule-off', '1'); pool = []; groups = null; save(); msg = '✓ بدأت سنة جديدة، أضف الشعب الجديدة'; show('cls'); });
       if (!ks.length) { sel.value = '__new'; nw.hidden = false; }
       sel.onchange = function () { if (sel.value === '__new') { nw.hidden = false; nw.focus(); ta.value = ''; } else { nw.hidden = true; sync(); D.cur = sel.value; pool = []; save(); load(); show('cls'); } };
       body.querySelector('.stu-save').onclick = function () {
