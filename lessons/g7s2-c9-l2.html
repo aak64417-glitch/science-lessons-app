@@ -1291,13 +1291,24 @@ window.STU = (function () {
   function bindWin(body, nm) { var b = body.querySelector('.stu-st'); if (b) b.onclick = function () { star(nm, 1); b.textContent = '⭐ +١'; b.disabled = true; }; }
 
   // «من يجيب؟» داخل بطاقة السؤال
+  // صوت خفيف لدوران الأسماء والتوقف
+  var AC = null;
+  function beep(f, d, v) { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); var t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain(); o.type = 'triangle'; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v || 0.08, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + d + 0.05); } catch (e) {} }
+  if (!document.getElementById('stu-spin-css')) { var cs = document.createElement('style'); cs.id = 'stu-spin-css'; cs.textContent = '.stu-badge b.sp{display:inline-block;min-width:8em;opacity:.75;filter:blur(.4px)}.stu-badge b.go{display:inline-block;animation:stuPop .45s cubic-bezier(.2,1.6,.4,1)}@keyframes stuPop{0%{transform:scale(.6)}60%{transform:scale(1.25)}100%{transform:scale(1)}}'; document.head.appendChild(cs); }
+  // «من يجيب؟»: الأسماء تدور ثم تتوقف عند اسم واحد (مثل الدروس)
   function who(card) {
     var nm = nextName(); if (!nm) { open('cls'); return; }
-    var old = card.querySelector('.stu-badge'); if (old) old.remove();
-    var b = el('div', 'stu-badge', '<span>🎯 يجيب الآن:</span> <b>' + esc(nm) + '</b> <button aria-label="نجمة">⭐</button> <button aria-label="طالب آخر">🔄</button>');
-    b.querySelectorAll('button')[0].onclick = function () { star(nm, 1); this.textContent = '⭐ +١'; this.disabled = true; };
-    b.querySelectorAll('button')[1].onclick = function () { who(card); };
-    card.insertBefore(b, card.firstChild);
+    var all = names(), old = card.querySelector('.stu-badge'); if (old) { if (old._spin) return; old.remove(); }
+    var b = el('div', 'stu-badge', '<span>🎯 يجيب الآن:</span> <b class="sp">…</b> <button aria-label="نجمة" disabled>⭐</button> <button aria-label="طالب آخر" disabled>🔄</button>');
+    var nmEl = b.querySelector('b'), bs = b.querySelectorAll('button'), k = 0, steps = 16;
+    b._spin = true; card.insertBefore(b, card.firstChild);
+    (function spin() {
+      if (++k <= steps) { var x = all[Math.floor(Math.random() * all.length)]; if (all.length > 1) while (x === nmEl.textContent) x = all[Math.floor(Math.random() * all.length)]; nmEl.textContent = x; beep(520 + k * 18, 0.05); setTimeout(spin, 45 + k * k * 1.1); return; }
+      nmEl.textContent = '🎓 ' + nm; nmEl.className = 'go'; b._spin = false; bs[0].disabled = bs[1].disabled = false;
+      beep(660, 0.12, 0.1); setTimeout(function () { beep(990, 0.18, 0.1); }, 110);
+    })();
+    bs[0].onclick = function () { star(nm, 1); this.textContent = '⭐ +١'; this.disabled = true; };
+    bs[1].onclick = function () { who(card); };
   }
   return { open: open, who: who, has: function () { return names().length > 0; }, groups: function () { return groups; }, onGroups: function (f) { onGroups = f; } };
 })();
