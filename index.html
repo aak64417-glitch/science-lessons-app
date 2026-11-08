@@ -273,7 +273,7 @@ function render(){
   if(S.types){ var k0=S.types[0], one=S.types.length===1; html+='<div class="secb" style="--sc:'+(TYC[k0]||'#1F4FB8')+'"><img src="'+TY[k0][1]+'" alt=""><div><b>'+esc(S.typeLabel||TY[k0][0])+'</b><p>'+esc(one?TYD[k0]:S.types.map(function(t){return TY[t][0]}).join(' · '))+'</p></div><span class="st"><strong>'+n(rows.length)+'</strong>'+(rows.length>2&&rows.length<11?'عناصر':'عنصرًا')+'</span></div>' }
   keys.forEach(function(k,ix){ var p=k.split('|'), cn=chNo(p[1]), list=by[k].slice().sort(function(a,b){return (a.type==='lab')-(b.type==='lab')||(a.no||99)-(b.no||99)||a.title.localeCompare(b.title,'ar')});
     if(p[0]!==g0){ g0=p[0]; html+='<h3 class="ghd">الصف '+esc(GR[p[0]]||'')+'</h3>' }
-    var m=p[1].match(/^(الفصل\s+\S+)\s*[:：-]\s*(.+)$/), cnt0=function(t){return list.filter(function(r){return r.type===t}).length};
+    var m=p[1].match(/^(الفصل\s+\S+(?:\s+عشر)?)\s*[:：-]\s*(.+)$/), cnt0=function(t){return list.filter(function(r){return r.type===t}).length};
     var les=cnt0('lesson'), lab=cnt0('lab'), sh=cnt0('sheet'), oth=list.length-les-lab-sh;
     var cnt=[les?plural(les):'', sh?cw(sh,'ورقة عمل','ورقتا عمل','أوراق عمل','ورقة عمل'):'', oth?cw(oth,'أداة تعلّم','أداتا تعلّم','أدوات تعلّم','أداة تعلّم'):'', lab?cw(lab,'تجربة افتراضية','تجربتان افتراضيتان','تجارب افتراضية','تجربة افتراضية'):''].filter(Boolean).join(' · ');
     var tg=TYO.filter(function(t){return cnt0(t)}), body=tg.length>1?tg.map(function(t){return '<h5 class="sub"><img src="'+TY[t][1]+'" alt="">'+esc(TY[t][0])+'</h5><div class="grid">'+list.filter(function(r){return r.type===t}).map(card).join('')+'</div>'}).join(''):'<div class="grid">'+list.map(card).join('')+'</div>';
@@ -281,8 +281,8 @@ function render(){
     html+='<section class="chap'+(open?' open':'')+'" style="--cc:'+col+'"><button class="ch" data-chap="'+esc(k)+'" aria-expanded="'+open+'"><span class="num" aria-hidden="true">'+(cn<90?n(cn):(list[0].type==='lab'?'⚗️':'📚'))+'</span><span class="tt">'+(m?'<small>'+esc(m[1])+'</small><b>'+esc(m[2])+'</b>':'<b>'+esc(p[1])+'</b>')+'<span>'+cnt+'</span></span><span class="arr" aria-hidden="true">▾</span></button><div class="cbody">'+body+'</div></section>' });
   L.innerHTML=html }
 var CHC=['#2F7BF6','#E2662B','#0F9D78','#8E44AD','#D93F6A','#B7860B'];
-var ORD={'الأول':1,'الثاني':2,'الثالث':3,'الرابع':4,'الخامس':5,'السادس':6,'السابع':7,'الثامن':8};
-function chNo(t){ var m=String(t).match(/^الفصل\s+([^\s:：-]+)/); return m&&ORD[m[1]]||99 }
+var ORD={'الأول':1,'الثاني':2,'الثالث':3,'الرابع':4,'الخامس':5,'السادس':6,'السابع':7,'الثامن':8,'التاسع':9,'العاشر':10,'الحادي':1};
+function chNo(t){ var m=String(t).match(/^الفصل\s+([^\s:：-]+)(\s+عشر)?/); if(!m||!ORD[m[1]]) return 99; return ORD[m[1]]+(m[2]?10:0) }
 function card(r){ var id=esc(r.id), T=TY[r.type]||TY.lesson;
   var cov=r.cover?'<img src="'+esc(r.cover)+'" alt="" loading="lazy" onerror="this.remove()">':'<span class="pat"></span><span class="ic"><img src="'+T[1]+'" alt=""></span>';
   return '<article class="card" style="--fc:'+esc(r.color)+'"><button class="cv" data-open="'+id+'" aria-label="افتح '+esc(r.title)+'">'+cov+'<span class="no">'+(r.no?'الدرس '+n(r.no):esc(T[0]))+'</span>'+(r.type!=='lesson'?'<span class="ty">'+esc(T[0])+'</span>':'')+'<span class="gl">'+esc(GR[r.grade]||'')+'</span><span class="play">'+svg('play')+'</span></button>'+
