@@ -2800,10 +2800,72 @@ S({id:'formula',name:'م الصيغ الكيميائية للمركبات',build
 
  return {enter:function(){E.complete('formula')},reveal:RV(el)}}});
 S({id:'cmplab',name:'م تجربة: مقارنة المركبات',build:function(el){
- BK(el,'المحطة · تجربة ص 118','تجربة: مقارنة المركبات',
-  '<div class="row" style="gap:12px;align-items:stretch"><div class="card" style="'+CS2+';flex:1"><h3 style="margin:0 0 6px">الخطوات</h3><ol style="margin:0;font-size:19px;line-height:1.9"><li>احصل على المواد الآتية: سكر، وعطر، وزيت.</li><li>لاحظ ألوان هذه المواد وأشكالها وحالاتها وقوامها.</li><li>أذب مقدار ملعقة من كل منها في كأس تحوي ماءً ساخنًا.</li></ol><p class="hint" style="margin:10px 0 0">🏠 في المنزل · تجربة عملية: المخاليط والمركبات — ارجع إلى كراسة التجارب العملية على منصة عين الإثرائية.</p></div>'+
-  '<div class="card" style="'+CS2+';flex:1"><h3 style="margin:0 0 6px">التحليل</h3><ol style="margin:0;font-size:19px;line-height:1.9"><li>قارن بين الخصائص المختلفة لتلك المواد.</li><li>تتكوّن المواد الثلاث من عناصر الكربون والهيدروجين والأكسجين لا أكثر. فكيف تستدل على اختلاف خصائصها من صيغها الكيميائية؟</li></ol><div class="qa"><button class="btn ghost" data-rv>اعرض الإجابة المقترحة</button></div><div class="explain reveal"><b>إجابة مقترحة:</b> رغم أنها من العناصر نفسها، فإن أعداد الذرات ونسبها وطريقة ترتيبها مختلفة في كل مركب؛ لذلك تختلف صيغها الكيميائية وتختلف خصائصها.</div></div></div>');
+ /* مختبر افتراضي يُنفَّذ في الصف: الخطوات الثلاث كما في الكتاب ص 118 */
+ var M=[
+  {k:'sugar',n:'السكر',c:'أبيض',s:'بلورات صغيرة · صلب',t:'حُبيبي خشن',w:'ذاب كليًّا واختفى ✓',wc:'var(--ok)'},
+  {k:'perf',n:'العطر',c:'عديم اللون (شفاف)',s:'سائل',t:'خفيف سريع الانسياب، رائحته قوية',w:'امتزج بالماء وانتشرت رائحته ✓',wc:'var(--ok)'},
+  {k:'oil',n:'الزيت',c:'أصفر',s:'سائل',t:'لزج بطيء الانسياب',w:'لم يذب، وطفا فوق الماء ✗',wc:'var(--no)'}];
+ var X=[110,330,550],NS='http://www.w3.org/2000/svg';
+ var smp=[
+  '<ellipse cx="0" cy="62" rx="58" ry="10" fill="#cfd8e6"/><path d="M-58 62 Q0 112 58 62" fill="#e8eef7" stroke="#9fb0c8" stroke-width="2"/>'+[[-30,58],[-14,54],[2,57],[18,53],[32,58],[-22,49],[8,48],[24,47],[-6,44]].map(function(p){return '<rect x="'+p[0]+'" y="'+p[1]+'" width="7" height="7" rx="1.5" fill="#fff" stroke="#c9d3e2" transform="rotate(20 '+(p[0]+3)+' '+(p[1]+3)+')"/>'}).join(''),
+  '<rect x="-9" y="6" width="18" height="12" rx="3" fill="#c9a24a"/><rect x="-6" y="16" width="12" height="10" fill="#e7eef8" opacity=".9"/><rect x="-30" y="26" width="60" height="66" rx="16" fill="rgba(235,245,255,.35)" stroke="#d7e6ff" stroke-width="3"/><rect x="-26" y="44" width="52" height="44" rx="12" fill="rgba(255,214,235,.55)"/><text x="0" y="72" text-anchor="middle" font-size="13" fill="#5b2a49" font-weight="700">عطر</text>',
+  '<rect x="-8" y="2" width="16" height="12" rx="3" fill="#2f7d32"/><rect x="-7" y="12" width="14" height="14" fill="rgba(255,230,140,.55)" stroke="#e8d27a"/><path d="M-26 30 Q-28 26 -7 26 L7 26 Q28 26 26 30 L26 88 Q26 94 20 94 L-20 94 Q-26 94 -26 88 Z" fill="rgba(255,255,255,.18)" stroke="#f3e3a0" stroke-width="3"/><path d="M-23 44 L23 44 L23 88 Q23 91 19 91 L-19 91 Q-23 91 -23 88 Z" fill="#f2c230"/><text x="0" y="72" text-anchor="middle" font-size="13" fill="#5a4300" font-weight="700">زيت</text>'];
+ var svg='<svg viewBox="0 0 660 330" style="width:100%;height:auto;max-height:40vh;display:block;margin:auto" aria-label="طاولة المختبر"><defs><linearGradient id="clW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(140,205,255,.45)"/><stop offset="1" stop-color="rgba(90,160,240,.55)"/></linearGradient></defs>'+
+  '<rect x="0" y="300" width="660" height="30" rx="8" fill="#3a2a1c"/><rect x="0" y="296" width="660" height="8" rx="4" fill="#5c4330"/>'+
+  X.map(function(x,i){return '<g class="cl-s" data-i="'+i+'" transform="translate('+x+',-140)" style="cursor:pointer;opacity:0">'+smp[i]+'<text class="cl-q" x="0" y="118" text-anchor="middle" font-size="16" font-weight="800" fill="#ffe29a">'+M[i].n+'</text></g>'+
+   '<g class="cl-b" data-i="'+i+'" transform="translate('+x+',0)" style="opacity:0;cursor:pointer">'+
+   '<g class="cl-steam">'+[-18,0,18].map(function(d,j){return '<path d="M'+d+' 168 q6 -10 0 -20 q-6 -10 0 -20" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="3" stroke-linecap="round" style="animation:clSt 2.2s '+(j*.5)+'s infinite"/>'}).join('')+'</g>'+
+   '<rect x="-50" y="208" width="100" height="86" rx="6" fill="url(#clW)"/><g class="cl-fx"></g>'+
+   '<path d="M-56 172 L-56 288 Q-56 296 -48 296 L48 296 Q56 296 56 288 L56 172" fill="rgba(255,255,255,.07)" stroke="#d7e6ff" stroke-width="3"/><path d="M-60 172 L-50 172 M50 172 L60 168" stroke="#d7e6ff" stroke-width="3"/>'+
+   '<text x="0" y="250" text-anchor="middle" font-size="12" fill="#eaf3ff" opacity=".85">ماء ساخن</text></g>'}).join('')+
+  '<g id="clSp" style="opacity:0;pointer-events:none"><rect x="-6" y="-70" width="12" height="62" rx="5" fill="#cfd8e6"/><ellipse cx="0" cy="0" rx="20" ry="12" fill="#e8eef7" stroke="#9fb0c8" stroke-width="2"/><g class="cl-load"></g></g></svg>';
+ var ST=['احصل على المواد الآتية: سكر، وعطر، وزيت.','لاحظ ألوان هذه المواد وأشكالها وحالاتها وقوامها.','أذب مقدار ملعقة من كل منها في كأس تحوي ماءً ساخنًا.'];
+ BK(el,'المحطة · تجربة ص 118 · مختبر افتراضي','تجربة: مقارنة المركبات',
+  '<style>@keyframes clSt{0%{opacity:0;transform:translateY(6px)}40%{opacity:.9}100%{opacity:0;transform:translateY(-10px)}}.cl-st{display:flex;gap:10px;align-items:flex-start;border-radius:14px;padding:4px 10px;margin:2px 0;border:1.5px solid transparent;cursor:pointer;font-size:18px;line-height:1.6;background:none;color:inherit;text-align:start;width:100%;font-family:inherit;font-weight:600}.cl-st i{font-style:normal;flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.1);font-weight:800}.cl-st.on{border-color:var(--au);background:rgba(245,196,81,.12)}.cl-st.ok i{background:var(--ok);color:#03203a}.cl-st:disabled{opacity:.45;cursor:default}.cl-tb{width:100%;border-collapse:separate;border-spacing:0 5px;font-size:16px}.cl-tb th{color:var(--au2);font-weight:800;text-align:start;padding:2px 6px;font-size:15px}.cl-tb td{background:rgba(255,255,255,.06);padding:6px 8px;min-width:46px;font-weight:600}.cl-tb td:first-child{border-radius:0 10px 10px 0;color:var(--cy2);font-weight:800}.cl-tb td:last-child{border-radius:10px 0 0 10px}.cl-tb td.fill{animation:rin .5s}.cl-msg{font-size:18px;font-weight:800;color:var(--au2);text-align:center;min-height:30px;margin-top:4px}</style>'+
+  '<div class="row" style="gap:12px;align-items:stretch"><div class="card" style="'+CS2+';flex:1.2"><h3 style="margin:0 0 4px">الخطوات</h3>'+ST.map(function(s,i){return '<button class="cl-st'+(i?'':' on')+'" data-st="'+i+'"'+(i?' disabled':'')+'><i>'+n(i+1)+'</i><span>'+s+'</span></button>'}).join('')+svg+'<div class="cl-msg" id="clMsg">👆 اضغط الخطوة ١ لإحضار المواد إلى طاولة المختبر</div><p class="hint" style="margin:4px 0 0">🏠 في المنزل · تجربة عملية: المخاليط والمركبات — ارجع إلى كراسة التجارب العملية على منصة عين الإثرائية.</p></div>'+
+  '<div class="col" style="flex:1;gap:0"><div class="card" style="'+CS2+'"><h3 style="margin:0 0 4px">📋 جدول الملاحظات</h3><table class="cl-tb"><tr><th>المادة</th><th>اللون</th><th>الشكل والحالة</th><th>القوام</th><th>في الماء الساخن</th></tr>'+M.map(function(m,i){return '<tr data-r="'+i+'"><td>'+m.n+'</td><td></td><td></td><td></td><td></td></tr>'}).join('')+'</table></div>'+
+  '<div class="card" style="'+CS2+'"><h3 style="margin:0 0 6px">التحليل</h3><ol style="margin:0;font-size:19px;line-height:1.8"><li>قارن بين الخصائص المختلفة لتلك المواد.</li><li>تتكوّن المواد الثلاث من عناصر الكربون والهيدروجين والأكسجين لا أكثر. فكيف تستدل على اختلاف خصائصها من صيغها الكيميائية؟</li></ol><div class="qa"><button class="btn ghost" data-rv>اعرض الإجابة المقترحة</button></div><div class="explain reveal"><b>إجابة مقترحة:</b> رغم أنها من العناصر نفسها، فإن أعداد الذرات ونسبها وطريقة ترتيبها مختلفة في كل مركب؛ لذلك تختلف صيغها الكيميائية وتختلف خصائصها.</div></div></div></div>');
  $$('[data-rv]',el).forEach(function(b){b.onclick=function(){$('.reveal',el).classList.add('shown')}});
+ var step=0,seen=[0,0,0],done=[0,0,0],busy=false,sp=$('#clSp',el),msg=$('#clMsg',el);
+ function say(t){msg.textContent=t}
+ function tw(d,f,cb){var t0=performance.now();(function fr(now){var k=Math.min(1,(now-t0)/d);f(k);if(k<1)requestAnimationFrame(fr);else if(cb)cb()})(t0)}
+ function ez(k){return k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2}
+ function mk(tag,a,p){var e=document.createElementNS(NS,tag);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+ function cell(i,c,v,col){var td=$$('tr[data-r="'+i+'"] td',el)[c];td.textContent=v;td.classList.add('fill');if(col)td.style.color=col}
+ function setStep(s){step=s;$$('.cl-st',el).forEach(function(b,i){b.classList.toggle('on',i===s);b.classList.toggle('ok',i<s);b.disabled=i>s})}
+ function stepGo(i){
+  if(i===0&&step===0){busy=true;E.sfx.tick();$$('.cl-s',el).forEach(function(g,j){setTimeout(function(){tw(650,function(k){var e=ez(k);g.style.opacity=k;g.setAttribute('transform','translate('+X[j]+','+(-140+150*e)+')')},function(){E.sfx.tick()})},j*220)});
+   $$('.cl-b',el).forEach(function(g,j){setTimeout(function(){tw(500,function(k){g.style.opacity=k})},500+j*200)});
+   setTimeout(function(){busy=false;setStep(1);say('🔍 اضغط على كل مادة لتلاحظ لونها وشكلها وحالتها وقوامها')},1400)}
+ }
+ $$('.cl-st',el).forEach(function(b){b.onclick=function(){var i=+b.dataset.st;if(i===0)stepGo(0);else if(i===1&&step>=1)say('🔍 اضغط على كل مادة لتلاحظ لونها وشكلها وحالتها وقوامها');else if(i===2&&step>=2)say('🥄 اضغط على كل مادة لتذيب ملعقة منها في كأس الماء الساخن')}});
+ function observe(i){if(seen[i])return;seen[i]=1;var g=$$('.cl-s',el)[i];E.sfx.tick();
+  var r=mk('circle',{cx:0,cy:58,r:66,fill:'none',stroke:'#ffe29a','stroke-width':4,opacity:1},g);tw(700,function(k){r.setAttribute('r',66+16*k);r.setAttribute('opacity',1-k)},function(){r.remove()});
+  setTimeout(function(){cell(i,1,M[i].c)},150);setTimeout(function(){cell(i,2,M[i].s)},400);setTimeout(function(){cell(i,3,M[i].t)},650);
+  if(seen.indexOf(0)<0)setTimeout(function(){setStep(2);E.sfx.ok();say('🥄 الآن: اضغط على كل مادة لتذيب ملعقة منها في كأس الماء الساخن')},900);
+  else say('✓ سُجّلت ملاحظات '+M[i].n+' — تابع بقية المواد')}
+ function dissolve(i){if(done[i]||busy)return;busy=true;done[i]=1;var x=X[i],fx=$$('.cl-fx',el)[i],ld=$('.cl-load',sp);ld.innerHTML='';
+  if(i===0)for(var j=0;j<7;j++)mk('rect',{x:-12+j*3.5,y:-6-(j%2)*3,width:5,height:5,fill:'#fff'},ld);else mk('ellipse',{cx:0,cy:-1,rx:15,ry:7,fill:i===1?'rgba(255,214,235,.9)':'#f2c230'},ld);
+  sp.style.opacity=1;say('🥄 نأخذ ملعقة من '+M[i].n+'…');
+  tw(700,function(k){var e=ez(k);sp.setAttribute('transform','translate('+x+','+(80+70*e)+') rotate('+(-30*e)+')')},function(){E.sfx.tick();
+   tw(450,function(k){sp.setAttribute('transform','translate('+x+',150) rotate('+(-30-60*k)+')')},function(){ld.innerHTML='';pour(i,x,fx);tw(400,function(k){sp.style.opacity=1-k})})})}
+ function pour(i,x,fx){
+  if(i===0){var cr=[];for(var j=0;j<14;j++)cr.push(mk('rect',{x:-30+Math.random()*60,y:170,width:5,height:5,fill:'#fff',opacity:1},fx));say('السكر يهبط في الماء…');
+   tw(900,function(k){cr.forEach(function(c,j){c.setAttribute('y',170+(100+j%4*4)*ez(k))})},function(){say('…ويختفي تدريجيًّا: السكر يذوب في الماء الساخن');
+    tw(1800,function(k){cr.forEach(function(c){c.setAttribute('opacity',1-k);c.setAttribute('width',5-4*k);c.setAttribute('height',5-4*k)})},function(){cr.forEach(function(c){c.remove()});fin(i)})})}
+  else if(i===1){var d=[];for(var j=0;j<5;j++)d.push(mk('circle',{cx:-12+j*6,cy:170,r:4,fill:'rgba(255,190,225,.95)'},fx));
+   tw(700,function(k){d.forEach(function(c,j){c.setAttribute('cy',170+(50+j*6)*ez(k))})},function(){d.forEach(function(c){c.remove()});say('العطر ينتشر في الماء وتنتشر رائحته…');
+    var cl=mk('ellipse',{cx:0,cy:240,rx:4,ry:4,fill:'rgba(255,200,230,.5)'},fx);var w=[];for(var j=0;j<3;j++)w.push(mk('path',{d:'M'+(-20+j*20)+' 165 q8 -10 0 -20 q-8 -10 0 -20',fill:'none',stroke:'#ffb3dc','stroke-width':3,'stroke-linecap':'round',opacity:0},fx));
+    tw(2200,function(k){cl.setAttribute('rx',4+44*k);cl.setAttribute('ry',4+38*k);cl.setAttribute('fill','rgba(255,200,230,'+(.5-.32*k)+')');w.forEach(function(p,j){var q=(k*2+j*.3)%1;p.setAttribute('opacity',Math.sin(q*Math.PI)*.9);p.setAttribute('transform','translate(0,'+(-24*q)+')')})},function(){w.forEach(function(p){p.remove()});cl.remove();mk('rect',{x:-50,y:208,width:100,height:86,rx:6,fill:'rgba(255,200,230,.18)'},fx);fin(i)})})}
+  else{var d=[];for(var j=0;j<6;j++)d.push(mk('ellipse',{cx:-20+j*8,cy:170,rx:6,ry:4,fill:'#f2c230'},fx));
+   tw(650,function(k){d.forEach(function(c,j){c.setAttribute('cy',170+(70+(j%3)*8)*ez(k))})},function(){say('قطرات الزيت ترتفع ولا تذوب…');
+    tw(1200,function(k){d.forEach(function(c,j){c.setAttribute('cy',240+(j%3)*8-(32+(j%3)*8)*ez(k));c.setAttribute('cx',(-20+j*8)*(1-k*.2))})},function(){
+     var ly=mk('rect',{x:-50,y:208,width:100,height:0,fill:'#f2c230',opacity:.95},fx);tw(800,function(k){ly.setAttribute('height',9*k);d.forEach(function(c){c.setAttribute('opacity',1-k)})},function(){d.forEach(function(c){c.remove()});fin(i)})})})}}
+ function fin(i){busy=false;cell(i,4,M[i].w,M[i].wc);(M[i].k==='oil'?E.sfx.no:E.sfx.ok)();
+  if(done.indexOf(0)<0){setStep(3);say('🎉 اكتملت التجربة! قارن بين المواد في الجدول، ثم أجب عن أسئلة التحليل');E.sfx.ok()}
+  else say('✓ سُجّلت نتيجة '+M[i].n+' — تابع بقية المواد')}
+ $$('.cl-s',el).forEach(function(g){g.onclick=function(){var i=+g.dataset.i;if(step===1)observe(i);else if(step>=2)dissolve(i)}});
+ $$('.cl-b',el).forEach(function(g){g.onclick=function(){if(step>=2)dissolve(+g.dataset.i)}});
  return {enter:function(){E.complete('cmplab')},reveal:RV(el)}}});
 S({id:'mixinfo',name:'م المخاليط',build:function(el){
  BK(el,'المحطة · المخاليط ص 118','المخاليط',
