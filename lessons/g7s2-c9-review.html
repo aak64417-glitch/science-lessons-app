@@ -1058,16 +1058,39 @@ window.STU = (function () {
   var D = { cur: '', classes: {}, stars: {} };
   try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) D = Object.assign(D, s); } catch (e) {}
   function save() { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) {} }
-  function names() { return (D.classes[D.cur] || []).slice(); }
+  function sync() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) D = { cur: s.cur || '', classes: s.classes || {}, stars: s.stars || {} }; } catch (e) {} }
+  function kz(k) { return String(k).replace(/\s/g, '').replace(/\d/g, function (d) { return AR[d]; }); }
+  function nz(s) { return String(s).replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+بن\s+/g, ' ').replace(/\s+/g, ' ').trim(); }
+  function findKey(list) { var ks = Object.keys(D.classes); for (var i = 0; i < ks.length; i++) if (list.indexOf(kz(ks[i])) >= 0) return ks[i]; return null; }
+  function moveStudent(nm, from, to) {
+    var a = D.classes[from] || [], i = a.indexOf(nm); if (i < 0 || from === to) return false;
+    a.splice(i, 1); D.classes[to] = D.classes[to] || []; if (D.classes[to].indexOf(nm) < 0) D.classes[to].push(nm);
+    var s1 = D.stars[from + '|' + nm]; if (s1) { D.stars[to + '|' + nm] = (D.stars[to + '|' + nm] || 0) + s1; delete D.stars[from + '|' + nm]; }
+    return true;
+  }
+  // نقل لمرة واحدة بطلب المعلم: محمد سامي الدليم من ١/١ إلى ٣/١
+  function migrate() {
+    try { if (localStorage.getItem('durus-mig-dulaim')) return; } catch (e) { return; }
+    var isHim = function (x) { var z = nz(x); return z.indexOf('محمد سامي') === 0 && z.indexOf('الدليم') > 0; };
+    var to = findKey(['٣/١', '١/٣']), from = findKey(['١/١']), done = false;
+    if (to && (D.classes[to] || []).some(isHim)) done = true;
+    if (from) (D.classes[from] || []).filter(isHim).forEach(function (nm) { if (!to) to = '٣/١'; if (moveStudent(nm, from, to)) done = true; });
+    if (done) { save(); try { localStorage.setItem('durus-mig-dulaim', '1'); } catch (e) {} }
+  }
+  migrate();
+  function names() { sync(); return (D.classes[D.cur] || []).slice(); }
   var pool = [], groups = null, onGroups = null;
   function nextName() { var all = names(); if (!all.length) return null; pool = pool.filter(function (x) { return all.indexOf(x) >= 0; }); if (!pool.length) pool = shuffle(all); return pool.pop(); }
-  function star(nm, d) { var k = D.cur + '|' + nm; D.stars[k] = Math.max(0, (D.stars[k] || 0) + d); save(); }
+  function star(nm, d) { sync(); var k = D.cur + '|' + nm; D.stars[k] = Math.max(0, (D.stars[k] || 0) + d); save(); }
   function stars(nm) { return D.stars[D.cur + '|' + nm] || 0; }
+  function arm(btn, label, fn) { btn.onclick = function () { if (btn.dataset.arm) { fn(); return; } var o = btn.textContent; btn.dataset.arm = '1'; btn.textContent = label; btn.style.background = '#DC2626'; btn.style.color = '#fff'; setTimeout(function () { if (btn.isConnected && btn.dataset.arm) { delete btn.dataset.arm; btn.textContent = o; btn.style.background = ''; btn.style.color = ''; } }, 4000); }; }
+  var msg = '';
   var COLS = ['#DC2626', '#2563EB', '#16A34A', '#CA8A04', '#7C3AED', '#0891B2'];
 
   // ---------- النافذة ----------
   var TABS = [['cls', '📋 الشعب والأسماء'], ['wheel', '🎡 عجلة الأسماء'], ['draw', '🎟 سحب القرعة'], ['hot', '🔥 الكرسي الساخن'], ['web', '🕸 شبكة العنكبوت'], ['heads', '🔢 الرؤوس المرقمة'], ['duel', '⚔ تحدّي الثنائي'], ['grp', '👥 المجموعات'], ['hon', '⭐ لوحة الشرف']];
   function open(tab) {
+    sync(); migrate();
     var bg = el('div', 'stu-bg'), box = el('div', 'stu-box'); bg.appendChild(box);
     box.innerHTML = '<div class="stu-head"><b>👥 الطلاب · الشعبة <span class="stu-cur">' + (D.cur ? esc(D.cur) : '—') + '</span></b><button class="stu-x" aria-label="إغلاق">✕</button></div><div class="stu-tabs">' + TABS.map(function (t) { return '<button data-t="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div><div class="stu-body"></div>';
     var stop = null;
@@ -1092,17 +1115,30 @@ window.STU = (function () {
     cls: function (body, show) {
       var ks = Object.keys(D.classes);
       body.innerHTML = '<div class="stu-row"><label>الشعبة: <select class="stu-sel">' + ks.map(function (k) { return '<option' + (k === D.cur ? ' selected' : '') + '>' + esc(k) + '</option>'; }).join('') + '<option value="__new">➕ شعبة جديدة…</option></select></label><input class="stu-new" placeholder="مثال: ٤/١" hidden><button class="b stu-del">🗑 حذف الشعبة</button></div>' +
-        '<label class="stu-lab">أسماء الطلاب (اسم في كل سطر):</label><textarea class="stu-ta" rows="9" placeholder="أحمد محمد&#10;خالد علي&#10;…"></textarea><div class="stu-row"><button class="b c stu-save">💾 حفظ الأسماء</button><span class="stu-cnt"></span></div><p class="stu-note">تُحفظ الأسماء في هذا الجهاز فقط، وتظهر في جميع الدروس.</p>';
+        '<label class="stu-lab">أسماء الطلاب (اسم في كل سطر):</label><textarea class="stu-ta" rows="9" placeholder="أحمد محمد&#10;خالد علي&#10;…"></textarea><div class="stu-row"><button class="b c stu-save">💾 حفظ الأسماء</button><span class="stu-cnt"></span></div>' +
+        '<div class="stu-row stu-mv"' + (names().length ? '' : ' hidden') + ' style="background:#F1F5F9;border-radius:12px;padding:8px 10px"><label>🔀 نقل طالب: <select class="stu-mn">' + names().map(function (x) { return '<option>' + esc(x) + '</option>'; }).join('') + '</select></label><label>إلى الشعبة: <select class="stu-mt">' + ks.filter(function (k) { return k !== D.cur; }).map(function (k) { return '<option>' + esc(k) + '</option>'; }).join('') + '<option value="__new">➕ شعبة جديدة…</option></select></label><input class="stu-mtn" placeholder="مثال: ٣/١" hidden><button class="b c stu-mvb">نقل</button></div>' +
+        '<p class="stu-note">تُحفظ الأسماء في هذا الجهاز فقط، وتظهر في جميع الدروس والأنشطة والمسابقات. لحذف طالب: احذف سطره ثم «حفظ الأسماء».</p>' +
+        '<div class="stu-row" style="border-top:2px dashed var(--line);padding-top:10px"><button class="b stu-year">🗓 سنة دراسية جديدة: حذف جميع الشعب والأسماء</button></div>';
       var sel = body.querySelector('.stu-sel'), nw = body.querySelector('.stu-new'), ta = body.querySelector('.stu-ta');
-      function load() { ta.value = (D.classes[D.cur] || []).join('\n'); body.querySelector('.stu-cnt').textContent = D.cur ? n((D.classes[D.cur] || []).length) + ' طالبًا' : ''; }
+      function load() { ta.value = (D.classes[D.cur] || []).join('\n'); body.querySelector('.stu-cnt').textContent = (D.cur ? n((D.classes[D.cur] || []).length) + ' طالبًا' : '') + (msg ? '  ' + msg : ''); msg = ''; }
+      var mt = body.querySelector('.stu-mt'), mtn = body.querySelector('.stu-mtn');
+      if (mt.value === '__new') mtn.hidden = false;
+      mt.onchange = function () { mtn.hidden = mt.value !== '__new'; if (!mtn.hidden) mtn.focus(); };
+      body.querySelector('.stu-mvb').onclick = function () {
+        sync(); var nm = body.querySelector('.stu-mn').value, to = mt.value === '__new' ? kz(mtn.value) : mt.value; if (!nm) return; if (!to) { mtn.focus(); return; }
+        var ex = findKey([kz(to)]); if (ex) to = ex;
+        if (moveStudent(nm, D.cur, to)) { save(); pool = []; msg = '✓ نُقل «' + nm + '» إلى الشعبة ' + to; }
+        show('cls');
+      };
+      arm(body.querySelector('.stu-year'), '⚠ اضغط مرة أخرى للتأكيد: سيُحذف كل شيء', function () { D = { cur: '', classes: {}, stars: {} }; pool = []; groups = null; save(); msg = '✓ بدأت سنة جديدة، أضف الشعب الجديدة'; show('cls'); });
       if (!ks.length) { sel.value = '__new'; nw.hidden = false; }
-      sel.onchange = function () { if (sel.value === '__new') { nw.hidden = false; nw.focus(); ta.value = ''; } else { nw.hidden = true; D.cur = sel.value; pool = []; save(); load(); show('cls'); } };
+      sel.onchange = function () { if (sel.value === '__new') { nw.hidden = false; nw.focus(); ta.value = ''; } else { nw.hidden = true; sync(); D.cur = sel.value; pool = []; save(); load(); show('cls'); } };
       body.querySelector('.stu-save').onclick = function () {
-        var k = sel.value === '__new' ? nw.value.trim() : D.cur; if (!k) { nw.focus(); return; }
+        sync(); var k = sel.value === '__new' ? nw.value.trim() : D.cur; if (!k) { nw.focus(); return; }
         k = k.replace(/\d/g, function (d) { return AR[d]; });
         D.classes[k] = ta.value.split(/\n|،|,/).map(function (x) { return x.trim(); }).filter(Boolean); D.cur = k; pool = []; save(); show('cls');
       };
-      body.querySelector('.stu-del').onclick = function () { if (!D.cur || !D.classes[D.cur]) return; delete D.classes[D.cur]; D.cur = Object.keys(D.classes)[0] || ''; save(); show('cls'); };
+      arm(body.querySelector('.stu-del'), '⚠ اضغط مرة أخرى لحذف الشعبة', function () { sync(); if (!D.cur || !D.classes[D.cur]) return; var c = D.cur; delete D.classes[c]; Object.keys(D.stars).forEach(function (k) { if (k.indexOf(c + '|') === 0) delete D.stars[k]; }); D.cur = Object.keys(D.classes)[0] || ''; pool = []; save(); show('cls'); });
       load();
     },
     wheel: function (body) {
