@@ -1,5 +1,5 @@
 {
- "version": 48,
+ "version": 49,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -1606,8 +1606,8 @@
    "title": "المعادن – جواهر الأرض",
    "desc": "كهف البلورات: مختبر فحص المعادن باللون والمخدش والبريق والقساوة والانفصام، ومقياس موهس، ومنجم الجواهر.",
    "color": "#9b5de5",
-   "file": "lessons/g7-c5-r4.html#l1",
-   "cover": "img/cover-g7-c5-l1.webp"
+   "file": "lessons/g7-c5-r5.html#l1",
+   "cover": "img/cover-g7-c5-l1-3d.webp"
   },
   {
    "id": "g7-c5-l2",
@@ -1618,8 +1618,8 @@
    "title": "أنواع الصخور",
    "desc": "مختبر التبلور، وطبقات الرسوبيات، ومكبس التحول، ورحلة الجرانيت في دورة الصخور، وتحدي البركان.",
    "color": "#e2662b",
-   "file": "lessons/g7-c5-r4.html#l2",
-   "cover": "img/cover-g7-c5-l2.webp"
+   "file": "lessons/g7-c5-r5.html#l2",
+   "cover": "img/cover-g7-c5-l2-3d.webp"
   },
   {
    "id": "lab-minr-7",
@@ -1750,8 +1750,8 @@
    "title": "صفائح الأرض المتحركة",
    "desc": "بعثة إلى باطن الأرض: مختبر الموجات الزلزالية، ونموذج الطين، وحدود الصفائح، وتيارات الحمل، وورشة صناعة الجبال، ومختبر التوازن.",
    "color": "#8A5A2B",
-   "file": "lessons/g7-c6-r3.html#l1",
-   "cover": "img/cover-g7-c6-l1.webp"
+   "file": "lessons/g7-c6-r4.html#l1",
+   "cover": "img/cover-g7-c6-l1-3d.webp"
   },
   {
    "id": "g7-c6-l2",
@@ -1762,8 +1762,8 @@
    "title": "التجوية والتعرية وأثرهما",
    "desc": "من شقّ في صخرة إلى دلتا: التجمد والجذور، ومختبر الأحماض، ومقياس المناخ، والتربة، ومنحدر الجاذبية، والجليديات والرياح، وحوض الجريان.",
    "color": "#8A5A2B",
-   "file": "lessons/g7-c6-r3.html#l2",
-   "cover": "img/cover-g7-c6-l2.webp"
+   "file": "lessons/g7-c6-r4.html#l2",
+   "cover": "img/cover-g7-c6-l2-3d.webp"
   },
   {
    "id": "sheet-g7-c6-l1",

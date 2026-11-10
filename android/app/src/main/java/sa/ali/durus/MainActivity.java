@@ -37,8 +37,13 @@ public class MainActivity extends Activity {
         s.setCacheMode(WebSettings.LOAD_DEFAULT);
         web.setWebViewClient(new WebViewClient() {
             @Override
+            public void onPageFinished(WebView v, String url) {
+                /* بعد نجاح التحميل نعود لجلب أحدث نسخة من الإنترنت (لا نبقى على النسخة المحفوظة) */
+                if (v.getSettings().getCacheMode() != WebSettings.LOAD_DEFAULT) v.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+            }
+            @Override
             public void onReceivedError(WebView v, WebResourceRequest req, WebResourceError err) {
-                if (req.isForMainFrame()) {
+                if (req.isForMainFrame() && v.getSettings().getCacheMode() == WebSettings.LOAD_DEFAULT) {
                     v.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
                     v.loadUrl(HOME);
                 }
