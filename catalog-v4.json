@@ -1,5 +1,5 @@
 {
- "version": 49,
+ "version": 50,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -1488,6 +1488,18 @@
    "color": "#6a4be0",
    "file": "lessons/g7-c4-r17.html#l2",
    "cover": "img/cover-g7-c4-l2.webp"
+  },
+  {
+   "id": "g7-c4-rv",
+   "title": "حل أسئلة مراجعة الفصل الرابع",
+   "type": "lesson",
+   "grade": "7",
+   "no": 3,
+   "chapter": "الفصل الرابع: الذرات والعناصر والجدول الدوري",
+   "desc": "حلول أسئلة مراجعة الفصل (١–٢٠) سؤالًا سؤالًا بخط كبير وواضح للعرض في الفصل وفي التيمز",
+   "color": "#5b3fd6",
+   "file": "lessons/g7-c4-review.html",
+   "cover": "img/cover-g7-c4-rv.webp"
   },
   {
    "id": "sheet-g7-c4-l1",
