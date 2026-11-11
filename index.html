@@ -305,7 +305,7 @@ function fs(el){ if(document.fullscreenElement){ document.exitFullscreen().catch
 function play(r){ if(!r) return; var P=$('#player'), st=$('#pStage'); $('#pT').textContent=r.title; P.hidden=false; document.body.style.overflow='hidden';
   if(r.kind==='video') st.innerHTML='<video controls autoplay playsinline src="'+esc(r.file)+'"></video>';
   else if(r.kind==='image') st.innerHTML='<img class="pimg" src="'+esc(r.file)+'" alt="'+esc(r.title)+'">';
-  else st.innerHTML='<iframe title="'+esc(r.title)+'" src="'+esc(r.file)+'" allow="fullscreen; autoplay"></iframe>' }
+  else { st.innerHTML='<iframe title="'+esc(r.title)+'" src="'+esc(r.file)+'" allow="fullscreen; autoplay"></iframe>'; var fr=st.querySelector('iframe'); fr.addEventListener('load',function(){ try{ var d=fr.contentDocument; if(d&&d.body&&!fr.contentWindow.__penLoaded&&!d.querySelector('script[src$="pen.js"]')){ var sc=d.createElement('script'); sc.src=new URL('pen.js',location.href).href; d.body.appendChild(sc) } }catch(e){} }) } }
 function closeP(){ $('#player').hidden=true; $('#pStage').innerHTML=''; document.body.style.overflow='' }
 $('#pClose').addEventListener('click',closeP);
 $('#pFull').addEventListener('click',function(){ fs($('#player')) });
