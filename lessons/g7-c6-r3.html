@@ -450,7 +450,7 @@ var css=[
 '.x3-meter{position:absolute;top:118px;left:112px;z-index:4;text-align:left;direction:rtl;opacity:0;transition:.5s}.x3-meter.on{opacity:1}',
 '.x3-meter b{display:block;font-size:66px;font-weight:800;line-height:1;color:#fff;text-shadow:0 0 30px var(--c)}.x3-meter span{font-size:19px;color:#cfd6e4}',
 '.x3-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:7}',
-'.x3-fin{position:absolute;inset:0;display:grid;place-items:center;z-index:5;pointer-events:none;opacity:0;transition:opacity 1.2s}.x3-fin.on{opacity:1}',
+'.x3-fin{position:absolute;inset:0;display:grid;place-items:center;z-index:5;pointer-events:none;opacity:0;transition:opacity 1.2s}.x3-fin.on{opacity:1;background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,.82),rgba(0,0,0,.45) 70%)}','.x3-gb{font-size:18px!important;padding:11px 18px;background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.3)!important}','.x3-guide{position:absolute;top:118px;left:50%;transform:translate(-50%,-10px);width:900px;z-index:8;background:rgba(250,250,252,.97);color:#111827;border-radius:20px;padding:16px 24px 14px;box-shadow:0 20px 60px rgba(0,0,0,.6);border-top:6px solid var(--c);opacity:0;pointer-events:none;transition:.35s}','.x3-guide.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}.x3-guide h4{margin:0 0 4px;font-size:18px;color:#4b5563}.x3-guide p{margin:0;font-size:25px;line-height:1.65;font-weight:700}.x3-guide small{display:block;margin-top:8px;font-size:15px;color:#6b7280}',
 '.x3-fin div{text-align:center;max-width:1100px;margin-top:-80px}.x3-fin small{font-size:20px;color:var(--c);letter-spacing:3px}.x3-fin h2{margin:10px 0 0;font-size:54px;line-height:1.45;font-weight:800;text-shadow:0 4px 30px #000,0 0 2px #000}'
 ].join('');
 var st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
@@ -468,11 +468,12 @@ window.X3D=function(el,story,hooks){
   el.innerHTML='<div class="x3" style="--c:'+(story.color||'#7dd3fc')+'"><div class="x3-bandt"></div><div class="x3-band"></div>'+
    '<div class="x3-ttl"><div class="k"></div><h1></h1><p></p></div><div class="x3-meter"><b></b><span></span></div>'+
    '<div class="x3-sub"></div><div class="x3-rail"></div><div class="x3-dock"></div><div class="x3-vote"></div><div class="x3-fin"><div><small></small><h2></h2></div></div>'+
-   '<div class="x3-nav"><button class="x3-nx">ابدأ ←</button><button class="x3-pv">→</button></div><div class="x3-flash"></div>'+
+   '<div class="x3-nav"><button class="x3-nx">ابدأ ←</button><button class="x3-pv">→</button><button class="x3-gb">📋 شرح المشهد</button></div><div class="x3-guide"><h4></h4><p></p><small>اضغط في أي مكان على هذه البطاقة لإغلاقها</small></div><div class="x3-flash"></div>'+
    '<div class="x3-load"><div>جارٍ تجهيز المشهد ثلاثي الأبعاد…<i></i></div></div></div>';
   var root=el.querySelector('.x3'),q=function(s){return root.querySelector(s)};
   var ttl=q('.x3-ttl'),sub=q('.x3-sub'),rail=q('.x3-rail'),dock=q('.x3-dock'),vote=q('.x3-vote'),fin=q('.x3-fin'),nx=q('.x3-nx'),pv=q('.x3-pv'),meter=q('.x3-meter'),flashEl=q('.x3-flash');
-  var tags={},tasks=[],K=null;
+  var tags={},tasks=[],K=null,gOn=false,guide=q('.x3-guide'),gb=q('.x3-gb');guide.onclick=function(){gOn=false;guide.classList.remove('on')};gb.onclick=function(){gOn=!gOn;showG()};
+  function showG(){var s=api&&api.steps[cur];if(!s)return;guide.querySelector('h4').textContent='شرح المشهد '+ar(cur+1)+': '+s.name;guide.querySelector('p').innerHTML=s.g||'';guide.classList.toggle('on',gOn&&!!s.g)}
   function words(s){return s.split(' ').map(function(w,i){return '<span class="x3-w" style="animation-delay:'+(i*.09)+'s">'+w+'</span>'}).join(' ')}
   var U={
     title:function(k,h,p){ttl.classList.remove('mini');ttl.querySelector('.k').textContent=k||'';ttl.querySelector('h1').innerHTML=words(h||'');ttl.querySelector('p').innerHTML=p||''},
@@ -499,13 +500,13 @@ window.X3D=function(el,story,hooks){
   function ezf(k){return k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2}
   function go(i){if(!api||i<0||i>=api.steps.length)return;cur=i;tasks.length=0;U.vote(null);U.fin(null);U.meter(null);U.untag();dock.innerHTML='';
     rail.querySelectorAll('button').forEach(function(b,j){b.className=j===i?'on':j<i?'dn':''});
-    nx.textContent=i===api.steps.length-1?'✔ إلى الدرس':'التالي ←';pv.style.visibility=i?'visible':'hidden';SFX.step();api.steps[i].enter()}
+    nx.textContent=i===api.steps.length-1?'✔ إلى الدرس':'التالي ←';pv.style.visibility=i?'visible':'hidden';SFX.step();api.steps[i].enter();showG()}
   function next(){if(cur<api.steps.length-1){go(cur+1);return true}hooks.done&&hooks.done();return false}
   nx.onclick=function(){ac();if(!api)return;if(next()===false&&hooks.end)hooks.end()};pv.onclick=function(){go(cur-1)};
   function frame(ts){if(!running)return;raf=requestAnimationFrame(frame);var dt=Math.min(.1,(ts-(last||ts))/1000);last=ts;T+=dt;
     for(var i=tasks.length-1;i>=0;i--){var o=tasks[i];o.t+=dt;var k=Math.min(1,o.t/o.d);o.fn(o.ease?ezf(k):k,dt);if(k>=1){tasks.splice(i,1);o.done&&o.done()}}
     api.update(dt,T);K.renderer.render(K.scene,K.camera);if(K.q){K.q.n++;K.q.s+=dt;if(K.q.s>2){var fps=K.q.n/K.q.s;K.q.n=0;K.q.s=0;var pr=K.renderer.getPixelRatio();if(fps<28&&pr>.6){K.renderer.setPixelRatio(Math.max(.6,pr*.8));K.renderer.setSize(1600,900,false)}}}
-    var v=new K.THREE.Vector3();Object.keys(tags).forEach(function(id){var e=tags[id];if(!e.classList.contains('on'))return;v.copy(e._p);if(e._o)e._o.localToWorld(v);v.project(K.camera);e.style.left=((v.x+1)/2*1600)+'px';e.style.top=((1-v.y)/2*900)+'px';e.style.visibility=v.z<1?'visible':'hidden'})}
+    var v=new K.THREE.Vector3();Object.keys(tags).forEach(function(id){var e=tags[id];if(!e.classList.contains('on'))return;v.copy(e._p);if(e._o)e._o.localToWorld(v);v.project(K.camera);var tx=(v.x+1)/2*1600,ty=(1-v.y)/2*900,tw=e.offsetWidth,th=e.offsetHeight+18;[[dock,1],[vote.classList.contains('on')?vote:null,-1]].forEach(function(o){var d=o[0];if(!d||!d.children.length)return;var l=d.offsetLeft,t=d.offsetTop,r=l+d.offsetWidth,b=t+d.offsetHeight;if(tx+tw/2>l-10&&tx-tw/2<r+10&&ty>t-10&&ty-th<b+10)tx=o[1]>0?r+18+tw/2:l-18-tw/2});e.style.left=tx+'px';e.style.top=ty+'px';e.style.visibility=v.z<1?'visible':'hidden'})}
   function start(){started=true;loadThree().then(function(THREE){
     var r=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});var PR=/x3lo/.test(location.search)?.4:Math.min(1.5,window.devicePixelRatio||1);r.setPixelRatio(PR);r.setSize(1600,900,false);
     r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1;r.shadowMap.enabled=true;r.shadowMap.type=THREE.PCFSoftShadowMap;r.localClippingEnabled=true;
@@ -561,6 +562,8 @@ S3.gems={color:'#7dd3fc',build:function(K){
     d.piv=piv;d.g=g;d.home=piv.position.clone();
     var sp=new T.SpotLight(0xffffff,0,16,.3,.55,1.2);sp.position.set(d.x,7.5,2.6);sp.target=piv;sp.castShadow=true;sp.shadow.mapSize.set(1024,1024);sp.shadow.bias=-.0005;sc.add(sp);d.sp=sp});
   var sw=new T.PointLight(0xffffff,0,14,1.2);sc.add(sw);
+  var bd=new T.Mesh(new T.PlaneGeometry(40,16),new T.MeshBasicMaterial({map:canvasTex(T,512,256,function(x,w,h){var g=x.createRadialGradient(w/2,h*.62,10,w/2,h*.62,w*.55);g.addColorStop(0,'#3a4a6e');g.addColorStop(.45,'#18203a');g.addColorStop(1,'#04050a');x.fillStyle=g;x.fillRect(0,0,w,h)})}));bd.position.set(0,5,-7);sc.add(bd);
+  var beam=new T.Mesh(new T.ConeGeometry(1.1,4,40,1,true),new T.MeshBasicMaterial({color:0xfff6d8,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide}));beam.visible=false;sc.add(beam);
   var stx=starTex(T),glints=[];for(var i=0;i<9;i++){var s=new T.Sprite(new T.SpriteMaterial({map:stx,blending:T.AdditiveBlending,depthWrite:false,transparent:true,opacity:0}));s.userData={life:0,own:null};sc.add(s);glints.push(s)}
   var plate=new T.Mesh(new T.BoxGeometry(4.2,.06,1.5),new T.MeshPhysicalMaterial({color:0xe6f6ff,transmission:.85,roughness:.04,thickness:.2,ior:1.5,metalness:0}));plate.position.set(0,1.03,2.6);plate.visible=false;sc.add(plate);
   var scratchMat=new T.MeshBasicMaterial({color:0xffffff});
@@ -576,35 +579,35 @@ S3.gems={color:'#7dd3fc',build:function(K){
       var p0=d.piv.position.clone();U.tween(1.2,function(k){d.piv.position.x=lerp(p0.x,sx-.55,k);if(line){line.scale.x=Math.max(.001,1.1*k);line.position.x=sx+.55-.55*k}},function(){
         U.tag('s'+d.n,new V(sx,1.15,2.6),d.scr?'<b>✔ ترك خدشًا</b>':'<b>✘ لا خدش واضح</b>');
         move(d,[sx,2.8,2.6],.6,function(){move(d,d.home.toArray(),1,function(){U.tween(.5,function(k){d.g.rotation.x=lerp(0,.38,k)});d.busy=false;spin=true})})},false)})})}
-  function sweep(){if(sweeping)return;sweeping=true;sw.intensity=0;U.tween(5,function(k){sw.position.set(lerp(6,-6,k),3.4,2.6);sw.intensity=Math.sin(k*Math.PI)*90},function(){sweeping=false;sw.intensity=0},false)}
+  function sweep(){if(sweeping)return;sweeping=true;sw.intensity=0;beam.visible=true;U.say('راقبوا الأحجار والشعاع يمرّ فوقها… أيّها يتلألأ بألوان أكثر؟');U.tween(6,function(k){var bx=lerp(5.5,-5.5,k);sw.position.set(bx,3.6,1.2);sw.intensity=Math.sin(k*Math.PI)*110;beam.position.set(bx,3.9,.4);beam.material.opacity=.16*Math.sin(k*Math.PI)},function(){sweeping=false;sw.intensity=0;beam.visible=false;var st=['★★☆☆☆','★★☆☆☆','★★★★★'];D.forEach(function(d,i){U.tag('g'+d.n,new V(d.x,2.75,0),'<b>'+d.n+'</b><small>البريق</small><b>'+st[i]+'</b>')});U.say('الحجر <b>ج</b> تلألأ بألوان قوس المطر أكثر من غيره! فما السبب؟ اكشفوا معامل الانكسار.')},false)}
   var dia=D[2],qz=D[0];
   function duel(){if(dia.busy)return;dia.busy=qz.busy=true;spin=false;move(dia,[1.6,2.4,.6],1.4,function(){U.sfx.hiss();for(var i=0;i<4;i++){var g=glints[i];g.userData.own=qz;g.userData.life=0}
     U.tag('gأ',new V(3,2.75,0),'<b>أ خُدش!</b><small>الألماس أقسى من الكوارتز</small>');U.wait(1.4,function(){move(dia,dia.home.toArray(),1.2,function(){dia.busy=qz.busy=false;spin=true})})})}
   return {steps:[
-   {name:'الملف',enter:function(){K.look([0,5,20],[0,1.6,0]);K.fly([1.8,2.9,9.6],[1.8,1.75,0],4.5);lights(true,true);U.title('تحدٍّ يواجهه خبراء الأحجار الكريمة','لغز الأحجار الثلاثة','ألماس حقيقي يختبئ بين حجرين مقلَّدين');
+   {name:'الملف',g:'المشهد: ثلاثة أحجار متشابهة (أ، ب، ج)، واحد منها فقط <b>ألماس</b>. اطلب من الطلاب التصويت بالنظر فقط، واضغط الخيار مع كل صوت. لا إجابة هنا؛ نعيد التصويت في مرحلة «الكشف».',enter:function(){K.look([0,5,20],[0,1.6,0]);K.fly([1.8,2.9,9.6],[1.8,1.75,0],4.5);lights(true,true);U.title('تحدٍّ يواجهه خبراء الأحجار الكريمة','لغز الأحجار الثلاثة','ألماس حقيقي يختبئ بين حجرين مقلَّدين');
      U.say('ثلاثة أحجار متطابقة في الشكل والقَطع… واحد منها فقط <b>ألماس</b>، والآخران <b>كوارتز</b> و<b>زجاج</b>. ممنوع كسرها!','اسحب المشهد لتدوير الأحجار');
      U.wait(2.2,tagsBasic);U.wait(3.2,function(){U.vote({q:'بالنظر فقط… أيّها الألماس في رأيكم؟',o:['الحجر أ','الحجر ب','الحجر ج']})})}},
-   {name:'اختبار البريق',enter:function(){U.mini();tagsBasic();K.fly([0,2.8,8.4],[0,1.75,0],1.2);
+   {name:'اختبار البريق',g:'اضغط «مرّر ضوءًا»: يتحرك شعاع ضوء فوق الأحجار، ولاحظوا أن الحجر <b>ج</b> يتلألأ بألوان قوس المطر أكثر من غيره، وتظهر درجة البريق. ثم اضغط «اكشف معامل الانكسار»: الأعلى بريقًا له أعلى معامل انكسار (٢٫٤٢).',enter:function(){U.mini();tagsBasic();K.fly([0,2.8,8.4],[0,1.75,0],1.2);
      U.say('الخبير لا يكتفي بالنظر… يبدأ بـ<b>الضوء</b>. مرّروا ضوءًا وراقبوا: أيّ حجر يلمع بألوان قوس المطر؟');
      U.tools([{ic:'🔦',lbl:'مرّر ضوءًا على الأحجار',fn:sweep},{ic:'📐',lbl:'اكشف معامل الانكسار',fn:function(){D.forEach(function(d){U.tag('g'+d.n,new V(d.x,2.75,0),'<b>'+d.n+'</b><small>معامل الانكسار</small><b>'+X3D.ar(d.ior,2)+'</b>')});
        U.say('كلما زاد <b>معامل الانكسار</b> انحنى الضوء أكثر داخل الحجر فزاد بريقه وتلوّنه. أعلاها ٢٫٤٢!','قيم حقيقية مقيسة لهذه المواد')}}])}},
-   {name:'اختبار القساوة',enter:function(){U.mini();tagsBasic();plate.visible=true;K.fly([0,4.4,9.4],[0,1.4,1.4],1.6);
+   {name:'اختبار القساوة',g:'اضغط أزرار الخدش واحدًا تلو الآخر: يُسحب كل حجر على لوح الزجاج؛ <b>أ</b> و<b>ج</b> يتركان خدشًا و<b>ب</b> لا يترك. ثم «ج ضد أ»: الألماس يخدش الكوارتز. وأخيرًا «مقياس موهس» لعرض القيم.',enter:function(){U.mini();tagsBasic();plate.visible=true;K.fly([0,4.4,9.4],[0,1.4,1.4],1.6);
      U.say('على الطاولة <b>لوح زجاج</b>. الحجر الأقسى يخدش الأقل قساوة… جرّبوا كل حجر!');
      U.tools([{ic:'✏️',lbl:'اخدش اللوح بالحجر أ',fn:function(){scratch(D[0],0)}},{ic:'✏️',lbl:'اخدش اللوح بالحجر ب',fn:function(){scratch(D[1],1)}},{ic:'✏️',lbl:'اخدش اللوح بالحجر ج',fn:function(){scratch(D[2],2)}},
        {ic:'⚔️',lbl:'الحجر ج ضد الحجر أ',fn:duel},{ic:'📏',lbl:'مقياس موهس للقساوة',fn:function(){D.forEach(function(d){U.tag('g'+d.n,new V(d.x,2.75,0),'<b>'+d.n+'</b><small>القساوة على مقياس موهس</small><b>'+d.H+'</b>')});
        U.say('على <b>مقياس موهس</b>: الألماس <b>١٠</b> وهو أقسى المعادن، والكوارتز ٧، والزجاج نحو ٥٫٥.')}}])}},
-   {name:'اختبار الكثافة',enter:function(){U.mini();plate.visible=false;tagsBasic();K.fly([0,3.4,9],[0,1.5,0],1.4);
+   {name:'اختبار الكثافة',g:'الأحجار لها الحجم نفسه (٠٫٥ سم³). اضغط «زِن الأحجار» لتظهر كتلة كل حجر، ثم «احسب الكثافة»: الأكثف هو الحجر ج (٣٫٥٢ غ/سم³).',enter:function(){U.mini();plate.visible=false;tagsBasic();K.fly([0,3.4,9],[0,1.5,0],1.4);
      U.say('للأحجار الحجم نفسه تمامًا: <b>٠٫٥ سم³</b>. هل تتساوى كتلها؟ ضعوها على الميزان!');
      U.tools([{ic:'⚖️',lbl:'زِن الأحجار',fn:function(){D.forEach(function(d){U.tween(1.8,function(k){U.tag('w'+d.n,new V(d.x,1.0,1.0),'<small>الكتلة</small><b>'+X3D.ar(d.m*k,2)+' غ</b>')})})}},
        {ic:'➗',lbl:'احسب الكثافة',fn:function(){D.forEach(function(d){U.tag('g'+d.n,new V(d.x,2.75,0),'<b>'+d.n+'</b><small>الكثافة (غ/سم³)</small><b>'+d.rho+'</b>')});U.say('<b>الكثافة = الكتلة ÷ الحجم</b>. الحجم واحد، لكن الألماس أكثف: ٣٫٥٢ غ/سم³.')}}])}},
-   {name:'الكشف',enter:function(){U.mini();tagsBasic();K.fly([1.8,2.9,9.6],[1.8,1.8,0],1.4);U.say('اجمعوا الأدلة: البريق… القساوة… الكثافة. صوّتوا من جديد!');
+   {name:'الكشف',g:'صوّت الصف من جديد بعد الاختبارات الثلاثة، ثم اضغط «اكشف الإجابة»: يرتفع الألماس وتظهر أسماء الأحجار، مع لفت الانتباه إلى أن <b>الزجاج ليس معدنًا</b>.',enter:function(){U.mini();tagsBasic();K.fly([1.8,2.9,9.6],[1.8,1.8,0],1.4);U.say('اجمعوا الأدلة: البريق… القساوة… الكثافة. صوّتوا من جديد!');
      U.vote({q:'بعد الاختبارات الثلاثة… أيّها الألماس؟',o:['الحجر أ','الحجر ب','الحجر ج'],a:2,ex:'<b>الحجر ج هو الألماس</b>: الأعلى بريقًا وقساوةً وكثافة. والمفاجأة: <b>الزجاج ليس معدنًا</b> أصلًا!',onReveal:function(){U.sfx.ok();U.flash(.35);
        D.forEach(function(d){U.tween(1.2,function(k){d.sp.intensity=lerp(d.sp.intensity,d===dia?320:40,k)});U.tag('g'+d.n,new V(d.x,2.75,0),'<b>'+d.name+'</b><small>'+(d.name==='زجاج'?'ليس معدنًا':'معدن')+'</small>')});
        move(dia,[dia.home.x,dia.home.y+.7,dia.home.z],1.4)}})}},
-   {name:'سؤال الدرس',enter:function(){U.mini();K.fly([0,6,14],[0,1.6,0],3);U.fin('سؤال الدرس','البريق… القساوة… الكثافة…<br>كيف نميّز <span style="color:var(--c)">المعادن</span> بعضها من بعض؟');U.say('ولماذا لا يُعدّ الزجاج معدنًا رغم أنه صلب ولامع؟')}}
+   {name:'سؤال الدرس',g:'اطرح سؤال الدرس واستقبل إجابات الطلاب، ثم اضغط «إلى الدرس» للانتقال إلى المحطة التالية.',enter:function(){U.mini();K.fly([0,6,14],[0,1.6,0],3);U.fin('سؤال الدرس','البريق… القساوة… الكثافة…<br>كيف نميّز <span style="color:var(--c)">المعادن</span> بعضها من بعض؟');U.say('ولماذا لا يُعدّ الزجاج معدنًا رغم أنه صلب ولامع؟')}}
   ],update:function(dt,t){if(spin)D.forEach(function(d){if(!d.busy)d.piv.rotation.y+=dt*.28});
-    glints.forEach(function(g){var u=g.userData;u.life-=dt;if(u.life<=0){if(!lightOn&&!sweeping){g.material.opacity=0;return}var o=u.own||D[Math.random()<.7?2:(Math.random()<.5?0:1)];u.own=null;if(Math.random()>o.gl*(sweeping?1.6:1)*.9){u.life=.15;g.material.opacity=0;return}
-      var dir=new V(Math.random()-.5,Math.random()*.8,Math.random()-.5).normalize(),cd=K.camera.position.clone().sub(o.piv.position).normalize();if(dir.dot(cd)<0)dir.reflect(cd);g.position.copy(o.piv.position).addScaledVector(dir,.5);u.max=.25+Math.random()*.4*o.gl;u.life=u.dur=.25+Math.random()*.35}
+    glints.forEach(function(g){var u=g.userData;u.life-=dt;if(u.life<=0){if(!lightOn&&!sweeping){g.material.opacity=0;return}var o=u.own||D[Math.random()<.7?2:(Math.random()<.5?0:1)];u.own=null;if(Math.random()>o.gl*(sweeping?(o===dia?3:1):1)*.9){u.life=.15;g.material.opacity=0;return}
+      var dir=new V(Math.random()-.5,Math.random()*.8,Math.random()-.5).normalize(),cd=K.camera.position.clone().sub(o.piv.position).normalize();if(dir.dot(cd)<0)dir.reflect(cd);g.position.copy(o.piv.position).addScaledVector(dir,.5);u.max=(.25+Math.random()*.4*o.gl)*(sweeping&&o===dia?2.2:1);u.life=u.dur=.25+Math.random()*.35;g.material.color.setHSL(o===dia?Math.random():0,o===dia?.9:0,o===dia?.7:1)}
       var k=1-u.life/u.dur;g.material.opacity=Math.sin(k*Math.PI);g.scale.setScalar(u.max*(.6+.4*Math.sin(k*Math.PI)));g.material.rotation=t*2})}};
 }};
 
@@ -663,25 +666,25 @@ S3.rocks={color:'#fb923c',build:function(K){
   K.look([0,7,15],[0,0,0]);
   function sky(day,d){var c0=new T.Color(0x05060c),c1=new T.Color(0x9fb8d6);U.tween(d||3,function(k){var kk=lerp(P.day,day,k);sc.background.copy(c0).lerp(c1,kk);sc.fog.color.copy(sc.background);sun.intensity=.2+2.6*kk;hemi.intensity=.35+.45*kk;st.material.opacity=.8*(1-kk)},function(){P.day=day})}
   return {steps:[
-   {name:'٦٥٤هـ',enter:function(){P.lava=0;P.cool=0;P.e=0;P.s=0;P.m=0;P.heat=0;update();K.look([0,9,18],[0,0,0]);K.fly([1.5,6,13.5],[1,0,0],4);
+   {name:'٦٥٤هـ',g:'مجسّم لقطعة من الأرض (اسحبه لتدويره). اضغط «فجّر البركان»: تتدفق اللابة ويعدّ العدّاد ٥٢ يومًا، وهو حدث حقيقي قرب المدينة المنورة سنة ٦٥٤هـ.',enter:function(){P.lava=0;P.cool=0;P.e=0;P.s=0;P.m=0;P.heat=0;update();K.look([0,9,18],[0,0,0]);K.fly([1.5,6,13.5],[1,0,0],4);
      U.title('آلة زمن الصخور','رحلة صخرة عبر الزمن','تبدأ بحدث حقيقي قرب المدينة المنورة');
      U.say('جمادى الآخرة <b>٦٥٤هـ</b> (١٢٥٦م): زلازل متتالية قرب المدينة المنورة… ثم ثار البركان!','اسحب المشهد لتدوير المجسّم');
      U.tools([{ic:'🌋',lbl:'فجّر البركان',fn:function(){if(P.erupt)return;P.erupt=1;U.sfx.boom();U.flash(.6);fount.visible=true;U.tween(9,function(k){P.lava=k;U.meter(X3D.ar(Math.round(52*k)),'يومًا من تدفّق اللابة')},function(){U.say('استمر تدفّق اللابة <b>٥٢ يومًا</b>، ووصلت إلى نحو ١٢ كم من المدينة.','المصدر: هيئة المساحة الجيولوجية السعودية')},false)}}])}},
-   {name:'تبرد اللابة',enter:function(){U.mini();if(P.lava<1){P.lava=1;P.erupt=1}K.fly([0,5.5,12.5],[1,.2,0],2);U.say('توقّف التدفّق… والحرارة تتسرّب من اللابة يومًا بعد يوم.');
+   {name:'تبرد اللابة',g:'صوّت الصف: ماذا يحدث للّابة حين تبرد؟ ثم اكشف الإجابة أو اضغط «سرّع التبريد»: تسودّ اللابة وتظهر عيّنة <b>البازلت</b> (صخر ناري).',enter:function(){U.mini();if(P.lava<1){P.lava=1;P.erupt=1}K.fly([0,5.5,12.5],[1,.2,0],2);U.say('توقّف التدفّق… والحرارة تتسرّب من اللابة يومًا بعد يوم.');
      function cool(){P.erupt=0;fount.visible=false;sky(1,4);U.tween(4,function(k){P.cool=Math.max(P.cool,k)},function(){showSpec('b','<b>صخر ناري</b><small>البازلت · من تبريد اللابة</small>');U.say('بردت اللابة فتصلّبت <b>صخرًا ناريًا</b>… وما زالت «الحرّات» السوداء قرب المدينة حتى اليوم.')})}
      U.vote({q:'ماذا سيحدث للّابة حين تبرد؟',o:['تبقى سائلة إلى الأبد','تتصلّب فتصبح صخرًا','تتبخّر وتختفي'],a:1,ex:'تبرد اللابة وتتصلّب فتكوّن <b>صخرًا ناريًا</b> مثل البازلت.',onReveal:cool});
      U.tools([{ic:'❄️',lbl:'سرّع التبريد',fn:function(){U.reveal();if(P.cool<.01)cool()}}])}},
-   {name:'ملايين السنين',enter:function(){U.mini();P.cool=1;P.erupt=0;fount.visible=false;if(P.day<1)sky(1,1);showSpec('b','<b>صخر ناري</b><small>البازلت</small>');K.fly([3.5,6.5,13.5],[1.2,-.2,.5],2);
+   {name:'ملايين السنين',g:'اضغط «مطر ورياح»: يتآكل البركان وتتراكم الطبقات في المنخفض، ثم تظهر عيّنة <b>الحجر الرملي</b> (صخر رسوبي).',enter:function(){U.mini();P.cool=1;P.erupt=0;fount.visible=false;if(P.day<1)sky(1,1);showSpec('b','<b>صخر ناري</b><small>البازلت</small>');K.fly([3.5,6.5,13.5],[1.2,-.2,.5],2);
      U.say('الآن نسرّع الزمن ملايين السنين… ماذا تفعل الأمطار والرياح بالصخور؟');
      U.tools([{ic:'🌧️',lbl:'مطر ورياح عبر ملايين السنين',fn:function(){if(P.rain)return;P.rain=1;U.tween(1,function(k){rain.material.opacity=.5*k});U.say('المطر والرياح تفتّت الصخور (<b>تجوية</b>) وتنقل فتاتها (<b>تعرية</b>)…');
        U.tween(10,function(k){P.e=Math.min(1,k*1.6);P.s=sst(.35,1,k);U.meter(X3D.ar(Math.round(k*10))+' ملايين','سنة تقريبًا (توضيحي)')},function(){P.rain=0;U.tween(1,function(k){rain.material.opacity=.5*(1-k)});
          showSpec('s','<b>صخر رسوبي</b><small>الحجر الرملي · فتات تراكم وتماسك</small>');U.say('ترسّب الفتات طبقةً فوق طبقة ثم تماسك فصار <b>صخرًا رسوبيًا</b>… مثل صخور العُلا.')},false)}}])}},
-   {name:'حرارة وضغط',enter:function(){U.mini();P.e=1;P.s=1;showSpec('b','<b>صخر ناري</b>');showSpec('s','<b>صخر رسوبي</b>');K.fly([.5,3.6,13],[1.2,-.8,0],2);
+   {name:'حرارة وضغط',g:'صوّت الصف، ثم اضغط «اضغط وسخّن»: يتوهج الجزء السفلي من المجسّم وتتحول طبقاته إلى أشرطة، وتظهر عيّنة <b>الرخام</b> (صخر متحوّل).',enter:function(){U.mini();P.e=1;P.s=1;showSpec('b','<b>صخر ناري</b>');showSpec('s','<b>صخر رسوبي</b>');K.fly([.5,3.6,13],[1.2,-.8,0],2);
      U.say('تُدفن الصخور أعمق فأعمق… حيث الحرارة والضغط هائلان.');
      function press(){U.sfx.boom();U.tween(5,function(k){P.m=Math.max(P.m,k);P.heat=Math.sin(k*Math.PI)*1+k*.15;block.scale.y=1-.1*k},function(){showSpec('m','<b>صخر متحوّل</b><small>الرخام · تغيّر بالحرارة والضغط</small>');U.say('لم ينصهر الصخر… لكن بلّوراته وتركيبه تغيّرت فصار <b>صخرًا متحوّلًا</b> مثل الرخام.')})}
      U.vote({q:'حرارة وضغط هائلان دون أن تنصهر الصخور… ماذا يحدث لها؟',o:['تتحوّل إلى صخر جديد مختلف','تعود لابة فورًا','لا يتغيّر فيها شيء'],a:0,ex:'يتغيّر تركيبها وبلّوراتها فتصبح <b>صخرًا متحوّلًا</b>.',onReveal:press});
      U.tools([{ic:'🔥',lbl:'اضغط وسخّن',fn:function(){U.reveal();if(P.m<.01)press()}}])}},
-   {name:'الدورة',enter:function(){U.mini();P.m=Math.max(P.m,1);P.heat=.15;showSpec('b','<b>صخر ناري</b>');showSpec('s','<b>صخر رسوبي</b>');showSpec('m','<b>صخر متحوّل</b>');K.fly([0,4.5,14],[2.5,.6,2],2.5);
+   {name:'الدورة',g:'تتجمع العيّنات الثلاث في دائرة تمثّل <b>دورة الصخور</b>. اطرح سؤال الدرس، ثم انتقل إلى الدرس.',enter:function(){U.mini();P.m=Math.max(P.m,1);P.heat=.15;showSpec('b','<b>صخر ناري</b>');showSpec('s','<b>صخر رسوبي</b>');showSpec('m','<b>صخر متحوّل</b>');K.fly([0,4.5,14],[2.5,.6,2],2.5);
      var cen=new V(3.2,1.2,4.6),ks=['b','s','m'],p0=ks.map(function(k){return SP[k].position.clone()});U.tween(2.2,function(t){ks.forEach(function(k,i){var a=-Math.PI/2+i*2.094;SP[k].position.lerpVectors(p0[i],new V(cen.x+Math.cos(a)*1.7,cen.y+Math.sin(a)*1.7,cen.z),t)})},function(){
        if(!arrows){arrows=new T.Group();for(var i=0;i<3;i++){var a0=-Math.PI/2+i*2.094+.45,a1=a0+2.094-.9,pts=[];for(var s=0;s<=20;s++){var a=lerp(a0,a1,s/20);pts.push(new V(Math.cos(a)*1.7,Math.sin(a)*1.7,0))}
          var tb=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts),40,.045,8),new T.MeshBasicMaterial({color:0xfbbf24}));arrows.add(tb);var cn=new T.Mesh(new T.ConeGeometry(.12,.3,16),new T.MeshBasicMaterial({color:0xfbbf24}));var e=pts[20],e0=pts[19];cn.position.copy(e);cn.quaternion.setFromUnitVectors(new V(0,1,0),e.clone().sub(e0).normalize());arrows.add(cn)}arrows.position.copy(cen);sc.add(arrows)}
@@ -727,21 +730,21 @@ S3.earth={color:'#f97316',build:function(K){
   function faceLon(lon,lat,cam,d,done){var p=ll(lon,lat,1),ap=Math.atan2(p.z,p.x),acm=Math.atan2(cam.z,cam.x),ry0=globe.rotation.y,ry=ap-acm;while(ry-ry0>Math.PI)ry-=2*Math.PI;while(ry-ry0<-Math.PI)ry+=2*Math.PI;U.tween(d||2.5,function(k){globe.rotation.y=lerp(ry0,ry,k)},done)}
   function setCut(on,d){var c0=clipA.constant,c1=on?0:9;layers.forEach(function(l){l.visible=true});U.tween(d||2.5,function(k){clipA.constant=clipB.constant=lerp(c0,c1,k)},function(){if(!on)layers.forEach(function(l){l.visible=false})})}
   return {steps:[
-   {name:'كوكب يرتجف',enter:function(){spin=.12;K.look([0,2,15],[0,0,0]);K.fly([0,1.4,7.8],[0,.3,0],4);U.title('بيانات حقيقية · هيئة المسح الجيولوجي الأمريكية','الأرض الحية','أسبوع واحد من زلازل كوكبنا');
+   {name:'كوكب يرتجف',g:'كرة أرضية تدور (اسحبها لتدويرها). اضغط «شغّل أسبوعًا من الزلازل»: تظهر زلازل حقيقية رُصدت خلال أسبوع واحد، مع عدّاد للأيام والزلازل.',enter:function(){spin=.12;K.look([0,2,15],[0,0,0]);K.fly([0,1.4,7.8],[0,.3,0],4);U.title('بيانات حقيقية · هيئة المسح الجيولوجي الأمريكية','الأرض الحية','أسبوع واحد من زلازل كوكبنا');
      U.say('شغّلوا أسبوعًا حقيقيًا من الزلازل… كل نقطة <b>زلزال سُجّل فعلًا</b> بين ٣١ يناير و٧ فبراير ٢٠١٨م.','الزلازل التي قوتها ٢٫٥ فأكثر · اسحب الكرة لتدويرها');
      U.tools([{ic:'▶️',lbl:'شغّل أسبوعًا من الزلازل',fn:function(){for(var i=0;i<nq;i++)shown[i]=0;play=0}}])}},
-   {name:'لاحظ النمط',enter:function(){U.mini();if(play<0)play=PLAYD;spin=.06;K.fly([0,1.4,7.6],[0,.3,0],1.5);U.say('أوقفوا الكرة وتأمّلوا: هل الزلازل منتشرة في كل مكان؟');
+   {name:'لاحظ النمط',g:'اسأل: هل الزلازل منتشرة عشوائيًا؟ صوّت الصف، ثم اكشف الإجابة أو اضغط «أظهر حدود الصفائح»: تضيء الحدود فوق أحزمة الزلازل.',enter:function(){U.mini();if(play<0)play=PLAYD;spin=.06;K.fly([0,1.4,7.6],[0,.3,0],1.5);U.say('أوقفوا الكرة وتأمّلوا: هل الزلازل منتشرة في كل مكان؟');
      function showPB(){U.tween(2.5,function(k){pbM.opacity=k});U.say('قشرة الأرض ليست قطعة واحدة… بل <b>صفائح</b> ضخمة متجاورة كقطع اللغز، والزلازل تتجمّع على <b>حدودها</b>.','الحدود من نموذج علمي منشور لحدود الصفائح الأرضية')}
      U.vote({q:'ماذا تلاحظون على أماكن الزلازل؟',o:['موزّعة عشوائيًا في كل مكان','تتجمّع في أحزمة وخطوط','تحدث في الصحارى فقط'],a:1,ex:'تتجمّع في <b>أحزمة</b>… هذه الأحزمة هي <b>حدود الصفائح الأرضية</b>.',onReveal:showPB});
      U.tools([{ic:'✨',lbl:'أظهر حدود الصفائح',fn:function(){U.reveal();if(pbM.opacity<.01)showPB()}}])}},
-   {name:'في الداخل',enter:function(){U.mini();pbM.opacity=1;spin=.05;K.fly([5.2,2,5.2],[0,.25,0],2.2);U.say('ما الذي يحرّك هذه الصفائح؟ لنشطر الأرض وننظر إلى الداخل…');
+   {name:'في الداخل',g:'اضغط «اشطر الكرة الأرضية»: يُقطع ربع الكرة وتظهر الطبقات بأسمائها: القشرة، الوشاح، اللب الخارجي، اللب الداخلي.',enter:function(){U.mini();pbM.opacity=1;spin=.05;K.fly([5.2,2,5.2],[0,.25,0],2.2);U.say('ما الذي يحرّك هذه الصفائح؟ لنشطر الأرض وننظر إلى الداخل…');
      U.tools([{ic:'🔪',lbl:'اشطر الكرة الأرضية',fn:function(){U.sfx.boom();setCut(true,3);U.wait(3,function(){function onFace(r,a){a=a*Math.PI/180;return new V(0,r*Math.sin(a),r*Math.cos(a))}U.tag('crust',onFace(R*.99,62),'<b>القشرة</b><small>تتكوّن منها الصفائح</small>');
          [[R*.78,25],[R*.42,-38],[R*.12,-100]].forEach(function(q,i){var l=LAY[i];U.tag('L'+i,onFace(q[0],q[1]),'<b>'+l[3]+'</b><small>'+l[4]+'</small>')});
          U.say('تطفو الصفائح الصلبة فوق طبقة <b>لدنة</b> من الوشاح تتحرك ببطء شديد… فتحمل الصفائح معها.','سُمك القشرة مكبَّر للتوضيح')})}}])}},
-   {name:'بيتنا يتحرك',enter:function(){U.mini();pbM.opacity=1;if(clipA.constant<9)setCut(false,1.5);spin=0;var cd=new V(0,1.45,4.6);K.fly(cd.toArray(),[0,.15,0],2.5);faceLon(40,22,cd,2.5,function(){mk.visible=arA.visible=arF.visible=true;
+   {name:'بيتنا يتحرك',g:'تقترب الكاميرا من الجزيرة العربية: الأسهم البيضاء تبيّن ابتعاد الجزيرة العربية عن أفريقيا، والنقطة الحمراء النابضة موقع زلازل <b>حرّة الشاقة ٢٠٠٩م</b>.',enter:function(){U.mini();pbM.opacity=1;if(clipA.constant<9)setCut(false,1.5);spin=0;var cd=new V(0,1.45,4.6);K.fly(cd.toArray(),[0,.15,0],2.5);faceLon(40,22,cd,2.5,function(){mk.visible=arA.visible=arF.visible=true;
        U.tag('lun',lun,'<b>حرّة الشاقة · ٢٠٠٩م</b><small>أكثر من ٣٠ ألف هزّة وشقوق ٨ كم</small>');U.tag('rs',ll(40,15,R*1.01),'<b>البحر الأحمر</b><small>يتّسع نحو ١ سم كل سنة</small>')});
      U.say('<b>بيتنا يتحرك!</b> الجزيرة العربية تبتعد عن أفريقيا نحو ١ سم كل سنة… فتهتز الأرض وتتشقق كما حدث في حرّة الشاقة قرب العيص.','المصدر: هيئة المساحة الجيولوجية السعودية')}},
-   {name:'سؤال الدرس',enter:function(){U.mini();spin=.1;mk.visible=arA.visible=arF.visible=false;K.fly([0,1,9],[0,.2,0],3);U.fin('سؤال الدرس','كيف تتحرك صفائح الأرض؟<br><span style="color:var(--c)">وماذا يحدث عند حدودها؟</span>');U.say('جبال… براكين… زلازل… كلها تبدأ من حركة الصفائح.')}}
+   {name:'سؤال الدرس',g:'اطرح سؤال الدرس، ثم انتقل إلى الدرس.',enter:function(){U.mini();spin=.1;mk.visible=arA.visible=arF.visible=false;K.fly([0,1,9],[0,.2,0],3);U.fin('سؤال الدرس','كيف تتحرك صفائح الأرض؟<br><span style="color:var(--c)">وماذا يحدث عند حدودها؟</span>');U.say('جبال… براكين… زلازل… كلها تبدأ من حركة الصفائح.')}}
   ],update:function(dt,t){globe.rotation.y+=dt*spin;
     if(play>=0&&play<PLAYD){play+=dt;var lim=Math.min(1,play/PLAYD)*MAXM,cnt=0;for(var i=0;i<nq;i++){var q=EQ[i];if(q[3]<=lim){if(!shown[i]){shown[i]=.001;if(q[2]>=4.5)ring(q.p,.06+(q[2]-4)*.05)}cnt++}}
       U.meter(X3D.ar(cnt),'زلزالًا · اليوم '+X3D.ar(Math.min(7,Math.floor(play/PLAYD*7)+1))+' من ٧')}
@@ -794,18 +797,18 @@ S3.sculpt={color:'#fbbf24',build:function(K){
   function reveal(){U.sfx.ok();U.flash(.3);U.tag('el',new V(-2.4,5.2,0),'<b>جبل الفيل · العُلا</b><small>ارتفاعه الحقيقي ٥٢ مترًا · حجر رملي</small>');U.say('إنه <b>جبل الفيل</b> في العُلا: نحتته <b>التجوية والتعرية</b> عبر ملايين السنين… دون أي إنسان!')}
   var view=[[-1,3.6,15.5],[.2,2.4,0]];
   return {steps:[
-   {name:'الكتلة الصمّاء',enter:function(){K.look([6,6,26],[0,2,0]);K.fly(view[0],view[1],4);U.title('العُلا · قبل ملايين السنين','النحّات الخفي','كتلة حجر رملي… من سينحتها؟');
+   {name:'الكتلة الصمّاء',g:'كتلة حجر رملي في صحراء العُلا (اسحب المشهد للدوران حولها). صوّت الصف: من سينحتها؟',enter:function(){K.look([6,6,26],[0,2,0]);K.fly(view[0],view[1],4);U.title('العُلا · قبل ملايين السنين','النحّات الخفي','كتلة حجر رملي… من سينحتها؟');
      U.say('كتلة ضخمة من <b>الحجر الرملي</b> في صحراء العُلا. لا إزميل ولا إنسان… ومع ذلك ستتحوّل إلى تحفة!','اسحب المشهد للدوران حول الصخرة');
      U.wait(2.5,function(){U.vote({q:'من سينحت هذه الكتلة؟',o:['الإنسان بأدواته','المطر والرياح والحرارة','الحيوانات'],a:1,ex:'لا إنسان ولا إزميل: <b>عوامل التجوية والتعرية</b> هي النحّات الخفي.'})})}},
-   {name:'انحت كالطبيعة',enter:function(){U.mini();K.fly(view[0],view[1],1.2);U.say(done?'اكتمل النحت!':'أنتم الآن <b>الطبيعة</b>! اختاروا عاملًا… وشاهدوا ماذا يصنع بالصخر.');
+   {name:'انحت كالطبيعة',g:'اضغط أدوات الطبيعة بالترتيب: المطر، ثم الرياح، ثم الحرارة، ثم «مليون سنة»؛ يتساقط الفتات ويرتفع العدّاد حتى تتشكل الكتلة على هيئة <b>جبل الفيل</b> ويظهر اسمه.',enter:function(){U.mini();K.fly(view[0],view[1],1.2);U.say(done?'اكتمل النحت!':'أنتم الآن <b>الطبيعة</b>! اختاروا عاملًا… وشاهدوا ماذا يصنع بالصخر.');
      U.tools([{ic:'🌧️',lbl:'مطر يتسرّب في الشقوق',fn:function(){carve(.22,3,function(d){U.tween(.6,function(k){rain.material.opacity=.55*k});U.tween(d,function(k){st.wet=Math.sin(k*Math.PI)},function(){U.tween(1,function(k){rain.material.opacity=.55*(1-k)})})});U.say('الماء يتسرّب في الشقوق ويُذيب المواد اللاحمة بين الحبيبات… فتتفكّك.')}},
        {ic:'💨',lbl:'رياح محمّلة بالرمال',fn:function(){windMode=1;U.tween(.5,function(k){sand.material.opacity=.85*k});carve(.22,3,function(d){U.wait(d,function(){U.tween(1,function(k){sand.material.opacity=.85*(1-k)})})});U.say('حبيبات الرمل التي تحملها الرياح تصطدم بالصخر كورق الصنفرة… فتبريه ببطء.')}},
        {ic:'🌡️',lbl:'حرارة النهار وبرودة الليل',fn:function(){carve(.22,3,function(d){U.tween(d,function(k){var c=.5+.5*Math.cos(k*Math.PI*6);sun.intensity=.4+2.8*c;skyM.uniforms.k.value=.35+.65*c},function(){sun.intensity=3.2;skyM.uniforms.k.value=1})});U.say('يتمدّد الصخر في حرّ النهار وينكمش في برد الليل… فيتشقّق ويتساقط.')}},
        {ic:'⏩',lbl:'مليون سنة دفعة واحدة',fn:function(){carve(1,6,function(d){windMode=1;U.tween(.6,function(k){rain.material.opacity=.4*k;sand.material.opacity=.7*k});U.wait(d,function(){U.tween(1,function(k){rain.material.opacity=.4*(1-k);sand.material.opacity=.7*(1-k)})})})}}])}},
-   {name:'أين ذهب الفتات؟',enter:function(){U.mini();if(st.k<1){st.k=1;done=true;build();pile.scale.set(1.6,.55,1.1)}U.tag('el',new V(-2.4,5.2,0),'<b>جبل الفيل · العُلا</b><small>ارتفاعه الحقيقي ٥٢ مترًا</small>');K.fly([2.5,4.2,18.5],[2.6,2.3,0],2);
+   {name:'أين ذهب الفتات؟',g:'اضغط «أطلق الرياح»: تحمل الرياح الفتات من أسفل الصخرة فيتكوّن <b>كثيب رملي</b> (تعرية ثم ترسيب).',enter:function(){U.mini();if(st.k<1){st.k=1;done=true;build();pile.scale.set(1.6,.55,1.1)}U.tag('el',new V(-2.4,5.2,0),'<b>جبل الفيل · العُلا</b><small>ارتفاعه الحقيقي ٥٢ مترًا</small>');K.fly([2.5,4.2,18.5],[2.6,2.3,0],2);
      U.say('الفتات لا يختفي! تحمله الرياح والسيول بعيدًا (<b>تعرية</b>)… ثم يستقر كثبانًا وطبقات جديدة (<b>ترسيب</b>).');
      U.tools([{ic:'💨',lbl:'أطلق الرياح',fn:function(){windMode=2;U.tween(.6,function(k){sand.material.opacity=.9*k});U.tween(6,function(k){pile.scale.set(1.6*(1-.6*k)+.01,.55*(1-.6*k)+.01,1.1*(1-.6*k)+.01);dune.scale.set(3.6*k+.01,1.3*k+.01,2.6*k+.01)},function(){U.tween(1,function(k){sand.material.opacity=.9*(1-k)});U.tag('dn',new V(11,1.8,1),'<b>كثيب رملي</b><small>من فتات الصخر</small>')})}}])}},
-   {name:'سؤال الدرس',enter:function(){U.mini();K.fly([-6,3.4,15.5],[0,2.6,0],3);U.fin('سؤال الدرس','هل يبقى جبل الفيل إلى الأبد؟<br><span style="color:var(--c)">كيف تتفتّت الصخور؟ وكيف تنقلها الرياح والماء؟</span>');U.say('التجوية والتعرية لا تتوقفان أبدًا… حتى الآن.')}}
+   {name:'سؤال الدرس',g:'اطرح سؤال الدرس، ثم انتقل إلى الدرس.',enter:function(){U.mini();K.fly([-6,3.4,15.5],[0,2.6,0],3);U.fin('سؤال الدرس','هل يبقى جبل الفيل إلى الأبد؟<br><span style="color:var(--c)">كيف تتفتّت الصخور؟ وكيف تنقلها الرياح والماء؟</span>');U.say('التجوية والتعرية لا تتوقفان أبدًا… حتى الآن.')}}
   ],update:function(dt,t){if(Math.abs(st.k-lastK)>.004||(st.wet>0&&Math.random()<.2))build();
     if(orbit){var cp=K.camera.position,a=Math.atan2(cp.x-K._tgt.x,cp.z-K._tgt.z)+orbit,r=Math.hypot(cp.x-K._tgt.x,cp.z-K._tgt.z);cp.x=K._tgt.x+Math.sin(a)*r;cp.z=K._tgt.z+Math.cos(a)*r;K.camera.lookAt(K._tgt);orbit=0}
     deb.forEach(function(m){var u=m.userData;if(!u.on)return;u.v.y-=9.8*dt;m.position.addScaledVector(u.v,dt);m.rotation.x+=dt*4;m.rotation.z+=dt*3;if(m.position.y<.08){m.position.y=.08;u.v.y*=-.3;u.v.x*=.6;u.v.z*=.6;if(Math.abs(u.v.y)<.3){u.on=0;U.wait(2+Math.random()*3,function(){m.visible=false})}}});
