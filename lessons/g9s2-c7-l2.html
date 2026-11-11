@@ -208,14 +208,14 @@ const Lesson = {
     document.body.insertAdjacentHTML('afterbegin', `
 <header class="top"><button class="hbtn" id="mBtn" aria-label="قائمة">☰ القائمة</button>
 <div class="ttl">${cfg.title}<small>${cfg.sub || ''}</small></div>
-<button class="hbtn" id="penBtn">✎ القلم</button><button class="hbtn" id="modeBtn"></button>
-${cfg.home ? `<a class="hbtn" href="${cfg.home}" style="text-decoration:none">⌂ المنصة</a>` : ''}
+${cfg.platform ? '' : '<button class="hbtn" id="penBtn">✎ القلم</button>'}<button class="hbtn" id="modeBtn"></button>
+${cfg.home ? `<a class="hbtn" id="homeBtn" href="${cfg.home}" style="text-decoration:none">⌂ ${cfg.platform ? 'المنصة' : 'الفصل'}</a>` : ''}
 <div class="prog"><i></i></div></header>
 <main id="stage"></main>
 <footer class="nav"><button class="nbtn" id="prevBtn">→ السابق</button><span class="phase" id="phase"></span><span class="count" id="count"></span><button class="nbtn next" id="nextBtn">التالي ←</button></footer>
 <nav class="drawer" id="drawer"><h3>محتويات ${cfg.short || 'الدرس'}</h3><ol></ol></nav>
-<canvas id="penCanvas"></canvas>
-<div id="penBar"><span class="grip">⠿</span><button data-c="#dc2626" class="sw on" style="background:#dc2626"></button><button data-c="#1d4ed8" class="sw" style="background:#1d4ed8"></button><button data-c="#16a34a" class="sw" style="background:#16a34a"></button><button data-c="#111827" class="sw" style="background:#111827"></button><button id="eraser" title="ممحاة">⌫</button><button id="clearPen" title="مسح">🗑</button><button id="closePen" title="إغلاق">✕</button></div>
+${cfg.platform ? '' : `<canvas id="penCanvas"></canvas>
+<div id="penBar"><span class="grip">⠿</span><button data-c="#dc2626" class="sw on" style="background:#dc2626"></button><button data-c="#1d4ed8" class="sw" style="background:#1d4ed8"></button><button data-c="#16a34a" class="sw" style="background:#16a34a"></button><button data-c="#111827" class="sw" style="background:#111827"></button><button id="eraser" title="ممحاة">⌫</button><button id="clearPen" title="مسح">🗑</button><button id="closePen" title="إغلاق">✕</button></div>`}
 <div class="modal" id="modal"><div class="box"></div></div>`);
     const stage = $('#stage');
     this.visited = new Set(store.get(this.key + '_v', []));
@@ -240,7 +240,9 @@ ${cfg.home ? `<a class="hbtn" href="${cfg.home}" style="text-decoration:none">�
     this.setMode(store.get('ch7_teacher', true));
     document.addEventListener('keydown', e => { if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; if (e.key === 'ArrowLeft') this.go(this.i + 1); if (e.key === 'ArrowRight') this.go(this.i - 1); });
     $('#modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
-    Pen.init();
+    if (!cfg.platform) Pen.init();
+    const hb = $('#homeBtn');
+    if (hb && cfg.platform) hb.onclick = e => { try { if (window.parent && window.parent !== window) { e.preventDefault(); window.parent.postMessage({ type: 'durus-nav', to: 'list', chapter: cfg.chapterKey || '' }, '*'); } } catch (x) { } };
     const start = Math.min(store.get(this.key + '_i', 0), cfg.screens.length - 1);
     const hash = parseInt((location.hash || '').replace('#s', ''));
     this.go(isNaN(hash) ? start : hash - 1, true);
@@ -964,7 +966,7 @@ function simConduct(el) {
   el.querySelectorAll('.cd').forEach(b => b.onclick = () => { k = b.dataset.k; el.querySelectorAll('.cd').forEach(z => z.classList.toggle('alt', z !== b)); });
 }
 </script><script>Lesson.init({
-  id: 'L2', title: 'الدرس 2: ارتباط العناصر', sub: 'الفصل 7 | البناء الذري والروابط الكيميائية', short: 'الدرس', home: '../index.html',
+  id: 'L2', title: 'الدرس 2: ارتباط العناصر', sub: 'الفصل 7 | البناء الذري والروابط الكيميائية', short: 'الدرس', home: '../index.html', platform: true, chapterKey: 'الفصل السابع: البناء الذري والروابط الكيميائية',
   accent: '#6d28d9', accentL: '#eee8fd',
   screens: [
     { title: 'ارتباط العناصر', tag: 'الأهداف', phase: 'إثارة الفضول', layout: 'cols-2-1',
@@ -1085,4 +1087,4 @@ function simConduct(el) {
       <div class="card tint" style="display:flex;flex-direction:column;justify-content:center;gap:.4em"><h3>خلاصة الدرس</h3><ul class="list"><li>تستقر الذرة بالفقد أو الاكتساب أو المشاركة.</li><li>الأيونية: تجاذب أيونات مختلفة الشحنة.</li><li>الفلزية: أيونات موجبة + إلكترونات حرة.</li><li>التساهمية: مشاركة؛ قطبية (غير متساوية) أو غير قطبية.</li><li>الصيغة تبيّن العناصر وعدد ذرات كل منها.</li></ul></div>` }
   ]
 });
-</script></body></html>
+</script><script src="../pen.js" defer></script></body></html>
