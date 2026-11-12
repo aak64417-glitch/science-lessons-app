@@ -1,0 +1,907 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#0b1f3a">
+<title>مختبر حفظ الكتلة</title><style>:root{
+  --navy:#0b1f3a;--navy2:#16335e;--cyan:#0891b2;--cyanL:#ddf4fa;--orange:#ea7a0c;--orangeL:#fff1db;
+  --violet:#6d28d9;--violetL:#eee8fd;--green:#15803d;--greenL:#ddf7e5;--red:#b91c1c;--redL:#fde4e4;
+  --text:#0f172a;--muted:#475569;--bg:#eef3f9;--card:#ffffff;--line:#cbd5e1;--gold:#f5b700;
+  --accent:var(--cyan);--accentL:var(--cyanL);
+  --fs:clamp(15px,min(1.9vw,2.75vh),25px);
+  --hdr:clamp(52px,7.5vh,68px);--ftr:clamp(56px,8.5vh,74px);
+  --r:16px;--sh:0 4px 14px rgba(11,31,58,.12);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:"Segoe UI","Geeza Pro","Noto Kufi Arabic","Noto Sans Arabic",Tahoma,Arial,sans-serif;font-weight:600;
+  color:var(--text);font-size:var(--fs);direction:rtl;display:grid;grid-template-rows:var(--hdr) 1fr var(--ftr);height:100dvh;
+  user-select:none;-webkit-user-select:none}
+button{font:inherit;font-weight:700;cursor:pointer;border:0;border-radius:12px;touch-action:manipulation}
+input,textarea,select{font:inherit;font-weight:600}
+b,strong,h1,h2,h3{font-weight:800}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+sub,sup{font-size:.68em;line-height:0}
+/* ---------- header */
+header.top{display:flex;align-items:center;gap:.5em;padding:0 .7em;background:var(--navy);color:#fff;position:relative;z-index:30}
+header.top .ttl{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:1.05em;font-weight:800}
+header.top .ttl small{color:#9fc6ec;font-weight:700;margin-inline-start:.4em;font-size:.8em}
+.hbtn{background:#21416f;color:#fff;padding:.38em .8em;font-size:.82em;white-space:nowrap}
+.hbtn.on{background:var(--gold);color:var(--navy)}
+.prog{position:absolute;bottom:0;right:0;left:0;height:5px;background:#21416f}
+.prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
+/* ---------- footer */
+footer.nav{display:flex;align-items:center;justify-content:space-between;gap:.6em;padding:0 .8em;background:#fff;border-top:1px solid var(--line);z-index:20}
+footer .nbtn{background:var(--navy);color:#fff;padding:.5em 1.3em;font-size:1em;min-width:6.5em}
+footer .nbtn.next{background:var(--accent)}
+footer .nbtn:disabled{opacity:.35}
+footer .count{color:var(--muted);font-weight:800}
+footer .phase{background:var(--accentL);color:var(--accent);border-radius:99px;padding:.2em .8em;font-size:.8em;font-weight:800}
+/* ---------- screens */
+main{position:relative;overflow:hidden}
+.screen{position:absolute;inset:0;padding:clamp(8px,1.6vh,18px) clamp(10px,2vw,26px);display:none;flex-direction:column;gap:clamp(6px,1.2vh,14px);overflow:hidden}
+.screen.active{display:flex;animation:fadeIn .35s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.screen>h2{margin:0;font-size:1.45em;color:var(--navy);display:flex;align-items:center;gap:.4em;flex:none}
+.screen>h2 .tag{font-size:.55em;background:var(--accent);color:#fff;border-radius:99px;padding:.15em .7em}
+.body{flex:1;min-height:0;display:grid;gap:clamp(8px,1.4vh,16px)}
+.cols{grid-template-columns:1fr 1fr}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-2-1{grid-template-columns:1.35fr 1fr}
+.cols-1-2{grid-template-columns:1fr 1.35fr}
+.rows{grid-template-rows:auto 1fr}
+@media (orientation:portrait){.cols,.cols-2-1,.cols-1-2{grid-template-columns:1fr;grid-template-rows:minmax(0,.85fr) minmax(0,1.15fr)}.cols-3{grid-template-columns:1fr 1fr}.lab-split{grid-template-rows:minmax(0,1fr) auto!important}.lab-split .grid{grid-auto-rows:2.6em!important}}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:clamp(8px,1.5vh,18px) clamp(10px,1.4vw,20px);min-height:0;overflow:hidden;position:relative}
+.card h3{margin:0 0 .3em;color:var(--accent);font-size:1.1em}
+.card p{margin:.2em 0;line-height:1.55}
+.tint{background:var(--accentL)}
+.big{font-size:1.25em;line-height:1.5}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.muted{color:var(--muted)}
+.ok{color:var(--green)}.bad{color:var(--red)}
+.pill{display:inline-block;border-radius:99px;padding:.15em .8em;font-weight:800;font-size:.85em}
+.btn{background:var(--accent);color:#fff;padding:.5em 1.1em}
+.btn.alt{background:#e2e8f0;color:var(--navy)}
+.btn.green{background:var(--green)}.btn.orange{background:var(--orange)}.btn.navy{background:var(--navy)}
+.btn:disabled{opacity:.4}
+.row{display:flex;gap:.5em;flex-wrap:wrap;align-items:center}
+.list{margin:0;padding-inline-start:1.1em;line-height:1.6}
+.list li{margin:.15em 0}
+img.ph{width:100%;height:100%;object-fit:cover;border-radius:var(--r);display:block;min-height:0}
+.imgbox{min-height:0;overflow:hidden;border-radius:var(--r);box-shadow:var(--sh);position:relative}
+.imgbox img{width:100%;height:100%;object-fit:cover;display:block}
+.cap{position:absolute;bottom:0;right:0;left:0;background:rgba(11,31,58,.78);color:#fff;padding:.35em .7em;font-size:.82em}
+svg text{font-family:inherit;font-weight:700}
+/* hero */
+.hero{position:relative;flex:1;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);min-height:0}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .over{position:absolute;right:3%;left:3%;bottom:4%;background:rgba(11,31,58,.86);color:#fff;border-radius:var(--r);padding:clamp(10px,2vh,22px) clamp(12px,2vw,28px)}
+.hero .over h3{margin:0 0 .3em;color:var(--gold);font-size:1.35em}
+.hero .over p{margin:.2em 0;font-size:1.1em;line-height:1.5}
+/* ---------- widgets */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:clamp(6px,1.2vh,12px)}
+@media (orientation:portrait){.opts{grid-template-columns:1fr}}
+.opt{background:#fff;border:3px solid var(--line);color:var(--text);text-align:right;padding:.55em .8em;display:flex;align-items:center;gap:.6em;font-weight:700;border-radius:14px;line-height:1.35}
+.opt .lt{flex:none;width:1.8em;height:1.8em;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:.9em}
+.opt.right{border-color:var(--green);background:var(--greenL)}
+.opt.wrong{border-color:var(--red);background:var(--redL);animation:shake .35s}
+body.teacher .opt[data-c="1"]:not(.right){outline:3px dashed var(--green);outline-offset:-7px}
+@keyframes shake{25%{transform:translateX(6px)}75%{transform:translateX(-6px)}}
+.fb{border-radius:12px;padding:.5em .8em;line-height:1.5;display:none}
+.fb.show{display:block;animation:fadeIn .3s}
+.fb.good{background:var(--greenL);color:#14532d;border:2px solid var(--green)}
+.fb.poor{background:var(--orangeL);color:#7c2d12;border:2px solid var(--orange)}
+.q{font-size:1.15em;font-weight:800;color:var(--navy);line-height:1.45}
+.ans{display:none;background:var(--greenL);border:2px solid var(--green);border-radius:12px;padding:.45em .8em;line-height:1.5;margin-top:.4em}
+.ans.show{display:block;animation:fadeIn .3s}
+body.teacher .ans.tshow{display:block}
+.revbtn{background:var(--green);color:#fff;padding:.35em .9em;font-size:.85em}
+textarea.think{width:100%;border:2px solid var(--line);border-radius:12px;padding:.4em .6em;resize:none;height:2.6em;background:#f8fafc}
+body.teacher textarea.think{display:none}
+/* chips & drop zones */
+.chip{display:inline-flex;align-items:center;justify-content:center;background:#fff;border:2.5px solid var(--accent);color:var(--navy);border-radius:12px;padding:.35em .75em;margin:.2em;font-weight:800;touch-action:none;cursor:grab;line-height:1.3;text-align:center}
+.chip.sel{background:var(--gold);border-color:var(--gold)}
+.chip.ok{border-color:var(--green);background:var(--greenL)}
+.chip.no{border-color:var(--red);background:var(--redL)}
+.chip.ghost{position:fixed;z-index:999;pointer-events:none;opacity:.9;box-shadow:0 10px 25px rgba(0,0,0,.25)}
+.zone{border:3px dashed var(--line);border-radius:14px;padding:.3em;min-height:2.6em;display:flex;flex-wrap:wrap;align-content:flex-start;align-items:center;transition:.2s}
+.zone.hot{border-color:var(--accent);background:var(--accentL)}
+.zone h4{width:100%;margin:0 0 .2em;text-align:center;color:var(--navy)}
+.bank{min-height:3em;background:#f8fafc}
+/* tf */
+.tfrow{display:grid;grid-template-columns:1fr auto;gap:.5em;align-items:center;background:#fff;border-radius:12px;padding:.35em .6em;border:2px solid var(--line)}
+.tfrow .tfb button{width:2.4em;height:2.2em;margin-inline-start:.25em;background:#e2e8f0;color:var(--navy)}
+.tfrow .tfb button.pick{background:var(--navy);color:#fff}
+.tfrow.right{border-color:var(--green);background:var(--greenL)}
+.tfrow.wrong{border-color:var(--red);background:var(--redL)}
+.tfrow .why{grid-column:1/-1;font-size:.85em;display:none}
+.tfrow.done .why{display:block}
+/* strip */
+.strip{background:#1e1e24;border-radius:12px;padding:1.4em .6em;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:.5em;position:relative}
+.strip::before,.strip::after{content:"";position:absolute;right:.5em;left:.5em;height:.7em;background:repeating-linear-gradient(90deg,#f8fafc 0 .7em,transparent .7em 1.6em);border-radius:3px}
+.strip::before{top:.35em}.strip::after{bottom:.35em}
+.frame{background:#fff7e6;border:3px solid var(--gold);border-radius:10px;padding:.5em .4em;text-align:center;color:var(--navy);display:flex;flex-direction:column;align-items:center;gap:.3em;font-size:.82em;line-height:1.35}
+.frame .n{width:1.8em;height:1.8em;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center}
+.frame.seen{opacity:.55}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(11,31,58,.6);display:none;align-items:center;justify-content:center;z-index:60;padding:4vmin}
+.modal.show{display:flex}
+.modal .box{background:#fff;border-radius:20px;max-width:900px;width:100%;padding:clamp(14px,3vh,30px);box-shadow:var(--sh);animation:fadeIn .25s}
+.modal .box .q{font-size:1.5em}
+/* menu drawer */
+.drawer{position:fixed;top:var(--hdr);bottom:0;right:0;width:min(420px,88vw);background:#fff;z-index:50;transform:translateX(105%);transition:.3s;box-shadow:var(--sh);display:flex;flex-direction:column}
+.drawer.open{transform:none}
+.drawer h3{margin:0;padding:.6em .9em;background:var(--accentL);color:var(--navy)}
+.drawer ol{list-style:none;margin:0;padding:.3em;overflow:auto;flex:1}
+.drawer li button{width:100%;text-align:right;background:none;color:var(--text);padding:.45em .7em;display:flex;gap:.5em;align-items:center;border-radius:10px}
+.drawer li button:hover,.drawer li button.cur{background:var(--accentL)}
+.drawer li .ph{font-size:.7em;border-radius:99px;padding:.1em .5em;color:#fff;flex:none}
+.drawer li .vis{margin-inline-start:auto;color:var(--green)}
+/* pen */
+#penCanvas{position:fixed;inset:0;z-index:40;pointer-events:none;touch-action:none}
+body.pen #penCanvas{pointer-events:auto}
+#penBar{position:fixed;left:14px;top:calc(var(--hdr) + 12px);z-index:45;background:#fff;border-radius:14px;box-shadow:var(--sh);display:none;padding:.3em;gap:.3em;align-items:center;font-size:.85em}
+body.pen #penBar{display:flex}
+#penBar .grip{cursor:move;padding:.3em .4em;color:var(--muted);touch-action:none}
+#penBar button{width:2.2em;height:2.2em;background:#e2e8f0;color:var(--navy);padding:0}
+#penBar button.on{outline:3px solid var(--navy)}
+#penBar .sw{border-radius:50%}
+/* toast */
+.toast{position:fixed;bottom:calc(var(--ftr) + 12px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:.5em 1.2em;border-radius:99px;z-index:70;display:none}
+.toast.show{display:block;animation:fadeIn .3s}
+/* stat */
+.stat{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border-radius:14px;box-shadow:var(--sh);padding:.4em}
+.stat b{font-size:2.3em;line-height:1.1;color:var(--accent)}
+.meter{height:1.1em;background:#e2e8f0;border-radius:99px;overflow:hidden}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--gold),var(--red));transition:width .25s}
+input[type=range]{width:100%;accent-color:var(--accent);height:2em}
+table.data{border-collapse:collapse;width:100%;font-size:.9em}
+table.data th,table.data td{border:1px solid var(--line);padding:.25em .4em;text-align:center}
+table.data th{background:var(--accentL);color:var(--navy)}
+.lvl{border-radius:14px;padding:.5em .7em;color:#fff}
+.lvl.l1{background:#0e7490}.lvl.l2{background:#7c3aed}.lvl.l3{background:#c2410c}
+.kbd{display:inline-block;background:#e2e8f0;border-radius:8px;padding:0 .4em}
+
+.tans{display:none;color:var(--green);font-size:.8em}
+body.teacher .tans{display:inline}
+.tonly{display:none!important}
+body.teacher .tonly{display:inline-block!important}
+
+svg{direction:ltr}
+bdi.fm{direction:ltr;unicode-bidi:isolate}
+.mgrid{display:grid;gap:.45em}
+.mgrid.two{grid-template-columns:1fr 1fr}
+.lab-split>.card{overflow:auto;scrollbar-width:thin}
+.lab-split .data{font-size:.8em}.lab-split .data td,.lab-split .data th{padding:.15em .3em}
+.lab-split .fb{font-size:.92em;padding:.35em .6em}
+.lab-split .rv .q{font-size:.95em}
+</style></head><body>
+<script>/* ===== Core: navigation, modes, pen, widgets (offline, no libraries) ===== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
+};
+function h(html) { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; }
+function f(s) { // chemistry formula markup: H_2O -> H<sub>2</sub>O ; Na^+ -> Na<sup>+</sup>
+  s = s.replace(/_\{([^}]*)\}/g, '<sub>$1</sub>').replace(/\^\{([^}]*)\}/g, '<sup>$1</sup>');
+  return s.replace(/(^|[^\w<\/])([0-9]*[A-Z][a-z]?(?:<su[bp]>[^<]*<\/su[bp]>|[A-Z][a-z]?|[0-9\u2080-\u2089\u00b2\u00b3\u2070-\u207b])*)(?![\w>])/g, (all, p, m) => p + (/<su|[0-9\u2080-\u2089\u00b2\u00b3\u2070-\u207b]|[A-Z].*[A-Z]/.test(m) ? '<bdi class="fm">' + m + '</bdi>' : m));
+}
+/* sound */
+let AC = null;
+function beep(ok) {
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const o = AC.createOscillator(), g = AC.createGain(); o.connect(g); g.connect(AC.destination);
+    const t = AC.currentTime; o.type = 'sine';
+    if (ok) { o.frequency.setValueAtTime(660, t); o.frequency.setValueAtTime(880, t + .1); }
+    else { o.frequency.setValueAtTime(260, t); o.frequency.setValueAtTime(200, t + .12); }
+    g.gain.setValueAtTime(.12, t); g.gain.exponentialRampToValueAtTime(.001, t + .3); o.start(t); o.stop(t + .32);
+  } catch (e) { }
+}
+function toast(msg) { let t = $('.toast'); if (!t) { t = h('<div class="toast"></div>'); document.body.appendChild(t); } t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2200); }
+const PH = { 'إثارة الفضول': '#ea7a0c', 'الاستكشاف': '#0891b2', 'بناء المفهوم': '#1d4ed8', 'التطبيق': '#6d28d9', 'التقويم': '#15803d' };
+
+/* ===== Lesson shell ===== */
+const Lesson = {
+  init(cfg) {
+    this.cfg = cfg; this.i = 0; this.key = 'ch7_' + cfg.id;
+    document.documentElement.style.setProperty('--accent', cfg.accent || '#0891b2');
+    document.documentElement.style.setProperty('--accentL', cfg.accentL || '#ddf4fa');
+    document.title = cfg.title;
+    document.body.insertAdjacentHTML('afterbegin', `
+<header class="top"><button class="hbtn" id="mBtn" aria-label="قائمة">☰ القائمة</button>
+<div class="ttl">${cfg.title}<small>${cfg.sub || ''}</small></div>
+${cfg.platform ? '' : '<button class="hbtn" id="penBtn">✎ القلم</button>'}<button class="hbtn" id="modeBtn"></button>
+${cfg.home ? `<a class="hbtn" id="homeBtn" href="${cfg.home}" style="text-decoration:none">⌂ ${cfg.platform ? 'المنصة' : 'الفصل'}</a>` : ''}
+<div class="prog"><i></i></div></header>
+<main id="stage"></main>
+<footer class="nav"><button class="nbtn" id="prevBtn">→ السابق</button><span class="phase" id="phase"></span><span class="count" id="count"></span><button class="nbtn next" id="nextBtn">التالي ←</button></footer>
+<nav class="drawer" id="drawer"><h3>محتويات ${cfg.short || 'الدرس'}</h3><ol></ol></nav>
+${cfg.platform ? '' : `<canvas id="penCanvas"></canvas>
+<div id="penBar"><span class="grip">⠿</span><button data-c="#dc2626" class="sw on" style="background:#dc2626"></button><button data-c="#1d4ed8" class="sw" style="background:#1d4ed8"></button><button data-c="#16a34a" class="sw" style="background:#16a34a"></button><button data-c="#111827" class="sw" style="background:#111827"></button><button id="eraser" title="ممحاة">⌫</button><button id="clearPen" title="مسح">🗑</button><button id="closePen" title="إغلاق">✕</button></div>`}
+<div class="modal" id="modal"><div class="box"></div></div>`);
+    const stage = $('#stage');
+    this.visited = new Set(store.get(this.key + '_v', []));
+    cfg.screens.forEach((s, k) => {
+      const el = h(`<section class="screen" data-i="${k}"><h2>${s.title}${s.tag ? `<span class="tag">${s.tag}</span>` : ''}</h2></section>`);
+      const b = document.createElement('div'); b.className = 'body ' + (s.layout || '');
+      if (s.html) b.innerHTML = s.html;
+      el.appendChild(b); stage.appendChild(el); s.el = el; s.body = b;
+      if (s.init) try { s.init(b, el); } catch (e) { console.error('init', k, e); }
+      enhance(b);
+    });
+    const ol = $('#drawer ol');
+    cfg.screens.forEach((s, k) => {
+      const li = h(`<li><button data-k="${k}"><span class="ph" style="background:${PH[s.phase] || '#64748b'}">${s.phase || ''}</span><span>${k + 1}. ${s.title.replace(/<[^>]+>/g, '')}</span><span class="vis"></span></button></li>`);
+      li.querySelector('button').onclick = () => { this.go(k); $('#drawer').classList.remove('open'); };
+      ol.appendChild(li);
+    });
+    $('#mBtn').onclick = () => $('#drawer').classList.toggle('open');
+    $('#prevBtn').onclick = () => this.go(this.i - 1);
+    $('#nextBtn').onclick = () => this.go(this.i + 1);
+    $('#modeBtn').onclick = () => this.setMode(!document.body.classList.contains('teacher'));
+    this.setMode(store.get('ch7_teacher', true));
+    document.addEventListener('keydown', e => { if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; if (e.key === 'ArrowLeft') this.go(this.i + 1); if (e.key === 'ArrowRight') this.go(this.i - 1); });
+    $('#modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
+    if (!cfg.platform) Pen.init();
+    const hb = $('#homeBtn');
+    if (hb && cfg.platform) hb.onclick = e => { try { if (window.parent && window.parent !== window) { e.preventDefault(); window.parent.postMessage({ type: 'durus-nav', to: 'list', chapter: cfg.chapterKey || '' }, '*'); } } catch (x) { } };
+    const start = Math.min(store.get(this.key + '_i', 0), cfg.screens.length - 1);
+    const hash = parseInt((location.hash || '').replace('#s', ''));
+    this.go(isNaN(hash) ? start : hash - 1, true);
+  },
+  setMode(t) {
+    document.body.classList.toggle('teacher', t); store.set('ch7_teacher', t);
+    $('#modeBtn').textContent = t ? '👨‍🏫 وضع المعلم' : '🎓 وضع الطالب';
+    $('#modeBtn').classList.toggle('on', t);
+  },
+  go(k, first) {
+    const S = this.cfg.screens; if (k < 0 || k >= S.length) return;
+    Pen.save(this.i);
+    S.forEach(s => s.el.classList.remove('active'));
+    this.i = k; const s = S[k]; s.el.classList.add('active');
+    if (s.onShow) try { s.onShow(s.body, s.el); } catch (e) { console.error(e); }
+    this.visited.add(k); store.set(this.key + '_v', [...this.visited]); store.set(this.key + '_i', k);
+    $('#count').textContent = (k + 1) + ' / ' + S.length;
+    $('#phase').textContent = s.phase || ''; $('#phase').style.background = (PH[s.phase] || '#64748b') + '22'; $('#phase').style.color = PH[s.phase] || '#64748b';
+    $('#prevBtn').disabled = k === 0; $('#nextBtn').disabled = k === S.length - 1;
+    $('.prog i').style.width = (100 * this.visited.size / S.length) + '%';
+    $$('#drawer li button').forEach((b, j) => { b.classList.toggle('cur', j === k); b.querySelector('.vis').textContent = this.visited.has(j) ? '✓' : ''; });
+    Pen.load(k);
+    if (!first) history.replaceState(null, '', '#s' + (k + 1));
+  }
+};
+function openModal(html) { const m = $('#modal'); m.querySelector('.box').innerHTML = html; enhance(m); m.classList.add('show'); }
+function closeModal() { $('#modal').classList.remove('show'); }
+
+/* ===== Pen (annotation) ===== */
+const Pen = {
+  data: {}, color: '#dc2626', erase: false,
+  init() {
+    const c = this.c = $('#penCanvas'); this.x = c.getContext('2d');
+    const fit = () => { const im = this.x.getImageData ? c.toDataURL() : null; c.width = innerWidth; c.height = innerHeight; if (im) this.draw(im); };
+    fit(); addEventListener('resize', fit);
+    let down = false, lx, ly;
+    c.addEventListener('pointerdown', e => { down = true; lx = e.clientX; ly = e.clientY; c.setPointerCapture(e.pointerId); });
+    c.addEventListener('pointermove', e => {
+      if (!down) return; const x = this.x;
+      x.globalCompositeOperation = this.erase ? 'destination-out' : 'source-over';
+      x.strokeStyle = this.color; x.lineWidth = this.erase ? 34 : 4.5; x.lineCap = 'round'; x.lineJoin = 'round';
+      x.beginPath(); x.moveTo(lx, ly); x.lineTo(e.clientX, e.clientY); x.stroke(); lx = e.clientX; ly = e.clientY;
+    });
+    c.addEventListener('pointerup', () => down = false);
+    $('#penBtn').onclick = () => { document.body.classList.toggle('pen'); $('#penBtn').classList.toggle('on', document.body.classList.contains('pen')); };
+    $('#closePen').onclick = () => { document.body.classList.remove('pen'); $('#penBtn').classList.remove('on'); };
+    $('#clearPen').onclick = () => this.x.clearRect(0, 0, c.width, c.height);
+    $('#eraser').onclick = () => { this.erase = true; $$('#penBar button').forEach(b => b.classList.remove('on')); $('#eraser').classList.add('on'); };
+    $$('#penBar .sw').forEach(b => b.onclick = () => { this.erase = false; this.color = b.dataset.c; $$('#penBar button').forEach(x => x.classList.remove('on')); b.classList.add('on'); });
+    // draggable bar
+    const bar = $('#penBar'), g = $('#penBar .grip'); let sx, sy, bx, by, drag = false;
+    g.addEventListener('pointerdown', e => { drag = true; sx = e.clientX; sy = e.clientY; const r = bar.getBoundingClientRect(); bx = r.left; by = r.top; g.setPointerCapture(e.pointerId); });
+    g.addEventListener('pointermove', e => { if (!drag) return; bar.style.left = Math.max(0, bx + e.clientX - sx) + 'px'; bar.style.top = Math.max(0, by + e.clientY - sy) + 'px'; });
+    g.addEventListener('pointerup', () => drag = false);
+  },
+  save(i) { if (!this.c) return; this.data[i] = this.c.toDataURL(); },
+  load(i) { if (!this.c) return; this.x.clearRect(0, 0, this.c.width, this.c.height); if (this.data[i]) this.draw(this.data[i]); },
+  draw(url) { const im = new Image(); im.onload = () => { this.x.globalCompositeOperation = 'source-over'; this.x.drawImage(im, 0, 0); }; im.src = url; }
+};
+
+/* ===== enhance: declarative widgets inside html ===== */
+function enhance(root) {
+  // reveal: <div class="rv" data-a="answer">question</div>
+  $$('.rv', root).forEach(el => {
+    if (el._done) return; el._done = 1;
+    const a = el.dataset.a; const q = el.innerHTML;
+    el.innerHTML = `<div class="q">${q}</div>${el.dataset.think !== undefined ? '<textarea class="think" placeholder="اكتب إجابتك أولًا…"></textarea>' : ''}<div class="row" style="margin-top:.3em"><button class="revbtn">أظهر الإجابة</button></div><div class="ans">${f(a)}</div>`;
+    const btn = el.querySelector('.revbtn'), ans = el.querySelector('.ans'), ta = el.querySelector('textarea');
+    btn.onclick = () => {
+      if (ta && !document.body.classList.contains('teacher') && ta.value.trim().length < 2) { toast('اكتب إجابتك أولًا ثم تحقّق'); ta.focus(); return; }
+      ans.classList.toggle('show'); btn.textContent = ans.classList.contains('show') ? 'إخفاء الإجابة' : 'أظهر الإجابة';
+    };
+  });
+}
+
+/* ===== Widgets ===== */
+const W = {
+  mcq(o) { // {q, opts:[], c:index, ex, hint, onDone}
+    const L = ['أ', 'ب', 'ج', 'د'];
+    const el = h(`<div class="mcq" style="display:flex;flex-direction:column;gap:clamp(6px,1.2vh,12px)"><div class="q">${f(o.q)}</div>
+      <div class="opts">${o.opts.map((t, k) => `<button class="opt" data-k="${k}" data-c="${k === o.c ? 1 : 0}"><span class="lt">${L[k]}</span><span>${f(t)}</span></button>`).join('')}</div>
+      <div class="fb"></div></div>`);
+    const fb = el.querySelector('.fb'); let tries = 0, done = false;
+    el.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+      if (done) return; const k = +b.dataset.k; tries++;
+      if (k === o.c) {
+        b.classList.add('right'); done = true; beep(true);
+        fb.className = 'fb show good'; fb.innerHTML = '✔ إجابة صحيحة. ' + f(o.ex || '');
+        o.onDone && o.onDone(tries === 1);
+      } else {
+        b.classList.add('wrong'); beep(false);
+        fb.className = 'fb show poor';
+        if (tries >= 2) { fb.innerHTML = '✘ الإجابة الصحيحة: <b>' + f(o.opts[o.c]) + '</b> — ' + f(o.ex || ''); el.querySelector(`.opt[data-k="${o.c}"]`).classList.add('right'); done = true; o.onDone && o.onDone(false); }
+        else fb.innerHTML = '✘ حاول مرة أخرى. ' + (o.hint ? 'تلميح: ' + f(o.hint) : '');
+      }
+    });
+    return el;
+  },
+  tf(o) { // {items:[{t, v:true/false, why}]}
+    const el = h(`<div style="display:flex;flex-direction:column;gap:.45em"></div>`);
+    o.items.forEach(it => {
+      const r = h(`<div class="tfrow"><div>${f(it.t)} <span class="tans">(${it.v ? 'صح' : 'خطأ'})</span></div><div class="tfb"><button data-v="1">صح</button><button data-v="0">خطأ</button></div><div class="why">${f(it.why || '')}</div></div>`);
+      r.querySelectorAll('button').forEach(b => b.onclick = () => {
+        if (r.classList.contains('done')) return;
+        const v = b.dataset.v === '1'; b.classList.add('pick'); r.classList.add('done', v === it.v ? 'right' : 'wrong'); beep(v === it.v);
+        o.onAnswer && o.onAnswer(v === it.v);
+      });
+      if (o.teacher !== false) r.dataset.v = it.v ? 'صح' : 'خطأ';
+      el.appendChild(r);
+    });
+    return el;
+  },
+  dnd(root, onDrop) { // generic: .chip draggable into .zone (tap-select fallback)
+    let sel = null;
+    const zones = () => $$('.zone', root);
+    $$('.chip', root).forEach(ch => {
+      if (ch._dnd) return; ch._dnd = 1;
+      ch.addEventListener('pointerdown', e => {
+        if (ch.classList.contains('lock')) return;
+        e.preventDefault(); const r = ch.getBoundingClientRect(); const ox = e.clientX - r.left, oy = e.clientY - r.top;
+        let g = null, moved = false; const sx = e.clientX, sy = e.clientY;
+        const mv = ev => {
+          if (!moved && Math.hypot(ev.clientX - sx, ev.clientY - sy) < 8) return;
+          if (!g) { moved = true; g = ch.cloneNode(true); g.classList.add('ghost'); g.style.width = r.width + 'px'; document.body.appendChild(g); ch.style.opacity = .35; }
+          g.style.left = (ev.clientX - ox) + 'px'; g.style.top = (ev.clientY - oy) + 'px';
+          zones().forEach(z => z.classList.remove('hot'));
+          const t = document.elementFromPoint(ev.clientX, ev.clientY); const z = t && t.closest('.zone'); if (z && root.contains(z)) z.classList.add('hot');
+        };
+        const up = ev => {
+          removeEventListener('pointermove', mv); removeEventListener('pointerup', up);
+          zones().forEach(z => z.classList.remove('hot'));
+          if (g) {
+            g.remove(); ch.style.opacity = 1;
+            const t = document.elementFromPoint(ev.clientX, ev.clientY); const z = t && t.closest('.zone');
+            if (z && root.contains(z)) { z.appendChild(ch); onDrop && onDrop(ch, z); }
+          } else { // tap select
+            $$('.chip.sel', root).forEach(c => c.classList.remove('sel'));
+            if (sel === ch) { sel = null; } else { sel = ch; ch.classList.add('sel'); }
+          }
+        };
+        addEventListener('pointermove', mv); addEventListener('pointerup', up);
+      });
+    });
+    zones().forEach(z => { if (z._dnd) return; z._dnd = 1; z.addEventListener('click', e => { if (sel && !e.target.closest('.chip')) { z.appendChild(sel); sel.classList.remove('sel'); const c = sel; sel = null; onDrop && onDrop(c, z); } }); });
+  },
+  sort(o) { // {cats:[{id,label}], items:[{t,cat}], cols}
+    const el = h(`<div style="display:flex;flex-direction:column;gap:.5em;height:100%;min-height:0">
+      <div class="zone bank">${shuffle(o.items.map((it, k) => `<span class="chip" data-cat="${it.cat}">${f(it.t)}</span>`)).join('')}</div>
+      <div style="display:grid;grid-template-columns:repeat(${o.cats.length},1fr);gap:.5em;flex:1;min-height:0">${o.cats.map(c => `<div class="zone" data-id="${c.id}"><h4>${c.label}</h4></div>`).join('')}</div>
+      <div class="row"><button class="btn chk">تحقّق</button><button class="btn alt rst">إعادة</button><button class="btn green tonly sol">الحل</button><span class="res"></span></div></div>`);
+    setTimeout(() => W.dnd(el), 0);
+    el.querySelector('.sol').onclick = () => { $$('.chip', el).forEach(c => el.querySelector(`.zone[data-id="${c.dataset.cat}"]`).appendChild(c)); el.querySelector('.chk').click(); };
+    el.querySelector('.chk').onclick = () => {
+      let ok = 0, n = 0; $$('.chip', el).forEach(c => { const z = c.parentElement; c.classList.remove('ok', 'no'); if (z.dataset.id) { n++; const g = z.dataset.id === c.dataset.cat; c.classList.add(g ? 'ok' : 'no'); if (g) ok++; } });
+      const all = o.items.length; el.querySelector('.res').innerHTML = ok === all ? '<b class="ok">✔ ممتاز! جميعها صحيحة</b>' : `<b class="bad">${ok} من ${all} صحيحة</b>`; beep(ok === all);
+    };
+    el.querySelector('.rst').onclick = () => { const bank = el.querySelector('.bank'); $$('.chip', el).forEach(c => { c.classList.remove('ok', 'no'); bank.appendChild(c); }); el.querySelector('.res').textContent = ''; };
+    return el;
+  },
+  order(o) { // {items:[correct order], label}
+    const el = h(`<div style="display:flex;flex-direction:column;gap:.5em">
+      <div class="zone bank">${shuffle(o.items.map((t, k) => `<span class="chip" data-k="${k}">${f(t)}</span>`)).join('')}</div>
+      <div class="zone tgt" style="min-height:4em;flex-direction:column;align-items:stretch"><h4>${o.label || 'الترتيب الصحيح (من الأول إلى الأخير)'}</h4></div>
+      <div class="row"><button class="btn chk">تحقّق</button><button class="btn alt rst">إعادة</button><button class="btn green tonly sol">الحل</button><span class="res"></span></div></div>`);
+    setTimeout(() => W.dnd(el), 0);
+    el.querySelector('.sol').onclick = () => { const t = el.querySelector('.tgt'); $$('.chip', el).sort((a, b) => a.dataset.k - b.dataset.k).forEach(c => t.appendChild(c)); el.querySelector('.chk').click(); };
+    el.querySelector('.chk').onclick = () => {
+      const got = $$('.tgt .chip', el); let ok = got.length === o.items.length;
+      got.forEach((c, i) => { const g = +c.dataset.k === i; c.classList.toggle('ok', g); c.classList.toggle('no', !g); if (!g) ok = false; });
+      el.querySelector('.res').innerHTML = ok ? '<b class="ok">✔ ترتيب صحيح</b>' : '<b class="bad">راجع الترتيب</b>'; beep(ok);
+    };
+    el.querySelector('.rst').onclick = () => { const b = el.querySelector('.bank'); $$('.chip', el).forEach(c => { c.classList.remove('ok', 'no'); b.appendChild(c); }); el.querySelector('.res').textContent = ''; };
+    return el;
+  },
+  match(o) { // {pairs:[[left,right]]}: drag right chips into slots next to left items
+    const el = h(`<div style="display:flex;flex-direction:column;gap:.45em">
+      <div class="zone bank">${shuffle(o.pairs.map((p, k) => `<span class="chip" data-k="${k}">${f(p[1])}</span>`)).join('')}</div>
+      <div class="mgrid ${o.pairs.length > 4 ? 'two' : ''}">${o.pairs.map((p, k) => `<div style="display:grid;grid-template-columns:1fr 1.2fr;gap:.4em;align-items:center"><div class="card" style="padding:.35em .6em;font-size:.92em">${f(p[0])}</div><div class="zone" data-k="${k}" style="min-height:2.4em"></div></div>`).join('')}</div>
+      <div class="row"><button class="btn chk">تحقّق</button><button class="btn alt rst">إعادة</button><button class="btn green tonly sol">الحل</button><span class="res"></span></div></div>`);
+    setTimeout(() => el.querySelector('.sol').onclick = () => { $$('.chip', el).forEach(c => el.querySelector(`.zone[data-k="${c.dataset.k}"]`).appendChild(c)); el.querySelector('.chk').click(); }, 0);
+    setTimeout(() => W.dnd(el, (c, z) => { if (z.dataset.k !== undefined) { $$('.chip', z).forEach(x => { if (x !== c) el.querySelector('.bank').appendChild(x); }); } }), 0);
+    el.querySelector('.chk').onclick = () => {
+      let ok = 0; $$('.zone[data-k]', el).forEach(z => { const c = z.querySelector('.chip'); if (c) { const g = c.dataset.k === z.dataset.k; c.classList.toggle('ok', g); c.classList.toggle('no', !g); if (g) ok++; } });
+      el.querySelector('.res').innerHTML = ok === o.pairs.length ? '<b class="ok">✔ جميعها صحيحة</b>' : `<b class="bad">${ok} من ${o.pairs.length}</b>`; beep(ok === o.pairs.length); if (ok === o.pairs.length && o.onOk) o.onOk();
+    };
+    el.querySelector('.rst').onclick = () => { const b = el.querySelector('.bank'); $$('.chip', el).forEach(c => { c.classList.remove('ok', 'no'); b.appendChild(c); }); el.querySelector('.res').textContent = ''; };
+    return el;
+  },
+  quiz(list, opts = {}) { // one question at a time, score, retry. item: {type:'mcq'|'tf', ...}
+    const el = h(`<div style="display:flex;flex-direction:column;gap:.6em;height:100%;min-height:0">
+      <div class="row" style="justify-content:space-between"><span class="pill" style="background:var(--accentL);color:var(--accent)">السؤال <span class="qi">1</span> من ${list.length}</span><span class="pill" style="background:#fef3c7;color:#92400e">النقاط: <span class="sc">0</span></span></div>
+      <div class="qbox card" style="flex:1;display:flex;flex-direction:column;justify-content:center"></div>
+      <div class="row" style="justify-content:flex-end"><button class="btn navy nx" disabled>السؤال التالي ←</button></div></div>`);
+    let i = 0, score = 0; const box = el.querySelector('.qbox'), nx = el.querySelector('.nx');
+    const show = () => {
+      box.innerHTML = ''; nx.disabled = true; el.querySelector('.qi').textContent = i + 1;
+      const it = list[i];
+      const w = W.mcq(Object.assign({}, it, { onDone: first => { if (first) score++; el.querySelector('.sc').textContent = score; nx.disabled = false; nx.textContent = i === list.length - 1 ? 'عرض النتيجة' : 'السؤال التالي ←'; } }));
+      box.appendChild(w);
+    };
+    nx.onclick = () => {
+      if (i < list.length - 1) { i++; show(); return; }
+      const pct = Math.round(100 * score / list.length);
+      box.innerHTML = `<div class="center" style="gap:.5em"><div style="font-size:3em">${pct >= 80 ? '🏆' : pct >= 50 ? '👍' : '💪'}</div><div class="big">نتيجتك: <b>${score}</b> من ${list.length} (${pct}%)</div><div class="muted">${pct >= 80 ? 'إتقان ممتاز!' : pct >= 50 ? 'جيد، راجع الأسئلة التي أخطأت فيها.' : 'راجع الدرس ثم أعد المحاولة.'}</div><button class="btn rt">إعادة الاختبار</button></div>`;
+      nx.disabled = true; store.set('ch7_score_' + (opts.id || 'q'), score + '/' + list.length); opts.onFinish && opts.onFinish(score, list.length);
+      box.querySelector('.rt').onclick = () => { i = 0; score = 0; el.querySelector('.sc').textContent = 0; show(); };
+    };
+    show(); return el;
+  },
+  strip(items) { // memory strip
+    const el = h(`<div class="strip">${items.map((it, k) => `<button class="frame" data-k="${k}"><span class="n">${k + 1}</span><span>${it[0]}</span></button>`).join('')}</div>`);
+    el.querySelectorAll('.frame').forEach(b => b.onclick = () => {
+      const it = items[+b.dataset.k]; b.classList.add('seen');
+      openModal(`<div class="pill" style="background:var(--accent);color:#fff">إطار ${+b.dataset.k + 1}</div><div class="rv" data-a="${it[1].replace(/"/g, '&quot;')}">${it[0]}</div><div class="row" style="justify-content:flex-end;margin-top:1em"><button class="btn navy" onclick="closeModal()">عودة إلى الشريط</button></div>`);
+    });
+    return el;
+  }
+};
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function mount(sel, node) { const t = typeof sel === 'string' ? $(sel) : sel; t.appendChild(node); return node; }
+
+/* ===== shared chemistry data ===== */
+const EL = [null, ['H', 'هيدروجين'], ['He', 'هيليوم'], ['Li', 'ليثيوم'], ['Be', 'بيريليوم'], ['B', 'بورون'], ['C', 'كربون'], ['N', 'نيتروجين'], ['O', 'أكسجين'], ['F', 'فلور'], ['Ne', 'نيون'],
+  ['Na', 'صوديوم'], ['Mg', 'ماغنيسيوم'], ['Al', 'ألومنيوم'], ['Si', 'سليكون'], ['P', 'فوسفور'], ['S', 'كبريت'], ['Cl', 'كلور'], ['Ar', 'أرجون'], ['K', 'بوتاسيوم'], ['Ca', 'كالسيوم']];
+function shells(z) { const caps = [2, 8, 8, 2], o = []; for (const c of caps) { if (z <= 0) break; const n = Math.min(z, c); o.push(n); z -= n; } return o; }
+function groupOf(z) { if (z === 1) return 1; if (z === 2) return 18; const s = shells(z), v = s[s.length - 1]; if (z >= 19) return v; return v <= 2 ? v : v + 10; }
+function periodOf(z) { return shells(z).length; }
+function familyOf(z) { const g = groupOf(z); if (z === 1) return 'لافلز (حالة خاصة)'; return { 1: 'الفلزات القلوية', 2: 'الفلزات القلوية الأرضية', 17: 'الهالوجينات', 18: 'الغازات النبيلة' }[g] || 'المجموعة ' + g; }
+/* SVG helpers */
+const NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function bohrSVG(z, opts = {}) { // returns svg markup string of Bohr model
+  const sh = opts.shells || shells(z), sym = opts.sym || (EL[z] ? EL[z][0] : '?');
+  const R0 = 26, dR = 22, size = 2 * (R0 + dR * (sh.length) + 14);
+  const c = size / 2; let s = `<svg viewBox="0 0 ${size} ${size}" width="100%" height="100%" style="max-height:100%">`;
+  sh.forEach((n, i) => { s += `<circle cx="${c}" cy="${c}" r="${R0 + dR * (i + 1)}" fill="none" stroke="#8cb8e8" stroke-width="2.2"/>`; });
+  sh.forEach((n, i) => {
+    const r = R0 + dR * (i + 1), outer = i === sh.length - 1;
+    const angs = electronAngles(n, i === 0);
+    angs.forEach(a => { const x = c + r * Math.cos(a * Math.PI / 180), y = c + r * Math.sin(a * Math.PI / 180); s += `<circle cx="${x}" cy="${y}" r="6" fill="${outer && opts.hl ? opts.hl : '#1d4ed8'}"/>`; });
+  });
+  s += `<circle cx="${c}" cy="${c}" r="${R0}" fill="#f97316"/><text x="${c}" y="${c + 7}" text-anchor="middle" font-size="${sym.length > 4 ? 13 : 20}" fill="#fff">${sym}</text></svg>`;
+  return s;
+}
+function electronAngles(n, first) {
+  if (first && n <= 2) return n === 1 ? [-90] : [-90, 90];
+  if (n > 8) return Array.from({ length: n }, (_, k) => -90 + 360 * k / n);
+  const base = [-90, 0, 90, 180], out = [];
+  for (let k = 0; k < n; k++) { let a = base[k % 4]; if ((k % 4) < n - 4) a += k < 4 ? -12 : 12; out.push(a); }
+  return out;
+}
+function dotSVG(sym, n, opts = {}) {
+  const w = 120, c = 60; const d = 34, dx = d + (sym.length - 1) * 9, off = 7;
+  let s = `<svg viewBox="0 0 ${w} ${w}" width="100%" height="100%"><text x="${c}" y="${c + 13}" text-anchor="middle" font-size="38" fill="${opts.color || '#0b1f3a'}">${sym}</text>`;
+  const spots = [[0, -d - 2], [dx, 0], [0, d + 4], [-dx, 0]];
+  for (let k = 0; k < 4; k++) {
+    const cnt = (n > k ? 1 : 0) + (n > k + 4 ? 1 : 0); if (!cnt) continue; const [x, y] = spots[k];
+    if (cnt === 1) s += `<circle cx="${c + x}" cy="${c + y}" r="4.5" fill="#dc2626"/>`;
+    else if (k % 2 === 0) s += `<circle cx="${c + x - off}" cy="${c + y}" r="4.5" fill="#dc2626"/><circle cx="${c + x + off}" cy="${c + y}" r="4.5" fill="#dc2626"/>`;
+    else s += `<circle cx="${c + x}" cy="${c + y - off}" r="4.5" fill="#dc2626"/><circle cx="${c + x}" cy="${c + y + off}" r="4.5" fill="#dc2626"/>`;
+  }
+  return s + '</svg>';
+}
+</script><script>/* ===== Virtual labs — Chapter 8: Chemical reactions (operable simulations) ===== */
+function _lab(body, cls) { body.className = 'body ' + (cls || 'cols-2-1') + ' lab-split'; }
+function _fbk(el, ok, msg) { el.className = 'fb show ' + (ok ? 'good' : 'poor'); el.innerHTML = msg; beep(ok); }
+function _sub(s) { return s.replace(/(\d+)/g, (m, d, i, str) => (i > 0 && /[A-Za-z)]/.test(str[i - 1])) ? '<sub>' + d + '</sub>' : d); }
+
+/* ---------- LAB: heating sugar (launch lab p43) ---------- */
+function labSugar(body) {
+  _lab(body);
+  body.innerHTML = `
+  <div class="card" style="display:flex;flex-direction:column;padding:.4em"><svg viewBox="0 0 400 420" class="sv" style="flex:1;min-height:0;width:100%"></svg>
+   <div class="row" style="justify-content:center;gap:.6em"><span class="pill" style="background:#fee2e2;color:#991b1b">⚠ لا تلمس الأنبوب الساخن، ولا توجّه فوهته نحو أحد</span></div></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:.45em">
+    <h3>1) ضع 3 جم من السكر في الأنبوب، ثم أشعل اللهب</h3>
+    <div class="row"><button class="btn alt put">🥄 ضع السكر</button><button class="btn orange fire" disabled>🔥 أشعل اللهب</button><button class="btn heat" disabled>✋ سخّن (ارفع الأنبوب فوق اللهب)</button></div>
+    <div class="row"><span>زمن التسخين:</span><b class="tm ltr">0</b><span>ثانية من 45</span><div class="meter" style="flex:1"><i class="mt" style="width:0"></i></div></div>
+    <table class="data"><thead><tr><th>الزمن (ث)</th><th>ما ألاحظه</th></tr></thead><tbody class="tb"></tbody></table>
+    <div class="q" style="margin-top:.2em">2) هل المادة التي بقيت في الأنبوب هي السكر نفسه؟</div>
+    <div class="row"><button class="btn alt an" data-v="0">نعم، السكر نفسه</button><button class="btn alt an" data-v="1">لا، مادة جديدة</button></div>
+    <div class="fb concl"></div><div class="row"><button class="btn alt rs">↺ إعادة</button></div>
+  </div>`;
+  const sv = body.querySelector('.sv'); let st = 0, t = 0, timer = null, fire = false;
+  const OBS = [[0, 'سكر أبيض صلب'], [10, 'ينصهر السكر ويصبح سائلًا شفافًا مائلًا للصفرة'], [22, 'يتحول إلى اللون البني وتنبعث رائحة السكر المحروق'], [32, 'قطرات ماء تتكاثف على جدار الأنبوب البارد'], [42, 'تبقى مادة سوداء هشة (كربون)']];
+  function col() { if (t < 10) return '#ffffff'; if (t < 22) return '#fde68a'; if (t < 32) return '#b45309'; if (t < 42) return '#57351a'; return '#111111'; }
+  function draw() {
+    sv.innerHTML = '';
+    svgEl('rect', { x: 120, y: 370, width: 160, height: 20, rx: 6, fill: '#64748b' }, sv); svgEl('rect', { x: 185, y: 300, width: 30, height: 72, fill: '#94a3b8' }, sv);
+    if (fire) { const f = svgEl('path', { d: 'M200 300 C 170 270 185 240 200 205 C 215 240 230 270 200 300 Z', fill: '#f97316', opacity: .9 }, sv); svgEl('path', { d: 'M200 300 C 188 280 192 262 200 245 C 208 262 212 280 200 300 Z', fill: '#fde047' }, sv); }
+    const g = svgEl('g', { transform: st >= 2 ? 'rotate(-20 200 190)' : 'translate(95 70) rotate(-8 200 190)' }, sv);
+    const y0 = 40;
+    svgEl('rect', { x: 180, y: y0, width: 40, height: 170, rx: 18, fill: '#e0f2fe', stroke: '#64748b', 'stroke-width': 3, opacity: .9 }, g);
+    if (st >= 1) svgEl('rect', { x: 183, y: y0 + 130 - (t > 10 ? 8 : 0), width: 34, height: 37 + (t > 10 ? 8 : 0), rx: 14, fill: col(), stroke: t < 10 ? '#cbd5e1' : 'none' }, g);
+    if (t >= 32) for (let k = 0; k < 6; k++) svgEl('circle', { cx: 186 + (k % 3) * 13, cy: y0 + 20 + Math.floor(k / 3) * 14, r: 3.4, fill: '#38bdf8' }, g);
+    if (t >= 22) for (let k = 0; k < 4; k++) svgEl('circle', { cx: 196 + k * 8, cy: y0 - 18 - ((t * 7 + k * 13) % 40), r: 6, fill: '#cbd5e1', opacity: .6 }, g);
+    svgEl('rect', { x: 230, y: y0 + 70, width: 110, height: 14, rx: 7, fill: '#a16207' }, g);
+    const tx = svgEl('text', { x: 300, y: y0 + 64, 'font-size': 16, fill: '#475569', 'text-anchor': 'middle' }, g); tx.textContent = 'الماسك';
+  }
+  function log() { const o = OBS.filter(x => x[0] <= t).pop(); const tb = body.querySelector('.tb'); if (tb.dataset.last != o[0]) { tb.dataset.last = o[0]; tb.insertAdjacentHTML('beforeend', `<tr><td>${o[0]}</td><td>${o[1]}</td></tr>`); } }
+  body.querySelector('.put').onclick = () => { st = 1; body.querySelector('.fire').disabled = false; body.querySelector('.put').disabled = true; log(); draw(); };
+  body.querySelector('.fire').onclick = () => { fire = true; body.querySelector('.heat').disabled = false; body.querySelector('.fire').disabled = true; draw(); };
+  const heat = body.querySelector('.heat');
+  const go = e => { e.preventDefault(); if (!fire) return; st = 2; clearInterval(timer); timer = setInterval(() => { if (t >= 45) { clearInterval(timer); return; } t += 1; body.querySelector('.tm').textContent = t; body.querySelector('.mt').style.width = (t / 45 * 100) + '%'; log(); draw(); }, 120); };
+  const stop = () => { clearInterval(timer); if (st === 2) { st = 1.5; draw(); } };
+  heat.addEventListener('pointerdown', go); heat.addEventListener('pointerup', stop); heat.addEventListener('pointerleave', stop);
+  body.querySelectorAll('.an').forEach(b => b.onclick = () => {
+    if (t < 42) { toast('سخّن حتى 45 ثانية ولاحظ أولًا'); return; }
+    _fbk(body.querySelector('.concl'), b.dataset.v === '1', b.dataset.v === '1' ? '✔ صحيح: المادة السوداء (كربون) وبخار الماء مواد جديدة لها خصائص تختلف عن السكر؛ إذن حدث <b>تفاعل كيميائي</b>.' : '✘ قارن: السكر أبيض حلو ويذوب في الماء، والمادة الباقية سوداء هشة لا تذوب؛ الخصائص تغيّرت فهي مادة جديدة.');
+  });
+  body.querySelector('.rs').onclick = () => { clearInterval(timer); st = 0; t = 0; fire = false; body.querySelector('.tb').innerHTML = ''; delete body.querySelector('.tb').dataset.last; body.querySelector('.tm').textContent = 0; body.querySelector('.mt').style.width = 0; body.querySelector('.put').disabled = false; body.querySelector('.fire').disabled = true; heat.disabled = true; body.querySelector('.concl').className = 'fb concl'; draw(); };
+  draw();
+}
+
+/* ---------- LAB: conservation of mass (p50) ---------- */
+function labMass(body) {
+  _lab(body, 'cols');
+  body.innerHTML = `
+  <div class="card" style="display:flex;flex-direction:column;padding:.4em"><svg viewBox="0 0 420 400" class="sv" style="flex:1;min-height:0;width:100%"></svg>
+   <div class="row" style="justify-content:center"><label class="row" style="gap:.3em"><input type="checkbox" class="open"> جرّب بدون بالون (فوهة مفتوحة)</label></div></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:.45em">
+    <div class="muted">قطعة من سلك الأواني في أنبوب اختبار، وبالون مثبت على فوهته.</div>
+    <div class="row"><button class="btn w1">⚖ 1) عيّن الكتلة</button><button class="btn orange ht" disabled>♨ 2) سخّن في حمام مائي (دقيقتان)</button><button class="btn w2" disabled>⚖ 3) برّد وجفّف ثم زِن</button></div>
+    <div class="meter"><i class="mt" style="width:0"></i></div>
+    <table class="data"><thead><tr><th>المحاولة</th><th>الكتلة قبل (جم)</th><th>الكتلة بعد (جم)</th><th>الفرق</th></tr></thead><tbody class="tb"></tbody></table>
+    <div class="rv" data-a="تغيّر لون سلك الأواني إلى البني المحمر (صدأ)، وانكمش البالون قليلًا لاستهلاك الأكسجين؛ وهذا دليل على حدوث تفاعل كيميائي.">التحليل 1: ما الذي لاحظته؟ وما الذي يدل على حدوث تفاعل؟</div>
+    <div class="rv" data-a="عند إغلاق الأنبوب بالبالون تبقى الكتلة ثابتة: كتلة المواد المتفاعلة = كتلة المواد الناتجة (قانون حفظ الكتلة).">التحليل 2: قارن بين كتل المواد المتفاعلة والناتجة.</div>
+    <div class="rv" data-a="لكي لا يدخل الأكسجين من الهواء أو يخرج أي غاز؛ فيبقى النظام مغلقًا وتُقاس جميع المتفاعلات والنواتج.">التحليل 3: لماذا كان من الضروري إغلاق فوهة الأنبوب؟</div>
+  </div>`;
+  const sv = body.querySelector('.sv'); let m0 = null, rust = 0, n = 0, busy = false;
+  function draw(reading) {
+    sv.innerHTML = ''; const open = body.querySelector('.open').checked;
+    svgEl('rect', { x: 60, y: 330, width: 300, height: 46, rx: 10, fill: '#334155' }, sv); svgEl('rect', { x: 150, y: 342, width: 120, height: 24, rx: 4, fill: '#bbf7d0' }, sv);
+    const tx = svgEl('text', { x: 210, y: 360, 'font-size': 20, 'text-anchor': 'middle', fill: '#14532d', 'font-family': 'monospace' }, sv); tx.textContent = reading == null ? '----' : reading.toFixed(2) + ' g';
+    svgEl('rect', { x: 120, y: 316, width: 180, height: 14, rx: 4, fill: '#64748b' }, sv);
+    svgEl('rect', { x: 185, y: 120, width: 50, height: 196, rx: 22, fill: '#e0f2fe', stroke: '#64748b', 'stroke-width': 3, opacity: .9 }, sv);
+    const c = rust > .5 ? '#b45309' : rust > 0 ? '#a16207' : '#9ca3af';
+    for (let k = 0; k < 14; k++) svgEl('path', { d: `M${192 + (k * 7) % 34} ${250 + (k * 11) % 50} q 8 -10 16 0 t 16 0`, stroke: c, 'stroke-width': 3, fill: 'none' }, sv);
+    if (!open) { const r = 34 - rust * 8; svgEl('ellipse', { cx: 210, cy: 120 - r, rx: r * .85, ry: r, fill: '#ef4444', opacity: .85 }, sv); svgEl('rect', { x: 198, y: 108, width: 24, height: 14, fill: '#b91c1c' }, sv); }
+  }
+  function busyRun(cb) { busy = true; let p = 0; const bar = body.querySelector('.mt'); const iv = setInterval(() => { p += 4; bar.style.width = p + '%'; rust = Math.min(1, p / 100); draw(null); if (p >= 100) { clearInterval(iv); busy = false; cb(); } }, 60); }
+  body.querySelector('.w1').onclick = () => { if (busy) return; rust = 0; m0 = 52.4; draw(m0); body.querySelector('.ht').disabled = false; body.querySelector('.w1').disabled = true; body.querySelector('.mt').style.width = 0; };
+  body.querySelector('.ht').onclick = () => { if (busy) return; body.querySelector('.ht').disabled = true; busyRun(() => { body.querySelector('.w2').disabled = false; toast('اترك الأنبوب يبرد ثم جفّف سطحه'); }); };
+  body.querySelector('.w2').onclick = () => {
+    const open = body.querySelector('.open').checked, m1 = open ? m0 + 0.03 : m0; n++; draw(m1);
+    body.querySelector('.tb').insertAdjacentHTML('beforeend', `<tr><td>${n} ${open ? '(مفتوح)' : '(مغلق)'}</td><td>${m0.toFixed(2)}</td><td>${m1.toFixed(2)}</td><td><b>${(m1 - m0).toFixed(2)}</b></td></tr>`);
+    toast(open ? 'زادت الكتلة: دخل أكسجين من الهواء واتحد بالحديد — النظام لم يكن مغلقًا' : 'الكتلة ثابتة ✔ قانون حفظ الكتلة'); beep(true);
+    body.querySelector('.w2').disabled = true; body.querySelector('.w1').disabled = false;
+  };
+  body.querySelector('.open').onchange = () => { if (!busy) { rust = 0; draw(null); body.querySelector('.w1').disabled = false; body.querySelector('.ht').disabled = true; body.querySelector('.w2').disabled = true; } };
+  draw(null);
+}
+
+/* ---------- LAB: balancing equations with atoms ---------- */
+const EQS = [
+  { n: 'كبريتيد الفضة', r: [['Ag', { Ag: 1 }], ['H2S', { H: 2, S: 1 }]], p: [['Ag2S', { Ag: 2, S: 1 }], ['H2', { H: 2 }]], sol: [2, 1, 1, 1] },
+  { n: 'احتراق الميثان', r: [['CH4', { C: 1, H: 4 }], ['O2', { O: 2 }]], p: [['CO2', { C: 1, O: 2 }], ['H2O', { H: 2, O: 1 }]], sol: [1, 2, 1, 2] },
+  { n: 'تكوين الماء', r: [['H2', { H: 2 }], ['O2', { O: 2 }]], p: [['H2O', { H: 2, O: 1 }]], sol: [2, 1, 2] },
+  { n: 'Ag₂O (اختبر نفسك 4)', r: [['Ag2O', { Ag: 2, O: 1 }]], p: [['Ag', { Ag: 1 }], ['O2', { O: 2 }]], sol: [2, 4, 1] },
+  { n: 'Zn + Ag₂S (اختبر نفسك 1ب)', r: [['Zn', { Zn: 1 }], ['Ag2S', { Ag: 2, S: 1 }]], p: [['ZnS', { Zn: 1, S: 1 }], ['Ag', { Ag: 1 }]], sol: [1, 1, 1, 2] },
+  { n: 'Al + I₂ (مسألة 2)', r: [['Al', { Al: 1 }], ['I2', { I: 2 }]], p: [['AlI3', { Al: 1, I: 3 }]], sol: [2, 3, 2] },
+  { n: 'Fe₂O₃ + CO (مسألة 1)', r: [['Fe2O3', { Fe: 2, O: 3 }], ['CO', { C: 1, O: 1 }]], p: [['Fe3O4', { Fe: 3, O: 4 }], ['CO2', { C: 1, O: 2 }]], sol: [3, 1, 2, 1] }];
+const ACOL = { H: '#e2e8f0', O: '#ef4444', C: '#334155', Ag: '#a8a29e', S: '#facc15', Zn: '#60a5fa', Al: '#94a3b8', I: '#7c3aed', Fe: '#b45309', Na: '#a855f7', Cl: '#22c55e', Ca: '#f59e0b' };
+function labBalance(body) {
+  _lab(body, 'rows');
+  body.innerHTML = `<div class="row" style="gap:.4em;flex-wrap:wrap"><b>اختر المعادلة:</b><span class="pk row" style="gap:.3em;flex-wrap:wrap"></span></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:.5em;min-height:0">
+   <div class="eq row ltr" style="justify-content:center;gap:.5em;flex-wrap:wrap;font-size:1.25em"></div>
+   <div class="cnt" style="display:grid;grid-template-columns:1fr 1fr;gap:.6em;min-height:0;flex:1"></div>
+   <div class="row" style="justify-content:space-between"><span class="muted">🔒 الأرقام السفلية مقفلة: نغيّر <b>المعاملات</b> فقط (الأرقام الكبيرة أمام الصيغ).</span><button class="btn alt hint">💡 تلميح</button></div>
+   <div class="fb msg"></div></div>`;
+  let E = 0, co = [];
+  const pk = body.querySelector('.pk');
+  EQS.forEach((e, k) => { const b = h(`<button class="btn alt" style="padding:.3em .7em">${e.n}</button>`); b.onclick = () => { E = k; init(); }; pk.appendChild(b); });
+  function init() { const e = EQS[E]; co = Array(e.r.length + e.p.length).fill(1); pk.querySelectorAll('.btn').forEach((b, k) => b.classList.toggle('alt', k !== E)); body.querySelector('.msg').className = 'fb msg'; render(); }
+  function tally(side, off) { const t = {}; side.forEach((s, i) => { for (const el in s[1]) t[el] = (t[el] || 0) + s[1][el] * co[off + i]; }); return t; }
+  function mols(f, c, n) { let s = ''; for (let k = 0; k < Math.min(c, 6); k++) { s += '<span style="display:inline-flex;gap:1px;margin:2px;padding:2px;border:1px dashed #cbd5e1;border-radius:8px">'; for (const el in f) for (let j = 0; j < f[el]; j++) s += `<i title="${el}" style="width:.8em;height:.8em;border-radius:50%;display:inline-block;background:${ACOL[el] || '#999'};border:1px solid #475569"></i>`; s += '</span>'; } return s; }
+  function render() {
+    const e = EQS[E], eq = body.querySelector('.eq'); eq.innerHTML = '';
+    const all = e.r.concat(e.p);
+    all.forEach((s, i) => {
+      if (i === e.r.length) eq.appendChild(h('<b style="font-size:1.3em">→</b>')); else if (i > 0) eq.appendChild(h('<b>+</b>'));
+      const box = h(`<span style="display:inline-flex;flex-direction:column;align-items:center;background:#fff;border:2px solid var(--line);border-radius:12px;padding:.2em .5em">
+        <span class="row" style="gap:.2em"><button class="btn alt m" style="padding:0 .5em">−</button><b class="cv" style="color:var(--accent);min-width:1.2em;text-align:center">${co[i]}</b><button class="btn alt p" style="padding:0 .5em">+</button></span>
+        <span style="font-size:1.15em">${_sub(s[0])}</span><span>${mols(s[1], co[i])}</span></span>`);
+      box.querySelector('.m').onclick = () => { if (co[i] > 1) { co[i]--; render(); } };
+      box.querySelector('.p').onclick = () => { if (co[i] < 9) { co[i]++; render(); } };
+      eq.appendChild(box);
+    });
+    const L = tally(e.r, 0), R = tally(e.p, e.r.length), els = [...new Set(Object.keys(L).concat(Object.keys(R)))];
+    const mk = (title, T, O) => `<div class="tint card" style="box-shadow:none"><h3>${title}</h3>${els.map(el => `<div class="row" style="gap:.4em;margin:.2em 0"><b class="ltr" style="width:2.2em">${el}</b><div class="meter" style="flex:1"><i style="width:${Math.min(100, (T[el] || 0) * 9)}%;background:${(T[el] || 0) === (O[el] || 0) ? 'var(--green)' : 'var(--orange)'}"></i></div><b>${T[el] || 0}</b></div>`).join('')}</div>`;
+    body.querySelector('.cnt').innerHTML = mk('ذرات المتفاعلات', L, R) + mk('ذرات النواتج', R, L);
+    const ok = els.every(el => (L[el] || 0) === (R[el] || 0));
+    if (ok) _fbk(body.querySelector('.msg'), true, '✔ المعادلة موزونة: أعداد الذرات من كل عنصر متساوية في الطرفين؛ تحقق قانون حفظ الكتلة.');
+    else body.querySelector('.msg').className = 'fb msg';
+  }
+  body.querySelector('.hint').onclick = () => { const e = EQS[E], L = tally(e.r, 0), R = tally(e.p, e.r.length); const bad = Object.keys(Object.assign({}, L, R)).find(el => (L[el] || 0) !== (R[el] || 0)); toast(bad ? `ابدأ بالعنصر ${bad}: في المتفاعلات ${L[bad] || 0} وفي النواتج ${R[bad] || 0}. أي معامل تغيّره؟` : 'موزونة!'); };
+  init();
+}
+
+/* ---------- LAB: exothermic or endothermic (inquiry p64 + cold pack) ---------- */
+function labEnergy(body) {
+  _lab(body);
+  body.innerHTML = `
+  <div class="card" style="display:flex;flex-direction:column;padding:.4em"><svg viewBox="0 0 420 400" class="sv" style="flex:1;min-height:0;width:100%"></svg><div class="row" style="justify-content:center"><span class="pill" style="background:#fee2e2;color:#991b1b;white-space:normal">⚠ فوق أكسيد الهيدروجين قد يهيّج الجلد والعيون؛ اغسل يديك جيدًا</span></div></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:.4em">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3em"><button class="btn smp" data-k="liver">كبد + فوق أكسيد الهيدروجين</button><button class="btn alt smp" data-k="potato">بطاطس + فوق أكسيد الهيدروجين</button><button class="btn alt smp" data-k="ctrl">فوق أكسيد الهيدروجين فقط (ضابط)</button><button class="btn alt smp" data-k="cold">كمادة باردة: نترات الأمونيوم + ماء</button></div>
+    <div class="row"><button class="btn orange go">▶ ابدأ التفاعل (دقيقة واحدة)</button><span>الحرارة: <b class="tc ltr">22.0</b> °س</span><span>الزمن: <b class="ts">0</b> ث</span></div>
+    <table class="data"><thead><tr><th>العينة</th><th>البداية</th><th>بعد دقيقة</th><th>التغير</th><th>تصنيفك</th></tr></thead><tbody class="tb"></tbody></table>
+    <div class="fb msg"></div>
+  </div>`;
+  const D = { liver: { n: 'كبد', d: 9.0, b: 1 }, potato: { n: 'بطاطس', d: 3.0, b: .45 }, ctrl: { n: 'ضابط', d: 0, b: 0 }, cold: { n: 'كمادة باردة', d: -14, b: 0 } };
+  const sv = body.querySelector('.sv'); let k = 'liver', T = 22, ts = 0, iv = null;
+  function draw() {
+    sv.innerHTML = ''; const d = D[k];
+    svgEl('rect', { x: 120, y: 90, width: 90, height: 260, rx: 30, fill: '#e0f2fe', stroke: '#64748b', 'stroke-width': 3 }, sv);
+    svgEl('rect', { x: 124, y: 200, width: 82, height: 146, rx: 26, fill: k === 'cold' ? '#dbeafe' : '#f0f9ff' }, sv);
+    if (k === 'liver') svgEl('ellipse', { cx: 165, cy: 320, rx: 26, ry: 14, fill: '#7f1d1d' }, sv);
+    if (k === 'potato') svgEl('rect', { x: 148, y: 305, width: 34, height: 26, rx: 6, fill: '#fde68a', stroke: '#a16207' }, sv);
+    if (k === 'cold') for (let j = 0; j < 8; j++) svgEl('rect', { x: 135 + (j % 4) * 16, y: 310 + Math.floor(j / 4) * 14, width: 10, height: 10, fill: '#fff', stroke: '#94a3b8' }, sv);
+    if (iv && d.b) for (let j = 0; j < Math.round(14 * d.b); j++) svgEl('circle', { cx: 135 + (j * 23) % 60, cy: 330 - ((ts * 40 + j * 37) % 130), r: 4 + (j % 3), fill: 'none', stroke: '#0284c7', 'stroke-width': 2 }, sv);
+    // thermometer
+    svgEl('rect', { x: 290, y: 60, width: 26, height: 270, rx: 13, fill: '#fff', stroke: '#475569', 'stroke-width': 3 }, sv);
+    const hgt = Math.max(8, (T + 0) / 40 * 250); svgEl('rect', { x: 296, y: 320 - hgt, width: 14, height: hgt, rx: 7, fill: T < 15 ? '#2563eb' : '#dc2626' }, sv);
+    svgEl('circle', { cx: 303, cy: 340, r: 20, fill: T < 15 ? '#2563eb' : '#dc2626', stroke: '#475569', 'stroke-width': 3 }, sv);
+    [0, 10, 20, 30, 40].forEach(v => { const y = 320 - v / 40 * 250; svgEl('line', { x1: 318, x2: 330, y1: y, y2: y, stroke: '#475569' }, sv); const t = svgEl('text', { x: 336, y: y + 5, 'font-size': 14, fill: '#475569' }, sv); t.textContent = v; });
+    svgEl('line', { x1: 290, y1: 200, x2: 210, y2: 230, stroke: '#94a3b8', 'stroke-dasharray': '5 5' }, sv);
+  }
+  body.querySelectorAll('.smp').forEach(b => b.onclick = () => { if (iv) return; k = b.dataset.k; T = 22; ts = 0; body.querySelectorAll('.smp').forEach(x => x.classList.toggle('alt', x !== b)); body.querySelector('.tc').textContent = T.toFixed(1); body.querySelector('.ts').textContent = 0; draw(); });
+  body.querySelector('.go').onclick = () => {
+    if (iv) return; T = 22; ts = 0; const d = D[k];
+    iv = setInterval(() => {
+      ts += 2; T = 22 + d.d * (1 - Math.exp(-ts / 18)); body.querySelector('.tc').textContent = T.toFixed(1); body.querySelector('.ts').textContent = ts; draw();
+      if (ts >= 60) {
+        clearInterval(iv); iv = null; const ch = T - 22;
+        const row = h(`<tr><td>${d.n}</td><td>22.0</td><td>${T.toFixed(1)}</td><td class="ltr">${ch >= 0 ? '+' : ''}${ch.toFixed(1)}</td><td><select class="cl"><option value="">—</option><option value="ex">طارد للحرارة</option><option value="en">ماص للحرارة</option><option value="no">لا تغير يُذكر</option></select></td></tr>`);
+        body.querySelector('.tb').appendChild(row);
+        row.querySelector('.cl').onchange = e => { const v = e.target.value, right = ch > 1 ? 'ex' : ch < -1 ? 'en' : 'no'; _fbk(body.querySelector('.msg'), v === right, v === right ? (right === 'ex' ? '✔ ارتفعت الحرارة: تحررت طاقة إلى الوسط المحيط، فالتفاعل <b>طارد للحرارة</b>. مصدرها روابط فوق أكسيد الهيدروجين، والإنزيم في النسيج محفز يسرّع تحلله.' : right === 'en' ? '✔ انخفضت الحرارة: امتصت العملية حرارة من الوسط المحيط، فهي <b>ماصة للحرارة</b>؛ لذلك تبرّد الكمادة العضو المصاب.' : '✔ العامل الضابط لم يتغير تقريبًا؛ نقارن به لنتأكد أن التغير سببه النسيج.') : '✘ انظر إلى إشارة التغير في درجة الحرارة: ارتفاع = طارد، انخفاض = ماص.'); };
+        beep(true);
+      }
+    }, 120);
+  };
+  draw();
+}
+
+/* ---------- LAB: collision theory — temperature, concentration, surface area, catalyst ---------- */
+function labRate(body) {
+  _lab(body);
+  body.innerHTML = `
+  <div class="card" style="display:flex;flex-direction:column;padding:.4em;gap:.3em"><canvas class="cv" style="flex:1;min-height:0;width:100%;background:#0b1f3a;border-radius:12px"></canvas>
+   <canvas class="gr" style="height:22%;width:100%;background:#fff;border:1px solid var(--line);border-radius:10px"></canvas></div>
+  <div class="card" style="display:flex;flex-direction:column;gap:.35em">
+    <label class="row" style="justify-content:space-between">🌡 درجة الحرارة <input type="range" class="tp" min="1" max="5" value="2" style="flex:1;margin:0 .5em"><b class="tpv">20°س</b></label>
+    <label class="row" style="justify-content:space-between">🧪 التركيز <input type="range" class="cc" min="6" max="30" value="12" style="flex:1;margin:0 .5em"><b class="ccv">12</b></label>
+    <label class="row" style="justify-content:space-between">🧊 مساحة السطح <select class="sa"><option value="1">قطعة واحدة كبيرة</option><option value="4">4 قطع</option><option value="0">مسحوق (مجزأ تمامًا)</option></select></label>
+    <label class="row" style="gap:.4em"><input type="checkbox" class="cat"> ⚙ إضافة محفز (يخفض طاقة التنشيط)</label>
+    <div class="row"><button class="btn go">▶ ابدأ</button><button class="btn alt rs">↺ إعادة</button><span>النواتج: <b class="np">0</b> / 10</span><span>الزمن: <b class="tt">0.0</b> ث</span></div>
+    <table class="data"><thead><tr><th>#</th><th>الحرارة</th><th>التركيز</th><th>السطح</th><th>محفز</th><th>زمن 10 نواتج</th></tr></thead><tbody class="tb"></tbody></table>
+    <div class="muted">🔴 جسيمات المادة (أ) — 🔵 المادة (ب) — 🟣 الناتج. يتكوّن الناتج فقط إذا كان التصادم قويًّا بما يكفي (طاقة التنشيط).</div>
+  </div>`;
+  const cv = body.querySelector('.cv'), gr = body.querySelector('.gr'), ctx = cv.getContext('2d'), gx = gr.getContext('2d');
+  let P = [], prod = 0, t = 0, run = false, raf = null, hist = [], runs = 0, last = 0;
+  function size() { const r = cv.getBoundingClientRect(); cv.width = r.width * 1.5; cv.height = r.height * 1.5; const g = gr.getBoundingClientRect(); gr.width = g.width * 1.5; gr.height = g.height * 1.5; }
+  function setup() {
+    size(); P = []; prod = 0; t = 0; hist = []; const W = cv.width, H = cv.height, n = +body.querySelector('.cc').value, sp = +body.querySelector('.tp').value, sa = +body.querySelector('.sa').value;
+    for (let i = 0; i < n; i++) P.push({ x: Math.random() * W * .9 + W * .05, y: Math.random() * H * .9 + H * .05, vx: (Math.random() - .5) * sp * 2.2, vy: (Math.random() - .5) * sp * 2.2, k: 'A' });
+    // B: solid lump(s) — only exposed particles can react
+    const nb = n, lumps = sa === 0 ? nb : sa, per = Math.ceil(nb / lumps);
+    for (let L = 0; L < lumps; L++) { const cx = W * (.2 + .6 * ((L * 0.37 + .1) % 1)), cy = H * (.25 + .5 * ((L * 0.61 + .3) % 1)); const side = Math.ceil(Math.sqrt(per));
+      for (let j = 0; j < per && P.filter(p => p.k === 'B').length < nb; j++) P.push({ x: cx + (j % side) * 20, y: cy + Math.floor(j / side) * 20, vx: 0, vy: 0, k: 'B', fixed: sa !== 0, lump: L, gi: j % side, gj: Math.floor(j / side), side }); }
+    if (sa === 0) P.filter(p => p.k === 'B').forEach(p => { p.fixed = false; p.vx = (Math.random() - .5) * sp * 2.2; p.vy = (Math.random() - .5) * sp * 2.2; p.x = Math.random() * W * .9 + W * .05; p.y = Math.random() * H * .9 + H * .05; });
+    body.querySelector('.np').textContent = 0; body.querySelector('.tt').textContent = '0.0'; draw();
+  }
+  function exposed(p) { if (!p.fixed) return true; const s = p.side, mates = P.filter(q => q.k === 'B' && q.lump === p.lump); const has = (i, j) => mates.some(q => q.gi === i && q.gj === j); return !(has(p.gi - 1, p.gj) && has(p.gi + 1, p.gj) && has(p.gi, p.gj - 1) && has(p.gi, p.gj + 1)); }
+  function step() {
+    const W = cv.width, H = cv.height, sp = +body.querySelector('.tp').value, Ea = body.querySelector('.cat').checked ? 1.6 : 3.4;
+    P.forEach(p => { if (p.fixed || p.k === 'X') { if (p.k === 'X') { p.x += p.vx; p.y += p.vy; } } else { p.x += p.vx; p.y += p.vy; } if (p.x < 6 || p.x > W - 6) p.vx *= -1; if (p.y < 6 || p.y > H - 6) p.vy *= -1; });
+    for (const a of P) if (a.k === 'A') for (const b of P) if (b.k === 'B' && exposed(b)) {
+      const dx = a.x - b.x, dy = a.y - b.y; if (dx * dx + dy * dy < 360) {
+        const rel = Math.hypot(a.vx - b.vx, a.vy - b.vy) * (0.75 + Math.random() * .5);
+        if (rel > Ea) { a.k = 'X'; b.k = 'X'; b.fixed = false; b.vx = a.vx * .5; b.vy = a.vy * .5; a.vx *= .5; a.vy *= .5; prod++; beep(true); }
+        else { a.vx *= -1; a.vy *= -1; }
+        break;
+      }
+    }
+    t += 1 / 30; if (Math.floor(t * 4) !== hist.length) hist.push(prod);
+  }
+  function draw() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    P.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, p.k === 'X' ? 11 : 9, 0, 7); ctx.fillStyle = p.k === 'A' ? '#ef4444' : p.k === 'B' ? (exposed(p) ? '#3b82f6' : '#1e3a8a') : '#a855f7'; ctx.fill(); });
+    gx.clearRect(0, 0, gr.width, gr.height); gx.strokeStyle = '#cbd5e1'; gx.strokeRect(30, 6, gr.width - 40, gr.height - 22);
+    gx.fillStyle = '#475569'; gx.font = '18px sans-serif'; gx.fillText('النواتج مع الزمن', gr.width - 160, 26);
+    gx.strokeStyle = '#a855f7'; gx.lineWidth = 3; gx.beginPath(); hist.forEach((v, i) => { const x = 30 + i * 3, y = gr.height - 16 - v / 12 * (gr.height - 26); i ? gx.lineTo(x, y) : gx.moveTo(x, y); }); gx.stroke();
+    body.querySelector('.np').textContent = prod; body.querySelector('.tt').textContent = t.toFixed(1);
+  }
+  function loop() { if (!run) return; for (let k = 0; k < 2; k++) step(); draw();
+    if (prod >= 10) { run = false; runs++; const sa = body.querySelector('.sa'); body.querySelector('.tb').insertAdjacentHTML('afterbegin', `<tr><td>${runs}</td><td>${body.querySelector('.tpv').textContent}</td><td>${body.querySelector('.cc').value}</td><td>${sa.options[sa.selectedIndex].text}</td><td>${body.querySelector('.cat').checked ? 'نعم' : 'لا'}</td><td><b>${t.toFixed(1)} ث</b></td></tr>`); toast('اكتمل: غيّر عاملًا واحدًا فقط وقارن الزمن'); return; }
+    if (t > 90) { run = false; toast('التفاعل بطيء جدًّا في هذه الظروف'); return; } raf = requestAnimationFrame(loop); }
+  const upd = () => { body.querySelector('.tpv').textContent = [0, 0, 20, 40, 60, 80][body.querySelector('.tp').value] + '°س'; body.querySelector('.ccv').textContent = body.querySelector('.cc').value; };
+  ['.tp', '.cc', '.sa', '.cat'].forEach(s => body.querySelector(s).addEventListener('input', () => { upd(); if (!run) setup(); }));
+  body.querySelector('.go').onclick = () => { if (run) return; if (prod >= 10 || t > 0) setup(); run = true; loop(); };
+  body.querySelector('.rs').onclick = () => { run = false; cancelAnimationFrame(raf); setup(); };
+  upd(); setTimeout(setup, 50);
+  body._onShow = () => setTimeout(setup, 30);
+}
+
+/* ---------- LAB: inhibitors & catalysts ---------- */
+function labInhibit(body) {
+  _lab(body, 'cols');
+  body.innerHTML = `
+  <div class="card" style="display:flex;flex-direction:column;gap:.4em">
+    <h3>أ) المثبطات: شرائح التفاح في الهواء</h3>
+    <div class="row" style="justify-content:space-around" class="apl"><div class="center"><svg viewBox="0 0 120 120" class="a0" width="110"></svg><div>بلا معالجة</div></div><div class="center"><svg viewBox="0 0 120 120" class="a1" width="110"></svg><div>بعصير الليمون</div></div><div class="center"><svg viewBox="0 0 120 120" class="a2" width="110"></svg><div>في الثلاجة</div></div></div>
+    <label class="row">⏱ الزمن: <input type="range" class="hr" min="0" max="6" value="0" style="flex:1;margin:0 .5em"><b class="hv">0</b> ساعات</label>
+    <div class="rv" data-a="عصير الليمون مثبط يبطئ تفاعل مكونات التفاح مع الأكسجين، والتبريد يخفض درجة الحرارة فيبطئ التفاعل؛ أما الشريحة غير المعالجة فتتحول إلى البني أسرع.">لماذا تأخر تحوّل اللون في الشريحتين الأخيرتين؟</div>
+    <div class="tint card" style="box-shadow:none"><b>في المنزل:</b> اقرأ علبة رقائق الذرة أو البسكويت: المواد الحافظة مثل <b>BHT</b> مثبطات تطيل مدة الصلاحية.</div>
+  </div>
+  <div class="card" style="display:flex;flex-direction:column;gap:.4em">
+    <h3>ب) المحفز: تحلل فوق أكسيد الهيدروجين</h3>
+    <svg viewBox="0 0 300 200" class="cat" style="flex:1;min-height:0;width:100%"></svg>
+    <div class="row"><button class="btn alt c0">بدون محفز</button><button class="btn c1">مع محفز (إنزيم من الكبد)</button></div>
+    <div class="row"><span>الأكسجين المتصاعد:</span><div class="meter" style="flex:1"><i class="om" style="width:0"></i></div></div>
+    <div class="row"><span>كتلة المحفز قبل: <b>1.00 جم</b></span><span>بعد: <b class="ma">—</b></span></div>
+    <div class="fb msg"></div>
+  </div>`;
+  function apple(svg, lvl) { svg.innerHTML = ''; const c = ['#fff7d6', '#f3e2b0', '#e4c58a', '#cfa063', '#b07a42', '#8f5a2c', '#6e421f'][Math.min(6, Math.round(lvl))]; svgEl('circle', { cx: 60, cy: 60, r: 52, fill: '#dc2626' }, svg); svgEl('circle', { cx: 60, cy: 60, r: 46, fill: c }, svg); svgEl('ellipse', { cx: 60, cy: 60, rx: 8, ry: 14, fill: '#78350f' }, svg); }
+  const upd = () => { const hr = +body.querySelector('.hr').value; body.querySelector('.hv').textContent = hr; apple(body.querySelector('.a0'), hr); apple(body.querySelector('.a1'), hr * .3); apple(body.querySelector('.a2'), hr * .35); };
+  body.querySelector('.hr').oninput = upd; upd();
+  const sv = body.querySelector('.cat'); let iv = null, o = 0;
+  function cyl(rate, cat) { sv.innerHTML = ''; svgEl('rect', { x: 110, y: 40, width: 80, height: 140, rx: 14, fill: '#e0f2fe', stroke: '#64748b', 'stroke-width': 3 }, sv); svgEl('rect', { x: 114, y: 100, width: 72, height: 76, rx: 10, fill: '#f0f9ff' }, sv); if (cat) svgEl('ellipse', { cx: 150, cy: 165, rx: 18, ry: 7, fill: '#7f1d1d' }, sv);
+    for (let j = 0; j < rate; j++) svgEl('circle', { cx: 122 + (j * 17) % 56, cy: 170 - ((o * 6 + j * 29) % 70), r: 3 + j % 3, fill: 'none', stroke: '#0284c7', 'stroke-width': 2 }, sv); }
+  function runIt(cat) { clearInterval(iv); o = 0; body.querySelector('.ma').textContent = '—'; body.querySelector('.msg').className = 'fb msg';
+    iv = setInterval(() => { o += cat ? 4 : .4; body.querySelector('.om').style.width = Math.min(100, o) + '%'; cyl(cat ? 16 : 2, cat); if (o >= 100 || (!cat && o >= 12)) { clearInterval(iv); if (cat) { body.querySelector('.ma').textContent = '1.00 جم'; _fbk(body.querySelector('.msg'), true, '✔ مع المحفز تصاعد الأكسجين بسرعة كبيرة، وبقيت كتلة المحفز <b>كما هي</b>: المحفز يسرّع التفاعل ولا يُستهلك. والنواتج (ماء + أكسجين) هي نفسها في التفاعلين.'); } else _fbk(body.querySelector('.msg'), false, 'بدون محفز يتحلل فوق أكسيد الهيدروجين ببطء شديد (فقاقيع قليلة). جرّب إضافة المحفز.'); } }, 80); }
+  body.querySelector('.c0').onclick = () => runIt(false); body.querySelector('.c1').onclick = () => runIt(true); cyl(0, false);
+}
+</script><script>const D={"CH": {"no": 8, "id": "c8", "key": "g9s2-c8", "title": "الفصل الثامن: التفاعلات الكيميائية", "short": "الفصل الثامن", "name": "التفاعلات الكيميائية", "idea": "يعاد ترتيب ذرات العناصر في المواد المتفاعلة في أثناء التفاعلات الكيميائية لتكوين نواتج لها خصائص كيميائية مختلفة.", "color": "#B45309", "color2": "#FEF3C7", "pages": "42–69"}, "L": {"id": "g9s2-c8-l1", "no": 1, "title": "الصيغ والمعادلات الكيميائية", "color": "#B45309", "color2": "#FEF3C7", "pages": "46–55", "idea": "الذرات لا تُستحدث ولا تفنى في التفاعلات الكيميائية، ولكن يعاد ترتيبها فقط.", "goals": ["تحدّد إن كان التفاعل الكيميائي يحدث أم لا.", "تكتب معادلة كيميائية موزونة.", "تميّز بين التفاعلات الطاردة للطاقة والتفاعلات الماصة لها.", "توضّح قانون حفظ الكتلة."], "importance": "تُدفأ المنازل، ويُهضم الطعام، وتُشغَّل السيارة بفعل التفاعلات الكيميائية.", "terms": [["التفاعل الكيميائي", "العملية التي تنتج تغيرًا كيميائيًّا (مادة جديدة لها خصائص مختلفة)."], ["المتفاعلات", "المواد البادئة في التفاعل الكيميائي."], ["النواتج", "المواد الناتجة عن التفاعل الكيميائي."], ["المعادلة الكيميائية", "طريقة مختصرة لكتابة التفاعل باستعمال الرموز، توضح المتفاعلات والنواتج."], ["التفاعل الماص للحرارة", "تفاعل تُمتص خلاله الطاقة الحرارية."], ["التفاعل الطارد للحرارة", "تفاعل تتحرر خلاله الطاقة الحرارية."], ["قانون حفظ الكتلة", "كتلة النواتج تساوي كتلة المتفاعلات؛ فالذرات لا تُستحدث ولا تفنى بل يعاد ترتيبها."]], "strip": [["ما أصغر جزء في المادة يحتفظ بخصائص العنصر؟", "الذرة."], ["ماذا يدل الرقم السفلي في الصيغة H₂O؟", "على عدد ذرات الهيدروجين في الجزيء: ذرتان."], ["اذكر مثالًا لتغير فيزيائي.", "تجمد الماء أو طي الورق أو انصهار الشمع."], ["ما الرابطة الكيميائية؟", "قوة تربط ذرتين إحداهما مع الأخرى."], ["ما رمز الأكسجين والهيدروجين والكربون؟", "O و H و C."], ["هل تتغير الذرات عند تجمد الماء؟", "لا؛ يبقى الماء ماءً وتتغير حالته فقط."]], "read": [["ماذا توضّح المعادلة الكيميائية؟", "توضح المواد المتفاعلة والمواد الناتجة وخصائص كل منها، وبعضها يبيّن الحالة الفيزيائية لكل مادة.", 48], ["إلى أيّ أنواع التفاعلات الكيميائية ينتمي الاحتراق؟", "إلى التفاعلات الطاردة للحرارة؛ تتحد المادة مع الأكسجين فتنتج طاقة حرارية وضوءًا.", 53]], "test": [["1. حدّد إن كانت المعادلتان موزونتين، ولماذا؟  أ) Ca + Cl₂ → CaCl₂   ب) Zn + Ag₂S → ZnS + Ag", "أ) موزونة: ذرة Ca وذرتا Cl في الطرفين.  ب) غير موزونة: ذرتا Ag في المتفاعلات وذرة واحدة في النواتج؛ وتُوزن هكذا: Zn + Ag₂S → ZnS + 2Ag"], ["2. صِف الدلائل التي تدل على أن تفاعلًا كيميائيًّا قد حدث.", "تغيّر اللون، تصاعد غاز (فقاقيع)، تكوّن راسب، تغيّر الرائحة أو المذاق، انطلاق أو امتصاص حرارة أو ضوء أو صوت."], ["3. التفكير الناقد: الرماد الذي تخلّفه حرائق الغابات أقل كتلة وحيّزًا من الأشجار قبل احتراقها. كيف تفسّر ذلك وفق قانون حفظ الكتلة؟", "لم تفنَ الكتلة؛ فجزء كبير من ذرات الخشب اتحد مع الأكسجين وانطلق في الهواء غازات (ثاني أكسيد الكربون وبخار الماء). لو جُمعت النواتج كلها لساوت كتلتها كتلة الخشب والأكسجين المتفاعل."], ["4. تطبيق المهارات: زِن المعادلة  Ag₂O → Ag + O₂", "2Ag₂O → 4Ag + O₂  (4 ذرات Ag و 2 ذرة O في كل طرف)."]], "concepts": [["التغير الفيزيائي", "يغيّر الخصائص الفيزيائية فقط: الحجم والشكل والحالة، والمادة تبقى نفسها."], ["التغير الكيميائي", "ينتج مادة جديدة لها خصائص مختلفة، مثل صدأ الحديد واحتراق الورق."], ["دلائل التفاعل", "تغير اللون، فقاقيع غاز، راسب، رائحة، حرارة أو ضوء أو صوت."], ["المعادلة الكيميائية", "المتفاعلات يمين السهم ← النواتج يساره، والسهم يعني «ينتج»."], ["المعادلة اللفظية", "حمض الأسيتيك + كربونات الصوديوم الهيدروجينية ← أستات الصوديوم + ماء + ثاني أكسيد الكربون."], ["الأرقام السفلية", "تدل على عدد ذرات العنصر في المركب: CO₂ فيه ذرة كربون وذرتا أكسجين."], ["حفظ الكتلة", "لافوازييه: كتلة النواتج = كتلة المتفاعلات؛ الذرات يعاد ترتيبها فقط."], ["الموازنة", "نضع المعاملات أمام الصيغ ولا نغيّر الأرقام السفلية: 2Ag + H₂S → Ag₂S + H₂"], ["طارد للحرارة", "تتحرر طاقة: الاحتراق، لهب اللحام، الكمادات الحارة، صدأ الحديد (بطيء)."], ["ماص للحرارة", "تُمتص طاقة: التحليل الكهربائي للماء، الكمادات الباردة (نترات الأمونيوم)."]], "tf": [["الاحتراق مثال على التغير الكيميائي.", true, "تتكوّن مواد جديدة (رماد وغازات) وتنطلق حرارة وضوء."], ["تجمد الماء تغيّر كيميائي.", false, "تغيّر فيزيائي؛ تتغير الحالة فقط ويبقى الماء ماءً."], ["عند موازنة المعادلة يمكن تغيير الأرقام السفلية في الصيغ.", false, "نغيّر المعاملات فقط؛ تغيير الرقم السفلي يغيّر نوع المركب."], ["عندما تحترق مادة تختفي ذرات وتظهر ذرات عناصر جديدة.", false, "الذرات لا تُستحدث ولا تفنى، بل يعاد ترتيبها."], ["بعض التفاعلات طاردة للطاقة وبعضها ماص لها.", true, "الاحتراق طارد، والتحليل الكهربائي للماء ماص."], ["تتكسّر الروابط في المتفاعلات وتتكوّن روابط جديدة في النواتج.", true, "وهذا سبب تحرر الطاقة أو امتصاصها."], ["كتابة (طاقة) مع المتفاعلات تعني أن التفاعل طارد للحرارة.", false, "تعني أن الطاقة ضرورية لحدوثه فهو ماص."], ["تعمل الكمادات الباردة بتفاعل يمتص الحرارة من الجلد.", true, "ذوبان نترات الأمونيوم في الماء يمتص حرارة من البيئة المحيطة."]], "qs": [["ضعنا 3 جم من السكر في أنبوب اختبار وسخّنّاه (التجربة الاستهلالية). ماذا يدل تحوّل السكر إلى مادة سوداء مع خروج بخار؟", ["حدوث تغير فيزيائي فقط", "حدوث تفاعل كيميائي وتكوّن مواد جديدة", "انصهار السكر فقط", "تبخر السكر"], 1, "المادة السوداء (كربون) وبخار الماء مواد جديدة لها خصائص مختلفة عن السكر؛ إذن حدث تفاعل كيميائي."], ["أيّ مما يأتي تغيّر كيميائي؟", ["طي صحيفة", "احتراق صحيفة", "تجمد الماء", "قص الورق"], 1, "الاحتراق ينتج مواد جديدة، أما الطي والقص والتجمد فتغيرات فيزيائية."], ["تتفاعل نترات الفضة مع كلوريد الصوديوم فينتج كلوريد الفضة الصلب. ما الدليل على حدوث التفاعل؟", ["تغير الحجم", "تكوّن راسب صلب", "تغير الشكل", "ثبات اللون"], 1, "تكوّن الراسب الصلب عند مزج سائلين دليل على تغير كيميائي."], ["المواد البادئة في التفاعل الكيميائي تُسمّى:", ["النواتج", "المتفاعلات", "المحفزات", "المثبطات"], 1, "المتفاعلات Reactants هي المواد البادئة، والنواتج Products هي المواد الناتجة."], ["في المعادلة الكيميائية، أين تُكتب النواتج؟", ["يمين السهم", "يسار السهم", "فوق السهم", "تحت السهم"], 1, "المتفاعلات يمين السهم والنواتج يساره، والسهم يعني «ينتج»."], ["ماذا يدل الرقم 2 في CO₂؟", ["جزيئين من CO", "ذرتي أكسجين في الجزيء", "ذرتي كربون", "أيوني أكسجين"], 1, "الرقم السفلي يدل على عدد ذرات العنصر الذي يسبقه."], ["العالم الذي أثبت أنه لا يُستحدث شيء أو يفنى في التفاعلات الكيميائية:", ["جاليليو", "لافوازييه", "نيوتن", "دالتون"], 1, "لافوازييه (1743–1794م) أبو الكيمياء الحديثة، ونصّ قانون حفظ الكتلة."], ["ينص قانون حفظ الكتلة على أن:", ["كتلة النواتج أكبر من كتلة المتفاعلات", "كتلة النواتج تساوي كتلة المتفاعلات", "الذرات تفنى في التفاعل", "الكتلة تتحول إلى طاقة"], 1, "عدد الذرات ونوعها متساوٍ في طرفي المعادلة؛ فالكتلة محفوظة."], ["ما المعادلة الموزونة لتفاعل الميثان مع الأكسجين؟", ["CH₄ + O₂ → CO₂ + H₂O", "CH₄ + 2O₂ → CO₂ + 2H₂O", "CH₄ + O₂ → CO₂ + 2H₂O", "2CH₄ + O₂ → CO₂ + H₂O"], 1, "في الطرفين: ذرة C و4 ذرات H و4 ذرات O."], ["عند موازنة المعادلة Ag + H₂S → Ag₂S + H₂ نضع:", ["2 أمام Ag", "2 أمام H₂S", "نغير Ag₂S إلى AgS", "2 أمام H₂"], 0, "في النواتج ذرتا فضة، فنضع المعامل 2 أمام Ag."], ["لماذا لا نغيّر الأرقام السفلية عند الموازنة؟", ["لأنها تغيّر نوع المركب", "لأنها صغيرة", "لأنها تغير الكتلة فقط", "لأنها تمثل الطاقة"], 0, "تغيير الرقم السفلي يغيّر صيغة المادة نفسها، فنغير المعاملات فقط."], ["‪2H₂ + O₂ → 2H₂O + طاقة‬. هذا التفاعل:", ["ماص للحرارة", "طارد للحرارة", "لا يتضمن طاقة", "تغير فيزيائي"], 1, "كتابة الطاقة مع النواتج تعني أنها تتحرر: طارد للحرارة."], ["‪2H₂O + طاقة → 2H₂ + O₂‬ (التحليل الكهربائي للماء). هذا التفاعل:", ["طارد للحرارة", "ماص للطاقة", "احتراق", "تجمد"], 1, "الطاقة مع المتفاعلات تعني أنها ضرورية لحدوثه: ماص."], ["مثال على تحرير بطيء للطاقة الحرارية:", ["ولاعة الفحم", "صدأ الحديد", "لهب اللحام", "الألعاب النارية"], 1, "يتحد الحديد مع أكسجين الهواء ببطء لتكوين الصدأ، فتنطلق الحرارة ببطء لا نشعر بها."], ["كيف تخفّض الكمادات الباردة حرارة العضو المصاب؟", ["تطلق حرارة", "يذوب فيها نترات الأمونيوم فيمتص حرارة من الجلد", "تحترق ببطء", "تتجمد"], 1, "ذوبان نترات الأمونيوم في الماء عملية ماصة للحرارة."], ["(نافس) تُترك شرائح التفاح فيتحول لونها إلى البني. ما نوع هذا التغير؟", ["فيزيائي لأن الشكل لم يتغير", "كيميائي لتفاعل التفاح مع الأكسجين", "فيزيائي لأن الكتلة لم تتغير", "لا يحدث أي تغير"], 1, "الجدول 1: شريحة تفاح + أكسجين ← تحول للون البني؛ تغيّر اللون دليل تفاعل كيميائي."], ["(نافس) في المعادلة 2Ag₂O → 4Ag + O₂ كم ذرة أكسجين في الطرف الأيمن؟", ["1", "2", "4", "8"], 1, "2Ag₂O = ذرتا أكسجين، وO₂ في النواتج = ذرتا أكسجين."], ["في الشكل 4 (الميزان) كم ذرة صوديوم في كل كفة؟", ["1", "3", "5", "0"], 0, "كل كفة: 3C و5H و5O و1Na؛ أي أن الذرات متساوية في الطرفين."]], "sets": [["تغير فيزيائي أم كيميائي؟", ["تغير فيزيائي", "تغير كيميائي"], [["طي الصحيفة", 0], ["تجمد الماء", 0], ["قص الورق", 0], ["انصهار الشمع", 0], ["احتراق الصحيفة", 1], ["صدأ الحديد", 1], ["تحول التفاح للبني", 1], ["خبز العجين", 1]]], ["طارد أم ماص للحرارة؟", ["طارد للحرارة", "ماص للحرارة"], [["احتراق الميثان", 0], ["لهب اللحام", 0], ["صدأ الحديد", 0], ["ولاعة الفحم", 0], ["التحليل الكهربائي للماء", 1], ["الكمادات الباردة", 1]]]], "calc": [["زِن المعادلة: Al + I₂ → AlI₃", "2Al + 3I₂ → 2AlI₃ (2 Al و 6 I في كل طرف)."], ["زِن المعادلة: Fe₂O₃ + CO → Fe₃O₄ + CO₂", "3Fe₂O₃ + CO → 2Fe₃O₄ + CO₂ (6 Fe و 10 O و 1 C في كل طرف)."]], "think": ["يكون الرماد الذي تخلّفه حرائق الغابات أقل كتلة من الأشجار. كيف يتفق ذلك مع قانون حفظ الكتلة؟", "انطلقت كتلة كبيرة على هيئة غازات (CO₂ وبخار الماء)؛ فلو جمعنا كل النواتج لساوت كتلة الخشب والأكسجين."], "labs": [["lab-sugar", "مختبر تسخين السكر", "labSugar", "تجربة استهلالية"], ["lab-mass", "مختبر حفظ الكتلة", "labMass", "تجربة"], ["lab-balance", "مختبر موازنة المعادلات", "labBalance", "محاكاة"], ["lab-energy", "مختبر الطاقة: طارد أم ماص؟", "labEnergy", "استقصاء"]], "cover": "cover-g9s2-c8-l1", "desc": "«من السكر إلى الكربون»: مختبر تسخين السكر، ومختبر حفظ الكتلة بالميزان، وموازن المعادلات بالذرات، ومختبر الطاقة طارد أم ماص، وماذا قرأت؟ واختبر نفسك."}, "ANT": [["الاحتراق مثال على التغير الكيميائي.", true, "م"], ["تساعدنا المعادلة الكيميائية على معرفة أسماء المواد المتفاعلة وأسماء المواد الناتجة فقط.", false, "غ: وتبيّن أيضًا خصائصها وأعداد ذراتها، وأحيانًا حالتها الفيزيائية والطاقة."], ["عندما تحترق مادة ما تختفي ذرات العناصر، وتظهر ذرات عناصر جديدة.", false, "غ: الذرات لا تُستحدث ولا تفنى، بل يعاد ترتيبها."], ["عند موازنة المعادلة الكيميائية يمكن تغيير الأرقام السفلية التي توجد في الصيغة الكيميائية.", false, "غ: نغيّر المعاملات فقط."], ["بعض التفاعلات طاردة للطاقة، وبعضها الآخر ماص لها.", true, "م"], ["تتكسر خلال التفاعلات الكيميائية الروابط في المواد المتفاعلة، وتنتج روابط جديدة.", true, "م"], ["لا تحتاج التفاعلات الطاردة للطاقة إلى أي طاقة لتبدأ.", false, "غ: تحتاج إلى طاقة تنشيط."], ["تزداد سرعة معظم التفاعلات الكيميائية بزيادة درجة الحرارة.", true, "م"]], "INTRO": {"lab_title": "تعرّف التفاعل الكيميائي", "lab_steps": ["ضع 3 جم من السكر في أنبوب اختبار كبير.", "أشعل اللهب بحذر.", "استخدم الماسك لرفع الأنبوب فوق اللهب 45 ثانية، أو حتى تلاحظ تغيرًا في السكر.", "لاحظ التغيرات التي تحدث."], "lab_q": "صِف التغيرات في أنبوب الاختبار. ماذا حدث للسكر؟ هل المادة التي بقيت بعد التسخين هي المادة نفسها التي بدأ بها التفاعل؟", "lab_a": "ينصهر السكر ثم يتحول إلى اللون البني فالأسود ويتصاعد بخار ماء؛ المادة السوداء (كربون) مادة جديدة تختلف عن السكر، إذن حدث تفاعل كيميائي.", "warn": "لا تلمس أنبوب الاختبار لأنه ساخن، وتوخَّ الحذر عند استعمال اللهب، ولا توجّه فوهة الأنبوب نحو أحد.", "fold": ["اطوِ ورقة من المنتصف بصورة رأسية.", "قصّ وجه الورقة العلوي في صورة أشرطة متساوية.", "عنون كل شريط."], "fold_note": "معلومات للبحث: اكتب قبل القراءة أسئلة حول التفاعل الكيميائي على الجهة الأمامية للأشرطة، وأضف أسئلة في أثناء القراءة، ثم أجب أسفل الأشرطة.", "skill": "التوقع", "skill_text": "التوقع تخمين مدروس مبني على ما تعلمته من قبل.", "opener_q": "ما أنواع التفاعلات الكيميائية التي تحدث في محطات تصنيع المواد الكيميائية؟", "opener_t": "تزوّدنا محطات إنتاج المواد الكيميائية المصنّعة بالعديد من المواد الخام التي تدخل في التفاعلات لإنتاج مواد نستخدمها يوميًّا: القرص المدمج، والمنظفات، ومستحضرات التجميل، والأدوية.", "notebook": "ما المنتجات الأخرى التي تعتقد أن إنتاجها يعتمد على محطات تصنيع المواد الكيميائية؟"}, "INQ": {"title": "تفاعلات طاردة للحرارة أو ماصة لها", "kind": "صمّم بنفسك", "page": 64, "q": "تكون الطاقة دائمًا جزءًا من التفاعلات الكيميائية؛ فبعضها يحتاج إلى الطاقة حتى يستمر، وبعضها تنتج عنه طاقة تنطلق إلى الوسط المحيط. ستدرس تفاعل فوق أكسيد الهيدروجين مع كل من الكبد والبطاطس، وتبحث هل التفاعل طارد أم ماص للطاقة.", "goals": ["تصمّم نشاطًا لتختبر ما إذا كان التفاعل الكيميائي طاردًا أم ماصًا للطاقة.", "تقيس التغيّر في درجات الحرارة الناتج عن التفاعل الكيميائي."], "materials": ["أنابيب اختبار (عدد 8)", "حامل أنابيب اختبار", "محلول فوق أكسيد الهيدروجين (3٪)", "كبد دجاج نيّ", "بطاطس", "مقياس حرارة", "ساعة إيقاف، وساعة ذات عقرب ثوانٍ", "مخبار مدرّج سعته 25 مل"], "warn": "قد يسبب فوق أكسيد الهيدروجين تهيجًا للجلد والعيون، وقد يُتلف الملابس. اتبع إرشادات المعلم عند التخلص من المواد الكيميائية، واغسل يديك جيدًا.", "hyp": "ضع فرضية تصف كيف يمكنك تحديد ما إذا كان التفاعل بين فوق أكسيد الهيدروجين وكل من الكبد أو البطاطس طاردًا للحرارة أم ماصًا لها.", "hyp_a": "مثال: إذا ارتفعت درجة حرارة الخليط بعد إضافة الكبد أو البطاطس فالتفاعل طارد للحرارة، وإذا انخفضت فهو ماص.", "plan": ["تأمّل المواد والأدوات المتوافرة لديك، وقرّر الإجراءات والقياسات.", "قرّر كيف يمكنك الكشف عن الحرارة المنبعثة إلى الوسط الخارجي، وحدّد عدد القياسات.", "كرّر النشاط أكثر من مرة، وخذ متوسط المحاولات.", "قرّر ما العوامل المتغيرة وما العامل الضابط.", "انسخ جدول البيانات في دفتر العلوم."], "analysis": [["هل يمكن أن تستدل على حدوث التفاعل الكيميائي؟ ما الأدلة؟", "نعم: تصاعد فقاقيع غاز الأكسجين بكثرة وارتفاع درجة الحرارة."], ["حدّد العوامل المتغيرة في التجربة.", "المتغير المستقل: نوع النسيج (كبد أو بطاطس). المتغير التابع: درجة الحرارة."], ["حدّد العامل الضابط في التجربة.", "حجم فوق أكسيد الهيدروجين وتركيزه ودرجة حرارته الابتدائية، وحجم قطعة النسيج؛ ويمكن استخدام أنبوب فيه فوق أكسيد الهيدروجين فقط للمقارنة."]], "concl": [["هل تمكّنك ملاحظاتك من التمييز بين التفاعل الطارد والماص للحرارة؟", "نعم؛ ارتفاع درجة الحرارة يعني أن التفاعل طارد للحرارة، وانخفاضها يعني أنه ماص."], ["ما مصدر الطاقة في هذه التجربة؟", "الطاقة الكيميائية المختزنة في روابط فوق أكسيد الهيدروجين، تتحرر عند تحلله إلى ماء وأكسجين بمساعدة إنزيم في الكبد والبطاطس."]], "comm": "قارن بين نتائجك ونتائج زملائك، ووضّح سبب الاختلافات إن وجدت."}, "SCI": {"title": "الألماس المصنّع: كأنه حقيقي", "kind": "العلم والتاريخ", "page": 66, "points": ["الألماس مكوّن من الكربون نفسه الذي يكوّن الجرافيت في أقلام الرصاص.", "صلابته تعود إلى قوة ترابط ذراته، وشفافيته إلى طريقة ترتيب بلوراته.", "يتكوّن على عمق 150 كم تقريبًا، عند نحو 1400°س وضغط أكثر من 55000 مرة من الضغط عند سطح البحر.", "نجح العلماء عام 1954م في صنعه: ضغط أكثر من 68000 ضغط جوي وحرارة تقارب 1700°س مدة 16 ساعة.", "المصنّع له خصائص الحقيقي (الصلابة والموصلية الجيدة للحرارة)، ويُستخدم صناعيًّا لأنه أقل تكلفة."], "task": "بحث: استكشف تاريخ الألماس الطبيعي والمصنّع، ووضّح الفرق بينهما واستعمالات كل منهما."}};
+/* ===== Lesson kit: standard screens built from the chapter data object D (injected at build time) ===== */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+const S = {
+  goals(img) {
+    return { title: D.L.title, tag: 'الأهداف', phase: 'إثارة الفضول', layout: 'cols-2-1',
+      html: `<div class="hero"><img src="${img}" alt=""><div class="over"><h3>الفكرة الرئيسة</h3><p>${f(D.L.idea)}</p></div></div>
+      <div class="card" style="display:flex;flex-direction:column;justify-content:center;gap:.45em"><h3>في نهاية الدرس سأكون قادرًا على أن:</h3>
+      <ul class="list big">${D.L.goals.map(g => `<li>${f(g.replace(/^ت/, 'أ'))}</li>`).join('')}</ul>
+      <div class="pill" style="background:var(--accentL);color:var(--accent);white-space:normal">الأهمية: ${D.L.importance}</div>
+      <div class="muted">المفردات الجديدة: ${D.L.terms.slice(0, 6).map(t => '<b>' + t[0] + '</b>').join('، ')}</div></div>` };
+  },
+  hook(img, title, text, q, opts, key) {
+    return { title, phase: 'إثارة الفضول', layout: 'cols-2-1',
+      html: `<div class="hero"><img src="${img}" alt=""><div class="over"><p>${f(text)}</p></div></div>
+      <div class="card" style="display:flex;flex-direction:column;gap:.5em;justify-content:center"><div class="q">توقّع: ${f(q)}</div><div class="poll" style="display:flex;flex-direction:column;gap:.45em"></div><div class="muted pollmsg">سنعود إلى توقعك في أثناء الدرس.</div></div>`,
+      init(b) { const box = b.querySelector('.poll'), saved = store.get(key, null);
+        opts.forEach((t, k) => { const x = h(`<button class="opt"><span class="lt">${'أبجد'[k]}</span><span>${f(t)}</span></button>`); if (saved === k) x.classList.add('right');
+          x.onclick = () => { store.set(key, k); box.querySelectorAll('.opt').forEach(o => o.classList.remove('right')); x.classList.add('right'); b.querySelector('.pollmsg').textContent = 'سُجّل توقعك ✔ — اختبره في المختبر القادم.'; }; box.appendChild(x); }); } };
+  },
+  opener(img) {
+    return { title: D.INTRO.opener_q, tag: 'افتتاحية الفصل', phase: 'إثارة الفضول', layout: 'cols-2-1',
+      html: `<div class="hero"><img src="${img}" alt=""><div class="over"><h3>${D.CH.title}</h3><p>الفكرة العامة: ${D.CH.idea}</p></div></div>
+      <div class="card" style="display:flex;flex-direction:column;justify-content:center;gap:.6em"><p class="big">${f(D.INTRO.opener_t)}</p>
+      <div class="rv" data-think data-a="إجابات مفتوحة؛ ناقش أمثلة من حياتك اليومية.">📓 دفتر العلوم: ${D.INTRO.notebook}</div></div>` };
+  },
+  strip() {
+    return { title: 'شريط الذكريات', tag: 'استرجاع', phase: 'إثارة الفضول', layout: 'rows',
+      html: `<div class="muted">اختر إطارًا لتكبير سؤاله والإجابة عنه، ثم عُد إلى الشريط.</div><div class="sh"></div>`,
+      init(b) { mount(b.querySelector('.sh'), W.strip(D.L.strip)); b.querySelector('.sh').style.minHeight = 0; b.querySelector('.strip').style.height = '100%'; } };
+  },
+  pre(after) {
+    return { title: after ? 'بعد قراءة الفصل: هل تغيّر رأيك؟' : 'توجيه القراءة: قبل قراءة الفصل', tag: after ? 'بعد القراءة' : 'قبل القراءة (م / غ)', phase: after ? 'التقويم' : 'إثارة الفضول', layout: 'rows',
+      html: `<div class="muted">${after ? 'ارجع إلى العبارات، وصحّح العبارات غير الصحيحة.' : 'اكتب (م) إذا كنت موافقًا على العبارة، و(غ) إذا كنت غير موافق. ستعود إليها بعد قراءة الفصل.'}</div><div class="tfw" style="overflow:auto;min-height:0"></div>`,
+      init(b) { mount(b.querySelector('.tfw'), W.tf({ items: D.ANT.map(a => ({ t: a[0], v: a[1], why: a[2] })) })); } };
+  },
+  intro(img) {
+    const I = D.INTRO;
+    return [{ title: 'نشاطات تمهيدية: تجربة استهلالية', tag: I.lab_title, phase: 'الاستكشاف', layout: 'cols',
+      html: `<div class="card" style="display:flex;flex-direction:column;gap:.4em"><h3>🧪 ${I.lab_title}</h3><ol class="list">${I.lab_steps.map(s => `<li>${f(s)}</li>`).join('')}</ol>
+        <div class="pill" style="background:#fee2e2;color:#991b1b;white-space:normal">⚠ ${I.warn}</div></div>
+      <div class="card" style="display:flex;flex-direction:column;gap:.5em;justify-content:center"><div class="rv" data-think data-a="${esc(I.lab_a)}">التفكير الناقد: ${f(I.lab_q)}</div>
+        <div class="muted">نفّذ التجربة عمليًّا، أو افتح المختبر الافتراضي في الشاشة التالية.</div></div>` },
+    { title: 'المطويات: منظمات الأفكار', tag: 'نشاطات تمهيدية', phase: 'الاستكشاف', layout: 'cols',
+      html: `<div class="card" style="display:flex;flex-direction:column;gap:.5em;justify-content:center"><h3>🗂 خطوات المطوية</h3><ol class="list big">${I.fold.map(s => `<li>${s}</li>`).join('')}</ol></div>
+      <div class="card" style="display:flex;flex-direction:column;gap:.5em;justify-content:center"><p class="big">${I.fold_note}</p>
+      <div class="tint card" style="box-shadow:none"><b>أتهيأ للقراءة — ${I.skill}:</b> ${I.skill_text}</div></div>` }];
+  },
+  terms(n) {
+    return { title: 'صِل المفردة بمعناها', tag: 'مفردات', phase: 'بناء المفهوم', layout: 'rows',
+      html: `<div class="muted">اسحب كل تعريف إلى المصطلح المناسب (أو المس التعريف ثم المصطلح).</div><div class="mw"></div>`,
+      init(b) { mount(b.querySelector('.mw'), W.match({ pairs: D.L.terms.slice(0, n || 6).map(t => [t[0], t[1]]) })); } };
+  },
+  sort(i) {
+    const st = D.L.sets[i || 0];
+    return { title: 'صنّف: ' + st[0], tag: 'نشاط', phase: 'التطبيق', layout: 'rows',
+      html: `<div class="muted">اسحب كل بطاقة إلى المجموعة المناسبة، ثم اضغط «تحقّق».</div><div class="sw" style="min-height:0"></div>`,
+      init(b) { mount(b.querySelector('.sw'), W.sort({ cats: st[1].map((c, k) => ({ id: String(k), label: c })), items: st[2].map(x => ({ t: x[0], cat: String(x[1]) })) })); } };
+  },
+  read(i) {
+    const r = D.L.read[i];
+    return { title: 'ماذا قرأت؟', tag: 'ص ' + r[2], phase: 'بناء المفهوم', layout: 'rows',
+      html: `<div class="muted">سؤال الكتاب في نهاية الفقرة: اكتب إجابتك ثم تحقّق.</div><div class="card" style="display:flex;flex-direction:column;justify-content:center"><div class="rv big" data-think data-a="${esc(r[1])}">✅ ${f(r[0])}</div></div>` };
+  },
+  test() {
+    const T = D.L.test, out = [], per = 3;
+    for (let k = 0; k < T.length; k += per) {
+      const part = T.slice(k, k + per);
+      out.push({ title: 'اختبر نفسك' + (T.length > per ? ` (${Math.floor(k / per) + 1} من ${Math.ceil(T.length / per)})` : ''), tag: 'مراجعة الدرس ' + D.L.no, phase: 'التقويم', layout: 'rows',
+        html: `<div class="muted">أسئلة الكتاب في نهاية الدرس مع الحل المشروح.</div><div style="display:flex;flex-direction:column;gap:.5em;overflow:auto;min-height:0">${part.map(t => `<div class="card rv" data-a="${esc(t[1])}">${f(t[0])}</div>`).join('')}</div>` });
+    }
+    return out;
+  },
+  quiz(n) {
+    return { title: 'التقويم التكويني', tag: 'نافس', phase: 'التقويم', layout: 'rows', html: `<div class="muted">سؤال في كل مرة، مع تغذية راجعة فورية.</div><div class="qz" style="min-height:0"></div>`,
+      init(b) { mount(b.querySelector('.qz'), W.quiz(D.L.qs.slice(0, n || 10).map(q => ({ q: q[0], opts: q[1], c: q[2], ex: q[3] })), { id: D.L.id })); } };
+  },
+  tf() {
+    return { title: 'صح أم خطأ؟', tag: 'تقويم سريع', phase: 'التقويم', layout: 'rows', html: `<div class="muted">قرّر ثم اقرأ التعليل.</div><div class="tfw" style="overflow:auto;min-height:0"></div>`,
+      init(b) { mount(b.querySelector('.tfw'), W.tf({ items: D.L.tf.slice(0, 6).map(a => ({ t: a[0], v: a[1], why: a[2] })) })); } };
+  },
+  lab(title, func, tag, phase) {
+    return { title, tag: tag || 'مختبر افتراضي', phase: phase || 'الاستكشاف', init(b) { window[func](b); }, onShow(b) { b._onShow && b._onShow(); } };
+  },
+  cards(title, tag, phase, items, cols) { // items: [[head, body, color?]]
+    return { title, tag, phase: phase || 'بناء المفهوم', layout: 'rows',
+      html: `<div></div><div style="display:grid;grid-template-columns:repeat(${cols || 2},1fr);gap:.6em;min-height:0">${items.map(it => `<div class="card" style="border-top:6px solid ${it[2] || 'var(--accent)'};display:flex;flex-direction:column;gap:.3em;justify-content:center"><h3 style="color:${it[2] || 'var(--accent)'}">${f(it[0])}</h3><div class="big">${f(it[1])}</div></div>`).join('')}</div>` };
+  },
+  exit(qs) {
+    return { title: 'بطاقة الخروج', tag: '3 دقائق', phase: 'التقويم', layout: 'rows',
+      html: `<div class="muted">أجب في دفترك ثم تحقّق.</div><div style="display:flex;flex-direction:column;gap:.5em;overflow:auto;min-height:0">${qs.map(q => `<div class="card rv" data-think data-a="${esc(q[1])}">${f(q[0])}</div>`).join('')}</div>` };
+  },
+  levels(items) { // [[level, q, a]]
+    const C = ['#16a34a', '#2563eb', '#7c3aed'];
+    return { title: 'تحديات بثلاثة مستويات', tag: 'مراعاة الفروق', phase: 'التطبيق', layout: 'rows',
+      html: `<div class="muted">اختر المستوى المناسب لك، ثم انتقل إلى الأعلى.</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.6em;min-height:0">${items.map((it, k) => `<div class="card" style="border-top:6px solid ${C[k]};display:flex;flex-direction:column;gap:.4em"><span class="pill" style="background:${C[k]};color:#fff;align-self:flex-start">${it[0]}</span><div class="rv" data-a="${esc(it[2])}">${f(it[1])}</div></div>`).join('')}</div>` };
+  },
+  inquiry(labFunc) {
+    const Q = D.INQ, out = [];
+    out.push({ title: Q.kind + ': ' + Q.title, tag: 'ص ' + Q.page, phase: 'الاستكشاف', layout: 'cols',
+      html: `<div class="card" style="display:flex;flex-direction:column;gap:.4em"><h3>سؤال من واقع الحياة</h3><p>${f(Q.q)}</p><h3>الأهداف</h3><ul class="list">${Q.goals.map(g => `<li>${g}</li>`).join('')}</ul></div>
+      <div class="card" style="display:flex;flex-direction:column;gap:.4em"><h3>المواد والأدوات</h3><ul class="list" style="columns:2">${Q.materials.map(m => `<li>${m}</li>`).join('')}</ul>
+      <div class="pill" style="background:#fee2e2;color:#991b1b;white-space:normal">⚠ ${Q.warn}</div><div class="rv" data-think data-a="${esc(Q.hyp_a)}">تكوين فرضية: ${Q.hyp}</div></div>` });
+    out.push({ title: 'تصميم الخطة وتنفيذها', tag: Q.kind, phase: 'الاستكشاف', layout: 'cols',
+      html: `<div class="card"><h3>تصميم خطة</h3><ol class="list">${Q.plan.map(p => `<li>${p}</li>`).join('')}</ol></div>
+      <div class="card" style="display:flex;flex-direction:column;gap:.4em"><h3>تنفيذ الخطة</h3><ol class="list"><li>تأكّد من موافقة معلمك على خطتك قبل تنفيذها.</li><li>نفّذ خطة العمل.</li><li>دوّن قياساتك مباشرة في جدول البيانات.</li><li>احسب متوسط نتائج محاولاتك.</li></ol><div class="tint card" style="box-shadow:none">🧪 جرّب الاستقصاء افتراضيًّا في الشاشة التالية.</div></div>` });
+    if (labFunc) out.push(S.lab('الاستقصاء افتراضيًّا', labFunc, 'محاكاة الاستقصاء'));
+    out.push({ title: 'تحليل البيانات والاستنتاج', tag: Q.kind, phase: 'التطبيق', layout: 'rows',
+      html: `<div class="muted">${Q.comm}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:.5em;overflow:auto;min-height:0">${Q.analysis.concat(Q.concl).map((a, k) => `<div class="card rv" data-a="${esc(a[1])}">${k < Q.analysis.length ? 'تحليل' : 'استنتاج'} ${k < Q.analysis.length ? k + 1 : k - Q.analysis.length + 1}: ${f(a[0])}</div>`).join('')}</div>` });
+    return out;
+  },
+  scihist(img) {
+    const Q = D.SCI;
+    return { title: Q.kind + ': ' + Q.title, tag: 'ص ' + Q.page, phase: 'التطبيق', layout: 'cols-2-1',
+      html: `<div class="hero"><img src="${img}" alt=""><div class="over"><h3>${Q.kind}</h3><p>${Q.title}</p></div></div>
+      <div class="card" style="display:flex;flex-direction:column;gap:.4em;justify-content:center"><ul class="list">${Q.points.map(p => `<li>${f(p)}</li>`).join('')}</ul><div class="tint card" style="box-shadow:none">🔎 ${Q.task}</div></div>` };
+  },
+  links(items) { // [[title, url, sub]]
+    return { title: 'المختبرات الافتراضية والأنشطة', tag: 'روابط', phase: 'التطبيق', layout: 'rows',
+      html: `<div class="muted">افتح أي مختبر في صفحة مستقلة على المنصة.</div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.6em;align-content:start">${items.map(i => `<a href="${i[1]}" target="_blank" class="card" style="text-decoration:none;color:var(--navy);display:flex;justify-content:space-between;align-items:center"><b>🧪 ${i[0]}</b><span class="pill" style="background:var(--accentL);color:var(--accent)">${i[2] || 'فتح'}</span></a>`).join('')}</div>` };
+  }
+};
+</script><script>Lesson.init({id:'g9s2-c8-lab-mass',title:'مختبر حفظ الكتلة',sub:'الفصل 8',short:'المختبر',home:'../index.html',platform:true,chapterKey:'الفصل الثامن: التفاعلات الكيميائية',accent:'#B45309',accentL:'#FEF3C7',screens:[{title:'مختبر حفظ الكتلة',tag:'تجربة',phase:'الاستكشاف',init(b){labMass(b);},onShow(b){b._onShow&&b._onShow();}}]});</script><script src="../pen.js" defer></script></body></html>
