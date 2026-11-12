@@ -973,4 +973,23 @@ function simConduct(el) {
   el.querySelectorAll('.cd').forEach(b => b.onclick = () => { k = b.dataset.k; el.querySelectorAll('.cd').forEach(z => z.classList.toggle('alt', z !== b)); });
 }
 </script><script>Lesson.init({id:'lab-covalent',title:'تحدي العالم الصغير: الروابط التساهمية',sub:'الفصل 7',short:'المختبر',home:'../index.html',platform:true,chapterKey:'الفصل السابع: البناء الذري والروابط الكيميائية',accent:'#6d28d9',accentL:'#eee8fd',
-screens:[{title:'تحدي العالم الصغير: الروابط التساهمية',tag:'مختبر',phase:'الاستكشاف',init(b){labCovalent(b);}}]});</script><script src="../pen.js" defer></script></body></html>
+screens:[{title:'تحدي العالم الصغير: الروابط التساهمية',tag:'مختبر',phase:'الاستكشاف',init(b){labCovalent(b);}}]});</script><script src="../pen.js" defer></script><script>/* fxAutoFit: shrink any card whose content grows past its box (tables filling, answers revealed) so nothing is hidden */
+(function () {
+  if (window.fxAutoFit) return; window.fxAutoFit = true;
+  let pend = false;
+  function fit(card) {
+    if (!card.offsetParent) return;
+    const cs = getComputedStyle(card); if (cs.overflowY === 'visible' && card.scrollHeight <= card.clientHeight + 2) return;
+    let k = parseFloat(card.dataset.fitk || '1');
+    // grow back if there is room, then shrink until it fits
+    if (k < 1 && card.scrollHeight <= card.clientHeight + 2) { k = Math.min(1, k + .04); card.style.fontSize = k + 'em'; if (card.scrollHeight > card.clientHeight + 2) { k -= .04; card.style.fontSize = k + 'em'; } }
+    let guard = 20;
+    while (card.scrollHeight > card.clientHeight + 2 && k > .62 && guard--) { k -= .04; card.style.fontSize = k.toFixed(2) + 'em'; }
+    card.dataset.fitk = k.toFixed(2);
+  }
+  function run() { pend = false; document.querySelectorAll('.screen.active .card, .screen.active .body>.rv, .lab-split>.card').forEach(fit); }
+  const sched = () => { if (!pend) { pend = true; requestAnimationFrame(() => setTimeout(run, 30)); } };
+  const start = () => { new MutationObserver(sched).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class'] }); window.addEventListener('resize', sched); sched(); };
+  if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+</script></body></html>
