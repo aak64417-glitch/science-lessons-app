@@ -1,5 +1,5 @@
 {
- "version": 54,
+ "version": 55,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -1622,16 +1622,16 @@
    "cover": "img/cover-g7-c5-l1-3d.webp"
   },
   {
-   "id": "g7-c5-l1-q",
-   "title": "أسئلة درس المعادن – جواهر الأرض وحلولها",
+   "id": "g7-c5-rv",
+   "title": "حل أسئلة مراجعة الفصل الخامس",
    "type": "lesson",
    "grade": "7",
-   "no": 1.5,
+   "no": 3,
    "chapter": "الفصل الخامس: الصخور والمعادن",
-   "desc": "أسئلة الدرس من الكتاب (ص١٩–٢٤) وحلولها سؤالًا سؤالًا بخط كبير وواضح للعرض في الفصل وفي التيمز",
-   "color": "#7c3aed",
-   "file": "lessons/g7-c5-l1-questions.html",
-   "cover": "img/cover-g7-c5-l1-q.webp"
+   "desc": "حلول أسئلة مراجعة الفصل (١–٢٦) سؤالًا سؤالًا بخط كبير وواضح للعرض في الفصل وفي التيمز",
+   "color": "#b4530a",
+   "file": "lessons/g7-c5-review.html",
+   "cover": "img/cover-g7-c5-rv.webp"
   },
   {
    "id": "g7-c5-l2",

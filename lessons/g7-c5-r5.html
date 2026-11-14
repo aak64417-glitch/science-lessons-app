@@ -2463,8 +2463,112 @@ S({id:'sum',name:'م الخلاصة',build:function(el){return D.summary(el,{sid
  ['ما المعدن؟',['العديد من المنتجات التي نصادفها كل يوم مصنوعة من معادن.','تتشكّل المعادن بطرائق مختلفة، منها تبلور الصهارة، أو من المحاليل الغنية بالمواد الذائبة.']],
  ['خصائص المعادن',['نتعرّف المعادن من خلال خواصها الفيزيائية: الشكل البلوري، واللون، والمخدش، والبريق، والقساوة، والانفصام والمكسر.','تُظهر بعض المعادن خواص غير عادية، منها التفاعل مع الأحماض، والمغناطيسية.']],
  ['المعادن الشائعة',['تشكّل معادن قليلة – من أكثر من ٤٠٠٠ معدن معروف – معظم الصخور.','الأحجار الكريمة معادن قيّمة تُستخدم قطعًا ثمينة في المجوهرات.','الخامات معادن يُستخلص منها مواد مفيدة، مثل الحديد من الهيماتيت.']]]})}});
-S({id:'qbank',name:'م أسئلة الدرس وحلولها',full:true,build:function(el){el.innerHTML='<iframe src="g7-c5-l1-questions.html" title="أسئلة الدرس وحلولها" style="position:absolute;left:0;right:0;top:96px;bottom:100px;width:100%;height:calc(100% - 196px);border:0;background:#f7f6fb"></iframe>';return {enter:function(){},leave:function(){}}}});
-D.order(L1,['intro','wonder','prior','lab','fold','coop','goals','what','props','streak','mohs','cleave','uses','classify','eval1','practice','qbank','sum','mine','review'],['intro','wonder','prior','lab','fold','coop','goals']);
+/* أسئلة الكتاب داخل محطات الشرح (يعرضها المعلم) */
+(function(){if(document.getElementById('qbk-css'))return;var st=document.createElement('style');st.id='qbk-css';st.textContent=
+'.qbk-btn{display:inline-flex;align-items:center;vertical-align:middle;margin-inline-start:16px;font:inherit;font-weight:700;font-size:17px;border:0;border-radius:99px;padding:5px 14px;cursor:pointer;background:linear-gradient(180deg,#ffd166,#f4a63b);color:#2a1600;box-shadow:0 6px 18px rgba(0,0,0,.35)}'+
+'.qbk-btn b{display:inline-grid;place-items:center;min-width:24px;height:24px;border-radius:50%;background:#2a1600;color:#ffd166;margin-inline-start:8px;font-size:16px}'+
+'.qbk-ov{position:fixed;inset:0;z-index:9999;font-family:"Readex Pro","IBM Plex Sans Arabic",sans-serif;direction:rtl;background:rgba(6,5,10,.72);display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}.qbk-ov.on{display:flex}'+
+'.qbk-cd{width:min(1180px,94vw);max-height:92vh;overflow:auto;background:#fffdf7;color:#1c1a24;border-radius:26px;border-top:10px solid #f4a63b;padding:20px 30px 18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 30px 80px rgba(0,0,0,.6)}'+
+'.qbk-hd{display:flex;align-items:center;gap:12px}.qbk-hd span{background:#fff1d6;color:#9a4f00;border-radius:99px;padding:4px 16px;font-size:18px;font-weight:700}.qbk-hd small{margin-inline-start:auto;font-size:18px;color:#6b6475;font-weight:700}.qbk-hd button{font:inherit;font-size:20px;border:0;background:#eee;border-radius:12px;padding:4px 14px;cursor:pointer}'+
+'.qbk-q{font-size:clamp(22px,2.5vw,36px);line-height:1.6;font-weight:700;margin:0}.qbk-q .n{display:inline-grid;place-items:center;min-width:1.5em;height:1.5em;border-radius:50%;background:#f4a63b;color:#2a1600;font-size:.8em;margin-inline-end:.35em}'+
+'.qbk-a{display:none;background:#e3f8ec;border-inline-start:9px solid #10a35a;border-radius:16px;padding:12px 18px;font-size:clamp(20px,2.15vw,31px);line-height:1.65;font-weight:600;color:#0b3d24}.qbk-a.on{display:block;animation:rin .45s}.qbk-a b{color:#067a40}'+
+'.qbk-ft{display:flex;gap:10px;align-items:center}.qbk-ft button{font:inherit;font-weight:700;font-size:21px;border:0;border-radius:14px;padding:10px 22px;cursor:pointer;background:#f1eef6;color:#2b2140}.qbk-ft .rv{background:#10a35a;color:#fff;min-width:200px}.qbk-ft .dots{margin-inline-start:auto;display:flex;gap:6px}.qbk-ft .dots i{width:14px;height:14px;border-radius:50%;background:#ddd6e8}.qbk-ft .dots i.on{background:#f4a63b}';
+document.head.appendChild(st)})();
+function qbook(el,QS){if(!QS||!QS.length)return;
+  var bt=document.createElement('button');bt.className='qbk-btn';bt.innerHTML='📖 أسئلة الكتاب<b>'+n(QS.length)+'</b>';var ey=$('.eyebrow',el);if(ey)ey.appendChild(bt);else el.insertBefore(bt,el.firstChild);
+  var ov=document.createElement('div');ov.className='qbk-ov';ov.innerHTML='<div class="qbk-cd"><div class="qbk-hd"><span></span><small></small><button data-x>✕ إغلاق</button></div><p class="qbk-q"></p><div class="qbk-a"></div><div class="qbk-ft"><button data-p>→ السابق</button><button class="rv" data-r>💡 إظهار الإجابة</button><button data-nx>التالي ←</button><div class="dots"></div></div></div>';document.body.appendChild(ov);
+  var i=0,sh=false;function R(){var q=QS[i];sh=false;$('.qbk-hd span',ov).textContent=q.s;$('.qbk-hd small',ov).textContent='السؤال '+n(i+1)+' من '+n(QS.length);$('.qbk-q',ov).innerHTML='<span class="n">'+n(i+1)+'</span>'+q.q;var a=$('.qbk-a',ov);a.innerHTML=q.a;a.classList.remove('on');$('[data-r]',ov).textContent='💡 إظهار الإجابة';$('.dots',ov).innerHTML=QS.map(function(_,j){return '<i class="'+(j===i?'on':'')+'"></i>'}).join('')}
+  bt.onclick=function(e){e.stopPropagation();i=0;R();ov.classList.add('on')};ov.onclick=function(e){if(e.target===ov)ov.classList.remove('on')};
+  $('[data-x]',ov).onclick=function(){ov.classList.remove('on')};$('[data-r]',ov).onclick=function(){sh=!sh;$('.qbk-a',ov).classList.toggle('on',sh);this.textContent=sh?'🙈 إخفاء الإجابة':'💡 إظهار الإجابة'};
+  $('[data-nx]',ov).onclick=function(){if(i<QS.length-1){i++;R()}};$('[data-p]',ov).onclick=function(){if(i>0){i--;R()}};
+  ov.addEventListener('keydown',function(e){e.stopPropagation()})}
+
+/* ========== كيف تتشكّل المعادن؟ ========== */
+S({id:'form',name:'م كيف تتشكّل المعادن؟',build:function(el){
+  el.innerHTML='<div class="eyebrow">المحطة · كيف تتشكّل المعادن؟</div><h1 class="t" style="font-size:42px">من أين تأتي البلّورات؟</h1><div class="row grow" style="min-height:0"><div class="col" style="flex:0 0 57%;gap:8px;min-height:0"><div class="chips" id="fT"><button class="chip" data-m="0" aria-pressed="true">🌋 تبريد الصهارة</button><button class="chip" data-m="1" aria-pressed="false">☀ تبخّر الماء</button><button class="chip" data-m="2" aria-pressed="false">🌊 الترسيب من المحلول</button></div><canvas class="sim" id="fC" width="1000" height="470" style="flex:1;min-height:0;height:100%;border-radius:18px;background:#e8eef0"></canvas><div class="qa" style="margin:0" id="fA"></div></div>'+
+   '<div class="col grow side" style="gap:10px">'+card('تتشكّل المعادن بطرائق مختلفة','<p style="margin:0;font-size:19px;line-height:1.75"><b class="gl">١) من الصهارة:</b> تتبلور المعادن عندما تبرد الصهارة.<br><b class="gl">٢) من المحاليل بالتبخّر:</b> عند تبخّر ماء البحر يتشكّل الملح (الهاليت)، وتتشكّل معادن أخرى منها <b>الجبس</b>.<br><b class="gl">٣) بالترسيب:</b> يحمل الماء كمية محددة من المواد الذائبة، وما يفيض عنها يترسّب مادة صلبة، مثل <b>عقيدات المنجنيز</b> في قيعان المحيطات (قطرها حتى ٢٥ سم).</p>')+
+   card('أدلة تشكّل المعدن','<p style="margin:0;font-size:18px;line-height:1.7">• بلورات كبيرة مرتبطة معًا بإحكام ← الصخر تكوّن من <b>تبريد بطيء للصهارة</b>.<br>• بلورات كبيرة مكتملة الشكل ← توافر للمعدن <b>حيز كافٍ لينمو</b>، كما في فجوة داخل الصخور.<br>• الفلوريت في الشكل ٢ تكوّن من <b>محلول مشبع</b> بمعادن ذائبة فيه.</p>')+'</div></div>';
+  var cv=$('#fC',el),g=cv.getContext('2d'),W=1000,H=470,mode=0,raf=0,live=false,t=0,run=false,slow=true,C=[],lvl=1,conc=40,parts=[],nod=[],cr=[];
+  function T(s,x,y,sz,c){g.font='700 '+sz+'px "Readex Pro","IBM Plex Sans Arabic"';g.fillStyle=c;g.textAlign='center';g.textBaseline='middle';g.direction='rtl';g.fillText(s,x,y)}
+  function seeds(){C=[];var N=slow?9:90;for(var i=0;i<N;i++)C.push({x:150+Math.random()*700,y:110+Math.random()*250,a:Math.random()*3,c:['#d9d4cc','#8a8f98','#efe9e0','#5d6470','#c9b8a6'][i%5],g:.7+Math.random()*.6})}
+  function controls(){var A=$('#fA',el);if(mode===0)A.innerHTML='<button class="chip" data-s="1" aria-pressed="'+slow+'">🐢 تبريد بطيء (داخل الأرض)</button><button class="chip" data-s="0" aria-pressed="'+!slow+'">⚡ تبريد سريع (على السطح)</button><button class="btn gold" data-go>▶ ابدأ التبريد</button><button class="btn ghost" data-z>↺</button>';
+   else if(mode===1)A.innerHTML='<button class="btn gold" data-go>☀ سخّن ليتبخّر الماء</button><button class="btn ghost" data-z>↺ ماء مالح جديد</button>';
+   else A.innerHTML='<button class="btn gold" data-add>➕ أضف مواد ذائبة</button><button class="btn ghost" data-z>↺</button>';
+   $$('[data-s]',A).forEach(function(b){b.onclick=function(){slow=b.dataset.s==='1';reset();controls()}});var go=$('[data-go]',A);if(go)go.onclick=function(){run=true;t=0;E.complete&&E.complete('form')};var ad=$('[data-add]',A);if(ad)ad.onclick=function(){conc=Math.min(160,conc+22);for(var i=0;i<14;i++)parts.push({x:120+Math.random()*760,y:90+Math.random()*80,vy:0});E.complete&&E.complete('form')};$('[data-z]',A).onclick=function(){reset()}}
+  function reset(){run=false;t=0;seeds();lvl=1;cr=[];conc=40;parts=[];nod=[];for(var i=0;i<60;i++)parts.push({x:120+Math.random()*760,y:90+Math.random()*250,vy:0})}
+  function hex(x,y,r,a,c){g.save();g.translate(x,y);g.rotate(a);g.beginPath();for(var k=0;k<6;k++){var q=k*Math.PI/3;g.lineTo(Math.cos(q)*r,Math.sin(q)*r*.75)}g.closePath();g.fillStyle=c;g.fill();g.strokeStyle='rgba(30,30,40,.55)';g.lineWidth=2;g.stroke();g.restore()}
+  function draw(){g.clearRect(0,0,W,H);g.fillStyle='#e8eef0';g.fillRect(0,0,W,H);
+   if(mode===0){var k=run?Math.min(1,t/(slow?7:2.2)):0;g.fillStyle='#384952';g.fillRect(120,80,760,320);g.save();g.beginPath();g.rect(130,90,740,300);g.clip();
+     var hot=1-k;g.fillStyle='rgb('+Math.round(255*hot+70*k)+','+Math.round(120*hot+66*k)+','+Math.round(30*hot+60*k)+')';g.fillRect(130,90,740,300);
+     C.forEach(function(c){var r=k*(slow?150:26)*c.g;if(r>1)hex(c.x,c.y,r,c.a,c.c)});g.restore();
+     T(slow?'تبريد بطيء داخل الأرض':'تبريد سريع على سطح الأرض',500,48,28,'#14222b');
+     T(!run?'صهارة منصهرة… اضغط «ابدأ التبريد»':k<1?'تتكوّن البلورات وتنمو…':(slow?'النتيجة: بلورات كبيرة':'النتيجة: بلورات صغيرة جدًّا'),500,432,26,k>=1?'#b4530a':'#14222b')}
+   else if(mode===1){if(run&&lvl>.12)lvl-=.0028;var bx=330,bw=340,by=110,bh=290,wy=by+bh-bh*.85*lvl;
+     if(run){g.fillStyle='rgba(255,170,40,.9)';for(var i=0;i<3;i++){g.beginPath();g.moveTo(bx+60+i*110,by+bh+40);g.quadraticCurveTo(bx+80+i*110,by+bh+5,bx+100+i*110,by+bh+40);g.fill()}
+       g.strokeStyle='rgba(120,140,160,.5)';g.lineWidth=3;for(i=0;i<5;i++){var yy=wy-20-((t*60+i*40)%140);g.beginPath();g.moveTo(bx+60+i*55,yy);g.quadraticCurveTo(bx+75+i*55,yy-12,bx+60+i*55,yy-24);g.stroke()}}
+     g.fillStyle='rgba(120,190,240,.55)';g.fillRect(bx,wy,bw,by+bh-wy);
+     var nC=lvl<.75?Math.min(60,Math.floor((.75-lvl)*95)):0;while(cr.length<nC)cr.push({x:bx+20+Math.random()*(bw-40),y:by+bh-10-Math.random()*Math.min(60,(by+bh-wy)+30),s:6+Math.random()*16});
+     cr.forEach(function(c){g.fillStyle='#ffffff';g.strokeStyle='#9aa5ab';g.lineWidth=1.5;g.fillRect(c.x-c.s/2,c.y-c.s/2,c.s,c.s);g.strokeRect(c.x-c.s/2,c.y-c.s/2,c.s,c.s)});
+     g.strokeStyle='#5d6c74';g.lineWidth=5;g.beginPath();g.moveTo(bx,by);g.lineTo(bx,by+bh);g.lineTo(bx+bw,by+bh);g.lineTo(bx+bw,by);g.stroke();
+     T('ماء البحر (ماء مالح)',500,60,26,'#14222b');T(cr.length?'تبلورت مكعبات الملح (الهاليت) بعد تبخّر الماء':run?'يتبخّر الماء فيزداد تركيز الملح…':'اضغط «سخّن ليتبخّر الماء»',500,440,25,cr.length?'#b4530a':'#14222b')}
+   else{var cap=100;g.fillStyle='#1d4f78';g.fillRect(60,60,880,330);g.fillStyle='#6b5a44';g.fillRect(60,350,880,40);
+     var ex=conc>cap;parts.forEach(function(p){if(ex&&p.y<340&&Math.random()<.02)p.vy=1.4;p.y+=p.vy;if(p.y>=340&&p.vy){p.vy=0;p.dead=1;var near=nod.find(function(q){return Math.abs(q.x-p.x)<40});if(near)near.r=Math.min(34,near.r+1.3);else nod.push({x:p.x,r:5})}});parts=parts.filter(function(p){return !p.dead});
+     g.fillStyle='rgba(255,255,255,.75)';parts.forEach(function(p){g.beginPath();g.arc(p.x,p.y,3,0,7);g.fill()});
+     nod.forEach(function(q){var gr=g.createRadialGradient(q.x-q.r*.3,350-q.r*.6,2,q.x,350-q.r*.4,q.r);gr.addColorStop(0,'#5b5b62');gr.addColorStop(1,'#1d1c22');g.fillStyle=gr;g.beginPath();g.ellipse(q.x,352-q.r*.55,q.r,q.r*.7,0,0,7);g.fill()});
+     g.fillStyle='rgba(255,255,255,.9)';g.fillRect(760,80,150,26);g.fillStyle=conc>cap?'#e23b4a':'#38d6ff';g.fillRect(762,82,146*Math.min(1,conc/160),22);g.fillStyle='#14222b';g.fillRect(760+150*cap/160,76,3,34);T('تركيز المواد الذائبة',835,124,17,'#fff');
+     T('قاع المحيط',500,32,24,'#14222b');T(nod.length?'ما فاض عن قدرة الماء ترسّب… عقيدات المنجنيز':'أضف مواد ذائبة حتى يتجاوز التركيز ما يحمله الماء',500,432,24,nod.length?'#b4530a':'#14222b')}}
+  function loop(){if(!live)return;raf=requestAnimationFrame(loop);t+=1/60;if(mode===2&&conc>100&&Math.random()<.4&&parts.length<120)parts.push({x:120+Math.random()*760,y:90+Math.random()*60,vy:0});draw()}
+  $$('#fT .chip',el).forEach(function(b){b.onclick=function(){$$('#fT .chip',el).forEach(function(x){x.setAttribute('aria-pressed',x===b)});mode=+b.dataset.m;reset();controls()}});
+  reset();controls();draw();
+  return {enter:function(){live=true;loop()},leave:function(){live=false;cancelAnimationFrame(raf)}}}});
+
+var QB={
+what:[
+ {s:'ماذا قرأت؟',q:'ما الذي يميّز البلورات عن الأنواع الأخرى من المواد الصلبة؟',a:'ذرات البلورات <b>مرتبة بشكل منتظم ومتكرر</b>، ولكل معدن شكل بلوري خاص به.'},
+ {s:'اختبر نفسك ١',q:'وضّح الفرق بين المعدن والصخر.',a:'<b>المعدن</b> مادة صلبة غير عضوية توجد في الطبيعة، ذراتها مرتبة بانتظام ولها تركيب كيميائي محدد. <b>الصخر</b> مادة صلبة تتكوّن من معدن واحد أو أكثر.'},
+ {s:'الربط مع علم الأحياء',q:'تحتوي العظام في أجسام المخلوقات الحية على بلورات صغيرة من معدن. ما هذا المعدن؟',a:'معدن <b>الأباتيت</b>.'}],
+form:[
+ {s:'من النص',q:'اذكر طرائق تشكّل المعادن.',a:'من <b>تبريد الصهارة</b>، ومن المحاليل بـ<b>التبخّر</b> (الملح والجبس)، وبـ<b>الترسيب</b> (عقيدات المنجنيز).'},
+ {s:'من النص',q:'ماذا تعني رؤية بلورات معدنية كبيرة مرتبطة معًا بإحكام في صخر؟',a:'أن الصخر تكوّن نتيجة <b>تبريد بطيء للصهارة</b>.'},
+ {s:'من النص',q:'ما عقيدات المنجنيز؟',a:'رواسب بلورية <b>كروية</b> من معدن المنجنيز تتشكّل بالترسيب وتغطي مساحات شاسعة من قيعان المحيطات، تصل أقطارها إلى <b>٢٥ سم</b>.'}],
+props:[
+ {s:'خصائص المعادن',q:'كم عدد المعادن المعروفة في الطبيعة؟ وكيف نفرّق بين المعادن؟',a:'<b>أكثر من ٤٠٠٠ معدن</b>، ونفرّق بينها بخصائصها الفيزيائية: الشكل البلوري، الانفصام والمكسر، اللون، المخدش، اللمعان، القساوة.'},
+ {s:'اختبر نفسك ٢',q:'اكتب قائمة تتضمّن خمس خواص تُستخدم في تعرّف المعادن.',a:'<b>الشكل البلوري، الانفصام والمكسر، اللون، المخدش، اللمعان، القساوة</b> (يكفي خمس منها).'}],
+streak:[
+ {s:'الشكل ٣',q:'معدن البيريت يتكوّن عادة من بلورات سداسية الأوجه. فسّر لماذا يسمّى بالذهب الزائف؟',a:'لأن <b>لونه أصفر لامع</b> يشبه لون الذهب الحقيقي.'},
+ {s:'اللون',q:'لماذا سُمّي معدن البيريت بـ«ذهب المغفلين»؟',a:'لونه أصفر لامع مثل الذهب الحقيقي، مما <b>يخدع المنقّبين</b> عن الذهب.'},
+ {s:'اللون',q:'لماذا لا يكفي اللون وحده لتعرّف المعدن؟',a:'لأنه قد يكون <b>خادعًا</b>: معادن مختلفة لها اللون نفسه (البيريت والذهب)، والمعدن نفسه قد يظهر بألوان مختلفة مثل <b>الكالسيت</b> بسبب الشوائب.'},
+ {s:'المخدش',q:'ما معنى المخدش للمعادن؟',a:'<b>الفتات الناعم الملوّن</b> الناتج عن حكّ المعدن بلوح الخدش، أي <b>لون مسحوق المعدن</b>.'},
+ {s:'الشكل ٦',q:'وضّح كيف تحصل على مخدش معدن؟',a:'بحكّ المعدن على <b>لوح الخدش</b>، وهو قطعة خزف بيضاء سطحها خشن.'},
+ {s:'المخدش',q:'لماذا يعتمد المنقّبون على المخدش؟ وما الفرق بين مخدش البيريت ومخدش الذهب؟',a:'لأن المخدش <b>أدق</b> من اللون. مخدش البيريت <b>أخضر مسودّ أو بني مسودّ</b>، ومخدش الذهب <b>أصفر</b>.'},
+ {s:'اللمعان',q:'ما المقصود باللمعان (البريق)؟',a:'كيفية <b>انعكاس الضوء عن سطح المعدن</b>: فلزي، أو غير فلزي (لؤلؤي، زجاجي، باهت، ترابي).'},
+ {s:'اختبر نفسك ٤',q:'قارن: ما الفرق بين لون المعدن ومخدشه؟ اذكر مثالًا على ذلك.',a:'<b>اللون</b> لون المعدن الظاهري، و<b>المخدش</b> لون مسحوقه وهو أدق. مثال: <b>البيريت</b> لونه أصفر ذهبي ومخدشه أخضر مسودّ أو بني مسودّ.'}],
+mohs:[
+ {s:'القساوة',q:'ما أقسى معدن في الطبيعة؟ وما أقلها قساوة؟',a:'أقساها <b>الألماس (١٠)</b> ويمكن استخدامه لقص أي مادة أخرى، وأقلها <b>التلك (١)</b> على مقياس موهس.'},
+ {s:'القساوة',q:'ماذا يحدث عند خدش معدن الفلوريت (٤) بقطعة نقدية (٣) وبقطعة زجاجية (٥٫٥)؟',a:'القطعة النقدية <b>لا تخدشه</b> لأنها أقل قساوة منه، والزجاج <b>يخدشه</b> لأنه أقسى منه.'}],
+cleave:[
+ {s:'الانفصام والمكسر',q:'كيف تتكسّر المعادن؟',a:'بطريقتين: <b>الانفصام</b>: قطع ذات سطوح ناعمة منتظمة عاكسة للضوء (المايكا، الهاليت)، و<b>المكسر</b>: قطع ذات سطوح خشنة (الكوارتز).'},
+ {s:'الانفصام والمكسر',q:'ما سبب حدوث الانفصام في بعض المعادن؟',a:'وجود <b>مناطق ضعف</b> داخل ترتيب الذرات المكوّنة للمعدن.'},
+ {s:'الشكل ٤ ب',q:'استنتج: لماذا يمكن أن تظهر حبيبات الملح الصخري على شكل مكعبات صغيرة؟',a:'لأن للهاليت <b>ثلاثة اتجاهات انفصام متعامدة</b>، فينفصل إلى قطع مكعبة.'}],
+classify:[
+ {s:'تجربة: تصنيف المعادن',q:'قرّبنا مغناطيسًا من عينات الكوارتز والكالسيت والهورنبلند والمغنيتيت، ثم وضعنا عليها حمض الهيدروكلوريك المخفّف. ماذا نلاحظ؟',a:'<b>المغنيتيت</b> ينجذب إلى المغناطيس، و<b>الكالسيت</b> يتفاعل مع الحمض ويفور؛ وهي خواص غير عادية نتعرّف بها بعض المعادن.'}],
+practice:[
+ {s:'تطبيق العلوم',q:'أي الطرائق يمكنك استخدامها لتحديد المعدن الأكثر قساوة: الياقوت أم الزمرد؟',a:'نخدش أحدهما بالآخر: <b>الذي يخدش الآخر هو الأقسى</b>. (الياقوت أقسى من الزمرد.)'}],
+uses:[
+ {s:'المعادن الشائعة',q:'ما المعادن المكوّنة للصخور؟ اذكر أمثلة عليها.',a:'معادن قليلة تتكوّن منها معظم الصخور، أغلبها <b>سليكاتية</b> مثل <b>الكوارتز</b>، ومنها <b>الكربونات</b> التي تدخل في تركيب <b>الحجر الجيري</b> المستخدم في البناء.'},
+ {s:'ماذا قرأت؟',q:'ما أهمية معدن الفلسبار السليكاتي؟',a:'من <b>المعادن السليكاتية المكوّنة للصخور</b>، والمعادن السليكاتية تشكّل <b>أكثر من نصف</b> معادن قشرة الأرض.'},
+ {s:'الأحجار الكريمة',q:'ما تعريف الحجر الكريم؟ ومتى يكون غالي الثمن؟',a:'<b>معدن نادر قابل للقص والصقل</b> لصناعة الحلي. يكون غالي الثمن إذا كان <b>نقيًّا، خاليًا من الشقوق والعيوب، جميل اللمعان واللون</b>. أمثلة: الألماس، الياقوت، الزمرد، العقيق.'},
+ {s:'تكوّن الأحجار الكريمة',q:'أين يتكوّن الألماس في أعماق الأرض؟ وكيف يخرج إلى سطحها؟',a:'يتكوّن من <b>الكربون</b> تحت ضغوط مرتفعة في <b>منطقة الستار</b>، ويخرج <b>بثوران بركاني</b> يرغم الصهارة على الصعود بسرعة حاملة معها قطع الألماس.'},
+ {s:'الخامات',q:'متى يسمّى المعدن خامًا؟ وماذا يقصد بالتعدين؟',a:'يسمّى <b>خامًا</b> إذا كان يحوي ما يكفي من مادة مفيدة يمكن بيعها وتحقيق أرباح منها. و<b>التعدين</b> استخراج الفلزات من الأرض.'},
+ {s:'الخامات',q:'اذكر أمثلة على فلزات وخاماتها.',a:'<b>الحديد</b> من الهيماتيت، <b>الرصاص</b> من الجالينا، <b>الماغنيسيوم</b> من الدولوميت. ومن الفلزات المستخرجة من الخامات أيضًا: الألومنيوم، النحاس، الذهب، الفضة، الكروم.'},
+ {s:'معالجة الخامات',q:'ماذا نفعل بالخام بعد استخراجه؟ مثّل بالنحاس.',a:'يجب <b>معالجته</b>: فالنحاس <b>يُصهر</b> خامه ثم <b>ينقّى</b> من المعادن غير المرغوب فيها، ويستخدم في الأسلاك والتوصيلات الكهربائية والأجهزة.'},
+ {s:'اختبر نفسك ٣',q:'صف الظاهرة التي تدفع الألماس إلى سطح الأرض. أين يتكوّن الألماس في الأرض؟',a:'يتكوّن في <b>باطن الأرض (منطقة الستار)</b>، ويخرج بـ<b>ثوران بركاني</b>.'},
+ {s:'اختبر نفسك ٥',q:'التفكير الناقد: هل توافق على السكن بالقرب من منجم ذهب يجري العمل فيه؟ فسّر إجابتك.',a:'إجابة مفتوحة تُقبل مع التبرير. مثال: <b>لا أوافق</b>؛ بسبب الضوضاء والغبار وخطر تلوث الماء والتربة بالمواد الكيميائية المستخدمة في استخلاص الذهب.'},
+ {s:'اختبر نفسك ٦',q:'أنتج بلد حوالي ٢٣٤٠٠٠٠ طن من النحاس المكرر عام ١٩٩٦م، وفي عام ١٩٩٧م أنتج ٢٤٤٠٠٠٠ طن. ما النسبة المئوية للزيادة؟',a:'الزيادة = ٢٤٤٠٠٠٠ − ٢٣٤٠٠٠٠ = <b>١٠٠٠٠٠ طن</b><br>النسبة = (١٠٠٠٠٠ ÷ ٢٣٤٠٠٠٠) × ١٠٠ ≈ <b>٤٫٣٪</b>'}]
+};
+L1.stations.forEach(function(st){var q=QB[st.id];if(!q)return;var b=st.build;st.build=function(el,ctx){var r=b(el,ctx);qbook(el,q);return r}});
+
+D.order(L1,['intro','wonder','prior','lab','fold','coop','goals','what','form','props','streak','mohs','cleave','uses','classify','eval1','practice','sum','mine','review'],['intro','wonder','prior','lab','fold','coop','goals']);
 E.lesson('l1',L1);
 })();
 </script>
