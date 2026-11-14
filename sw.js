@@ -1,9 +1,9 @@
 /* يحفظ التطبيق ودروسه على الجهاز ليعمل دون إنترنت، ويحدّثها عند توفر الاتصال */
-const CACHE='science-app-v90';
+const CACHE='science-app-v91';
 const SHELL=['./','index.html','catalog-v4.json','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png',
  'fonts/lalezar.woff2','fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2','fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2','fonts/ibm-plex-sans-arabic-latin-400-normal.woff2','fonts/ibm-plex-sans-arabic-latin-600-normal.woff2',
  'img/scene.webp','img/g7.webp','img/g8.webp','img/g9.webp','img/flask.webp','img/books.webp',
- 'pen.js','tools/kit.css','tools/kit.js','tools/modes.js','tools/games.js','img/t_lab.webp','img/t_activity.webp','img/t_contest.webp','img/t_assess.webp','img/t_video.webp','img/t_sheet.webp','img/t_extra.webp'];
+ 'pen.js','tools/kit.css','tools/kit.js','tools/modes.js','tools/games.js','img/t_lab.webp','img/t_activity.webp','img/t_contest.webp','img/t_assess.webp','img/t_video.webp','img/t_sheet.webp','img/t_extra.webp','img/t_game.webp','tools/arena.js','fonts/readex-pro-arabic-600.woff2','fonts/readex-pro-arabic-700.woff2','fonts/readex-pro-latin-700.woff2'];
 self.addEventListener('install',e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())) });
 self.addEventListener('activate',e=>{ e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())) });
 self.addEventListener('message',e=>{ if(e.data&&e.data.cache){ caches.open(CACHE).then(c=>Promise.all(e.data.cache.map(u=>c.match(u).then(m=>m||c.add(u).catch(()=>{}))))) } });
