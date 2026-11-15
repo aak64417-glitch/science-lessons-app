@@ -1,206 +1,276 @@
-/* محاكاة الفصل العاشر: الحيوانات اللافقارية */
+/* محاكاة الفصل الثامن: استكشاف الفضاء */
 window.SIMS = (function () {
   var S = {};
-  var AR = '٠١٢٣٤٥٦٧٨٩';
-  function n(v) { return String(v).replace(/\d/g, function (d) { return AR[d]; }).replace('.', '٫'); }
   function mk(c, w, h) { var cv = document.createElement('canvas'); cv.width = w; cv.height = h; c.appendChild(cv); return cv; }
   function ctrl(c, html) { var d = document.createElement('div'); d.className = 'ctrl'; d.innerHTML = html; c.appendChild(d); return d; }
   function loop(f) { var on = true; (function k(t) { if (!on) return; f(t); requestAnimationFrame(k); })(performance.now()); return function () { on = false; }; }
-  function T(x, s, X, Y, sz, col, al) { x.font = '700 ' + sz + 'px Cairo, Tahoma, sans-serif'; x.fillStyle = col || '#fff'; x.textAlign = al || 'center'; x.direction = 'rtl'; x.fillText(s, X, Y); }
-  function seg(ct, k) { return ct.querySelectorAll('[data-' + k + ']'); }
+  function F(x, sz, w) { x.font = (w || 700) + ' ' + sz + 'px Cairo, Tahoma, sans-serif'; }
+  function txt(x, s, X, Y, sz, col, al) { F(x, sz); x.fillStyle = col || '#fff'; x.textAlign = al || 'center'; x.direction = 'rtl'; x.fillText(s, X, Y); }
+  var AR = '٠١٢٣٤٥٦٧٨٩'; function n(v) { return String(v).replace(/\d/g, function (d) { return AR[d]; }).replace('.', '٫'); }
+  var STARS = []; for (var i = 0; i < 140; i++) STARS.push([Math.random() * 1000, Math.random() * 560, Math.random() * 1.6 + .3]);
+  function sky(x, w, h, t) { x.fillStyle = '#070B1F'; x.fillRect(0, 0, w, h); STARS.forEach(function (s, i) { if (s[1] > h) return; x.globalAlpha = .45 + .45 * Math.sin((t || 0) / 600 + i); x.fillStyle = '#fff'; x.beginPath(); x.arc(s[0] * w / 1000, s[1], s[2], 0, 6.3); x.fill(); }); x.globalAlpha = 1; }
+  function sun(x, X, Y, r) { var g = x.createRadialGradient(X, Y, r * .2, X, Y, r * 1.6); g.addColorStop(0, '#FFF7C2'); g.addColorStop(.45, '#FDB813'); g.addColorStop(1, 'rgba(253,184,19,0)'); x.fillStyle = g; x.beginPath(); x.arc(X, Y, r * 1.6, 0, 6.3); x.fill(); }
+  function earth(x, X, Y, r) { x.fillStyle = '#2563EB'; x.beginPath(); x.arc(X, Y, r, 0, 6.3); x.fill(); x.fillStyle = '#22C55E'; x.beginPath(); x.ellipse(X - r * .25, Y - r * .1, r * .35, r * .5, .5, 0, 6.3); x.fill(); x.beginPath(); x.ellipse(X + r * .35, Y + r * .3, r * .25, r * .3, -.4, 0, 6.3); x.fill(); }
+  function seg(ct, name) { var bs = ct.querySelectorAll('[data-' + name + ']'); return bs; }
   function press(bs, b) { bs.forEach(function (o) { o.setAttribute('aria-pressed', o === b); }); }
-  function sea(x, w, h) { var g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#0C4A6E'); g.addColorStop(1, '#082F49'); x.fillStyle = g; x.fillRect(0, 0, w, h); }
 
-  // ١) التماثل: اختر الحيوان، واعرض خطوط التماثل، ثم صنّف نوع تماثله
-  S.symmetry = function (c) {
-    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var A = [['anem', 'شقائق النعمان', 'r'], ['star', 'نجم البحر', 'r'], ['lob', 'جراد البحر', 'b'], ['bug', 'الجندب', 'b'], ['spg', 'الإسفنج', 'a']];
-    var NM = { r: 'تماثل شعاعي', b: 'تماثل جانبي', a: 'عديم التماثل' };
-    var ct = ctrl(c, '<div class="seg" role="group" aria-label="الحيوان">' + A.map(function (a, i) { return '<button data-a="' + i + '"' + (i ? '' : ' aria-pressed="true"') + '>' + a[1] + '</button>'; }).join('') + '</div><button class="btn sm y" id="yL">📏 أظهر خطوط التماثل</button><div class="seg" role="group" aria-label="نوع التماثل"><button data-g="r">شعاعي</button><button data-g="b">جانبي</button><button data-g="a">عديم التماثل</button></div><div class="read" id="yR">اختر الحيوان، ثم خمّن نوع تماثله.</div>');
-    var k = 0, lines = 0, bs = seg(ct, 'a'), gs = seg(ct, 'g');
-    bs.forEach(function (b) { b.onclick = function () { k = +b.dataset.a; lines = 0; press(bs, b); press(gs, null); ct.querySelector('#yR').innerHTML = 'خمّن نوع تماثل ' + A[k][1] + '.'; }; });
-    ct.querySelector('#yL').onclick = function () { lines = 1; };
-    gs.forEach(function (b) { b.onclick = function () { press(gs, b); var ok = b.dataset.g === A[k][2]; lines = 1; ct.querySelector('#yR').innerHTML = (ok ? '✅ صحيح: ' : '❌ ليس كذلك؛ إنه ') + '<b>' + NM[A[k][2]] + '</b>' + (A[k][2] === 'r' ? ' — أجزاؤه مرتبة دائريًا حول نقطة مركزية، فيحصل على غذائه من كل الاتجاهات.' : A[k][2] === 'b' ? ' — خط واحد في المنتصف يقسمه إلى نصفين، كلٌّ منهما صورة الآخر في المرآة.' : ' — شكله غير منتظم؛ لا يمكن تقسيمه إلى نصفين متماثلين.'); }; });
+  // ١) الفصول الأربعة: ميل المحور 23.5°
+  S.seasons = function (c) {
+    var cv = mk(c, 1000, 480), x = cv.getContext('2d');
+    var ct = ctrl(c, '<div class="seg" role="group" aria-label="موقع الأرض"><button data-m="0" aria-pressed="true">❄ ديسمبر</button><button data-m="1">🌱 مارس</button><button data-m="2">☀ يونيو</button><button data-m="3">🍂 سبتمبر</button></div><label>ميل المحور <input type="range" min="0" max="45" value="23.5" step="0.5" id="sT"></label><button class="btn" id="sP">▶ تدوير حول الشمس</button><div class="read" id="sR"></div>');
+    var ang = 0, target = 0, tilt = 23.5, run = false, bs = seg(ct, 'm');
+    bs.forEach(function (b) { b.onclick = function () { run = false; target = +b.dataset.m * Math.PI / 2; press(bs, b); }; });
+    ct.querySelector('#sT').oninput = function (e) { tilt = +e.target.value; };
+    ct.querySelector('#sP').onclick = function () { run = !run; this.textContent = run ? '⏸ إيقاف' : '▶ تدوير حول الشمس'; };
     return loop(function (t) {
-      sea(x, 1000, 400); var X = 500, Y = 200, typ = A[k][0];
-      x.save(); x.translate(X, Y);
-      if (typ === 'anem') { for (var i = 0; i < 16; i++) { x.save(); x.rotate(i * Math.PI / 8 + Math.sin(t / 600) * .04); x.fillStyle = '#F9A8D4'; x.beginPath(); x.ellipse(0, -90, 13, 75, 0, 0, 6.3); x.fill(); x.restore(); } x.fillStyle = '#DB2777'; x.beginPath(); x.arc(0, 0, 40, 0, 6.3); x.fill(); }
-      if (typ === 'star') { x.fillStyle = '#F97316'; x.beginPath(); for (var j = 0; j < 10; j++) { var r = j % 2 ? 45 : 150, a = -Math.PI / 2 + j * Math.PI / 5; x.lineTo(r * Math.cos(a), r * Math.sin(a)); } x.closePath(); x.fill(); x.fillStyle = '#FDBA74'; for (j = 0; j < 30; j++) { x.beginPath(); x.arc(Math.cos(j) * (j * 4 % 110), Math.sin(j * 1.7) * (j * 3 % 100), 4, 0, 6.3); x.fill(); } }
-      if (typ === 'lob' || typ === 'bug') {
-        var col = typ === 'lob' ? '#EA580C' : '#65A30D';
-        x.fillStyle = col; x.beginPath(); x.ellipse(0, 0, 38, 140, 0, 0, 6.3); x.fill();
-        x.strokeStyle = col; x.lineWidth = 8;
-        [-1, 1].forEach(function (sd) { for (var l = 0; l < 3; l++) { x.beginPath(); x.moveTo(sd * 30, -30 + l * 35); x.lineTo(sd * 110, -60 + l * 50); x.lineTo(sd * 130, 0 + l * 50); x.stroke(); }
-          x.lineWidth = 4; x.beginPath(); x.moveTo(sd * 12, -135); x.quadraticCurveTo(sd * 80, -200, sd * 150, -175); x.stroke(); x.lineWidth = 8;
-          if (typ === 'lob') { x.fillStyle = col; x.beginPath(); x.ellipse(sd * 100, -130, 30, 50, sd * .5, 0, 6.3); x.fill(); } });
-        x.fillStyle = '#111'; x.beginPath(); x.arc(-14, -118, 6, 0, 6.3); x.arc(14, -118, 6, 0, 6.3); x.fill();
-      }
-      if (typ === 'spg') { x.fillStyle = '#CA8A04'; x.beginPath(); x.moveTo(-120, 150); x.bezierCurveTo(-160, 40, -90, -40, -100, -120); x.lineTo(-60, -130); x.bezierCurveTo(-50, -40, -10, -10, 0, -150); x.lineTo(40, -150); x.bezierCurveTo(40, -60, 70, -30, 110, -60); x.lineTo(140, -40); x.bezierCurveTo(120, 50, 140, 100, 90, 150); x.closePath(); x.fill(); x.fillStyle = '#713F12'; for (var p = 0; p < 40; p++) { x.beginPath(); x.arc(-110 + (p * 37 % 230), -100 + (p * 53 % 240), 4, 0, 6.3); x.fill(); } }
-      if (lines) {
-        x.strokeStyle = '#38BDF8'; x.lineWidth = 4; x.setLineDash([12, 8]);
-        if (A[k][2] === 'r') for (var q = 0; q < 5; q++) { x.beginPath(); var a2 = -Math.PI / 2 + q * Math.PI / 5; x.moveTo(-180 * Math.cos(a2), -180 * Math.sin(a2)); x.lineTo(180 * Math.cos(a2), 180 * Math.sin(a2)); x.stroke(); }
-        if (A[k][2] === 'b') { x.beginPath(); x.moveTo(0, -190); x.lineTo(0, 190); x.stroke(); }
-        x.setLineDash([]);
-        if (A[k][2] === 'a') T(x, '✗ لا يوجد خط يقسمه إلى نصفين متماثلين', 0, 185, 22, '#FCA5A5');
-      }
-      x.restore();
-      T(x, A[k][1], 130, 60, 28, '#FDE68A');
-      if (lines) T(x, NM[A[k][2]], 870, 60, 26, '#7DD3FC');
+      if (run) { ang += 0.006; target = ang; } else ang += (target - ang) * 0.08;
+      sky(x, 1000, 480, t); sun(x, 500, 240, 55);
+      x.strokeStyle = 'rgba(255,255,255,.25)'; x.setLineDash([6, 8]); x.beginPath(); x.ellipse(500, 240, 380, 150, 0, 0, 6.3); x.stroke(); x.setLineDash([]);
+      var ex = 500 + 380 * Math.cos(ang), ey = 240 + 150 * Math.sin(ang), r = 42, tr = tilt * Math.PI / 180;
+      earth(x, ex, ey, r);
+      // نصف الليل (جهة بعيدة عن الشمس)
+      var away = Math.atan2(ey - 240, ex - 500); x.fillStyle = 'rgba(0,0,0,.5)'; x.beginPath(); x.arc(ex, ey, r, away - Math.PI / 2, away + Math.PI / 2); x.fill();
+      // المحور يميل دائمًا نحو اليمين (ثابت الاتجاه في الفضاء)
+      x.strokeStyle = '#fff'; x.lineWidth = 3; x.beginPath(); x.moveTo(ex + Math.sin(tr) * 66, ey - Math.cos(tr) * 66); x.lineTo(ex - Math.sin(tr) * 66, ey + Math.cos(tr) * 66); x.stroke();
+      txt(x, 'ش', ex + Math.sin(tr) * 80, ey - Math.cos(tr) * 80 + 8, 20, '#FDE68A');
+      // الموسم في النصف الشمالي: يتحدد بمدى ميل القطب الشمالي نحو الشمس
+      var toward = -Math.cos(ang); // 1 عندما تكون الأرض يسار الشمس والقطب يميل يمينًا نحوها
+      var k = toward * Math.sin(tr), season, sc;
+      if (tilt < 1) { season = 'لا فصول تقريبًا: حرارة ثابتة طوال السنة'; sc = '#E2E8F0'; }
+      else if (k > .2) { season = 'صيف في النصف الشمالي ☀ (شتاء في الجنوبي)'; sc = '#FCA5A5'; }
+      else if (k < -.2) { season = 'شتاء في النصف الشمالي ❄ (صيف في الجنوبي)'; sc = '#93C5FD'; }
+      else { season = (Math.sin(ang) > 0 ? 'ربيع' : 'خريف') + ' في النصف الشمالي: المحور لا يميل نحو الشمس ولا بعيدًا عنها'; sc = '#FDE68A'; }
+      txt(x, season, 500, 455, 26, sc);
+      var day = 12 + 3.5 * k / Math.sin(23.5 * Math.PI / 180);
+      ct.querySelector('#sR').innerHTML = 'الميل: <b>' + n(tilt) + '°</b> · طول النهار في النصف الشمالي ≈ <b>' + n(Math.max(0, Math.min(24, day)).toFixed(1)) + ' ساعة</b> · أشعة الشمس ' + (k > .2 ? '<b>شبه عمودية</b>' : k < -.2 ? '<b>مائلة</b>' : '<b>معتدلة</b>');
     });
   };
 
-  // ٢) الإسفنج: تصفية الماء عبر المسام إلى التجويف المركزي بفعل الأسواط
-  S.sponge = function (c) {
-    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var ct = ctrl(c, '<label>نشاط الأسواط <input type="range" id="sF" min="0" max="10" value="6"></label><div class="read" id="sR"></div>');
-    var P = [], got = 0, out = 0;
-    function add() { var side = Math.random() < .5 ? -1 : 1; P.push({ x: 500 + side * (190 + Math.random() * 120), y: 110 + Math.random() * 240, side: side, st: 0, food: Math.random() < .45 }); }
+  // ٢) أطوار القمر
+  S.phases = function (c) {
+    var cv = mk(c, 1000, 500), x = cv.getContext('2d');
+    var ct = ctrl(c, '<label>📅 اليوم من الشهر القمري <input type="range" min="0" max="29.5" step="0.5" value="0" id="pD"></label><button class="btn" id="pP">▶ تشغيل</button><div class="read" id="pR"></div>');
+    var d = 0, run = false, rg = ct.querySelector('#pD');
+    rg.oninput = function () { d = +rg.value; };
+    ct.querySelector('#pP').onclick = function () { run = !run; this.textContent = run ? '⏸ إيقاف' : '▶ تشغيل'; };
+    var N = ['المحاق', 'هلال جديد', 'تربيع أول', 'أحدب أول', 'البدر', 'أحدب أخير', 'تربيع أخير', 'هلال أخير'];
     return loop(function (t) {
-      var f = +ct.querySelector('#sF').value;
-      sea(x, 1000, 400);
-      x.fillStyle = '#78350F'; x.fillRect(0, 370, 1000, 30);
-      // جسم الإسفنج
-      x.fillStyle = '#D97706'; x.beginPath(); x.moveTo(370, 370); x.lineTo(390, 60); x.lineTo(610, 60); x.lineTo(630, 370); x.closePath(); x.fill();
-      x.fillStyle = '#0B2B44'; x.beginPath(); x.moveTo(430, 370); x.lineTo(450, 60); x.lineTo(550, 60); x.lineTo(570, 370); x.closePath(); x.fill();
-      x.fillStyle = '#0B2B44'; for (var r = 0; r < 7; r++) { [-1, 1].forEach(function (sd) { x.beginPath(); x.ellipse(500 + sd * 92, 100 + r * 40, 18, 7, 0, 0, 6.3); x.fill(); }); }
-      // الأسواط
-      x.strokeStyle = '#FDE68A'; x.lineWidth = 2;
-      for (r = 0; r < 9; r++) [-1, 1].forEach(function (sd) { x.beginPath(); var bx = 500 + sd * 48, by = 90 + r * 32; x.moveTo(bx, by); x.quadraticCurveTo(bx - sd * 14, by - 6 + Math.sin(t / (60 - f * 4) + r) * (f ? 10 : 0), bx - sd * 26, by); x.stroke(); });
-      if (f && Math.random() < f / 25) add();
-      P.forEach(function (p) {
-        var sp = .4 + f * .35;
-        if (p.st === 0) { p.x += (p.side > 0 ? -1 : 1) * sp; if (Math.abs(p.x - 500) < 50) p.st = 1; }
-        else if (p.st === 1) { p.y -= sp * 1.4; p.x += (500 - p.x) * .05; if (p.food && Math.random() < .02) { p.st = 3; got++; } if (p.y < 40) { p.st = 2; out++; } }
-        else if (p.st === 2) { p.y -= sp * 1.6; }
-        x.fillStyle = p.food ? '#4ADE80' : '#93C5FD'; x.beginPath(); x.arc(p.x, p.y, p.food ? 5 : 3, 0, 6.3); x.fill();
-      });
-      P = P.filter(function (p) { return p.st !== 3 && p.y > -10; });
-      T(x, 'المسام', 270, 200, 22, '#BAE6FD'); T(x, 'التجويف المركزي', 500, 395, 18, '#FDE68A'); T(x, 'الفتحة العلوية ↑', 500, 40, 18, '#BAE6FD');
-      T(x, '● غذاء (مخلوقات مجهرية)', 880, 340, 17, '#4ADE80'); T(x, '● ماء وأكسجين', 880, 365, 17, '#93C5FD');
-      ct.querySelector('#sR').innerHTML = f ? 'الأسواط تحرك الماء: يدخل من <b>المسام</b> إلى <b>التجويف المركزي</b>، فتلتقط خلايا متخصصة الغذاء وتهضمه، ويخرج الماء من الفتحة العلوية. التقطت الخلايا: <b>' + n(got) + '</b> جسيم غذاء.' : 'توقفت الأسواط… فتوقف تدفق الماء، ولم يعد الإسفنج يحصل على الغذاء والأكسجين!';
+      if (run) { d = (d + 0.04) % 29.5; rg.value = d; }
+      sky(x, 1000, 500, t);
+      // الشمس يمينًا (أشعة)
+      x.fillStyle = 'rgba(253,224,71,.85)'; for (var i = 0; i < 5; i++) { x.fillRect(900, 90 + i * 70, 80, 6); }
+      txt(x, 'أشعة الشمس', 905, 60, 22, '#FDE68A');
+      var cx = 330, cy = 250, R = 170, a = d / 29.5 * 6.283; // 0 = بين الأرض والشمس (يمين)
+      x.strokeStyle = 'rgba(255,255,255,.25)'; x.beginPath(); x.arc(cx, cy, R, 0, 6.3); x.stroke();
+      earth(x, cx, cy, 40);
+      var mx = cx + R * Math.cos(-a), my = cy + R * Math.sin(-a);
+      x.fillStyle = '#334155'; x.beginPath(); x.arc(mx, my, 20, 0, 6.3); x.fill();
+      x.fillStyle = '#F1F5F9'; x.beginPath(); x.arc(mx, my, 20, -Math.PI / 2, Math.PI / 2); x.fill(); // النصف المواجه للشمس دائمًا مضاء
+      // ما نراه من الأرض
+      var px = 780, py = 260, r = 95, f = (1 - Math.cos(a)) / 2; // الجزء المضاء المرئي
+      x.fillStyle = '#1E293B'; x.beginPath(); x.arc(px, py, r, 0, 6.3); x.fill();
+      var waxing = a < Math.PI, w = r * Math.abs(1 - 2 * f);
+      x.fillStyle = '#F8FAFC'; x.beginPath();
+      if (waxing) x.arc(px, py, r, -Math.PI / 2, Math.PI / 2, false); else x.arc(px, py, r, Math.PI / 2, 3 * Math.PI / 2, false);
+      x.fill();
+      x.fillStyle = f < .5 ? '#1E293B' : '#F8FAFC'; x.beginPath(); x.ellipse(px, py, Math.max(w, .1), r - .5, 0, 0, 6.3);
+      x.fill();
+      txt(x, 'كما نراه من الأرض', px, 400, 24, '#CBD5E1');
+      var idx = Math.round(d / 29.5 * 8) % 8;
+      txt(x, N[idx], px, 450, 38, '#FDE68A');
+      ct.querySelector('#pR').innerHTML = 'اليوم <b>' + n(d.toFixed(1)) + '</b> · الطور: <b>' + N[idx] + '</b> · الجزء المضاء المرئي ≈ <b>' + n(Math.round(f * 100)) + '٪</b>' + (idx === 0 ? ' — القمر بين الأرض والشمس' : idx === 4 ? ' — الأرض بين الشمس والقمر' : '');
     });
   };
 
-  // ٣) دورة حياة الدودة الشريطية: تتبع المراحل، وجرّب طهي اللحم جيدًا
-  S.tapeworm = function (c) {
-    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var ST = [['🧑', 'الإنسان (العائل)', 'تثبت الدودة نفسها في الأمعاء بممصات وخطاطيف، وتمتص الغذاء المهضوم.'], ['💩', 'قطعة ناضجة', 'تمتلئ بالبيوض المخصبة فتنفصل وتخرج مع الغائط.'], ['🌿', 'الأعشاب', 'قد تصل البيوض المخصبة إلى الأعشاب.'], ['🐄', 'الأبقار (عائل متوسط)', 'تأكل الأعشاب فتفقس البيوض.'], ['🥩', 'لحم العضلات', 'تحفر اليرقات في لحم عضلات البقرة.'], ['🍔', 'لحم غير مطبوخ', 'يأكل الإنسان اللحم المصاب غير المطبوخ… فيُصاب.']];
-    var ct = ctrl(c, '<button class="btn sm" id="tN">⏭ المرحلة التالية</button><button class="btn sm y" id="tC">🔥 اطهُ اللحم جيدًا</button><button class="btn sm gh" id="tR">⟲ من البداية</button><div class="read" id="tRd"></div>');
-    var k = 0, cooked = 0;
-    ct.querySelector('#tN').onclick = function () { if (cooked && k === 4) { k = 6; return; } k = (k + 1) % 6; };
-    ct.querySelector('#tC').onclick = function () { cooked = 1; };
-    ct.querySelector('#tR').onclick = function () { k = 0; cooked = 0; };
+  // ٣) الكسوف والخسوف
+  S.eclipse = function (c) {
+    var cv = mk(c, 1000, 440), x = cv.getContext('2d');
+    var ct = ctrl(c, '<div class="seg" role="group" aria-label="الظاهرة"><button data-e="0" aria-pressed="true">🌑 كسوف الشمس</button><button data-e="1">🌕 خسوف القمر</button></div><label>حرّك القمر <input type="range" min="-60" max="60" value="-50" id="eM"></label><div class="read" id="eR"></div>');
+    var mode = 0, off = -50, bs = seg(ct, 'e'), rg = ct.querySelector('#eM');
+    bs.forEach(function (b) { b.onclick = function () { mode = +b.dataset.e; press(bs, b); }; });
+    rg.oninput = function () { off = +rg.value; };
     return loop(function (t) {
-      x.fillStyle = '#FFF7ED'; x.fillRect(0, 0, 1000, 400);
-      for (var i = 0; i < 6; i++) {
-        var a = -Math.PI / 2 + i * Math.PI / 3, X = 500 + 330 * Math.cos(a), Y = 200 + 150 * Math.sin(a);
-        var a2 = -Math.PI / 2 + (i + 1) * Math.PI / 3, X2 = 500 + 330 * Math.cos(a2), Y2 = 200 + 150 * Math.sin(a2);
-        var broken = cooked && i === 4;
-        x.strokeStyle = broken ? '#DC2626' : (i < k || k === 6 && i < 4 ? '#EA580C' : '#FDBA74'); x.lineWidth = 4; x.setLineDash(broken ? [8, 8] : []);
-        x.beginPath(); x.moveTo(X + (X2 - X) * .2, Y + (Y2 - Y) * .2); x.lineTo(X + (X2 - X) * .8, Y + (Y2 - Y) * .8); x.stroke(); x.setLineDash([]);
-        if (broken) T(x, '✗', (X + X2) / 2, (Y + Y2) / 2 + 10, 34, '#DC2626');
-        x.fillStyle = i === k ? '#FDBA74' : '#fff'; x.strokeStyle = '#EA580C'; x.lineWidth = i === k ? 5 : 2;
-        x.beginPath(); x.arc(X, Y, 44, 0, 6.3); x.fill(); x.stroke();
-        x.font = '40px serif'; x.textAlign = 'center'; x.fillText(i === 5 && cooked ? '🍖' : ST[i][0], X, Y + 14 + (i === k ? Math.sin(t / 200) * 3 : 0));
-        T(x, i === 5 && cooked ? 'لحم مطبوخ جيدًا' : ST[i][1], X, Y + 70, 17, '#7C2D12');
-      }
-      T(x, 'دورة حياة الدودة الشريطية', 500, 210, 24, '#9A3412');
-      var r = ct.querySelector('#tRd');
-      r.innerHTML = k === 6 ? '🛡 <b>انكسرت الدورة!</b> طهي اللحم جيدًا يقتل اليرقات، فلا يُصاب الإنسان بالدودة الشريطية.' : '<b>' + ST[k][1] + ':</b> ' + ST[k][2];
-    });
-  };
-
-  // ٤) دودة الأرض: رحلة الغذاء في القناة الهضمية، وتبادل الغازات عبر الجلد
-  S.earthworm = function (c) {
-    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var ct = ctrl(c, '<button class="btn sm" id="eF">🟤 التهم التراب</button><div class="seg" role="group" aria-label="الجلد"><button data-m="1" aria-pressed="true">💧 جلد رطب بالمخاط</button><button data-m="0">✋ يد جافة</button></div><div class="read" id="eR"></div>');
-    var food = [], moist = 1, ms = seg(ct, 'm');
-    ms.forEach(function (b) { b.onclick = function () { moist = +b.dataset.m; press(ms, b); }; });
-    ct.querySelector('#eF').onclick = function () { food.push({ p: 0 }); };
-    var ORG = [[900, 'الفم', ''], [760, 'الحوصلة', 'تخزين'], [600, 'القانصة', 'طحن'], [330, 'الأمعاء', 'هضم ونقل إلى الدم'], [80, 'الشرج', 'خروج الفضلات']];
-    return loop(function (t) {
-      x.fillStyle = '#78350F'; x.fillRect(0, 0, 1000, 400); x.fillStyle = '#92400E'; for (var i = 0; i < 60; i++) { x.beginPath(); x.arc((i * 97) % 1000, (i * 53) % 400, 6, 0, 6.3); x.fill(); }
-      // الجسم الحلقي
-      for (var s = 0; s < 22; s++) { var X = 60 + s * 40; x.fillStyle = s % 2 ? '#F9A8D4' : '#F472B6'; x.beginPath(); x.ellipse(X, 200 + Math.sin(t / 300 + s / 2) * 6, 26, 62, 0, 0, 6.3); x.fill();
-        x.strokeStyle = '#831843'; x.lineWidth = 2; x.beginPath(); x.moveTo(X - 6, 262); x.lineTo(X - 10, 274); x.moveTo(X + 6, 262); x.lineTo(X + 10, 274); x.stroke(); }
-      if (moist) { x.fillStyle = 'rgba(186,230,253,.25)'; x.fillRect(30, 130, 900, 140); }
-      // القناة الهضمية
-      x.strokeStyle = '#7F1D1D'; x.lineWidth = 16; x.beginPath(); x.moveTo(80, 200); x.lineTo(920, 200); x.stroke();
-      x.fillStyle = '#B91C1C'; x.beginPath(); x.ellipse(760, 200, 34, 24, 0, 0, 6.3); x.fill(); x.fillStyle = '#7F1D1D'; x.beginPath(); x.ellipse(600, 200, 30, 26, 0, 0, 6.3); x.fill();
-      ORG.forEach(function (o) { T(x, o[1], o[0], 105, 20, '#FDE68A'); if (o[2]) T(x, o[2], o[0], 330, 16, '#FEF3C7'); });
-      var here = '';
-      food.forEach(function (f) { f.p += .0028; var X2 = 920 - f.p * 840; var slow = Math.abs(X2 - 760) < 30 || Math.abs(X2 - 600) < 30; if (slow) f.p -= .0016;
-        x.fillStyle = X2 < 560 ? '#FDE68A' : '#A16207'; x.beginPath(); x.arc(X2, 200, X2 < 560 ? 6 : 10, 0, 6.3); x.fill();
-        ORG.forEach(function (o) { if (Math.abs(X2 - o[0]) < 60) here = '<b>' + o[1] + '</b>' + (o[2] ? ': ' + o[2] : ''); }); });
-      food = food.filter(function (f) { return f.p < 1; });
-      // الغازات
-      if (moist) { var k = (t / 25) % 60; T(x, 'O₂ ↓', 300, 125 - 60 + k, 18, '#BAE6FD'); T(x, 'CO₂ ↑', 500, 125 - k, 18, '#E2E8F0'); }
-      else T(x, '⚠ زال المخاط… لا يتم تبادل الغازات', 500, 380, 22, '#FCA5A5');
-      ct.querySelector('#eR').innerHTML = (here ? 'الغذاء الآن في ' + here + ' · ' : 'اضغط «التهم التراب» وتتبع الغذاء · ') + (moist ? 'تبادل الغازات عبر <b>الجلد الرطب</b> (بلا رئات ولا خياشيم).' : 'اليد الجافة تزيل المخاط فتموت الدودة <b>خنقًا</b>.');
-    });
-  };
-
-  // ٥) جهاز الدوران المفتوح والمغلق
-  S.circ = function (c) {
-    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var ct = ctrl(c, '<div class="seg" role="group" aria-label="الجهاز"><button data-c="o" aria-pressed="true">🐚 مفتوح (المحار، الحلزون، الحشرات)</button><button data-c="c">🦑 مغلق (الأخطبوط، الحبار، الديدان الحلقية)</button></div><div class="read" id="cR"></div>');
-    var mode = 'o', cs = seg(ct, 'c'), D = []; for (var i = 0; i < 70; i++) D.push({ a: Math.random() * 6.3, r: Math.random(), v: .5 + Math.random() });
-    cs.forEach(function (b) { b.onclick = function () { mode = b.dataset.c; press(cs, b); }; });
-    return loop(function (t) {
-      x.fillStyle = '#0F172A'; x.fillRect(0, 0, 1000, 400);
-      // القلب والأعضاء
-      var beat = 1 + Math.sin(t / 180) * .08;
-      x.fillStyle = '#DC2626'; x.beginPath(); x.ellipse(500, 200, 46 * beat, 36 * beat, 0, 0, 6.3); x.fill(); T(x, 'القلب', 500, 208, 18, '#fff');
-      [[250, 110, 'الهضمي'], [750, 110, 'التكاثر'], [250, 300, 'العضلات'], [750, 300, 'الخياشيم']].forEach(function (o) { x.fillStyle = '#334155'; x.beginPath(); x.ellipse(o[0], o[1], 80, 44, 0, 0, 6.3); x.fill(); T(x, o[2], o[0], o[1] + 7, 18, '#CBD5E1'); });
-      if (mode === 'c') {
-        x.strokeStyle = '#7F1D1D'; x.lineWidth = 14;
-        x.beginPath(); x.ellipse(500, 205, 330, 150, 0, 0, 6.3); x.stroke(); x.beginPath(); x.moveTo(170, 205); x.lineTo(830, 205); x.stroke();
-        D.forEach(function (d, i) { var a = (d.a + t / 1500 * d.v) % 6.3; x.fillStyle = '#F87171'; x.beginPath(); x.arc(500 + 330 * Math.cos(a), 205 + 150 * Math.sin(a), 5, 0, 6.3); x.fill(); });
-        ct.querySelector('#cR').innerHTML = '<b>جهاز دوران مغلق:</b> يمر الدم داخل <b>أوعية دموية</b> من القلب إلى الأعضاء ويعود إليه.';
+      sky(x, 1000, 440, t); sun(x, 90, 220, 80);
+      var ex = mode === 0 ? 760 : 560, ey = 220;
+      var mx = mode === 0 ? 560 : 820, my = 220 + off * 2.2;
+      earth(x, ex, ey, 70);
+      // ظل
+      var al = Math.abs(off) < 8;
+      if (mode === 0) {
+        x.fillStyle = 'rgba(0,0,0,.55)'; x.beginPath(); x.moveTo(mx, my - 22); x.lineTo(ex - 60, my - (al ? 4 : 10)); x.lineTo(ex - 60, my + (al ? 4 : 10)); x.lineTo(mx, my + 22); x.fill();
+        if (al) { x.fillStyle = '#000'; x.beginPath(); x.arc(ex - 66, ey, 9, 0, 6.3); x.fill(); }
       } else {
-        D.forEach(function (d) { var r = ((d.r + t / 4000 * d.v) % 1) * 380; x.fillStyle = 'rgba(248,113,113,' + (1 - r / 400) + ')'; x.beginPath(); x.arc(500 + r * Math.cos(d.a), 200 + r * .45 * Math.sin(d.a), 5, 0, 6.3); x.fill(); });
-        ct.querySelector('#cR').innerHTML = '<b>جهاز دوران مفتوح:</b> لا أوعية تنقل الدم؛ يضخه القلب ف<b>يتدفق حول الأعضاء مباشرة</b>. وفي الحشرات ينقل الغذاء والفضلات فقط، والأكسجين يدخل عبر الثغور التنفسية.';
+        x.fillStyle = 'rgba(0,0,0,.6)'; x.beginPath(); x.moveTo(ex, ey - 70); x.lineTo(900, ey - 40); x.lineTo(900, ey + 40); x.lineTo(ex, ey + 70); x.fill();
       }
+      var inS = mode === 1 && Math.abs(my - ey) < 50;
+      x.fillStyle = inS ? '#9A3412' : '#E2E8F0'; x.beginPath(); x.arc(mx, my, 22, 0, 6.3); x.fill();
+      txt(x, 'الشمس', 90, 340, 24, '#FDE68A'); txt(x, 'الأرض', ex, ey + 105, 24, '#93C5FD'); txt(x, 'القمر', mx, my - 32, 22, '#fff');
+      var msg;
+      if (mode === 0) msg = al ? '🌑 كسوف كلي للشمس! القمر بين الأرض والشمس على استقامة واحدة (طور المحاق). ظله صغير فيُرى من منطقة ضيقة فقط.' : 'القمر في المحاق لكنه ليس على استقامة واحدة مع الشمس والأرض… لا كسوف.';
+      else msg = inS ? '🌕 خسوف القمر! الأرض بين الشمس والقمر (طور البدر)، والقمر يميل إلى الأحمر، ويراه كل من في نصف الأرض الليلي.' : 'القمر بدر لكنه خارج ظل الأرض… لا خسوف.';
+      ct.querySelector('#eR').innerHTML = msg;
     });
   };
 
-  // ٦) التحول في الحشرات: كامل وناقص
-  S.meta = function (c) {
-    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var ct = ctrl(c, '<div class="seg" role="group" aria-label="نوع التحول"><button data-m="c" aria-pressed="true">🦋 تحول كامل (الفراشة، النحل، النمل)</button><button data-m="i">🦗 تحول ناقص (الجراد، الصراصير)</button></div><label>المرحلة <input type="range" id="mS" min="0" max="3" value="0"></label><div class="read" id="mR"></div>');
-    var mode = 'c', ms = seg(ct, 'm'), sl = ct.querySelector('#mS');
-    ms.forEach(function (b) { b.onclick = function () { mode = b.dataset.m; press(ms, b); sl.max = mode === 'c' ? 3 : 2; sl.value = 0; }; });
-    var C = [['🥚', 'البيضة', 'تضعها الأنثى على ورقة نبات.'], ['🐛', 'اليرقة', 'تأكل كثيرًا وتنمو، ولا تشبه الحشرة البالغة.'], ['🫘', 'العذراء', 'طور ساكن تتغير فيه أجزاء الجسم كليًا.'], ['🦋', 'الحشرة البالغة', 'تختلف تمامًا عن اليرقة.']];
-    var I = [['🥚', 'البيضة', 'تضعها الأنثى.'], ['🦗', 'الحورية', 'تشبه أبويها لكنها أصغر، وتنسلخ عدة مرات.'], ['🦗', 'الحشرة البالغة', 'بعد الانسلاخ الأخير تكتمل الأجنحة.']];
+  // ٤) المد والجزر
+  S.tides = function (c) {
+    var cv = mk(c, 1000, 460), x = cv.getContext('2d');
+    var ct = ctrl(c, '<label>🌙 موقع القمر حول الأرض <input type="range" min="0" max="360" value="0" id="tA"></label><button class="btn" id="tP">▶ تشغيل</button><div class="read" id="tR"></div>');
+    var A = 0, run = false, rg = ct.querySelector('#tA');
+    rg.oninput = function () { A = +rg.value; };
+    ct.querySelector('#tP').onclick = function () { run = !run; this.textContent = run ? '⏸ إيقاف' : '▶ تشغيل'; };
     return loop(function (t) {
-      var L = mode === 'c' ? C : I, k = +sl.value;
-      x.fillStyle = '#F0FDF4'; x.fillRect(0, 0, 1000, 400);
-      var gap = 900 / L.length;
-      L.forEach(function (s, i) { var X = 950 - gap / 2 - i * gap, on = i <= k;
-        x.globalAlpha = on ? 1 : .3; x.fillStyle = i === k ? '#BBF7D0' : '#fff'; x.strokeStyle = '#16A34A'; x.lineWidth = i === k ? 5 : 2; x.beginPath(); x.arc(X, 180, 80, 0, 6.3); x.fill(); x.stroke();
-        var sz = mode === 'i' && i === 1 ? 46 : 70; x.font = sz + 'px serif'; x.textAlign = 'center'; x.fillText(s[0], X, 180 + sz / 3 + (i === k ? Math.sin(t / 250) * 4 : 0));
-        T(x, s[1], X, 300, 24, '#14532D'); if (i < L.length - 1) { T(x, '←', X - gap / 2, 190, 40, '#16A34A'); if (mode === 'i') T(x, 'انسلاخ', X - gap / 2, 150, 16, '#15803D'); }
-        x.globalAlpha = 1; });
-      T(x, mode === 'c' ? 'أربع مراحل' : 'ثلاث مراحل', 500, 370, 22, '#166534');
-      ct.querySelector('#mR').innerHTML = '<b>' + L[k][1] + ':</b> ' + L[k][2];
+      if (run) { A = (A + 0.5) % 360; rg.value = A; }
+      sky(x, 1000, 460, t); sun(x, 960, 230, 70);
+      var cx = 470, cy = 230, a = A * Math.PI / 180;
+      var mx = cx + 200 * Math.cos(a), my = cy - 200 * Math.sin(a);
+      // محصلة الانتفاخ: القمر + نصف تأثير الشمس
+      var sp = Math.abs(Math.cos(a)); // 1 على استقامة واحدة
+      var amp = 18 + 14 * sp;
+      x.fillStyle = 'rgba(56,189,248,.55)'; x.beginPath();
+      for (var k = 0; k <= 64; k++) { var th = k / 64 * 6.283; var rr = 62 + amp * Math.pow(Math.cos(th - a), 2) + 6 * (1 - sp) * Math.pow(Math.cos(th), 2); var px = cx + rr * Math.cos(th), py = cy - rr * Math.sin(th); k ? x.lineTo(px, py) : x.moveTo(px, py); }
+      x.fill(); earth(x, cx, cy, 58);
+      x.fillStyle = '#E2E8F0'; x.beginPath(); x.arc(mx, my, 18, 0, 6.3); x.fill();
+      x.strokeStyle = 'rgba(255,255,255,.2)'; x.beginPath(); x.arc(cx, cy, 200, 0, 6.3); x.stroke();
+      var kind = sp > .92 ? 'مد الربيع: الشمس والأرض والقمر على خط واحد ← أعلى مد وأدنى جزر' : sp < .2 ? 'المد المنخفض: زاوية 90° بين الشمس والقمر ← مد أقل وجزر أعلى' : 'مد وجزر متوسط';
+      txt(x, kind, 470, 445, 24, sp > .92 ? '#FCA5A5' : sp < .2 ? '#93C5FD' : '#FDE68A');
+      var ph = A < 22 || A > 338 ? 'المحاق' : Math.abs(A - 180) < 22 ? 'البدر' : Math.abs(A - 90) < 22 ? 'التربيع' : Math.abs(A - 270) < 22 ? 'التربيع' : '—';
+      ct.querySelector('#tR').innerHTML = 'الانتفاخان: في الجهة المواجهة للقمر والجهة المقابلة · طور القمر: <b>' + ph + '</b> · ارتفاع المد: <b>' + (sp > .92 ? 'أقصى' : sp < .2 ? 'أدنى' : 'متوسط') + '</b>';
     });
   };
 
-  // ٧) مفتاح تصنيف المفصليات: أجزاء الجسم وعدد الأرجل
-  S.arthro = function (c) {
-    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var A = [['🐜', 'النملة', 'أجزاء الجسم: ٣ (رأس، صدر، بطن)', 'الأرجل: ٦', 'حشرات', 'رأس وصدر وبطن، و6 أرجل مفصلية تتصل بالصدر.'], ['🕷', 'العنكبوت', 'أجزاء الجسم: ٢ (رأس صدر، بطن)', 'الأرجل: ٨', 'عنكبيات', 'رأس صدر وبطن، وأربعة أزواج من الأرجل.'], ['🦂', 'العقرب', 'أجزاء الجسم: ٢ (رأس صدر، بطن)', 'الأرجل: ٨', 'عنكبيات', 'رأس صدر وبطن، و8 أرجل، ويشل فريسته بإبرته اللاسعة.'], ['🦞', 'جراد البحر', 'قرون الاستشعار: ٤', 'الزوائد المفصلية: ١٠', 'قشريات', '4 قرون استشعار، و3 زوائد للمضغ، و10 زوائد مفصلية، وزوائد سباحة تدفع الماء إلى الخياشيم.'], ['🐛', 'ذات الأرجل الألف', 'الجسم: قطع (عقل) كثيرة', 'الأرجل: زوجان في كل قطعة', 'عديدات الأرجل', 'جسم رفيع طويل مقسم إلى قطع، وتتغذى على النباتات.']];
-    var ct = ctrl(c, '<div class="seg" role="group" aria-label="الحيوان">' + A.map(function (a, i) { return '<button data-a="' + i + '"' + (i ? '' : ' aria-pressed="true"') + '>' + a[0] + ' ' + a[1] + '</button>'; }).join('') + '</div><div class="seg" role="group" aria-label="المجموعة"><button data-g="حشرات">حشرات</button><button data-g="عنكبيات">عنكبيات</button><button data-g="قشريات">قشريات</button><button data-g="عديدات الأرجل">عديدات الأرجل</button></div><div class="read" id="aR">لاحظ الصفات، ثم اختر المجموعة.</div>');
-    var k = 0, shown = 0, bs = seg(ct, 'a'), gs = seg(ct, 'g');
-    bs.forEach(function (b) { b.onclick = function () { k = +b.dataset.a; shown = 0; press(bs, b); press(gs, null); ct.querySelector('#aR').innerHTML = 'لاحظ الصفات، ثم اختر المجموعة.'; }; });
-    gs.forEach(function (b) { b.onclick = function () { press(gs, b); shown = 1; var ok = b.dataset.g === A[k][4]; ct.querySelector('#aR').innerHTML = (ok ? '✅ صحيح: ' : '❌ بل هو من ') + '<b>' + A[k][4] + '</b> — ' + A[k][5]; }; });
+  // ٥) مستكشف النظام الشمسي (الوحدة الفلكية)
+  var PL = [['عطارد', .39, '#A8A29E', 5, 'صخري · أصغر الكواكب وأقربها · 425 °س نهارًا و−170 °س ليلًا · بلا غلاف جوي'], ['الزهرة', .72, '#FBBF24', 8, 'صخري · أسطع جسم بعد الشمس والقمر · غيوم كثيفة · 472 °س'], ['الأرض', 1, '#3B82F6', 8, 'صخري · الكوكب الوحيد الملائم للحياة · ماء بحالاته الثلاث · قمر واحد'], ['المريخ', 1.52, '#EF4444', 6, 'صخري · الكوكب الأحمر (أكاسيد الحديد) · قمران: فوبوس وديموس'], ['المشتري', 5.2, '#D97706', 20, 'غازي · أكبر الكواكب · يومه 10 ساعات · البقعة الحمراء · 101 قمر'], ['زحل', 9.58, '#EAB308', 17, 'غازي · حلقات عريضة من الثلج والصخور · 274 قمرًا أكبرها تيتان'], ['أورانوس', 19.2, '#5EEAD4', 12, 'غازي · محور دورانه أفقي · الميثان يمنحه لونًا أخضر مائلًا للزرقة'], ['نبتون', 30.07, '#3B82F6', 12, 'غازي · أبعد الكواكب · أزرق بسبب الميثان · 16 قمرًا أكبرها تريتون']];
+  S.planets = function (c) {
+    var cv = mk(c, 1000, 380), x = cv.getContext('2d');
+    var ct = ctrl(c, '<div class="seg" role="group" aria-label="الكواكب">' + PL.map(function (p, i) { return '<button data-p="' + i + '"' + (i === 2 ? ' aria-pressed="true"' : '') + '>' + p[0] + '</button>'; }).join('') + '</div><div class="read" id="plR"></div>');
+    var sel = 2, bs = seg(ct, 'p');
+    bs.forEach(function (b) { b.onclick = function () { sel = +b.dataset.p; press(bs, b); }; });
+    function X(au) { return 930 - Math.sqrt(au) * 155; }
     return loop(function (t) {
-      x.fillStyle = '#FFFBEB'; x.fillRect(0, 0, 1000, 400);
-      x.font = '170px serif'; x.textAlign = 'center'; x.fillText(A[k][0], 260, 260 + Math.sin(t / 400) * 5);
-      T(x, A[k][1], 260, 360, 28, '#78350F');
-      T(x, A[k][2], 680, 130, 28, '#92400E'); T(x, A[k][3], 680, 190, 28, '#92400E');
-      T(x, 'كلها مفصليات: هيكل خارجي + زوائد مفصلية', 700, 270, 20, '#B45309');
-      if (shown) T(x, '← ' + A[k][4], 700, 340, 34, '#16A34A');
+      sky(x, 1000, 380, t); sun(x, 960, 190, 60);
+      PL.forEach(function (p, i) {
+        var X0 = X(p[1]); x.strokeStyle = i === sel ? 'rgba(253,224,71,.7)' : 'rgba(255,255,255,.12)'; x.lineWidth = i === sel ? 3 : 1;
+        x.beginPath(); x.moveTo(X0, 40); x.lineTo(X0, 340); x.stroke();
+        var Y = 190 + Math.sin(t / (400 * Math.sqrt(p[1] * p[1] * p[1]) + 300) + i) * 120;
+        x.fillStyle = p[2]; x.beginPath(); x.arc(X0, Y, p[3], 0, 6.3); x.fill();
+        if (i === 5) { x.strokeStyle = '#FDE68A'; x.lineWidth = 2; x.beginPath(); x.ellipse(X0, Y, 30, 7, -.3, 0, 6.3); x.stroke(); }
+        txt(x, p[0], X0, i < 4 ? (i % 2 ? 350 : 372) : 368, i === sel ? 20 : 15, i === sel ? '#FDE68A' : '#CBD5E1');
+      });
+      txt(x, 'حزام الكويكبات', X(2.7), 30, 16, '#A8A29E');
+      for (var k = 0; k < 40; k++) { x.fillStyle = '#78716C'; x.fillRect(X(2.2 + (k % 10) / 10 * 1.1), 50 + k * 7, 2, 2); }
+      var p = PL[sel];
+      ct.querySelector('#plR').innerHTML = '<b>' + p[0] + '</b>: يبعد <b>' + n(p[1]) + ' وف</b> = ' + n(p[1]) + ' × ١٥٠ مليون ≈ <b>' + n(Math.round(p[1] * 150)) + ' مليون كم</b><br>' + p[4];
+    });
+  };
+
+  // ٦) الطيف الكهرومغناطيسي
+  var EM = [['موجات الراديو', 'أطول طول موجي وأقل تردد · تعبر الغلاف الجوي · تستعملها المناظير الراديوية', '#F87171', 1], ['الموجات القصيرة (الميكروويف)', 'طول موجي قصير نسبيًا · تُستخدم في الاتصالات والطهي', '#FB923C', 2], ['الأشعة تحت الحمراء', 'نشعر بها حرارة · طولها أطول من الضوء المرئي وترددها أقل', '#FBBF24', 3], ['الضوء المرئي', 'الجزء الوحيد الذي تراه أعيننا · ألوان الطيف', '#4ADE80', 5], ['الأشعة فوق البنفسجية', 'أقصر من المرئي وأعلى ترددًا · تُتلف أنسجة الجسم · يمتصها الأوزون', '#818CF8', 8], ['الأشعة السينية', 'تنفذ عبر الأنسجة · تصوير العظام', '#C084FC', 12], ['أشعة جاما', 'أقصر طول موجي (أقل من 0.00000000001 م) وأعلى تردد وطاقة', '#F472B6', 18]];
+  S.spectrum = function (c) {
+    var cv = mk(c, 1000, 300), x = cv.getContext('2d');
+    var ct = ctrl(c, '<label>اختر موجة <input type="range" min="0" max="6" value="3" id="emS"></label><div class="read" id="emR"></div>');
+    var s = 3, rg = ct.querySelector('#emS'); rg.oninput = function () { s = +rg.value; };
+    return loop(function (t) {
+      x.fillStyle = '#0F172A'; x.fillRect(0, 0, 1000, 300);
+      var e = EM[s]; x.strokeStyle = e[2]; x.lineWidth = 4; x.beginPath();
+      for (var X = 0; X <= 1000; X += 2) { var Y = 120 + 70 * Math.sin((X / 1000) * e[3] * 6.283 - t / 300); X ? x.lineTo(X, Y) : x.moveTo(X, Y); }
+      x.stroke();
+      for (var i = 0; i < 7; i++) { var bx = 1000 - (i + 1) * 140 + 10; x.fillStyle = i === s ? EM[i][2] : 'rgba(255,255,255,.08)'; x.fillRect(bx, 230, 125, 50); txt(x, ['الراديو', 'الميكروويف', 'تحت الحمراء', 'المرئي', 'فوق البنفسجية', 'السينية', 'جاما'][i], bx + 62, 262, 16, i === s ? '#0F172A' : '#CBD5E1'); }
+      txt(x, '← يقل الطول الموجي ويزداد التردد', 500, 220, 18, '#94A3B8');
+      ct.querySelector('#emR').innerHTML = '<b>' + e[0] + '</b>: ' + e[1];
+      rg.value = s;
+    });
+  };
+
+  // ٧) المنظار الكاسر والعاكس
+  S.telescope = function (c) {
+    var cv = mk(c, 1000, 380), x = cv.getContext('2d');
+    var ct = ctrl(c, '<div class="seg" role="group" aria-label="نوع المنظار"><button data-k="0" aria-pressed="true">🔭 الكاسر (عدسات)</button><button data-k="1">🪞 العاكس (مرآة مقعرة)</button></div><div class="read" id="tlR"></div>');
+    var k = 0, bs = seg(ct, 'k'); bs.forEach(function (b) { b.onclick = function () { k = +b.dataset.k; press(bs, b); }; });
+    return loop(function (t) {
+      sky(x, 1000, 380, t); var ph = (t / 12) % 1100;
+      x.strokeStyle = '#94A3B8'; x.lineWidth = 3;
+      if (k === 0) {
+        x.strokeRect(150, 120, 650, 140);
+        x.fillStyle = 'rgba(147,197,253,.6)'; x.beginPath(); x.ellipse(800, 190, 14, 75, 0, 0, 6.3); x.fill();
+        x.beginPath(); x.ellipse(160, 190, 8, 30, 0, 0, 6.3); x.fill();
+        x.strokeStyle = '#FDE047'; x.lineWidth = 2; [140, 190, 240].forEach(function (y) { x.beginPath(); x.moveTo(990, y); x.lineTo(800, y); x.lineTo(240, 190 + (190 - y) * .25); x.stroke(); });
+        txt(x, 'عدسة شيئية محدبة', 800, 100, 20, '#BAE6FD'); txt(x, 'عدسة عينية', 160, 290, 20, '#BAE6FD'); txt(x, '👁', 110, 200, 34);
+        ct.querySelector('#tlR').innerHTML = 'الكاسر: يقوم على <b>انكسار</b> الضوء؛ تجمع العدسة المحدبة الشيئية الضوء وتكوّن صورة أمام العدسة العينية التي تكبّرها.';
+      } else {
+        x.strokeRect(150, 120, 650, 140);
+        x.strokeStyle = '#E2E8F0'; x.lineWidth = 6; x.beginPath(); x.arc(-100, 190, 270, -.28, .28); x.stroke();
+        x.strokeStyle = '#E2E8F0'; x.lineWidth = 5; x.beginPath(); x.moveTo(640, 175); x.lineTo(670, 205); x.stroke();
+        x.strokeStyle = '#FDE047'; x.lineWidth = 2; [145, 235].forEach(function (y) { x.beginPath(); x.moveTo(990, y); x.lineTo(168, y); x.lineTo(655, 190); x.lineTo(655, 110); x.stroke(); });
+        txt(x, 'مرآة مقعرة', 180, 100, 20, '#BAE6FD'); txt(x, 'مرآة مستوية', 660, 290, 20, '#BAE6FD'); txt(x, '👁', 655, 80, 34);
+        ct.querySelector('#tlR').innerHTML = 'العاكس: يقوم على <b>انعكاس</b> الضوء؛ تجمع المرآة المقعرة الضوء وتكوّن صورة في بؤرتها، وتعكسه مرآة مستوية صغيرة نحو العدسة العينية.';
+      }
+      x.fillStyle = '#FDE047'; x.beginPath(); x.arc(990 - (ph % 200), 190, 5, 0, 6.3); x.fill();
+    });
+  };
+
+  // ٨) دورة حياة النجم حسب الكتلة
+  S.starlife = function (c) {
+    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
+    var ct = ctrl(c, '<div class="seg" role="group" aria-label="كتلة النجم"><button data-s="0" aria-pressed="true">⭐ متوسط مثل الشمس</button><button data-s="1">🌟 كبير الكتلة</button><button data-s="2">💥 كبير جدًا</button></div><button class="btn" id="slN">التالي ⏭</button><div class="read" id="slR"></div>');
+    var P = [[['السديم', '#C084FC', 70], ['نجم أولي', '#FB923C', 30], ['نجم تابع رئيس', '#FDE047', 32], ['عملاق أحمر', '#EF4444', 85], ['قزم أبيض', '#F8FAFC', 14], ['قزم أسود', '#1E293B', 14]],
+             [['السديم', '#C084FC', 70], ['نجم أولي', '#FB923C', 34], ['نجم تابع رئيس', '#93C5FD', 40], ['نجم فوق عملاق', '#F87171', 100], ['نجم فوق مستعر', '#FFFFFF', 120], ['نجم نيوتروني', '#67E8F9', 10]],
+             [['السديم', '#C084FC', 70], ['نجم أولي', '#FB923C', 38], ['نجم تابع رئيس', '#60A5FA', 46], ['نجم فوق عملاق', '#F87171', 110], ['نجم فوق مستعر', '#FFFFFF', 130], ['ثقب أسود', '#000000', 30]]];
+    var NOTE = ['تنكمش السحابة بالجاذبية… ', 'ترتفع الحرارة والضغط فتندمج الذرات.', 'يشع طاقة من تفاعلات نووية معظم حياته.', 'ينفد الوقود في المركز فيتمدد النجم.', '', ''];
+    var m = 0, st = 0, bs = seg(ct, 's');
+    bs.forEach(function (b) { b.onclick = function () { m = +b.dataset.s; st = 0; press(bs, b); }; });
+    ct.querySelector('#slN').onclick = function () { st = (st + 1) % 6; };
+    var cur = 70;
+    return loop(function (t) {
+      sky(x, 1000, 400, t);
+      var p = P[m][st]; cur += (p[2] - cur) * .06;
+      for (var i = 0; i < 6; i++) { var bx = 930 - i * 172; x.fillStyle = i === st ? 'rgba(253,224,71,.2)' : 'rgba(255,255,255,.05)'; x.fillRect(bx - 80, 330, 160, 50); txt(x, P[m][i][0], bx, 362, 17, i <= st ? '#FDE68A' : '#64748B'); }
+      if (p[0] === 'السديم') { for (var k = 0; k < 30; k++) { x.fillStyle = 'rgba(192,132,252,.15)'; x.beginPath(); x.arc(500 + Math.cos(k * 2.4 + t / 3000) * (30 + k * 4), 160 + Math.sin(k * 2.4) * (20 + k * 2.5), 26 + (k % 5) * 6, 0, 6.3); x.fill(); } }
+      else if (p[0] === 'ثقب أسود') { x.strokeStyle = 'rgba(251,146,60,.8)'; x.lineWidth = 6; x.beginPath(); x.ellipse(500, 160, 90, 25, -.2, 0, 6.3); x.stroke(); x.fillStyle = '#000'; x.beginPath(); x.arc(500, 160, cur, 0, 6.3); x.fill(); }
+      else { var g = x.createRadialGradient(500, 160, 2, 500, 160, cur * 1.4); g.addColorStop(0, '#fff'); g.addColorStop(.4, p[1]); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.beginPath(); x.arc(500, 160, cur * 1.4, 0, 6.3); x.fill(); }
+      var note = st < 4 ? NOTE[st] : m === 0 ? (st === 4 ? 'يفقد غلافه الخارجي وينكمش اللب.' : 'يبرد القزم الأبيض.') : st === 4 ? 'ينهار اللب فينفجر النجم ويبدو ألمع من مجرة كاملة!' : m === 1 ? 'كتلة اللب أقل من 3 أضعاف كتلة الشمس.' : 'كتلة اللب أكبر من 3 أضعاف كتلة الشمس؛ جاذبيته لا يفلت منها حتى الضوء.';
+      ct.querySelector('#slR').innerHTML = 'المرحلة ' + n(st + 1) + ': <b>' + p[0] + '</b> — ' + note;
+    });
+  };
+
+  // ٩) حاسبة الضوء: كم يستغرق الضوء؟
+  S.lightyear = function (c) {
+    var cv = mk(c, 1000, 260), x = cv.getContext('2d');
+    var T = [['القمر', 384400, 'km'], ['الشمس (1 وف)', 150000000, 'km'], ['نبتون (30 وف)', 4.5e9, 'km'], ['أقرب نجم (4.2 سنة ضوئية)', 4.2, 'ly'], ['مجرة المرأة المسلسلة', 2500000, 'ly']];
+    var ct = ctrl(c, '<div class="seg" role="group" aria-label="الوجهة">' + T.map(function (o, i) { return '<button data-y="' + i + '"' + (i === 0 ? ' aria-pressed="true"' : '') + '>' + o[0] + '</button>'; }).join('') + '</div><div class="read" id="lyR"></div>');
+    var s = 0, t0 = performance.now(), bs = seg(ct, 'y');
+    bs.forEach(function (b) { b.onclick = function () { s = +b.dataset.y; t0 = performance.now(); press(bs, b); }; });
+    function fmt(sec) { if (sec < 60) return n(sec.toFixed(2)) + ' ثانية'; if (sec < 3600) return n((sec / 60).toFixed(1)) + ' دقيقة'; if (sec < 86400 * 365) return n((sec / 3600).toFixed(1)) + ' ساعة'; return n(Math.round(sec / 31557600).toLocaleString('en')) + ' سنة'; }
+    return loop(function (t) {
+      sky(x, 1000, 260, t); earth(x, 940, 130, 30);
+      var o = T[s], prog = Math.min(1, (t - t0) / 3000);
+      x.strokeStyle = 'rgba(253,224,71,.5)'; x.lineWidth = 2; x.beginPath(); x.moveTo(90, 130); x.lineTo(90 + prog * 820, 130); x.stroke(); x.fillStyle = '#FDE047'; x.beginPath(); x.arc(90 + prog * 820, 130, 7, 0, 6.3); x.fill();
+      x.fillStyle = '#E2E8F0'; x.beginPath(); x.arc(70, 130, 20, 0, 6.3); x.fill(); txt(x, o[0], 90, 200, 20, '#FDE68A');
+      var sec = o[2] === 'km' ? o[1] / 300000 : o[1] * 31557600;
+      var km = o[2] === 'km' ? n(o[1].toLocaleString('en')) + ' كم' : n(o[1].toLocaleString('en')) + ' سنة ضوئية × ٩٫٥ تريليون كم';
+      ct.querySelector('#lyR').innerHTML = 'المسافة: <b>' + km + '</b> · سرعة الضوء ٣٠٠٠٠٠ كم/ث ← يصلنا ضوؤه بعد <b>' + fmt(sec) + '</b>' + (o[2] === 'ly' ? ' — نحن نرى الماضي!' : '');
+    });
+  };
+
+  // ١٠) المجموعات النجمية والتلوث الضوئي
+  S.constel = function (c) {
+    var cv = mk(c, 1000, 440), x = cv.getContext('2d');
+    var ct = ctrl(c, '<label>💡 إضاءة المدينة (التلوث الضوئي) <input type="range" min="0" max="100" value="10" id="cL"></label><div class="seg" role="group"><button data-c="1" aria-pressed="true">✏ أظهر خطوط المجموعات</button><button data-c="0">إخفاء</button></div><div class="read" id="cR"></div>');
+    var L = 10, lines = 1, bs = seg(ct, 'c');
+    bs.forEach(function (b) { b.onclick = function () { lines = +b.dataset.c; press(bs, b); }; });
+    ct.querySelector('#cL').oninput = function (e) { L = +e.target.value; };
+    var BIG = [[620, 80], [690, 95], [745, 130], [800, 120], [810, 190], [740, 205], [735, 140]], CAS = [[150, 120], [200, 170], [250, 130], [300, 180], [350, 135]], POL = [460, 230];
+    var faint = []; for (var i = 0; i < 260; i++) faint.push([Math.random() * 1000, Math.random() * 360, Math.random()]);
+    return loop(function (t) {
+      var g = x.createLinearGradient(0, 0, 0, 440); g.addColorStop(0, 'rgb(' + (7 + L * .5) + ',' + (11 + L * .45) + ',' + (31 + L * .6) + ')'); g.addColorStop(1, 'rgb(' + (20 + L * 1.6) + ',' + (20 + L * 1.2) + ',' + (40 + L * .5) + ')'); x.fillStyle = g; x.fillRect(0, 0, 1000, 440);
+      var vis = 0;
+      faint.forEach(function (s) { if (s[2] * 100 > L) { vis++; x.fillStyle = 'rgba(255,255,255,' + (.35 + s[2] * .5) + ')'; x.fillRect(s[0], s[1], 2, 2); } });
+      function draw(arr, path) { if (lines) { x.strokeStyle = 'rgba(147,197,253,.6)'; x.lineWidth = 2; x.beginPath(); path.forEach(function (k, j) { j ? x.lineTo(arr[k][0], arr[k][1]) : x.moveTo(arr[k][0], arr[k][1]); }); x.stroke(); } arr.forEach(function (p) { x.fillStyle = '#fff'; x.beginPath(); x.arc(p[0], p[1], L > 85 ? 2 : 4, 0, 6.3); x.fill(); vis++; }); }
+      draw(BIG, [0, 1, 2, 3, 4, 5, 6, 2]); draw(CAS, [0, 1, 2, 3, 4]);
+      x.fillStyle = '#FDE68A'; x.beginPath(); x.arc(POL[0], POL[1], 5, 0, 6.3); x.fill();
+      txt(x, 'الدب الأكبر (المغرفة الكبرى)', 715, 245, 20, '#BAE6FD'); txt(x, 'ذات الكرسي', 250, 220, 20, '#BAE6FD'); txt(x, 'النجم القطبي', POL[0], POL[1] + 30, 18, '#FDE68A');
+      x.fillStyle = '#020617'; for (var b = 0; b < 12; b++) { var h = 40 + (b * 37) % 70; x.fillRect(b * 85, 440 - h, 70, h); x.fillStyle = 'rgba(253,224,71,' + L / 120 + ')'; for (var w = 0; w < 4; w++) x.fillRect(b * 85 + 10 + w * 15, 440 - h + 12, 8, 8); x.fillStyle = '#020617'; }
+      ct.querySelector('#cR').innerHTML = 'عدد النجوم المرئية تقريبًا: <b>' + n(vis) + '</b> — ' + (L > 60 ? 'إضاءة المدينة الساطعة تحجب النجوم الخافتة (تلوث ضوئي).' : L > 25 ? 'بعض النجوم الخافتة اختفت.' : 'سماء مظلمة صافية: نجوم كثيرة!');
     });
   };
   return S;
@@ -709,7 +779,7 @@ window.SIMS = (function () {
 /* ===== كشف الطلاب الموحّد لكل المنصة (الدروس والأنشطة والمسابقات وأوراق العمل) — durus-classes ===== */
 window.DROS = window.DROS || (function () {
   var AR = '٠١٢٣٤٥٦٧٨٩', KEY = 'durus-classes', API = 'https://script.google.com/macros/s/AKfycbxp-t4JgGO5WiK6hoacjTyBqFnG-9bSWClplOpVV4VDuTV7T4tY0swB1Ll36kr_djJ7nQ/exec';
-  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/3', '2/3', '3/3', '4/3']];
+  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/2'], ['1/3', '2/3', '3/3', '4/3']];
   function kz(k) { return String(k == null ? '' : k).replace(/\s/g, '').replace(/\d/g, function (d) { return AR[d]; }); }
   function nz(s) { return String(s).replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+بن\s+/g, ' ').replace(/\s+/g, ' ').trim(); }
   function ld() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) return { cur: s.cur || '', classes: s.classes || {}, stars: s.stars || {}, moves: s.moves || {} }; } catch (e) {} return { cur: '', classes: {}, stars: {}, moves: {} }; }
@@ -754,7 +824,7 @@ window.DROS = window.DROS || (function () {
   }
   // تحميل كشوف الفصول من منصة رحلة العلوم لكل الصفوف
   function importAll(cb) {
-    var all = LISTS[0].concat(LISTS[1]), G = {}, done = 0, okc = 0;
+    var all = [].concat.apply([], LISTS), G = {}, done = 0, okc = 0;
     all.forEach(function (k) {
       jsonp({ action: 'getStudents', className: k }, function (r) {
         if (r && r.ok) okc++;

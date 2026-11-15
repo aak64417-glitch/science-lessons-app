@@ -85,7 +85,7 @@ var st=document.createElement('style');st.textContent='.stu-bg,.stu-badge{--c1:#
 /* ===== كشف الطلاب الموحّد لكل المنصة (الدروس والأنشطة والمسابقات وأوراق العمل) — durus-classes ===== */
 window.DROS = window.DROS || (function () {
   var AR = '٠١٢٣٤٥٦٧٨٩', KEY = 'durus-classes', API = 'https://script.google.com/macros/s/AKfycbxp-t4JgGO5WiK6hoacjTyBqFnG-9bSWClplOpVV4VDuTV7T4tY0swB1Ll36kr_djJ7nQ/exec';
-  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/3', '2/3', '3/3', '4/3']];
+  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/2'], ['1/3', '2/3', '3/3', '4/3']];
   function kz(k) { return String(k == null ? '' : k).replace(/\s/g, '').replace(/\d/g, function (d) { return AR[d]; }); }
   function nz(s) { return String(s).replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+بن\s+/g, ' ').replace(/\s+/g, ' ').trim(); }
   function ld() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) return { cur: s.cur || '', classes: s.classes || {}, stars: s.stars || {}, moves: s.moves || {} }; } catch (e) {} return { cur: '', classes: {}, stars: {}, moves: {} }; }
@@ -130,7 +130,7 @@ window.DROS = window.DROS || (function () {
   }
   // تحميل كشوف الفصول من منصة رحلة العلوم لكل الصفوف
   function importAll(cb) {
-    var all = LISTS[0].concat(LISTS[1]), G = {}, done = 0, okc = 0;
+    var all = [].concat.apply([], LISTS), G = {}, done = 0, okc = 0;
     all.forEach(function (k) {
       jsonp({ action: 'getStudents', className: k }, function (r) {
         if (r && r.ok) okc++;

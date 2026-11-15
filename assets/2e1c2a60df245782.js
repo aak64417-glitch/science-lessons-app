@@ -1,279 +1,141 @@
-/* محاكاة الفصل السابع: الغلاف الجوي المتحرك */
+/* محاكاة الفصل الحادي عشر: الحيوانات الفقارية */
 window.SIMS = (function () {
   var S = {};
+  var AR = '٠١٢٣٤٥٦٧٨٩';
+  function n(v) { return String(v).replace(/\d/g, function (d) { return AR[d]; }).replace('.', '٫'); }
   function mk(c, w, h) { var cv = document.createElement('canvas'); cv.width = w; cv.height = h; c.appendChild(cv); return cv; }
   function ctrl(c, html) { var d = document.createElement('div'); d.className = 'ctrl'; d.innerHTML = html; c.appendChild(d); return d; }
   function loop(f) { var on = true; (function k(t) { if (!on) return; f(t); requestAnimationFrame(k); })(performance.now()); return function () { on = false; }; }
-  function F(x, sz, w) { x.font = (w || 800) + ' ' + sz + 'px Cairo, Tahoma, sans-serif'; }
-  function txt(x, s, X, Y, sz, col, al) { F(x, sz); x.fillStyle = col || '#fff'; x.textAlign = al || 'center'; x.direction = 'rtl'; x.fillText(s, X, Y); }
-  var AR = '٠١٢٣٤٥٦٧٨٩'; function n(v) { return String(v).replace(/\d/g, function (d) { return AR[d]; }).replace('.', '٫'); }
+  function T(x, s, X, Y, sz, col, al) { x.font = '700 ' + sz + 'px Cairo, Tahoma, sans-serif'; x.fillStyle = col || '#fff'; x.textAlign = al || 'center'; x.direction = 'rtl'; x.fillText(s, X, Y); }
+  function seg(ct, k) { return ct.querySelectorAll('[data-' + k + ']'); }
+  function press(bs, b) { bs.forEach(function (o) { o.setAttribute('aria-pressed', o === b); }); }
+  function E(x, s, X, Y, sz) { x.font = sz + 'px serif'; x.textAlign = 'center'; x.fillText(s, X, Y); }
 
-  // ١) جزيئات الغاز والغشاء الصابوني
-  S.gas = function (c, b, U) {
-    var cv = mk(c, 1000, 460), x = cv.getContext('2d');
-    var ct = ctrl(c, '<div class="seg" role="group" aria-label="حرارة الماء"><button data-t="80">🔥 ماء ساخن</button><button data-t="25" aria-pressed="true">🌡 حرارة الغرفة</button><button data-t="2">🧊 ماء مثلج</button></div><label>درجة حرارة الهواء داخل القنينة <input type="range" min="0" max="80" value="25" id="gT"></label><div class="read" id="gR"></div>');
-    var T = 25, film = 0, P = [];
-    for (var i = 0; i < 60; i++) P.push({ x: 380 + Math.random() * 240, y: 170 + Math.random() * 220, a: Math.random() * 6.28 });
-    var rg = ct.querySelector('#gT');
-    function set(v) { T = +v; rg.value = T; ct.querySelectorAll('[data-t]').forEach(function (b) { b.setAttribute('aria-pressed', Math.abs(+b.dataset.t - T) < 1); }); }
-    ct.querySelectorAll('[data-t]').forEach(function (b) { b.onclick = function () { set(b.dataset.t); }; });
-    rg.oninput = function () { set(rg.value); };
+  // ١) درجة حرارة الجسم: متغيرة أم ثابتة؟
+  S.tempreg = function (c) {
+    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
+    var ct = ctrl(c, '<label>حرارة البيئة <input type="range" id="tE" min="-5" max="45" value="20"> <b id="tV"></b></label><div class="read" id="tR"></div>');
+    var A = [['🐟', 'السمكة', 0], ['🐸', 'الضفدع', 0], ['🦎', 'السحلية', 0], ['🐦', 'الطائر', 1], ['🧍', 'الإنسان', 1]];
+    var cur = A.map(function () { return 20; });
     return loop(function () {
-      var target = (T - 25) * 1.6; film += (target - film) * 0.04;
-      var sp = 0.6 + T / 14;
-      x.clearRect(0, 0, 1000, 460);
-      // وعاء الماء
-      var hot = T > 40, cold = T < 12;
-      x.fillStyle = hot ? 'rgba(239,68,68,.35)' : cold ? 'rgba(96,165,250,.4)' : 'rgba(148,163,184,.25)';
-      x.fillRect(300, 300, 400, 140); x.strokeStyle = '#94A3B8'; x.lineWidth = 4; x.strokeRect(300, 240, 400, 200);
-      if (cold) { x.fillStyle = '#E0F2FE'; for (var k = 0; k < 6; k++) x.fillRect(320 + k * 62, 306 + (k % 2) * 14, 34, 28); }
-      if (hot) { x.strokeStyle = 'rgba(255,255,255,.5)'; x.lineWidth = 3; for (var k2 = 0; k2 < 5; k2++) { x.beginPath(); var bx = 340 + k2 * 75; x.moveTo(bx, 290); x.bezierCurveTo(bx - 14, 270, bx + 14, 250, bx, 230); x.stroke(); } }
-      // القنينة
-      x.strokeStyle = '#BAE6FD'; x.lineWidth = 6; x.beginPath();
-      x.moveTo(440, 150); x.lineTo(440, 175); x.quadraticCurveTo(370, 200, 370, 260); x.lineTo(370, 410); x.lineTo(630, 410); x.lineTo(630, 260); x.quadraticCurveTo(630, 200, 560, 175); x.lineTo(560, 150); x.stroke();
-      // الغشاء
-      x.strokeStyle = 'rgba(244,114,182,.95)'; x.fillStyle = 'rgba(244,114,182,.22)'; x.lineWidth = 5; x.beginPath(); x.moveTo(440, 150); x.quadraticCurveTo(500, 150 - film * 2, 560, 150); x.closePath(); x.fill(); x.stroke();
-      // الجزيئات
-      P.forEach(function (p) {
-        p.a += (Math.random() - .5) * 0.6; p.x += Math.cos(p.a) * sp; p.y += Math.sin(p.a) * sp;
-        if (p.x < 385) { p.x = 385; p.a = Math.PI - p.a; } if (p.x > 615) { p.x = 615; p.a = Math.PI - p.a; }
-        var topY = p.x > 450 && p.x < 550 ? 160 - film * 1.2 : 200; if (p.y < topY) { p.y = topY; p.a = -p.a; } if (p.y > 398) { p.y = 398; p.a = -p.a; }
-        x.fillStyle = hot ? '#FCA5A5' : cold ? '#93C5FD' : '#FDE68A'; x.beginPath(); x.arc(p.x, p.y, 7, 0, 6.3); x.fill();
+      var e = +ct.querySelector('#tE').value; ct.querySelector('#tV').textContent = n(e) + ' °س';
+      var g = x.createLinearGradient(0, 0, 1000, 0); g.addColorStop(0, e < 10 ? '#BFDBFE' : '#FEF3C7'); g.addColorStop(1, e > 32 ? '#FECACA' : '#E0F2FE'); x.fillStyle = g; x.fillRect(0, 0, 1000, 400);
+      A.forEach(function (a, i) {
+        var target = a[2] ? (a[1] === 'الطائر' ? 41 : 37) : e; cur[i] += (target - cur[i]) * .03;
+        var X = 900 - i * 200; E(x, a[0], X, 150, 74); T(x, a[1], X, 200, 22, '#0F172A');
+        x.fillStyle = '#fff'; x.fillRect(X - 14, 220, 28, 140); x.strokeStyle = '#334155'; x.lineWidth = 2; x.strokeRect(X - 14, 220, 28, 140);
+        var h = Math.max(0, Math.min(1, (cur[i] + 5) / 50)) * 136; x.fillStyle = a[2] ? '#DC2626' : '#2563EB'; x.fillRect(X - 11, 358 - h, 22, h);
+        T(x, a[1] === 'الطائر' ? 'ثابتة' : n(Math.round(cur[i])) + '°', X, 388, 20, a[2] ? '#B91C1C' : '#1D4ED8');
       });
-      txt(x, 'جزيئات الهواء', 800, 230, 26, '#FDE68A');
-      txt(x, n(T) + ' °س', 160, 230, 40, hot ? '#FCA5A5' : cold ? '#93C5FD' : '#fff');
-      txt(x, hot ? 'تتحرك أسرع وتتباعد' : cold ? 'تتحرك أبطأ وتتقارب' : 'حركة معتدلة', 160, 285, 26, '#fff');
-      ct.querySelector('#gR').innerHTML = 'الغشاء: <b>' + (film > 6 ? 'ينتفخ إلى الخارج ⬆' : film < -6 ? 'ينسحب إلى الداخل ⬇' : 'مستوٍ تقريبًا') + '</b>';
+      ct.querySelector('#tR').innerHTML = 'الأسماك والبرمائيات والزواحف <b>متغيرة درجة الحرارة</b> (أزرق): تتبع حرارة البيئة. الطيور والثدييات <b>ثابتة درجة الحرارة</b> (أحمر): الإنسان نحو 37 °س مهما تغيرت البيئة.' + (e < 5 ? ' ❄ في البرد الشديد تدخل البرمائيات <b>البيات الشتوي</b>.' : e > 38 ? ' ☀ في الحر الجاف تدخل <b>البيات الصيفي</b>.' : '');
     });
   };
 
-  // ٢) طبقات الغلاف الجوي: مستكشف الارتفاع
-  S.layers = function (c, b, U) {
-    var cv = mk(c, 1000, 520), x = cv.getContext('2d');
-    var ct = ctrl(c, '<label>🎈 الارتفاع <input type="range" min="0" max="1000" value="40" id="lA"></label><div class="read" id="lR"></div>');
-    var rg = ct.querySelector('#lA');
-    function alt(v) { v = +v; return v <= 800 ? v * 120 / 800 : 120 + (v - 800) * 480 / 200; } // كم
-    function yOf(h) { return h <= 120 ? 500 - h * 400 / 120 : 100 - (h - 120) * 80 / 480; }
-    function temp(h) { if (h <= 10) return 15 - 6.5 * h; if (h <= 50) return -50 + (h - 10) * 1.2; if (h <= 85) return -2 - (h - 50) * 88 / 35; if (h <= 500) return -90 + (h - 85) * 1790 / 415; return 1700; }
-    var LY = [[0, 10, 'التروبوسفير', '#38BDF8', 'تحدث فيها الغيوم وتغيرات الطقس، وتضم ثلاثة أرباع مادة الغلاف الجوي.'], [10, 50, 'الستراتوسفير', '#818CF8', 'يتركز فيها الأوزون الذي يمتص الأشعة فوق البنفسجية فترتفع حرارتها.'], [50, 85, 'الميزوسفير', '#A78BFA', 'أبرد الطبقات؛ لقلة الأوزون فيها.'], [85, 500, 'الثيرموسفير', '#F472B6', 'ترتفع حرارتها إلى أكثر من ١٧٠٠ °س، وفيها جزء من الأيونوسفير الذي يعكس أمواج AM.'], [500, 600, 'الإكسوسفير', '#334155', 'ذرات قليلة جدًا، وتتلاشى عند حدود الفضاء.']];
-    var t0 = 0;
+  // ٢) مثانة العوم: املأ أو أفرغ المثانة لتغوص السمكة أو تطفو
+  S.swimbladder = function (c) {
+    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
+    var ct = ctrl(c, '<button class="btn sm" id="bF">⬆ املأ المثانة بالغاز</button><button class="btn sm" id="bE">⬇ أفرغ المثانة</button><div class="read" id="bR"></div>');
+    var gas = .5, y = 200, held = 0;
+    ct.querySelector('#bF').onclick = function () { gas = Math.min(1, gas + .25); };
+    ct.querySelector('#bE').onclick = function () { gas = Math.max(0, gas - .25); };
     return loop(function (t) {
-      var h = alt(rg.value), L = LY.filter(function (l) { return h >= l[0] && h <= l[1]; })[0] || LY[4];
-      x.clearRect(0, 0, 1000, 520);
-      LY.forEach(function (l) { var y1 = yOf(l[1]), y0 = yOf(l[0]); x.fillStyle = l[3]; x.globalAlpha = l === L ? .55 : .22; x.fillRect(420, y1, 560, y0 - y1); x.globalAlpha = 1; txt(x, l[2], 700, (y0 + y1) / 2 + 9, l === L ? 30 : 22, l === L ? '#fff' : '#CBD5E1'); x.strokeStyle = 'rgba(255,255,255,.35)'; x.beginPath(); x.moveTo(420, y1); x.lineTo(980, y1); x.stroke(); });
-      // منحنى الحرارة (الجزء حتى ١٢٠ كم)
-      x.fillStyle = '#0F2740'; x.fillRect(20, 20, 380, 490);
-      x.strokeStyle = 'rgba(255,255,255,.2)'; x.lineWidth = 1; for (var g = -100; g <= 40; g += 20) { var gx = 60 + (g + 100) * 2.2; x.beginPath(); x.moveTo(gx, 100); x.lineTo(gx, 500); x.stroke(); }
-      txt(x, 'درجة الحرارة (°س) ← الارتفاع', 210, 60, 20, '#FDE68A');
-      x.strokeStyle = '#EF4444'; x.lineWidth = 5; x.beginPath();
-      for (var hh = 0; hh <= 120; hh += 1) { var tt = Math.min(40, temp(hh)); var px = 60 + (tt + 100) * 2.2, py = yOf(hh); if (hh) x.lineTo(px, py); else x.moveTo(px, py); } x.stroke();
-      txt(x, '↑ تستمر بالارتفاع حتى ١٧٠٠ °س', 210, 92, 18, '#FCA5A5');
-      // البالون
-      var y = yOf(h), tc = temp(h), dx = Math.sin(t / 500) * 6;
-      x.fillStyle = '#FACC15'; x.beginPath(); x.arc(560 + dx, y - 22, 18, 0, 6.3); x.fill(); x.strokeStyle = '#FACC15'; x.lineWidth = 2; x.beginPath(); x.moveTo(560 + dx, y - 4); x.lineTo(560 + dx, y + 10); x.stroke();
-      if (h <= 120) { x.fillStyle = '#FACC15'; x.beginPath(); x.arc(60 + (Math.min(40, tc) + 100) * 2.2, y, 10, 0, 6.3); x.fill(); }
-      ct.querySelector('#lR').innerHTML = 'الارتفاع: <b>' + n(Math.round(h)) + ' كم</b> · الطبقة: <b>' + L[2] + '</b> · الحرارة ≈ <b>' + n(Math.round(tc)) + ' °س</b><br>' + L[4];
+      var g = x.createLinearGradient(0, 0, 0, 400); g.addColorStop(0, '#7DD3FC'); g.addColorStop(1, '#0C4A6E'); x.fillStyle = g; x.fillRect(0, 0, 1000, 400);
+      var vy = (.5 - gas) * 2; y = Math.max(60, Math.min(340, y + vy));
+      var X = 500 + Math.sin(t / 900) * 160;
+      x.save(); x.translate(X, y);
+      x.fillStyle = '#F59E0B'; x.beginPath(); x.ellipse(0, 0, 110, 46, 0, 0, 6.3); x.fill();
+      x.beginPath(); x.moveTo(-100, 0); x.lineTo(-160, -40); x.lineTo(-160, 40); x.closePath(); x.fill();
+      x.fillStyle = 'rgba(255,255,255,.85)'; x.beginPath(); x.ellipse(-10, -6, 20 + gas * 45, 6 + gas * 14, 0, 0, 6.3); x.fill(); x.strokeStyle = '#94A3B8'; x.stroke();
+      x.fillStyle = '#111'; x.beginPath(); x.arc(70, -12, 7, 0, 6.3); x.fill();
+      x.restore();
+      T(x, 'مثانة العوم', X - 10, y - 60, 18, '#fff');
+      T(x, 'العمق: ' + n(Math.round((y - 60) / 2.8)) + ' م', 110, 50, 24, '#0C4A6E');
+      ct.querySelector('#bR').innerHTML = gas > .5 ? 'المثانة <b>ممتلئة بالغاز</b> فترتفع السمكة إلى أعلى ⬆' : gas < .5 ? 'المثانة <b>فارغة</b> فتغوص السمكة إلى الأعماق ⬇' : 'كمية الغاز متوازنة؛ فتبقى السمكة في عمقها. (تنتقل الغازات بين المثانة والدم.)';
     });
   };
 
-  // ٣) دورة الماء التفاعلية
-  S.water = function (c, b, U) {
-    var cv = mk(c, 1000, 470), x = cv.getContext('2d');
-    var ct = ctrl(c, '<label>☀ شدة أشعة الشمس <input type="range" min="0" max="100" value="60" id="wS"></label><div class="read" id="wR"></div>');
-    var rg = ct.querySelector('#wS'), V = [], R = [], cloud = 10, runoff = [], counts = { e: 0, t: 0, c: 0, p: 0 };
+  // ٣) التحول في الضفدع
+  S.frog = function (c) {
+    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
+    var ST = [['البيض في الماء', 'تضع الأنثى البيض في الماء (إخصاب خارجي).', 'خياشيم: —'], ['أبو ذنيبة', 'يفقس البيض عن صغار بلا أرجل.', 'يتنفس بالخياشيم'], ['ظهور الأرجل', 'تظهر الأرجل الخلفية ثم الأمامية، ويبدأ الذيل في الاختفاء.', 'تتكون الرئات'], ['الضفدع البالغ', 'يعيش على اليابسة ويعود إلى الماء ليتكاثر.', 'يتنفس برئتيه وجلده']];
+    var ct = ctrl(c, '<label>المرحلة <input type="range" id="fS" min="0" max="3" value="0"></label><label>حرارة الماء <input type="range" id="fT" min="10" max="25" value="20"></label><div class="read" id="fR"></div>');
     return loop(function (t) {
-      var sun = +rg.value / 100;
-      x.clearRect(0, 0, 1000, 470);
-      var sky = x.createLinearGradient(0, 0, 0, 470); sky.addColorStop(0, '#0EA5E9'); sky.addColorStop(1, '#BAE6FD'); x.fillStyle = sky; x.fillRect(0, 0, 1000, 470);
-      x.fillStyle = 'rgba(250,204,21,' + (0.3 + sun * 0.7) + ')'; x.beginPath(); x.arc(90, 70, 40 + sun * 15, 0, 6.3); x.fill();
-      x.fillStyle = '#0369A1'; x.fillRect(0, 380, 480, 90); // البحر
-      x.fillStyle = '#65A30D'; x.beginPath(); x.moveTo(480, 470); x.lineTo(480, 380); x.lineTo(700, 300); x.lineTo(820, 200); x.lineTo(1000, 260); x.lineTo(1000, 470); x.fill();
-      for (var tr = 0; tr < 3; tr++) { var tx0 = 560 + tr * 60, ty0 = 360 - tr * 30; x.fillStyle = '#78350F'; x.fillRect(tx0 - 4, ty0, 8, 26); x.fillStyle = '#15803D'; x.beginPath(); x.arc(tx0, ty0, 20, 0, 6.3); x.fill(); }
-      if (Math.random() < sun * 0.5) { V.push({ x: 40 + Math.random() * 420, y: 378, k: 'e' }); counts.e++; }
-      if (Math.random() < sun * 0.15) { V.push({ x: 560 + Math.random() * 120, y: 320, k: 't' }); counts.t++; }
-      V = V.filter(function (p) { p.y -= 1.2 + sun; p.x += (620 - p.x) * 0.004; if (p.y < 110) { cloud += 0.6; counts.c++; return false; } x.fillStyle = p.k === 't' ? 'rgba(134,239,172,.9)' : 'rgba(255,255,255,.85)'; x.beginPath(); x.arc(p.x, p.y, 4, 0, 6.3); x.fill(); return true; });
-      cloud = Math.min(cloud, 100);
-      var cs = 0.5 + cloud / 70, gray = Math.round(255 - cloud * 1.3);
-      x.fillStyle = 'rgb(' + gray + ',' + gray + ',' + (gray + 10 > 255 ? 255 : gray + 10) + ')';
-      [[560, 90, 50], [610, 70, 60], [670, 92, 48], [520, 100, 36], [720, 100, 34]].forEach(function (q) { x.beginPath(); x.arc(q[0], q[1], q[2] * cs * 0.8, 0, 6.3); x.fill(); });
-      if (cloud > 60) { for (var k = 0; k < 3; k++) R.push({ x: 500 + Math.random() * 260, y: 130 }); cloud -= 0.5; counts.p++; }
-      R = R.filter(function (p) { p.y += 9; x.strokeStyle = '#1D4ED8'; x.lineWidth = 3; x.beginPath(); x.moveTo(p.x, p.y); x.lineTo(p.x - 2, p.y + 12); x.stroke(); if (p.y > 300 + (p.x > 700 ? -60 : 0)) { if (Math.random() < 0.08) runoff.push({ x: p.x, y: 330 }); return false; } return true; });
-      runoff = runoff.filter(function (p) { p.x -= 3; p.y = p.x > 480 ? 380 - (p.x - 480) * 0.36 : 380; x.fillStyle = '#38BDF8'; x.beginPath(); x.arc(p.x, p.y - 4, 5, 0, 6.3); x.fill(); return p.x > 470; });
-      txt(x, 'تبخّر ↑', 250, 350, 26, '#fff'); txt(x, 'نتح ↑', 620, 300, 24, '#14532D'); txt(x, 'تكاثف', 620, 40, 26, '#0F172A'); if (cloud > 55) txt(x, 'هطول ↓', 860, 160, 26, '#1E3A8A'); txt(x, '← جريان سطحي', 760, 440, 22, '#fff');
-      ct.querySelector('#wR').innerHTML = 'كثافة الغيمة: <b>' + n(Math.round(cloud)) + '٪</b> · ' + (sun < 0.15 ? 'الشمس ضعيفة: يكاد التبخر يتوقف!' : cloud > 60 ? 'الغيمة ثقيلة: هطول 🌧' : 'البخار يصعد ويتكاثف…');
-    });
-  };
-
-  // ٤) الحمل والرياح بين اليابسة والبحر
-  S.wind = function (c, b, U) {
-    var cv = mk(c, 1000, 440), x = cv.getContext('2d');
-    var ct = ctrl(c, '<div class="seg"><button data-m="day" aria-pressed="true">☀ نهار</button><button data-m="night">🌙 ليل</button></div><label>فرق درجة الحرارة <input type="range" min="0" max="20" value="10" id="dT"></label><div class="read" id="wdR"></div>');
-    var mode = 'day', P = [], ang = 0;
-    ct.querySelectorAll('[data-m]').forEach(function (b2) { b2.onclick = function () { mode = b2.dataset.m; ct.querySelectorAll('[data-m]').forEach(function (y) { y.setAttribute('aria-pressed', y === b2); }); }; });
-    for (var i = 0; i < 70; i++) P.push({ t: Math.random() });
-    function path(tt, dir) { // مسار حلقي: نصف بحر ونصف يابسة
-      var cx = 500, cy = 220, rx = 330, ry = 120, a = tt * 6.283 * dir; return [cx + rx * Math.cos(a), cy + ry * Math.sin(a)];
-    }
-    return loop(function () {
-      var d = +ct.querySelector('#dT').value, sp = d / 20;
-      var landHot = mode === 'day';
-      x.clearRect(0, 0, 1000, 440);
-      x.fillStyle = mode === 'day' ? '#7DD3FC' : '#1E293B'; x.fillRect(0, 0, 1000, 440);
-      x.fillStyle = '#0369A1'; x.fillRect(0, 360, 500, 80); x.fillStyle = '#A16207'; x.fillRect(500, 360, 500, 80);
-      txt(x, 'البحر', 250, 410, 28, '#fff'); txt(x, 'اليابسة', 750, 410, 28, '#fff');
-      var hotX = landHot ? 750 : 250, coldX = landHot ? 250 : 750;
-      txt(x, 'L', hotX, 330, 56, '#DC2626'); txt(x, 'ضغط منخفض (هواء ساخن يصعد)', hotX, 290, 20, '#fff');
-      txt(x, 'H', coldX, 330, 56, '#1D4ED8'); txt(x, 'ضغط مرتفع (هواء بارد ينزل)', coldX, 290, 20, '#fff');
-      // الحلقة: صعود فوق الساخن، نزول فوق البارد، رياح سطحية من البارد إلى الساخن
-      var dir = landHot ? -1 : 1;
-      P.forEach(function (p) { p.t = (p.t + 0.0015 + sp * 0.006) % 1; var q = path(p.t, dir); var hotSide = (q[0] > 500) === landHot; x.fillStyle = hotSide ? '#FCA5A5' : '#BFDBFE'; x.beginPath(); x.arc(q[0], q[1], 6, 0, 6.3); x.fill(); });
-      // سهم الرياح السطحية
-      var len = 60 + sp * 260; x.strokeStyle = '#FACC15'; x.fillStyle = '#FACC15'; x.lineWidth = 10;
-      var x0 = 500 - (landHot ? len / 2 : -len / 2), x1 = 500 + (landHot ? len / 2 : -len / 2);
-      if (d > 0) { x.beginPath(); x.moveTo(x0, 345); x.lineTo(x1, 345); x.stroke(); x.beginPath(); x.moveTo(x1 + (landHot ? 16 : -16), 345); x.lineTo(x1, 330); x.lineTo(x1, 360); x.fill(); }
-      // أنيمومتر
-      ang += sp * 0.35; var ax = 500, ay = 120; x.strokeStyle = '#fff'; x.lineWidth = 4; for (var k = 0; k < 3; k++) { var a = ang + k * 2.094; x.beginPath(); x.moveTo(ax, ay); x.lineTo(ax + Math.cos(a) * 46, ay + Math.sin(a) * 18); x.stroke(); x.fillStyle = '#F97316'; x.beginPath(); x.arc(ax + Math.cos(a) * 46, ay + Math.sin(a) * 18, 9, 0, 6.3); x.fill(); }
-      x.fillStyle = '#fff'; x.fillRect(ax - 3, ay, 6, 70); txt(x, 'أنيمومتر', ax, ay + 100, 20, '#fff');
-      var spd = Math.round(d * 2.5);
-      ct.querySelector('#wdR').innerHTML = (d === 0 ? 'لا فرق في الحرارة ⇐ <b>لا رياح تقريبًا</b>' : (landHot ? 'نسيم بحري: الرياح من البحر نحو اليابسة' : 'نسيم بري: الرياح من اليابسة نحو البحر') + ' · السرعة ≈ <b>' + n(spd) + ' كم/ساعة</b>');
-    });
-  };
-
-  // ٥) الرطوبة النسبية ودرجة الندى
-  S.humid = function (c, b, U) {
-    var cv = mk(c, 1000, 430), x = cv.getContext('2d');
-    var CAP = [[0, 4.8], [5, 6.8], [10, 9.4], [15, 12.8], [20, 17.3], [25, 23], [30, 30.4], [35, 39.6], [40, 51.1], [45, 65.4], [50, 83]];
-    function cap(T) { for (var i = 1; i < CAP.length; i++) if (T <= CAP[i][0]) { var a = CAP[i - 1], b2 = CAP[i]; return a[1] + (b2[1] - a[1]) * (T - a[0]) / (b2[0] - a[0]); } return 83; }
-    function dew(v) { for (var T = 0; T <= 50; T += 0.1) if (cap(T) >= v) return T; return 50; }
-    var ct = ctrl(c, '<label>🌡 درجة الحرارة <input type="range" min="0" max="50" value="30" id="hT"></label><label>💧 بخار الماء (جم/م³) <input type="range" min="1" max="40" value="16" id="hV"></label><button class="btn y sm" id="hC">❄ برّد الهواء حتى درجة الندى</button><div class="read" id="hR"></div>');
-    var rT = ct.querySelector('#hT'), rV = ct.querySelector('#hV'), cooling = false, drops = [];
-    ct.querySelector('#hC').onclick = function () { cooling = true; };
-    return loop(function () {
-      var T = +rT.value, v = +rV.value;
-      if (cooling) { var dp = dew(v); if (T > Math.ceil(dp)) { rT.value = T - 0.2 < dp ? dp : (T - 0.2); T = +rT.value; } else cooling = false; }
-      var C = cap(T), rh = Math.min(100, v / C * 100), sat = v >= C - 0.05;
-      x.clearRect(0, 0, 1000, 430);
-      // أعمدة السعة
-      CAP.forEach(function (p) { var bx = 60 + p[0] * 9, bh = p[1] * 3.6; x.fillStyle = Math.abs(p[0] - T) < 2.5 ? '#38BDF8' : 'rgba(56,189,248,.35)'; x.fillRect(bx, 360 - bh, 30, bh); txt(x, n(p[0]), bx + 15, 392, 18, '#CBD5E1'); });
-      txt(x, 'أقصى بخار يحمله الهواء (جم/م³) حسب درجة الحرارة (°س)', 290, 30, 20, '#FDE68A');
-      var vy = 360 - v * 3.6; x.strokeStyle = '#FACC15'; x.setLineDash([10, 8]); x.lineWidth = 3; x.beginPath(); x.moveTo(50, vy); x.lineTo(560, vy); x.stroke(); x.setLineDash([]); txt(x, 'البخار الموجود', 470, vy - 10, 18, '#FACC15');
-      // مقياس الرطوبة
-      x.fillStyle = '#1E293B'; x.fillRect(640, 60, 320, 46); x.fillStyle = sat ? '#22C55E' : '#38BDF8'; x.fillRect(640, 60, 320 * rh / 100, 46);
-      txt(x, 'الرطوبة النسبية ' + n(Math.round(rh)) + '٪', 800, 94, 26, '#fff');
-      // صندوق الهواء
-      x.strokeStyle = '#94A3B8'; x.lineWidth = 3; x.strokeRect(660, 140, 280, 220);
-      if (sat) { if (drops.length < 90) drops.push({ x: 670 + Math.random() * 260, y: 150 + Math.random() * 200 }); } else drops = [];
-      drops.forEach(function (d) { x.fillStyle = 'rgba(226,232,240,.95)'; x.beginPath(); x.arc(d.x, d.y, 7, 0, 6.3); x.fill(); });
-      txt(x, sat ? 'مشبع: تكاثف ☁' : 'غير مشبع', 800, 395, 24, sat ? '#86EFAC' : '#fff');
-      ct.querySelector('#hR').innerHTML = 'يستطيع الهواء عند ' + n(T.toFixed ? Math.round(T) : T) + ' °س حمل نحو <b>' + n(C.toFixed(1)) + ' جم/م³</b> · الرطوبة النسبية = ' + n(v) + ' ÷ ' + n(C.toFixed(1)) + ' × ١٠٠ ≈ <b>' + n(Math.round(rh)) + '٪</b> · درجة الندى ≈ <b>' + n(dew(v).toFixed(0)) + ' °س</b>';
-    });
-  };
-
-  // ٦) الجبهات الهوائية
-  S.fronts = function (c, b, U) {
-    var cv = mk(c, 1000, 450), x = cv.getContext('2d');
-    var ct = ctrl(c, '<div class="seg"><button data-f="cold" aria-pressed="true">❄ جبهة باردة</button><button data-f="warm">🔥 جبهة دافئة</button><button data-f="stat">⏸ جبهة ثابتة</button></div><button class="btn y sm" id="fP">▶ تشغيل</button><div class="read" id="fR"></div>');
-    var kind = 'cold', pos = 0, play = false, t = 0;
-    ct.querySelectorAll('[data-f]').forEach(function (b2) { b2.onclick = function () { kind = b2.dataset.f; pos = 0; play = false; ct.querySelector('#fP').textContent = '▶ تشغيل'; ct.querySelectorAll('[data-f]').forEach(function (y) { y.setAttribute('aria-pressed', y === b2); }); }; });
-    ct.querySelector('#fP').onclick = function () { play = !play; if (pos >= 1) pos = 0; this.textContent = play ? '⏸ إيقاف' : '▶ تشغيل'; };
-    var INFO = { cold: ['كتلة باردة كثيفة تندفع أسفل الكتلة الدافئة وترفعها بسرعة', 'غيوم ركامية وعواصف قصيرة وأمطار غزيرة', 'تصفو السماء وتنخفض الحرارة', 22, 12], warm: ['كتلة دافئة تنزلق ببطء فوق الكتلة الباردة', 'غيوم ريشية عالية ثم أمطار منتظمة طويلة فوق منطقة واسعة', 'تصفو السماء وترتفع الحرارة', 12, 22], stat: ['كتلتان تتقابلان دون أن تتقدم إحداهما على الأخرى', 'غيوم وأمطار مستمرة على طول الجبهة عدة أيام', 'تبقى الأحوال كما هي مدة طويلة', 16, 16] };
-    return loop(function () {
-      t++; if (play && kind !== 'stat') { pos += 0.0025; if (pos >= 1) { pos = 1; play = false; ct.querySelector('#fP').textContent = '↺ إعادة'; } } if (play && kind === 'stat') pos = Math.min(1, pos + 0.0025);
-      var I = INFO[kind], fx = kind === 'stat' ? 500 : kind === 'cold' ? 150 + pos * 650 : 850 - pos * 650;
-      x.clearRect(0, 0, 1000, 450);
-      x.fillStyle = '#FECACA'; x.fillRect(0, 0, 1000, 400); // دافئ
-      x.fillStyle = '#BFDBFE'; x.beginPath();
-      if (kind === 'cold') { x.moveTo(0, 400); x.lineTo(0, 120); x.quadraticCurveTo(fx - 60, 130, fx, 400); }
-      else if (kind === 'warm') { x.moveTo(1000, 400); x.lineTo(1000, 300); x.quadraticCurveTo(fx + 250, 330, fx, 400); x.lineTo(1000, 400); }
-      else { x.moveTo(0, 400); x.lineTo(0, 60); x.quadraticCurveTo(420, 90, 500, 400); }
-      x.closePath(); x.fill();
-      x.strokeStyle = kind === 'warm' ? '#DC2626' : kind === 'cold' ? '#1D4ED8' : '#7C3AED'; x.lineWidth = 6; x.stroke();
-      txt(x, 'كتلة باردة', kind === 'warm' ? 900 : 120, 360, 26, '#1E3A8A'); txt(x, 'كتلة دافئة', kind === 'warm' ? 120 : 880, 360, 26, '#991B1B');
-      // سهم الحركة
-      var ay = 250; x.fillStyle = kind === 'warm' ? '#DC2626' : '#1D4ED8';
-      if (kind !== 'stat') { var ax = kind === 'cold' ? fx - 140 : fx + 40; x.fillRect(ax, ay, 100, 12); x.beginPath(); if (kind === 'cold') { x.moveTo(ax + 120, ay + 6); x.lineTo(ax + 96, ay - 12); x.lineTo(ax + 96, ay + 24); } else { x.moveTo(ax - 20, ay + 6); x.lineTo(ax + 4, ay - 12); x.lineTo(ax + 4, ay + 24); } x.fill(); }
-      // غيوم وأمطار
-      var cx = kind === 'stat' ? 470 : kind === 'cold' ? fx + 20 : fx + 120, cw = kind === 'cold' ? 1.4 : 1;
-      x.fillStyle = kind === 'cold' ? '#64748B' : '#94A3B8';
-      [[0, 0, 50], [45, -25, 60], [95, 0, 48], [-45, 8, 40]].forEach(function (q) { x.beginPath(); x.arc(cx + q[0] * cw, (kind === 'cold' ? 90 : 120) + q[1] * cw, q[2] * cw, 0, 6.3); x.fill(); });
-      if (kind === 'warm') { x.fillStyle = 'rgba(255,255,255,.8)'; for (var k = 0; k < 4; k++) x.fillRect(fx + 300 + k * 90, 40 + k * 6, 70, 6); txt(x, 'غيوم ريشية', fx + 430, 30, 18, '#7F1D1D'); }
-      x.strokeStyle = '#1D4ED8'; x.lineWidth = 2; for (var r = 0; r < (kind === 'cold' ? 26 : 16); r++) { var rx = cx - 60 + ((r * 37 + t * 3) % (kind === 'warm' ? 260 : 170)), ry = 150 + ((r * 53 + t * 9) % 220); x.beginPath(); x.moveTo(rx, ry); x.lineTo(rx - 3, ry + 14); x.stroke(); }
-      if (kind === 'cold' && t % 90 < 6) { x.strokeStyle = '#FACC15'; x.lineWidth = 4; x.beginPath(); x.moveTo(cx, 130); x.lineTo(cx - 20, 190); x.lineTo(cx + 5, 200); x.lineTo(cx - 15, 270); x.stroke(); }
-      // المدينة ومقياس الحرارة
-      x.fillStyle = '#334155'; [[480, 40], [520, 60], [560, 35]].forEach(function (h) { x.fillRect(h[0], 400 - h[1], 32, h[1]); });
-      var passed = kind === 'cold' ? fx > 560 : kind === 'warm' ? fx < 480 : false, Tm = passed ? I[4] : I[3];
-      x.fillStyle = '#0F172A'; x.fillRect(0, 400, 1000, 50); txt(x, '🏙 المدينة: ' + n(Tm) + ' °س — ' + (kind === 'stat' ? 'أمطار مستمرة' : passed ? 'بعد مرور الجبهة' : pos > 0 ? 'الجبهة تقترب' : 'قبل وصول الجبهة'), 520, 435, 24, '#FDE68A');
-      ct.querySelector('#fR').innerHTML = '<b>' + I[0] + '</b><br>الطقس عند الجبهة: ' + I[1] + ' · بعد مرورها: ' + I[2];
-    });
-  };
-
-  // ٧) تجربة تكوين مركز ضغط منخفض (افتراضية)
-  S.candle = function (c, b, U) {
-    var cv = mk(c, 1000, 440), x = cv.getContext('2d');
-    var ct = ctrl(c, '<button class="btn sm" id="cA">١ أشعل الشمعة 🔥</button><button class="btn sm" id="cB" disabled>٢ اقلب الكأس فوقها 🥛</button><button class="btn gh sm" id="cR">↺ إعادة</button><div class="read" id="cRd"></div>');
-    var st = 0, t = 0, glassY = -200, water = 0, flame = 1, bubbles = [];
-    var A = ct.querySelector('#cA'), Bb = ct.querySelector('#cB');
-    A.onclick = function () { st = 1; A.disabled = true; Bb.disabled = false; };
-    Bb.onclick = function () { st = 2; t = 0; Bb.disabled = true; };
-    ct.querySelector('#cR').onclick = function () { st = 0; t = 0; glassY = -200; water = 0; flame = 1; bubbles = []; A.disabled = false; Bb.disabled = true; };
-    return loop(function () {
-      t++; x.clearRect(0, 0, 1000, 440);
-      // الصحن والماء الملون
-      x.fillStyle = '#E2E8F0'; x.fillRect(250, 360, 500, 20);
-      var outW = 340 - water * 0.15; x.fillStyle = 'rgba(59,130,246,.75)'; x.fillRect(260, outW, 480, 360 - outW);
-      // الشمعة
-      x.fillStyle = '#FEF3C7'; x.fillRect(485, 270, 30, 90);
-      if (st >= 1 && flame > 0.02) { var fh = 34 * flame * (0.9 + Math.random() * 0.2); x.fillStyle = 'rgba(251,146,60,.95)'; x.beginPath(); x.ellipse(500, 262 - fh / 2, 10 * flame, fh / 2, 0, 0, 6.3); x.fill(); x.fillStyle = '#FDE047'; x.beginPath(); x.ellipse(500, 264 - fh / 3, 5 * flame, fh / 4, 0, 0, 6.3); x.fill(); }
-      // الكأس
-      if (st === 2) { glassY = Math.min(110, glassY + 8); if (glassY >= 110) { if (t < 260) flame = Math.max(0, 1 - t / 220); if (t < 90 && t % 12 === 0) bubbles.push({ x: 405 + Math.random() * 10, y: 345 }); if (flame === 0) water = Math.min(150, water + 0.7); } }
-      if (st === 2) {
-        var inY = 345 - water; x.fillStyle = 'rgba(59,130,246,.75)'; x.fillRect(405, inY, 190, 360 - inY);
-        x.strokeStyle = 'rgba(186,230,253,.95)'; x.lineWidth = 6; x.beginPath(); x.moveTo(400, glassY + 240); x.lineTo(400, glassY); x.lineTo(600, glassY); x.lineTo(600, glassY + 240); x.stroke();
-        bubbles = bubbles.filter(function (p) { p.x -= 2; p.y -= 2; x.strokeStyle = '#fff'; x.lineWidth = 2; x.beginPath(); x.arc(p.x, p.y, 6, 0, 6.3); x.stroke(); return p.y > 300; });
+      var k = +ct.querySelector('#fS').value, tw = +ct.querySelector('#fT').value;
+      x.fillStyle = '#ECFCCB'; x.fillRect(0, 0, 1000, 400); x.fillStyle = '#7DD3FC'; x.fillRect(0, 230, 1000, 170);
+      for (var i = 0; i < 4; i++) {
+        var X = 880 - i * 250, on = i <= k; x.globalAlpha = on ? 1 : .25;
+        if (i === 0) { x.fillStyle = '#1E293B'; for (var e = 0; e < 14; e++) { x.beginPath(); x.arc(X - 40 + (e % 5) * 20, 290 + Math.floor(e / 5) * 18, 6, 0, 6.3); x.fill(); } }
+        if (i === 1) { x.fillStyle = '#44403C'; x.beginPath(); x.ellipse(X, 300, 26, 18, 0, 0, 6.3); x.fill(); x.beginPath(); x.moveTo(X - 20, 300); x.quadraticCurveTo(X - 60, 300 + Math.sin(t / 150) * 14, X - 90, 300); x.lineTo(X - 20, 306); x.fill(); }
+        if (i === 2) { x.fillStyle = '#4D7C0F'; x.beginPath(); x.ellipse(X, 290, 34, 22, 0, 0, 6.3); x.fill(); x.fillRect(X - 70, 288, 40, 8); x.strokeStyle = '#4D7C0F'; x.lineWidth = 6; x.beginPath(); x.moveTo(X - 20, 305); x.lineTo(X - 30, 330); x.moveTo(X + 10, 305); x.lineTo(X + 18, 330); x.stroke(); }
+        if (i === 3) { E(x, '🐸', X, 210, 80); }
+        T(x, ST[i][0], X, 380, 20, '#0F172A'); if (i < 3) T(x, '←', X - 125, 300, 34, '#166534');
+        x.globalAlpha = 1;
       }
-      // مقياسا الضغط
-      var inside = st === 2 && glassY >= 110 ? (flame > 0 && t < 90 ? 'أعلى قليلًا (تمدد)' : flame === 0 ? 'أقل (ضغط منخفض)' : 'يتغير') : '—';
-      txt(x, 'الضغط داخل الكأس: ' + inside, 800, 120, 22, '#FDE68A'); txt(x, 'الضغط الجوي خارج الكأس: ثابت', 800, 160, 22, '#BFDBFE');
-      if (st === 2 && flame === 0 && water > 10) { x.fillStyle = '#FACC15'; for (var k = 0; k < 2; k++) { var ax = 300 + k * 380; x.beginPath(); x.moveTo(ax, 330); x.lineTo(ax + (k ? -40 : 40), 330); x.lineTo(ax + (k ? -40 : 40), 318); x.lineTo(ax + (k ? -60 : 60), 336); x.lineTo(ax + (k ? -40 : 40), 354); x.lineTo(ax + (k ? -40 : 40), 342); x.lineTo(ax, 342); x.fill(); } }
-      var msg = st === 0 ? 'ابدأ بإشعال الشمعة.' : st === 1 ? 'الشمعة مشتعلة؛ الآن اقلب الكأس فوقها.' : glassY < 110 ? 'تُنزَل الكأس…' : flame > 0 ? 'الهواء داخل الكأس يسخن ويتمدد فيخرج بعضه (فقاعات).' : 'انطفأت الشمعة: برد الهواء وانكمش فقلّ ضغطه، فدفع الضغط الخارجي الماء إلى داخل الكأس ⬆';
-      ct.querySelector('#cRd').innerHTML = msg;
+            ct.querySelector('#fR').innerHTML = '<b>' + ST[k][0] + ':</b> ' + ST[k][1] + ' · ' + ST[k][2] + '. <br>كلما انخفضت حرارة الماء أو قلّ الغذاء <b>طالت</b> مدة التحول' + (tw < 15 ? ' (الماء بارد الآن ⏳).' : '.');
     });
   };
 
-  // ٨) دوران الرياح حول المرتفع والمنخفض
-  S.cyclone = function (c, b, U) {
-    var cv = mk(c, 1000, 440), x = cv.getContext('2d');
-    var ct = ctrl(c, '<div class="seg"><button data-p="H" aria-pressed="true">H ضغط مرتفع</button><button data-p="L">L ضغط منخفض</button></div><div class="seg"><button data-h="N" aria-pressed="true">النصف الشمالي</button><button data-h="S">النصف الجنوبي</button></div><div class="read" id="cyR"></div>');
-    var P = 'H', Hm = 'N', pts = [];
-    ct.querySelectorAll('[data-p]').forEach(function (b2) { b2.onclick = function () { P = b2.dataset.p; pts = []; ct.querySelectorAll('[data-p]').forEach(function (y) { y.setAttribute('aria-pressed', y === b2); }); }; });
-    ct.querySelectorAll('[data-h]').forEach(function (b2) { b2.onclick = function () { Hm = b2.dataset.h; pts = []; ct.querySelectorAll('[data-h]').forEach(function (y) { y.setAttribute('aria-pressed', y === b2); }); }; });
-    return loop(function () {
-      x.fillStyle = P === 'H' ? '#0C4A6E' : '#1F2937'; x.fillRect(0, 0, 1000, 440);
-      if (pts.length < 120) pts.push({ r: P === 'H' ? 20 + Math.random() * 20 : 180 + Math.random() * 30, a: Math.random() * 6.28 });
-      var cw = (P === 'H') === (Hm === 'N') ? 1 : -1; // اتجاه الدوران على الشاشة (موجب = مع عقارب الساعة)
-      pts = pts.filter(function (p) { p.a += cw * 0.02; p.r += P === 'H' ? 0.9 : -0.9; var px = 500 + Math.cos(p.a) * p.r * 1.6, py = 220 + Math.sin(p.a) * p.r; x.fillStyle = P === 'H' ? '#7DD3FC' : '#E5E7EB'; x.beginPath(); x.arc(px, py, 5, 0, 6.3); x.fill(); return p.r > 8 && p.r < 220; });
-      txt(x, P, 500, 245, 72, P === 'H' ? '#60A5FA' : '#F87171');
-      txt(x, cw > 0 ? '↻ مع عقارب الساعة' : '↺ عكس عقارب الساعة', 500, 420, 28, '#FDE68A');
-      txt(x, P === 'H' ? '☀ جو صافٍ مشمس' : '🌧 جو غائم ماطر', 160, 60, 30, '#fff');
-      ct.querySelector('#cyR').innerHTML = P === 'H' ? 'تيارات <b>هابطة</b> تنتشر مبتعدة عن المركز؛ الهواء يسخن ويجف' : 'تيارات <b>صاعدة</b> تتجه نحو المركز؛ الهواء يبرد ويتكاثف بخاره';
+  // ٤) الطيران وقوة الرفع
+  S.flight = function (c) {
+    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
+    var ct = ctrl(c, '<label>مساحة الجناح <input type="range" id="wA" min="1" max="10" value="5"></label><label>سرعة الهواء <input type="range" id="wV" min="0" max="10" value="5"></label><label>وزن الجسم <input type="range" id="wM" min="1" max="10" value="5"></label><div class="read" id="wR"></div>');
+    var y = 200, P = []; for (var i = 0; i < 40; i++) P.push([Math.random() * 1000, Math.random() * 400]);
+    return loop(function (t) {
+      var A = +ct.querySelector('#wA').value, V = +ct.querySelector('#wV').value, M = +ct.querySelector('#wM').value;
+      var lift = A * V / 5, net = lift - M; y = Math.max(60, Math.min(360, y - net * .4));
+      x.fillStyle = '#E0F2FE'; x.fillRect(0, 0, 1000, 400);
+      x.strokeStyle = 'rgba(14,116,144,.35)'; x.lineWidth = 2; P.forEach(function (p) { p[0] -= V * 1.2 + .3; if (p[0] < 0) p[0] = 1000; x.beginPath(); x.moveTo(p[0], p[1]); x.lineTo(p[0] + 30, p[1]); x.stroke(); });
+      x.save(); x.translate(500, y);
+      x.fillStyle = '#78350F'; x.beginPath(); x.ellipse(0, 0, 70, 20, 0, 0, 6.3); x.fill();
+      var flap = V < 3 ? Math.sin(t / 90) * 30 : 0;
+      x.fillStyle = '#92400E'; x.beginPath(); x.moveTo(-20, 0); x.quadraticCurveTo(0, -40 - A * 9 + flap, 40, 0); x.closePath(); x.fill();
+      x.restore();
+      x.strokeStyle = '#16A34A'; x.lineWidth = 6; x.beginPath(); x.moveTo(500, y - 30); x.lineTo(500, y - 30 - lift * 12); x.stroke(); T(x, 'الرفع ↑', 560, y - 40 - lift * 6, 18, '#15803D');
+      x.strokeStyle = '#DC2626'; x.beginPath(); x.moveTo(500, y + 25); x.lineTo(500, y + 25 + M * 12); x.stroke(); T(x, 'الوزن ↓', 560, y + 40 + M * 6, 18, '#B91C1C');
+      ct.querySelector('#wR').innerHTML = (net > .3 ? '⬆ الرفع أكبر من الوزن: يرتفع الطائر.' : net < -.3 ? '⬇ الوزن أكبر من الرفع: يهبط الطائر.' : '↔ الرفع يساوي الوزن: يحلّق الطائر في مستواه.') + ' الأجنحة الكبيرة والهواء السريع يزيدان الرفع (كالعقاب)، والعظام المجوفة والأكياس الهوائية تقلل الوزن.';
     });
   };
 
-  // ٩) البرق والرعد: قدّر بُعد العاصفة
-  S.thunder = function (c, b, U) {
-    var cv = mk(c, 1000, 360), x = cv.getContext('2d');
-    var ct = ctrl(c, '<button class="btn y" id="tS">⚡ أطلق البرق</button><button class="btn" id="tH" disabled>👂 سمعتُ الرعد!</button><div class="read" id="tR">اضغط «أطلق البرق»، ثم اضغط «سمعت الرعد» فور سماع الصوت.</div>');
-    var flash = 0, t0 = 0, dist = 0, timer = null, AC = null, heard = false;
-    function boom() { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); var len = AC.sampleRate * 1.6, buf = AC.createBuffer(1, len, AC.sampleRate), d = buf.getChannelData(0); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.5); var s = AC.createBufferSource(); s.buffer = buf; var f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 400; var g = AC.createGain(); g.gain.value = 0.9; s.connect(f); f.connect(g); g.connect(AC.destination); s.start(); } catch (e) {} }
-    var S2 = ct.querySelector('#tS'), H = ct.querySelector('#tH'), R = ct.querySelector('#tR');
-    S2.onclick = function () { dist = [1, 1.5, 2, 2.5, 3][Math.floor(Math.random() * 5)]; flash = 18; t0 = performance.now(); heard = false; S2.disabled = true; H.disabled = false; R.innerHTML = 'رأيت البرق! انتظر الرعد…'; clearTimeout(timer); timer = setTimeout(boom, dist / 0.34 * 1000); };
-    H.onclick = function () { var s = (performance.now() - t0) / 1000; heard = true; H.disabled = true; S2.disabled = false; var est = s * 0.34; R.innerHTML = 'مرّ <b>' + n(s.toFixed(1)) + ' ث</b> ⇐ بُعد العاصفة ≈ ' + n(s.toFixed(1)) + ' × ٠٫٣٤ ≈ <b>' + n(est.toFixed(1)) + ' كم</b> (البعد الحقيقي ' + n(dist) + ' كم). الضوء يصلنا فورًا تقريبًا، أما الصوت فيقطع نحو ٣٤٠ م كل ثانية.'; };
+  // ٥) الأسنان ونمط التغذي
+  S.teeth = function (c) {
+    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
+    var A = [['القندس', 'h', 'قواطع كبيرة تقطع الأعشاب، وأضراس مسطحة تطحنها.'], ['أسد الجبال', 'c', 'أنياب حادة طويلة لتمزيق الفريسة.'], ['الإنسان', 'o', 'قواطع، وأنياب صغيرة، وأضراس أمامية حادة، وأضراس خلفية للطحن.']];
+    var NM = { h: 'آكل أعشاب', c: 'آكل لحوم', o: 'مزدوج التغذي' };
+    var ct = ctrl(c, '<div class="seg" role="group" aria-label="الحيوان">' + A.map(function (a, i) { return '<button data-a="' + i + '"' + (i ? '' : ' aria-pressed="true"') + '>' + a[0] + '</button>'; }).join('') + '</div><div class="seg" role="group" aria-label="نمط التغذي"><button data-g="h">آكل أعشاب</button><button data-g="c">آكل لحوم</button><button data-g="o">مزدوج التغذي</button></div><div class="read" id="tR">لاحظ الأسنان، ثم حدد نمط التغذي.</div>');
+    var k = 0, bs = seg(ct, 'a'), gs = seg(ct, 'g');
+    bs.forEach(function (b) { b.onclick = function () { k = +b.dataset.a; press(bs, b); press(gs, null); ct.querySelector('#tR').innerHTML = 'لاحظ الأسنان، ثم حدد نمط التغذي.'; }; });
+    gs.forEach(function (b) { b.onclick = function () { press(gs, b); var ok = b.dataset.g === A[k][1]; ct.querySelector('#tR').innerHTML = (ok ? '✅ صحيح: ' : '❌ بل هو ') + '<b>' + NM[A[k][1]] + '</b> — ' + A[k][2]; }; });
+    function tooth(X, Y, w, h, kind, up) { x.fillStyle = '#FEFCE8'; x.strokeStyle = '#A16207'; x.lineWidth = 2; x.beginPath(); var d = up ? 1 : -1;
+      if (kind === 'k') { x.moveTo(X, Y); x.lineTo(X + w / 2, Y + d * h); x.lineTo(X + w, Y); } else if (kind === 'm') { x.rect(X, up ? Y : Y - h, w, h); } else { x.moveTo(X, Y); x.lineTo(X + w * .1, Y + d * h); x.lineTo(X + w * .9, Y + d * h); x.lineTo(X + w, Y); }
+      x.closePath(); x.fill(); x.stroke(); }
     return loop(function () {
-      x.fillStyle = flash > 0 ? '#E0E7FF' : '#111827'; x.fillRect(0, 0, 1000, 360);
-      x.fillStyle = '#374151'; [[300, 80, 70], [380, 60, 90], [470, 85, 70], [230, 95, 50]].forEach(function (q) { x.beginPath(); x.arc(q[0], q[1], q[2], 0, 6.3); x.fill(); });
-      if (flash > 0) { x.strokeStyle = '#FACC15'; x.lineWidth = 6; x.beginPath(); x.moveTo(360, 130); x.lineTo(330, 200); x.lineTo(365, 210); x.lineTo(320, 320); x.stroke(); flash--; }
-      x.fillStyle = '#15803D'; x.fillRect(0, 320, 1000, 40); x.fillStyle = '#FDE68A'; x.beginPath(); x.arc(860, 300, 18, 0, 6.3); x.fill(); txt(x, 'أنت هنا', 860, 270, 22, '#FDE68A');
-      if (!S2.disabled || heard) return; var el2 = (performance.now() - t0) / 1000; txt(x, '⏱ ' + n(el2.toFixed(1)) + ' ث', 860, 60, 34, '#FDE68A');
+      x.fillStyle = '#FFF7ED'; x.fillRect(0, 0, 1000, 400);
+      x.fillStyle = '#FDBA74'; x.fillRect(150, 100, 700, 60); x.fillRect(150, 250, 700, 60);
+      var t = A[k][1], set;
+      if (t === 'h') set = [['i', 50, 80], ['i', 50, 80], ['g', 120, 0], ['m', 60, 30], ['m', 60, 30], ['m', 60, 30], ['m', 60, 30]];
+      else if (t === 'c') set = [['i', 30, 25], ['i', 30, 25], ['k', 40, 85], ['k', 45, 45], ['k', 45, 45], ['k', 60, 40], ['m', 50, 22]];
+      else set = [['i', 40, 40], ['i', 40, 40], ['k', 38, 42], ['k', 40, 32], ['k', 40, 32], ['m', 55, 26], ['m', 55, 26]];
+      var X = 820;
+      set.forEach(function (s2) { X -= s2[1] + 8; if (s2[0] === 'g') return; tooth(X, 160, s2[1], s2[2], s2[0] === 'i' ? 'i' : s2[0], true); tooth(X, 250, s2[1], s2[2] * .9, s2[0] === 'i' ? 'i' : s2[0], false); });
+      T(x, '← الأمام', 880, 210, 18, '#9A3412'); T(x, 'أسنان ' + A[k][0], 500, 60, 28, '#7C2D12');
+      T(x, 'قواطع · أنياب · أضراس أمامية · أضراس خلفية', 500, 370, 18, '#9A3412');
+    });
+  };
+
+  // ٦) أنواع الثدييات: أين ينمو الجنين؟
+  S.mammals = function (c) {
+    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
+    var A = [['🦆', 'منقار البط', 'p'], ['🦘', 'الكنغر', 'k'], ['🐫', 'الجمل', 'm'], ['🐨', 'الكوالا', 'k'], ['🧍', 'الإنسان', 'm'], ['🦔', 'آكل النمل الشوكي', 'p']];
+    var G = { p: ['ثدييات أولية', 'تضع بيضًا بقشور، وتلعق الصغار الحليب من جلد الأم.', '🥚'], k: ['ثدييات كيسية', 'تولد الصغار غير مكتملة وتكمل نموها في الكيس.', '👜'], m: ['ثدييات مشيمية', 'ينمو الجنين في الرحم متغذيًا عبر المشيمة والحبل السري.', '🫄'] };
+    var ct = ctrl(c, '<div class="seg" role="group" aria-label="المجموعة"><button data-g="p">🥚 أولية</button><button data-g="k">👜 كيسية</button><button data-g="m">🫄 مشيمية</button></div><div class="read" id="mR"></div>');
+    var k = 0, score = 0, msg = 'إلى أي مجموعة ينتمي هذا الحيوان؟', gs = seg(ct, 'g');
+    gs.forEach(function (b) { b.onclick = function () { if (k >= A.length) { k = 0; score = 0; } var ok = b.dataset.g === A[k][2]; if (ok) score++; msg = (ok ? '✅ ' : '❌ ') + A[k][1] + ': <b>' + G[A[k][2]][0] + '</b> — ' + G[A[k][2]][1]; k++; }; });
+    return loop(function (t) {
+      x.fillStyle = '#FDF2F8'; x.fillRect(0, 0, 1000, 400);
+      ['p', 'k', 'm'].forEach(function (g, i) { var X = 830 - i * 330; x.fillStyle = '#fff'; x.strokeStyle = '#BE123C'; x.lineWidth = 3; x.fillRect(X - 140, 230, 280, 150); x.strokeRect(X - 140, 230, 280, 150); E(x, G[g][2], X, 300, 46); T(x, G[g][0], X, 355, 22, '#881337'); });
+      if (k < A.length) { E(x, A[k][0], 500, 150 + Math.sin(t / 300) * 5, 100); T(x, A[k][1], 500, 205, 24, '#0F172A'); }
+      else T(x, '🎉 النتيجة: ' + n(score) + ' / ' + n(A.length) + ' (اضغط مجموعة للبدء من جديد)', 500, 140, 26, '#BE123C');
+      ct.querySelector('#mR').innerHTML = msg;
     });
   };
   return S;
@@ -782,7 +644,7 @@ window.SIMS = (function () {
 /* ===== كشف الطلاب الموحّد لكل المنصة (الدروس والأنشطة والمسابقات وأوراق العمل) — durus-classes ===== */
 window.DROS = window.DROS || (function () {
   var AR = '٠١٢٣٤٥٦٧٨٩', KEY = 'durus-classes', API = 'https://script.google.com/macros/s/AKfycbxp-t4JgGO5WiK6hoacjTyBqFnG-9bSWClplOpVV4VDuTV7T4tY0swB1Ll36kr_djJ7nQ/exec';
-  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/3', '2/3', '3/3', '4/3']];
+  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/2'], ['1/3', '2/3', '3/3', '4/3']];
   function kz(k) { return String(k == null ? '' : k).replace(/\s/g, '').replace(/\d/g, function (d) { return AR[d]; }); }
   function nz(s) { return String(s).replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+بن\s+/g, ' ').replace(/\s+/g, ' ').trim(); }
   function ld() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) return { cur: s.cur || '', classes: s.classes || {}, stars: s.stars || {}, moves: s.moves || {} }; } catch (e) {} return { cur: '', classes: {}, stars: {}, moves: {} }; }
@@ -827,7 +689,7 @@ window.DROS = window.DROS || (function () {
   }
   // تحميل كشوف الفصول من منصة رحلة العلوم لكل الصفوف
   function importAll(cb) {
-    var all = LISTS[0].concat(LISTS[1]), G = {}, done = 0, okc = 0;
+    var all = [].concat.apply([], LISTS), G = {}, done = 0, okc = 0;
     all.forEach(function (k) {
       jsonp({ action: 'getStudents', className: k }, function (r) {
         if (r && r.ok) okc++;

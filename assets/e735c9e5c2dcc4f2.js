@@ -135,7 +135,7 @@ W.tl=function(el,w,lid){var D=load('tl-'+lid,{});el.innerHTML='<div class="sgw">
 /* ===== كشف الطلاب الموحّد لكل المنصة (الدروس والأنشطة والمسابقات وأوراق العمل) — durus-classes ===== */
 window.DROS = window.DROS || (function () {
   var AR = '٠١٢٣٤٥٦٧٨٩', KEY = 'durus-classes', API = 'https://script.google.com/macros/s/AKfycbxp-t4JgGO5WiK6hoacjTyBqFnG-9bSWClplOpVV4VDuTV7T4tY0swB1Ll36kr_djJ7nQ/exec';
-  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/3', '2/3', '3/3', '4/3']];
+  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/2'], ['1/3', '2/3', '3/3', '4/3']];
   function kz(k) { return String(k == null ? '' : k).replace(/\s/g, '').replace(/\d/g, function (d) { return AR[d]; }); }
   function nz(s) { return String(s).replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+بن\s+/g, ' ').replace(/\s+/g, ' ').trim(); }
   function ld() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) return { cur: s.cur || '', classes: s.classes || {}, stars: s.stars || {}, moves: s.moves || {} }; } catch (e) {} return { cur: '', classes: {}, stars: {}, moves: {} }; }
@@ -180,7 +180,7 @@ window.DROS = window.DROS || (function () {
   }
   // تحميل كشوف الفصول من منصة رحلة العلوم لكل الصفوف
   function importAll(cb) {
-    var all = LISTS[0].concat(LISTS[1]), G = {}, done = 0, okc = 0;
+    var all = [].concat.apply([], LISTS), G = {}, done = 0, okc = 0;
     all.forEach(function (k) {
       jsonp({ action: 'getStudents', className: k }, function (r) {
         if (r && r.ok) okc++;
@@ -388,238 +388,213 @@ const ICO={doc:'<rect x="14" y="10" width="52" height="60" rx="6" fill="none" st
 const lst=a=>`<ul class="step-text" style="margin:0;line-height:1.9">${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
 Object.assign(window.C6,{order,fig,grid,reveal,plan,ICO,lst});})();
 
-/* ===== تجارب افتراضية — عمل العلم ===== */
+/* ===== تجارب افتراضية — الصفائح الأرضية ===== */
 (function(){
 const {$,$$,G,STN,def,say,SFX,mcq}=K;const AR='font-family="IBM Plex Sans Arabic"';
 
-/* ---------- 1) محقق الكوليرا ---------- */
-const PUMPS=[{id:'A',x:150,y:80},{id:'B',x:330,y:150},{id:'C',x:510,y:90},{id:'D',x:200,y:240},{id:'E',x:480,y:250}];
-function rnd(s){return ()=>{s=(s*9301+49297)%233280;return s/233280;};}
-const CASES=(()=>{const r=rnd(7),a=[];for(let i=0;i<46;i++){const ang=r()*6.28,d=12+r()*70;a.push({x:330+Math.cos(ang)*d*1.3,y:150+Math.sin(ang)*d});}for(let i=0;i<8;i++)a.push({x:40+r()*560,y:30+r()*250});return a;})();
-def('lab1',{after:'s2',n:'🧪 محقق الكوليرا',eyebrow:'تجربة افتراضية · بحث وصفي · مقترحة',title:'كن جون سنو: اكتشف مصدر الوباء',goal:'أنت الطبيب جون سنو. اجمع البيانات: المس «بيوت المرضى» لتظهر حالات الإصابة على الخريطة، ثم احسب المسافات إلى المضخات، وحدّد المضخة الملوثة.',plan:7,core:1,
- icon:'<rect x="8" y="8" width="64" height="64" rx="4" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="40" cy="40" r="6" fill="currentColor"/><circle cx="30" cy="34" r="3" fill="currentColor"/><circle cx="48" cy="46" r="3" fill="currentColor"/>',
- body:`<div class="two"><div class="stage"><svg id="j1svg" viewBox="0 0 640 300" aria-label="خريطة الحي"></svg>
-   <div class="toolbar" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button class="tool" type="button" id="j1a"><span>🏠</span><span>1. اجمع بيانات المرضى</span></button><button class="tool" type="button" id="j1b"><span>📏</span><span>2. احسب الحالات قرب كل مضخة</span></button><button class="tool" type="button" id="j1c"><span>🔒</span><span>3. أغلق مضخة</span></button></div></div>
-  <div class="side"><div class="card"><h3>دفتر المحقق</h3><div id="j1log" class="step-text muted">ابدأ بجمع البيانات.</div><div class="tablewrap mt"><table class="c6-table" id="j1t"></table></div></div></div></div>
-  <div class="card"><h3>استنتج</h3><div id="j1q"></div></div>`,
- init(){let st=0,closed=null,pick=false;
-  const near=p=>CASES.filter(c=>Math.hypot(c.x-p.x,c.y-p.y)<70).length;
-  const draw=()=>{let s=`<rect width="640" height="300" fill="#f5efe1"/>`;
-   for(let i=0;i<9;i++)s+=`<path d="M${i*80} 0V300" stroke="#e2d6b8" stroke-width="10"/>`;for(let j=0;j<5;j++)s+=`<path d="M0 ${j*70+10}H640" stroke="#e2d6b8" stroke-width="10"/>`;
-   if(st>=1)CASES.forEach(c=>s+=`<rect x="${c.x-4}" y="${c.y-4}" width="8" height="8" fill="#111" opacity=".75"/>`);
-   PUMPS.forEach(p=>{const n=near(p);s+=`<g class="pmp" data-p="${p.id}" style="cursor:${pick?'pointer':'default'}">${st>=2?`<circle cx="${p.x}" cy="${p.y}" r="70" fill="${n>25?'rgba(220,38,38,.18)':'rgba(37,99,235,.08)'}" stroke="${n>25?'#dc2626':'#94a3b8'}" stroke-dasharray="6 5"/>`:''}<circle cx="${p.x}" cy="${p.y}" r="13" fill="${closed===p.id?'#64748b':'#2563eb'}" stroke="#fff" stroke-width="3"/><text x="${p.x}" y="${p.y+5}" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">${p.id}</text>${closed===p.id?`<text x="${p.x}" y="${p.y-20}" text-anchor="middle" ${AR} font-size="13" font-weight="800" fill="#dc2626">مغلقة</text>`:''}</g>`;});
-   s+=`<g transform="translate(14 278)"><rect width="10" height="10" fill="#111"/><text x="16" y="10" ${AR} font-size="12" fill="#334155">حالة إصابة</text><circle cx="110" cy="5" r="7" fill="#2563eb"/><text x="122" y="10" ${AR} font-size="12" fill="#334155">مضخة ماء يدوية</text></g>`;
-   $('#j1svg').innerHTML=s;$$('#j1svg .pmp').forEach(g=>g.onclick=()=>{if(!pick)return;closeP(g.dataset.p);});};
-  const log=[];const L=m=>{log.push(m);$('#j1log').innerHTML='<ol style="margin:0;padding-inline-start:18px">'+log.map(x=>`<li>${x}</li>`).join('')+'</ol>';};
-  $('#j1a').onclick=()=>{st=Math.max(st,1);draw();SFX.pop();L(`سجّلت ${CASES.length} حالة إصابة على الخريطة (أماكن سكن المرضى).`);};
-  $('#j1b').onclick=()=>{if(st<1){L('اجمع بيانات المرضى أولًا.');return;}st=2;draw();SFX.tick();$('#j1t').innerHTML='<thead><tr><th>المضخة</th><th>حالات قريبة منها</th></tr></thead><tbody>'+PUMPS.map(p=>`<tr><td>${p.id}</td><td>${near(p)}</td></tr>`).join('')+'</tbody>';L('حوّلت البيانات إلى أرقام (الموضوعية): عددت الحالات القريبة من كل مضخة.');};
-  $('#j1c').onclick=()=>{if(st<2){L('احسب الحالات قرب كل مضخة أولًا.');return;}pick=true;draw();L('المس المضخة التي تريد إغلاقها.');};
-  function closeP(id){closed=id;pick=false;draw();if(id==='B'){SFX.correct();G.add(10,'lab1');L('أغلقت المضخة B… فتناقصت الإصابات الجديدة! المضخة B كانت مصدر التلوث.');}else{SFX.wrong();L(`أغلقت المضخة ${id} لكن الإصابات استمرت. راجع جدول الأرقام.`);}}
-  draw();
-  mcq($('#j1q'),{q:'ما الخطوة التي جعلت استقصاءك موضوعيًّا؟',o:['تحويل البيانات إلى قياسات رقمية (عدد الحالات قرب كل مضخة)','اختيار المضخة التي تبدو قديمة','الاعتماد على آراء السكان','تخمين المضخة الملوثة'],a:0},'lab1',()=>G.complete('lab1'));},
- explain:'<p>محاكاة مقترحة مبسطة لاستقصاء جون سنو (لندن 1854م): أماكن الحالات وأرقام المضخات افتراضية للتعلم.</p>'});
+/* ---------- 1) محاكي حدود الصفائح ---------- */
+const BD=[{k:'div',n:'حدود تباعد',ic:'← →',out:'تتباعد الصفيحتان فتتكون حفرة انهدام وشقوق تخرج منها الصهارة، ويحدث نشاط بركاني وزلازل.'},{k:'con',n:'حدود تقارب (غوص)',ic:'→ ←',out:'تغوص الصفيحة المحيطية الأكبر كثافة أسفل القارية، فتنصهر جزئيًّا وتصعد الصهارة مكونة براكين مركبة، وتحدث زلازل عميقة.'},{k:'tr',n:'حدود جانبية (تحويلية)',ic:'↑ ↓',out:'تنزلق الصفيحتان بمحاذاة بعضهما، فتتراكم الإجهادات وتحدث الزلازل، ولا تتكون براكين عادة.'}];
+def('lab1',{after:'s2',n:'🧪 محاكي الحدود',eyebrow:'تجربة افتراضية · مقترحة',title:'محاكي حدود الصفائح: حرّك الصفائح وشاهد النتيجة',goal:'اختر نوع الحد، ثم اسحب منزلق الزمن (ملايين السنين). ماذا يتكون عند الحد؟ وأين تحدث الزلازل والبراكين؟',plan:8,core:1,
+ icon:'<path d="M6 40h28M46 40h28M26 32l8 8-8 8M54 32l-8 8 8 8" fill="none" stroke="currentColor" stroke-width="5"/>',
+ body:`<div class="two"><div class="stage"><svg id="p1svg" viewBox="0 0 640 300" aria-label="مقطع في صفيحتين"></svg><div style="padding:10px"><div class="c6-chips" id="p1b"></div><label class="step-text">⏳ الزمن: <b id="p1v">0</b> مليون سنة<input type="range" id="p1r" min="0" max="100" value="0" style="width:100%"></label></div></div>
+  <div class="side"><div class="card"><h3>ماذا يحدث؟</h3><div id="p1o" class="step-text muted">اختر نوع الحد وحرّك الزمن.</div></div></div></div>
+  <div class="card"><h3>استنتج</h3><div id="p1q"></div></div>`,
+ init(){let k=0;const seen=new Set();
+  const draw=()=>{const t=+$('#p1r').value/100,b=BD[k];$('#p1v').textContent=Math.round(t*20);let s=`<rect width="640" height="300" fill="#e0f2fe"/><rect y="200" width="640" height="100" fill="#f59e0b" opacity=".55"/><text x="20" y="290" ${AR} font-size="12" fill="#7c2d12">الغلاف المائع</text>`;
+   const qk=[];
+   if(b.k==='div'){const g=t*80;s+=`<rect x="${20-g}" y="120" width="${300}" height="80" fill="#1e3a8a" opacity=".85"/><rect x="${320+g}" y="120" width="300" height="80" fill="#1e3a8a" opacity=".85"/><rect y="90" width="640" height="30" fill="#60a5fa" opacity=".5"/>`;
+    if(g>4)s+=`<path d="M${320-g} 120 L320 200 L${320+g} 120z" fill="#ea580c"/><path d="M320 300 V200" stroke="#ea580c" stroke-width="${6+g/8}"/>`;
+    if(t>.3)s+=`<path d="M300 120 l20 -30 l20 30z" fill="#7c2d12"/>`;qk.push([320,150]);
+    s+=`<path d="M220 160 h-60 M420 160 h60" stroke="#fff" stroke-width="5" marker-end="url(#pa)"/>`;}
+   else if(b.k==='con'){const g=t*90;s+=`<path d="M20 120 H${300+g*0.6} L${330+g} 200 L${290+g} 230 L${270+g*0.4} 200 H20z" fill="#1e3a8a" opacity=".85"/><rect y="90" width="${300+g*.6}" height="30" fill="#60a5fa" opacity=".5"/>`;
+    s+=`<path d="M${330+g*.2} 70 H620 V200 H${330+g*.2}z" fill="#a16207"/><path d="M${330+g*.2} 70 H620" stroke="#7c9a4b" stroke-width="10"/>`;
+    if(t>.3){s+=`<path d="M${420} 70 l30 -50 l30 50z" fill="#57534e"/><path d="M450 200 Q440 120 450 25" stroke="#ea580c" stroke-width="6" fill="none"/>`;}
+    qk.push([340+g*.4,170],[360+g*.5,220]);s+=`<path d="M160 105 h60 M560 140 h-60" stroke="#fff" stroke-width="5" marker-end="url(#pa)"/>`;}
+   else{const g=t*120;s+=`<g transform="translate(0 ${-g*.0})"><rect x="20" y="110" width="300" height="90" fill="#a16207"/><path d="M20 110 H320" stroke="#7c9a4b" stroke-width="10"/></g><rect x="322" y="110" width="298" height="90" fill="#b45309"/><path d="M322 110 H620" stroke="#7c9a4b" stroke-width="10"/>`;
+    s+=`<path d="M321 100 V210" stroke="#7f1d1d" stroke-width="4"/><text x="170" y="${160}" text-anchor="middle" font-size="26" fill="#fff">⬆</text><text x="470" y="160" text-anchor="middle" font-size="26" fill="#fff">⬇</text>`;
+    for(let i=0;i<5;i++){const y=((i*40+g*2)%100);s+=`<rect x="140" y="${112+y*.8}" width="16" height="8" fill="#fde68a"/><rect x="480" y="${190-y*.8}" width="16" height="8" fill="#fde68a"/>`;}
+    s+=`<text x="320" y="240" text-anchor="middle" ${AR} font-size="13" fill="#7c2d12">منظر جانبي: الكتلتان تنزلقان أفقيًّا؛ الأولى نحو الداخل والثانية نحو الخارج</text>`;qk.push([321,140],[321,180]);}
+   if(t>.15)qk.forEach(([x,y])=>s+=`<g transform="translate(${x} ${y})"><circle r="${8+((Date.now()/80)%10)}" fill="none" stroke="#dc2626" stroke-width="2"/><circle r="4" fill="#dc2626"/></g>`);
+   s+='<defs><marker id="pa" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="#fff"/></marker></defs>';
+   $('#p1svg').innerHTML=s;if(t>.5){seen.add(b.k);$('#p1o').innerHTML=`<b>${b.n}:</b> ${b.out}<br><span style="color:#dc2626">● زلازل</span>`;if(seen.size===3)G.add(6,'lab1');}};
+  $('#p1b').innerHTML=BD.map((b,i)=>`<button class="c6-chip" type="button" data-i="${i}" aria-pressed="${i===0}"><span style="direction:ltr;display:inline-block">${b.ic}</span> ${b.n}</button>`).join('');
+  $$('#p1b [data-i]').forEach(x=>x.onclick=()=>{k=+x.dataset.i;$$('#p1b [data-i]').forEach(y=>y.setAttribute('aria-pressed',y===x));$('#p1r').value=0;SFX.tick();draw();});
+  $('#p1r').oninput=draw;draw();
+  mcq($('#p1q'),{q:'عند أي الحدود تتكون عادة البراكين المركبة؟',o:['حدود التقارب حيث تغوص صفيحة تحت أخرى','الحدود الجانبية','وسط الصفيحة','لا تتكون عند أي حد'],a:0},'lab1',()=>G.complete('lab1'));},
+ explain:'<p>محاكاة مبسطة مقترحة لأنواع حدود الصفائح الثلاثة ونتائجها.</p>'});
 
-/* ---------- 2) طبق البكتيريا ---------- */
-def('lab2',{after:'s7',n:'🧪 أطباق البكتيريا',eyebrow:'تجربة افتراضية · مقترحة',title:'التجربة المضبوطة: أثر مضادين حيويين في نمو البكتيريا',goal:'جهّز الأطباق الثلاثة بالظروف نفسها، ثم شغّل الحاضنة وراقب نمو البكتيريا يومًا بعد يوم. حدّد المتغيرات.',plan:7,core:1,
- icon:'<circle cx="40" cy="40" r="28" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="30" cy="34" r="4" fill="currentColor"/><circle cx="46" cy="30" r="4" fill="currentColor"/><circle cx="44" cy="50" r="4" fill="currentColor"/>',
- body:`<div class="two"><div class="stage"><svg id="p2svg" viewBox="0 0 640 260" aria-label="ثلاثة أطباق بكتيريا"></svg><div style="padding:10px"><label class="step-text">📅 اليوم: <b id="p2d">0</b><input type="range" id="p2r" min="0" max="5" value="0" style="width:100%"></label>
-   <div class="row-actions"><label class="step-text"><input type="checkbox" id="p2fair" checked> الظروف ثابتة لكل الأطباق (الحرارة 37°س، الزمن، كمية المضاد)</label></div></div></div>
-  <div class="side"><div class="card"><h3>نتائج المراقبة</h3><div id="p2out" class="step-text"></div></div></div></div>
-  <div class="card"><h3>حدّد</h3><div id="p2q"></div></div>`,
- init(){const r0=rnd(3),SP=[...Array(60)].map(()=>({a:r0()*6.28,d:Math.sqrt(r0())*62}));
-  const draw=()=>{const d=+$('#p2r').value,fair=$('#p2fair').checked;$('#p2d').textContent=d;
-   const g=[d*12,Math.max(0,d*11-(fair?0:10)),fair?Math.min(2,d):d*5];
-   const L=[['أ','مضاد حيوي (أ)'],['ب','مضاد حيوي (ب)'],['ض','العينة الضابطة (بلا مضاد)']];
-   let s=`<rect width="640" height="260" fill="var(--wall)"/>`;
-   [110,320,530].forEach((x,i)=>{s+=`<ellipse cx="${x}" cy="120" rx="86" ry="80" fill="#fde68a" stroke="#94a3b8" stroke-width="5"/>`;const n=i===0?g[0]:i===1?g[2]:g[0]+3;
-    SP.slice(0,Math.min(60,i===1?g[2]:n)).forEach(p=>s+=`<circle cx="${x+Math.cos(p.a)*p.d}" cy="${120+Math.sin(p.a)*p.d*.9}" r="5" fill="#f8fafc" stroke="#d6d3d1"/>`);
-    if(i<2)s+=`<circle cx="${x}" cy="120" r="10" fill="#fff" stroke="#64748b" stroke-width="2"/>`;
-    s+=`<text x="${x}" y="230" text-anchor="middle" ${AR} font-size="15" font-weight="800" fill="var(--ink)">${['الطبق (أ)','الطبق (ب)','طبق العينة الضابطة'][i]}</text>`;});
-   $('#p2svg').innerHTML=s;
-   $('#p2out').innerHTML=d===0?'بداية التجربة: لم تنمُ البكتيريا بعد.':`<ul style="margin:0"><li>الطبق (أ): نمت البكتيريا (${Math.min(60,g[0])} مستعمرة).</li><li>الطبق (ب): ${fair?'لم تنمُ البكتيريا تقريبًا.':'نمو متفاوت!'}</li><li>العينة الضابطة: نمت البكتيريا (${Math.min(60,g[0]+3)} مستعمرة).</li></ul>${fair?'':'<p class="fb bad">عندما لم تُثبّت الظروف لم نعد نعرف سبب الاختلاف! يجب أن يتغير عامل واحد فقط.</p>'}`;
-   if(d>=4&&fair)G.add(0,'lab2');};
-  $('#p2r').oninput=()=>{SFX.tick();draw();};$('#p2fair').onchange=draw;draw();
-  K.sortGame($('#p2q'),{bins:['متغير مستقل','متغير تابع','ثابت','عينة ضابطة'],items:[['نوع المضاد الحيوي',0],['عدد مستعمرات البكتيريا',1],['درجة الحرارة 37°س',2],['مدة الحضانة',2],['الطبق بلا مضاد',3]]},'lab2',()=>G.complete('lab2'));},
- explain:'<p>تجربة مقترحة توضح نتيجة العرض: نمت البكتيريا في الضابطة وفي (أ)، ولم تنمُ في (ب)؛ فالمضاد (ب) فعال. أعداد المستعمرات افتراضية.</p>'});
+/* ---------- 2) سلسلة جزر البقعة الساخنة ---------- */
+def('lab2',{after:'s3',n:'🧪 البقعة الساخنة',eyebrow:'تجربة افتراضية · مقترحة',title:'صانع الجزر: الصفيحة فوق البقعة الساخنة',goal:'البقعة الساخنة ثابتة في أعماق الأرض، والصفيحة تتحرك فوقها. حرّك الزمن وراقب تكوّن سلسلة جزر مثل هاواي. أي الجزر أقدم؟',plan:6,core:1,
+ icon:'<circle cx="40" cy="60" r="10" fill="currentColor"/><path d="M10 30l8-8 8 8M34 30l8-12 8 12M58 30l6-6 6 6" fill="none" stroke="currentColor" stroke-width="4"/>',
+ body:`<div class="two"><div class="stage"><svg id="h2svg" viewBox="0 0 640 300" aria-label="بقعة ساخنة"></svg><div style="padding:10px"><label class="step-text">⏳ الزمن: <b id="h2v">0</b> مليون سنة<input type="range" id="h2r" min="0" max="10" value="0" style="width:100%"></label></div></div>
+  <div class="side"><div class="card"><div id="h2o" class="step-text"></div></div></div></div><div class="card"><div id="h2q"></div></div>`,
+ init(){const draw=()=>{const t=+$('#h2r').value;$('#h2v').textContent=t*1;let s=`<rect width="640" height="300" fill="#e0f2fe"/><rect y="110" width="640" height="10" fill="#3b82f6" opacity=".4"/><rect y="120" width="640" height="60" fill="#1e3a8a"/><rect y="180" width="640" height="120" fill="#f59e0b" opacity=".6"/>`;
+   s+=`<path d="M320 300 Q300 230 320 180 Q340 230 320 300" fill="#dc2626"/><text x="320" y="290" text-anchor="middle" ${AR} font-size="13" font-weight="800" fill="#fff">البقعة الساخنة</text>`;
+   for(let i=0;i<=t;i+=2){const x=320-(t-i)*28,age=t-i,h=Math.max(18,60-age*5);if(x<10)continue;s+=`<path d="M${x-30} 120 L${x} ${120-h} L${x+30} 120z" fill="${age<1?'#7c2d12':age<4?'#57534e':'#78716c'}"/>${age<1?`<path d="M${x} ${120-h} q-6 -20 6 -30" stroke="#ea580c" stroke-width="4" fill="none"/>`:''}<text x="${x}" y="${100-h}" text-anchor="middle" ${AR} font-size="11" fill="var(--ink)">${age} م.س</text>`;}
+   s+=`<path d="M560 150 h-80" stroke="#fff" stroke-width="5" marker-end="url(#ha)"/><text x="520" y="170" text-anchor="middle" ${AR} font-size="12" fill="#fff">اتجاه حركة الصفيحة</text><defs><marker id="ha" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="#fff"/></marker></defs>`;
+   $('#h2svg').innerHTML=s;$('#h2o').innerHTML=t?`تكوّنت <b>${Math.floor(t/2)+1}</b> جزيرة. الجزيرة النشطة فوق البقعة الساخنة مباشرة، والجزر الأبعد عنها أقدم وخامدة.`:'حرّك الزمن.';if(t>=8)G.add(0,'lab2');};
+  $('#h2r').oninput=()=>{SFX.tick();draw();};draw();
+  mcq($('#h2q'),{q:'في سلسلة جزر البقعة الساخنة، أي الجزر أقدم؟',o:['الأبعد عن البقعة الساخنة في اتجاه حركة الصفيحة','الجزيرة النشطة فوق البقعة','جميعها بالعمر نفسه','الأقرب إلى البقعة'],a:0,why:'لأن الصفيحة تحملها بعيدًا بعد تكوّنها، وتتكون جزيرة جديدة فوق البقعة الثابتة.'},'lab2',()=>G.complete('lab2'));},
+ explain:'<p>محاكاة مقترحة لتكوّن سلسلة جزر هاواي فوق بقعة ساخنة وسط صفيحة المحيط الهادئ؛ الأعمار توضيحية.</p>'});
 
-/* ---------- 3) لماذا نكرر المحاولات؟ ---------- */
-def('lab3',{after:'lab2',n:'🧪 المحاولات المتعددة',eyebrow:'تجربة افتراضية · مقترحة',title:'لماذا نجري عدة محاولات؟ تجربة سقي النبات',goal:'اختبر الفرضية: «النبات الذي يُسقى كل يوم ينمو أسرع». أجرِ محاولة واحدة، ثم عدة محاولات، وقارن المتوسط.',plan:7,core:1,
- icon:'<path d="M40 70V34" stroke="currentColor" stroke-width="5"/><path d="M40 44c-14 0-20-10-20-20 12 0 20 6 20 20zM40 38c14 0 20-10 20-20-12 0-20 6-20 20z" fill="currentColor"/>',
- body:`<div class="two"><div class="stage"><svg id="g3svg" viewBox="0 0 640 260" aria-label="نباتات"></svg><div class="row-actions" style="padding:10px"><button class="btn" type="button" id="g3one">أجرِ محاولة</button><button class="tbtn" type="button" id="g3five">أجرِ 5 محاولات دفعة واحدة</button><button class="tbtn" type="button" id="g3r">إعادة</button></div></div>
-  <div class="side"><div class="card"><h3>جدول البيانات (أطوال النبات بعد أسبوعين، سم)</h3><div class="tablewrap"><table class="c6-table" id="g3t"></table></div><div id="g3fb"></div></div></div></div>
-  <div class="card"><h3>استنتج</h3><div id="g3q"></div></div>`,
- init(){let T=[];const r=rnd(11);
-  const trial=()=>{const n=+(9+r()*5).toFixed(1),w=+(7+r()*6).toFixed(1);T.push([n,w]);};
-  const avg=i=>T.length?(T.reduce((a,t)=>a+t[i],0)/T.length).toFixed(1):'—';
-  const draw=()=>{const last=T[T.length-1]||[0,0];let s=`<rect width="640" height="260" fill="var(--wall)"/><rect y="220" width="640" height="40" fill="var(--bench)"/>`;
-   [[180,'يُسقى كل يوم',last[0]],[460,'يُسقى مرة في الأسبوع (ضابطة)',last[1]]].forEach(([x,lb,h])=>{const H=h*10;s+=`<path d="M${x-40} 220 l8 -40 h64 l8 40z" fill="#b45309"/><path d="M${x} 180 V${180-H}" stroke="#15803d" stroke-width="6"/>${H?`<path d="M${x} ${190-H*.6} c-26 0-34-14-34-26 18 0 34 8 34 26zM${x} ${200-H*.4} c26 0 34-14 34-26-18 0-34 8-34 26z" fill="#22c55e"/>`:''}<text x="${x}" y="246" text-anchor="middle" ${AR} font-size="14" font-weight="700" fill="#fff">${lb}</text><text x="${x}" y="${170-H}" text-anchor="middle" font-size="15" font-weight="800" fill="var(--ink)">${h?h+' سم':''}</text>`;});
-   $('#g3svg').innerHTML=s;
-   $('#g3t').innerHTML=`<thead><tr><th>المحاولة</th><th>كل يوم</th><th>مرة أسبوعيًّا</th></tr></thead><tbody>${T.map((t,i)=>`<tr><td>${i+1}</td><td>${t[0]}</td><td>${t[1]}</td></tr>`).join('')}<tr><th>المتوسط</th><th>${avg(0)}</th><th>${avg(1)}</th></tr></tbody>`;
-   if(T.length===1&&T[0][1]>=T[0][0])say($('#g3fb'),'bad','لاحظ: في هذه المحاولة الواحدة لم تُدعم الفرضية! هل نثق بمحاولة واحدة؟');
-   else if(T.length>=5){say($('#g3fb'),'ok',`بعد ${T.length} محاولات: متوسط «كل يوم» ${avg(0)} سم مقابل ${avg(1)} سم. النتائج المتعددة أدق وأوثق.`);G.complete('lab3');}else $('#g3fb').innerHTML='';};
-  $('#g3one').onclick=()=>{trial();SFX.pop();draw();};$('#g3five').onclick=()=>{for(let i=0;i<5;i++)trial();SFX.correct();draw();};$('#g3r').onclick=()=>{T=[];draw();};draw();
-  mcq($('#g3q'),{q:'لماذا نجري عدة محاولات للتجربة؟',o:['للتأكد من صحة النتائج ولتكون أكثر دقة','لأن المحاولة الأولى خاطئة دائمًا','لإضاعة الوقت','لتغيير الفرضية'],a:0},'lab3');},
- explain:'<p>تجربة مقترحة: القيم عشوائية ضمن مدى؛ قد لا تدعم محاولة واحدة الفرضية، لكن المتوسط بعد عدة محاولات يكشف النمط الحقيقي.</p>'});
+/* ---------- 3) خزان تيارات الحمل ---------- */
+def('lab3',{after:'s7',n:'🧪 تيارات الحمل',eyebrow:'تجربة افتراضية · مقترحة',title:'خزان تيارات الحمل: كيف تتحرك الصفائح؟',goal:'شغّل مصدر الحرارة (لب الأرض) وزِد شدته. راقب حركة مادة الستار والصفيحتين فوقها.',plan:6,core:1,
+ icon:'<path d="M20 60c-10-20 0-40 20-40s30 20 20 40" fill="none" stroke="currentColor" stroke-width="5"/><path d="M30 70h20" stroke="currentColor" stroke-width="6"/>',
+ body:`<div class="two"><div class="stage"><svg id="c3svg" viewBox="0 0 640 300" aria-label="خزان الحمل"></svg><div style="padding:10px"><label class="step-text">🔥 شدة التسخين: <b id="c3v">0</b><input type="range" id="c3r" min="0" max="3" value="0" style="width:100%"></label></div></div>
+  <div class="side"><div class="card"><div id="c3o" class="step-text">التسخين متوقف: لا حركة.</div></div></div></div><div class="card"><div id="c3q"></div></div>`,
+ init(){let ph=0,tm=null,off=0;const P=[...Array(70)].map((_,i)=>({a:i/70*6.28*2,side:i%2}));
+  const draw=()=>{const h=+$('#c3r').value;$('#c3v').textContent=['متوقف','ضعيف','متوسط','قوي'][h];let s=`<rect width="640" height="300" fill="#fed7aa"/><rect y="270" width="640" height="30" fill="#7f1d1d"/><text x="320" y="290" text-anchor="middle" ${AR} font-size="13" fill="#fff">لب الأرض (مصدر الحرارة)</text>`;
+   s+=`<rect x="${10-off}" y="20" width="300" height="34" fill="#1e3a8a"/><rect x="${330+off}" y="20" width="300" height="34" fill="#1e3a8a"/><text x="${160-off}" y="42" text-anchor="middle" ${AR} font-size="13" fill="#fff">صفيحة</text><text x="${480+off}" y="42" text-anchor="middle" ${AR} font-size="13" fill="#fff">صفيحة</text>`;
+   P.forEach(p=>{const cx=p.side?480:160,dir=p.side?-1:1,a=p.a+ph*dir,x=cx+Math.cos(a)*130*dir,y=160+Math.sin(a)*90;const hot=x>250&&x<390||Math.sin(a)>0.5;s+=`<circle cx="${x}" cy="${y}" r="5" fill="${hot?'#dc2626':'#f59e0b'}" opacity=".85"/>`;});
+   if(h)s+=`<path d="M320 250 V80" stroke="#dc2626" stroke-width="4" stroke-dasharray="6 6" marker-end="url(#ca)"/><path d="M40 90 V230 M600 90 V230" stroke="#2563eb" stroke-width="4" stroke-dasharray="6 6" marker-end="url(#cb)"/><defs><marker id="ca" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="#dc2626"/></marker><marker id="cb" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="#2563eb"/></marker></defs>`;
+   $('#c3svg').innerHTML=s;};
+  $('#c3r').oninput=()=>{const h=+$('#c3r').value;clearInterval(tm);if(h){tm=setInterval(()=>{ph+=.01*h;off=Math.min(60,off+.08*h);draw();},40);$('#c3o').innerHTML='المادة الساخنة في الوسط تقل كثافتها فتصعد، ثم تبرد عند الأعلى وتتحرك أفقيًّا ساحبة الصفيحتين بعيدًا عن بعضهما، ثم تنزل عند الأطراف. كلما زاد التسخين أسرعت الحركة.';G.add(3,'lab3');}else $('#c3o').textContent='التسخين متوقف: لا حركة.';draw();};
+  STN.lab3.stop=()=>clearInterval(tm);draw();
+  mcq($('#c3q'),{q:'لماذا تصعد مادة الستار الساخنة إلى أعلى؟',o:['لأن كثافتها تقل عند تسخينها','لأن كثافتها تزداد','لأن الصفائح تسحبها','بسبب جاذبية القمر'],a:0},'lab3',()=>G.complete('lab3'));},
+ leave(){STN.lab3.stop&&STN.lab3.stop();},explain:'<p>نموذج مقترح لفرضية تيارات الحمل.</p>'});
 })();
 
-/*@css c1.css*/
-/*@include lab2.js*/
+/*@css c2.css*/
+/*@include lab6.js*/
 /*@include kit.js*/
 /*@include skit.js*/
-/* ===== الفصل الأول · الدرس الثاني: عمل العلم — «مختبر المحققين» ===== */
+/* ===== الفصل الثاني · الدرس الثالث: الصفائح الأرضية وعلاقتها بالزلازل والبراكين — «أحجية الأرض» ===== */
 (function(){
 const {$,$$,G,STN,def,mcq,flips,match,sortGame,challenge,say,SFX,pic,slides,escape,auction,riddles,choiceBoard,solutions}=K;
-const {fig,grid,reveal,ICO,lst,order,fill,tfx}=C6;const P=(n,c)=>[n,c];
+const {fig,grid,reveal,ICO,lst,order,fill,tfx,label}=C6;const P=(n,c)=>[n,c];
+const PIC='<path d="M6 30h30l6 10h32M6 50h22l8-10" fill="none" stroke="currentColor" stroke-width="5"/>';
 
-def('intro',{n:'الافتتاحية',plan:3,icon:ICO.lens,
- body:`<div class="hero"><div class="hero-photo">${pic('s05_42b5f3bb','سيارة ارتفعت حرارة محركها')}<span class="cap">بينما تقود سيارتك لاحظت ارتفاع درجة حرارة المحرك… كيف تواجه هذا الموقف؟</span></div>
-  <div><span class="eyebrow">مختبر المحققين</span><h2 class="hero-h">كل مشكلة… لها طريقة علمية لحلها!</h2>
-   <p class="riddle">لابد أن يبدأ عقلك بطرح الأسئلة: لماذا؟ كيف؟ متى؟ ثم تبدأ بعمل منظم يقودك لحل المشكلة. فما الخطوات التي يتبعها العلماء؟</p>
+def('intro',{n:'الافتتاحية',plan:3,icon:'<circle cx="40" cy="40" r="28" fill="none" stroke="currentColor" stroke-width="5"/><path d="M14 30h20l6 10 10-4 16 6M20 56l14-6 8 8" fill="none" stroke="currentColor" stroke-width="4"/>',
+ body:`<div class="hero"><div class="hero-photo">${pic('s01_bdbd1c64','صدع في سطح الأرض')}<span class="cap">الفصل الثاني: تغيرات الأرض.</span></div>
+  <div><span class="eyebrow">أحجية الأرض</span><h2 class="hero-h">قشرة الأرض… قطع أحجية تتحرك!</h2>
+   <p class="riddle">يعتقد العلماء أن الأرض تشكلت منذ نحو 4.54 مليار عام. فهل تغيّر شكل الأرض على مدى عمرها؟ ولماذا تتجمع الزلازل والبراكين في أماكن محددة؟</p>
    <p class="q">ما توقعك قبل أن تبدأ؟</p><div class="opts" id="introOpts"></div><div id="introFb"></div></div></div>
   <div class="card teacher-only"><h3>مسار الحصة</h3><div id="introPlan"></div></div>`,init(){}});
 
-const GOALS=['تختبر خطوات حل مشكلة ما بطريقة علمية.','توضح كيفية بناء الاستقصاء المصمم جيدًا.'];
-const TERMS=[{t:'التجربة',d:'مجموعة من الخطوات المنظمة يقود تنفيذها إلى اكتشاف أو اختبار أو إثبات شيء ما. (مراجعة المفردات)'},
- {t:'البحث الوصفي',d:'بحث يجيب عن الأسئلة من خلال الملاحظات.'},{t:'البحث التجريبي',d:'بحث يجيب عن الأسئلة العلمية من خلال اختبار الفرضية (التجربة).'},
- {t:'الطرائق العلمية',d:'مجموعة من الخطوات المتسلسلة التي تؤدي إلى حل المشكلات.'},{t:'النموذج',d:'محاكاة لشيء ما أو حدث ما، ويستخدم أداةً لفهم العالم الطبيعي.'},
- {t:'الفرضية',d:'توقع أو عبارة قابلة للاختبار.'},{t:'المتغير المستقل',d:'العامل الذي يتم تغييره في التجربة.'},{t:'المتغير التابع',d:'العامل الذي يتم قياسه في التجربة.'},
- {t:'الثابت',d:'المتغيرات التي تبقى ثابتة دون أن تتغير.'},{t:'العينة الضابطة',d:'عينة تعامل مثل بقية المجموعات التجريبية، إلا أنها لم تتعرض إلى أثر المتغير المستقل.'}];
-def('goals',{n:'الأهداف والمفردات',eyebrow:'الكتاب صفحة 26',title:'الأهداف والمفردات',goal:'تعرّف أهداف الدرس وأهميته ومفرداته.',plan:4,icon:ICO.doc,
- body:`<div class="two"><div class="card"><h3>أهداف الدرس</h3><ol class="goals">${GOALS.map(g=>`<li>${g}</li>`).join('')}</ol><div class="story mt"><b>أهمية الدرس:</b> تساعدك الطرائق العلمية والتجارب المدروسة بعناية على حل المشكلات.</div></div>
-  <div class="card"><h3>مراجعة المفردات</h3><p class="step-text"><b>التجربة:</b> مجموعة من الخطوات المنظمة يقود تنفيذها إلى اكتشاف أو اختبار أو إثبات شيء ما.</p><h3 class="mt">المفردات الجديدة</h3><ul class="tasks plain" style="columns:2">${TERMS.slice(1).map(t=>`<li>${t.t}</li>`).join('')}</ul></div></div>
-  <div class="card"><div class="nb-head"><h2>بطاقات المفردات</h2><span>المس البطاقة</span></div><div id="g2f"></div></div><div class="card"><div class="nb-head"><h2>لعبة المطابقة</h2></div><div id="g2m"></div></div>`,
- init(){flips($('#g2f'),TERMS);this.reset();},reset(){match($('#g2m'),TERMS.slice(1,7).map(t=>[t.t,t.d]),'goals',()=>G.complete('goals'));}});
+const GOALS=['توضح علاقة مواقع البراكين ومراكز الزلازل السطحية بحدود الصفائح.','تشرح كيف تسبب الحرارة في باطن الأرض حركة الصفائح.','تبين الفرق بين أنواع حدود الصفائح.'];
+const TERMS=[{t:'اللابة (الحمم)',d:'الصهارة المتدفقة على سطح الأرض. (مراجعة المفردات)'},{t:'الصفيحة',d:'قطعة من الغلاف الصخري المكون من القشرة الأرضية وأعلى الستار.'},{t:'الغلاف المائع',d:'طبقة لدنة من الستار تتحرك عليها الصفائح.'},{t:'البقعة الساخنة',d:'مركز بركاني نشط يظهر بسبب ارتفاع غير عادي في درجة الحرارة في بقعة في أعماق الأرض، وقد يكون وسط الصفيحة.'},{t:'الغلاف الصخري',d:'نطاق صلب سمكه حوالي 100 كم، يتكون من القشرة الأرضية والجزء العلوي من الستار.'},{t:'حفرة الانهدام',d:'شقوق طويلة تتكون بين الصفائح المتباعدة.'}];
+def('goals',{n:'الأهداف والمفردات',eyebrow:'الكتاب صفحة 66',title:'الأهداف والمفردات',goal:'تعرّف أهداف الدرس وأهميته ومفرداته.',plan:4,icon:ICO.doc,
+ body:`<div class="two"><div class="card"><h3>أهداف الدرس</h3><ol class="goals">${GOALS.map(g=>`<li>${g}</li>`).join('')}</ol><div class="story mt"><b>أهمية الدرس:</b> توضح نظرية الصفائح التكتونية كيف تتشكل الكثير من المعالم الأرضية، وتنتج عن حركتها معظم الزلازل والبراكين.</div></div>
+  <div class="card"><h3>مراجعة المفردات</h3><p class="step-text"><b>اللابة (الحمم):</b> الصهارة المتدفقة على سطح الأرض.</p><h3 class="mt">المفردات الجديدة</h3><ul class="tasks plain"><li>الصفيحة</li><li>الغلاف المائع</li><li>البقعة الساخنة</li><li>الغلاف الصخري</li><li>حفرة الانهدام</li></ul></div></div>
+  <div class="card"><div class="nb-head"><h2>بطاقات المفردات</h2></div><div id="g6f"></div></div><div class="card"><div class="nb-head"><h2>لعبة المطابقة</h2></div><div id="g6m"></div></div>`,
+ init(){flips($('#g6f'),TERMS);this.reset();},reset(){match($('#g6m'),TERMS.slice(1).map(t=>[t.t,t.d]),'goals',()=>G.complete('goals'));}});
 
-def('s1',{n:'1 · حل المشكلات',eyebrow:'المحطة 1 · الكتاب صفحة 26',title:'حل المشكلات والطريقة العلمية',goal:'يتم حل المشكلات بالطريقة العلمية: مشكلة ← تفكير ← حل.',plan:6,core:1,icon:'<circle cx="16" cy="40" r="10" fill="currentColor"/><circle cx="40" cy="40" r="10" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="64" cy="40" r="10" fill="currentColor" opacity=".5"/>',
- body:`<div class="card" id="s1sl"></div><div class="two"><div class="card"><h3>طرق حل المشكلات</h3><div class="tablewrap"><table class="c6-table"><thead><tr><th>البحث الوصفي</th><th>البحث التجريبي</th></tr></thead><tbody><tr><td>بحث يجيب عن الأسئلة من خلال الملاحظات.</td><td>بحث يجيب عن الأسئلة العلمية من خلال اختبار الفرضية (التجربة).</td></tr></tbody></table></div>${grid([['s08_a6c151ac','البحث التجريبي'],['s08_8f96d7ba','البحث الوصفي']])}</div>
-  <div class="card"><h3>وصفي أم تجريبي؟</h3><div id="s1sort"></div></div></div>`,
- init(){slides($('#s1sl'),[
-  {k:'حل المشكلات',t:'ارتفاع حرارة المحرك',im:[P('s05_42b5f3bb','سيارة')],html:'<p>بينما تقود سيارتك لاحظت ارتفاع درجة حرارة محرك السيارة. كيف تواجه هذا الموقف؟</p><p>لابد أن يبدأ عقلك بطرح الأسئلة: <b>لماذا؟ كيف؟ متى؟</b> ثم تبدأ بعمل منظم يقودك لحل المشكلة.</p>'},
-  {k:'كيف يمكن حل المشكلة؟',t:'الطريقة العلمية',im:[P('s07_ae737bd9','مشكلة ثم تفكير ثم حل')],html:'<p>يتم حل المشكلات بالطريقة العلمية.</p><p class="def"><b>الطريقة العلمية:</b> مجموعة من الخطوات المتسلسلة التي تؤدي إلى حل المشكلات.</p><p>مشكلة ← تفكير ← حل</p>'}],'s1');
-  sortGame($('#s1sort'),{bins:['بحث وصفي','بحث تجريبي'],items:[['تسجيل أعداد الطيور المهاجرة كل يوم',0],['تتبّع أماكن سكن مرضى الكوليرا',0],['اختبار أثر السماد في نمو النبات',1],['اختبار أثر مضادين حيويين في نمو البكتيريا',1],['وصف شكل النجوم في السماء ليلًا',0]],hint:'هل نغيّر عاملًا ونختبر فرضية؟'},'s1',()=>G.complete('s1'));},
- explain:'<p>البحث الوصفي يجيب من خلال الملاحظات، والبحث التجريبي يختبر الفرضية بالتجربة. (أمثلة التصنيف مقترحة.)</p>'});
+def('s1',{n:'1 · الصفائح الأرضية',eyebrow:'المحطة 1 · الكتاب صفحة 66',title:'نظرية الصفائح الأرضية وتركيبها',goal:'هل تغيّر شكل الأرض على مدى عمرها؟',plan:7,core:1,icon:PIC,
+ body:`<div class="card" id="s1sl"></div><div class="two"><div class="card"><h3>عنون مقطع الصفائح</h3><div id="s1l"></div></div><div class="card"><h3>قارن: الصفائح المحيطية والقارية</h3><div id="s1s"></div></div></div>`,
+ init(){let n=0;const c=()=>{if(++n>=2)G.complete('s1');};
+  slides($('#s1sl'),[
+   {k:'الصفائح الأرضية',t:'منذ 4.54 مليار عام',im:[P('s05_3a4745d3','الأرض')],html:'<p>يعتقد العلماء أن الأرض تشكلت منذ نحو <b>4.54 مليار عام</b>. فهل تغيّر شكل الأرض على مدى عمرها؟</p>'},
+   {k:'نظرية الصفائح الأرضية',t:'1960م',im:[P('s06_81cae385','مقطع في الصفائح'),P('s06_9cd4801c','البراكين'),P('s06_78621292','الزلازل')],html:'<p>طوّر العلماء عام 1960م نظرية الصفائح الأرضية اعتمادًا على فرضيات سابقة وضعت لتفسير المعالم والأحداث الجيولوجية على سطح الأرض.</p><p>إن الغلاف الصخري المكون من القشرة الأرضية وأعلى الستار مقسم إلى قطع يسمى كل منها <b>صفيحة</b>. تتحرك هذه القطع على طبقة لدنة من الستار تسمى <b>الغلاف المائع</b>. وينتج عن هذه الحركة جميع المعالم والأحداث الجيولوجية، ومنها الزلازل والبراكين وتكوّن الجبال وتشكّل المحيطات.</p>'},
+   {k:'تركيب الصفائح الأرضية',t:'الغلاف الصخري',im:[P('s07_9dadbf17','الغلاف الصخري')],html:'<p>تتكون الصفائح الأرضية من القشرة الأرضية والجزء العلوي من الستار، في ما يعرف بـ<b>الغلاف الصخري</b>، وهو عبارة عن نطاق صلب سمكه حوالي <b>100 كم</b>، وكثافته غالبًا أقل من كثافة المواد التي تقع أسفل منه. وتطفو الصفائح الصلبة، وتتحرك فوق الغلاف المائع.</p>'},
+   {k:'تركيب الصفائح الأرضية',t:'محيطية وقارية',im:[P('s09_9dadbf17','الصفائح المحيطية والقارية'),P('s09_dd41d422','خريطة الصفائح')],html:'<p>تقسم الصفائح الأرضية إلى <b>صفائح محيطية</b> تقع أسفل المحيط، و<b>صفائح قارية</b> تشكّل القارات. وتتميز الصفائح المحيطية بأنها <b>أكبر كثافة وأقل سمكًا</b> من الصفائح القارية.</p>'}],'s1');
+  label($('#s1l'),{fig:`<svg viewBox="0 0 260 200" style="max-width:280px"><rect width="260" height="40" fill="#bae6fd"/><path d="M0 40h120v20H0z" fill="#1d4ed8"/><path d="M120 30h140v40H120z" fill="#a3c76d"/><path d="M0 60h120v30H0zM120 70h140v30H120z" fill="#b07a43"/><rect y="100" width="260" height="40" fill="#f59e0b"/><rect y="140" width="260" height="60" fill="#dc2626" opacity=".7"/>${[['1',60,52],['2',190,52],['3',130,90],['4',130,124],['5',130,174]].map(([t,x,y])=>`<circle cx="${x}" cy="${y}" r="11" fill="#fff" stroke="#111"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="13" font-weight="800">${t}</text>`).join('')}</svg>`,slots:[['1','القشرة المحيطية'],['2','القشرة القارية'],['3','الغلاف الصخري (صفيحة)'],['4','الغلاف المائع'],['5','الستار']]},'s1',c);
+  sortGame($('#s1s'),{bins:['الصفائح المحيطية','الصفائح القارية'],items:[['تقع أسفل المحيط',0],['أكبر كثافة',0],['أقل سمكًا',0],['تشكّل القارات',1],['أقل كثافة',1],['أكبر سمكًا',1]]},'s1',c);},
+ explain:'<p>رسم المقطع المرقّم مبسط ومقترح.</p>'});
 
-def('s2',{n:'2 · البحث الوصفي',eyebrow:'المحطة 2 · الكتاب صفحة 27',title:'البحث الوصفي: خطواته الثلاث',goal:'يعتمد البحث الوصفي على: تحديد الهدف من البحث، ووصف تصميم البحث، والموضوعية. تعرّفها مع قصة الطبيب جون سنو.',plan:7,core:1,icon:ICO.lens,
- body:`<div class="card" id="s2sl"></div><div class="card"><h3>رتّب خطوات البحث الوصفي</h3><div id="s2o"></div></div>`,
- init(){slides($('#s2sl'),[
-  {k:'1 · تحديد الهدف من البحث',t:'ماذا تريد أن تكتشف؟',im:[P('s10_91134c70','الطبيب جون سنو'),P('s10_78f8feb1','خريطة لندن')],html:'<p>هدف البحث هو ما تريد أن تكتشفه، أو السؤال الذي ترغب في الإجابة عنه.</p><p>تتبّع الطبيب البريطاني <b>جون سنو</b> مصدر وباء الكوليرا باستخدام البحث الوصفي، وحدّد هدفه: <b>اكتشاف مصدر وباء الكوليرا في لندن</b>.</p><p class="hint-line">تصحيح: ورد في العرض «عام 1800م»، والصواب أن ذلك كان عام 1854م (في القرن التاسع عشر).</p>'},
-  {k:'2 · وصف تصميم البحث',t:'الأسئلة والبيانات',im:[P('s11_ab6bd1ac','خريطة جون سنو')],html:'<p>ضمّن الطبيب جون سنو في استقصائه الأسئلة التي توصله لأماكن سكن المرضى المصابين وأماكن حصولهم على الماء.</p><p>واستخدم هذه البيانات في توقع أن المياه التي مصدرها <b>المضخة اليدوية الموجودة في الشارع</b> كانت مصدر التلوث.</p><p>جرّب أن تكون جون سنو في المختبر الافتراضي التالي!</p>'},
-  {k:'3 · الموضوعية',t:'الابتعاد عن التحيز',im:[P('s12_4de8af9d','تحويل البيانات إلى أرقام'),P('s12_1d16f426','العينات العشوائية')],html:'<p>تكون الموضوعية بالابتعاد عن التحيز أو النتائج المتوقعة. ويتم ذلك من خلال:</p><ol><li>تحويل جميع البيانات إلى قياسات رقمية.</li><li>استخدام عينات عشوائية.</li></ol>'}],'s2');
-  order($('#s2o'),['تحديد الهدف من البحث','وصف تصميم البحث','الموضوعية'],'s2',()=>G.complete('s2'));},
- quiz:[{q:'الابتعاد عن التحيز أو النتائج المتوقعة:',o:['الموضوعية','الفرضية','العينة الضابطة','النموذج'],a:0}]});
+def('s2',{n:'2 · حدود الصفائح',eyebrow:'المحطة 2 · نشاط صفي · 5 دقائق · الكتاب صفحة 65–67',title:'حدود الصفائح المتحركة',goal:'تسمى الحدود الفاصلة بين هذه الصفائح حدود الصفائح. ما أنواعها؟',plan:6,core:1,icon:PIC,
+ body:`<div class="two"><div class="card">${fig('s10_65207767','نشاط صفي: نمذجة حركة الصفائح بالطاولات',300)}<div class="tablewrap"><table class="c6-table"><thead><tr><th>نوع الحد</th><th>كيف ينتج؟</th></tr></thead><tbody><tr><td>1 · حدود تقارب</td><td>تنتج عندما تتحرك الصفائح بعضها نحو بعض وتتقارب أو تتصادم.</td></tr><tr><td>2 · حدود تباعد</td><td>تنتج عندما تتحرك الصفائح مبتعدة عن بعضها البعض.</td></tr><tr><td>3 · حدود جانبية (تحويلية)</td><td>تنتج عندما تتحرك الصفائح أو تنزلق بعضها بمحاذاة بعض.</td></tr></tbody></table></div><p class="step-text">وينجم عن حركة الصفائح الزلازل والبراكين.</p></div>
+  <div class="card"><h3>ماذا قرأت؟ طابق نوع الحد بحركته</h3><div id="s2m"></div>${grid([['s11_10969790','أنواع حدود الصفائح']])}</div></div>`,
+ init(){match($('#s2m'),[['حدود تقارب','الصفائح تتحرك بعضها نحو بعض وتتصادم'],['حدود تباعد','الصفائح تتحرك مبتعدة عن بعضها'],['حدود جانبية (تحويلية)','الصفائح تنزلق بعضها بمحاذاة بعض']],'s2',()=>G.complete('s2'));}});
 
-def('s3',{n:'3 · الطريقة العلمية',eyebrow:'المحطة 3 · الكتاب صفحة 27–28',title:'البحث التجريبي وخطوات الطريقة العلمية',goal:'ماذا تعمل إذا كانت نتائج تجربتك لا تدعم فرضيتك؟ ثم رتّب خطوات الطريقة العلمية.',plan:6,core:1,icon:'<path d="M8 64h16V48h16V32h16V16h16" fill="none" stroke="currentColor" stroke-width="6"/>',
- body:`<div class="two"><div class="card"><h3>إحدى الطرائق العلمية لحل المشكلات: البحث التجريبي</h3>${fig('s13_a70637d2','دورة البحث التجريبي',300)}<div id="s3q"></div></div>
-  <div class="card"><h3>رتّب خطوات الطريقة العلمية</h3><div id="s3o"></div></div></div>`,
- init(){let n=0;const c=()=>{if(++n>=2)G.complete('s3');};
-  mcq($('#s3q'),{q:'إذا كانت نتائج تجربتك لا تدعم فرضيتك، ماذا تعمل؟',o:['أعيد تكوين الفرضية','أخفي النتائج','أغيّر البيانات لتوافق الفرضية','أتوقف عن البحث'],a:0},'s3',c);
-  order($('#s3o'),['تحديد المشكلة','جمع البيانات','وضع الفرضيات','اختبار صحة الفرضيات','تحليل البيانات','استخلاص النتائج'],'s3',c,'هذه خطوات الطريقة العلمية الست.');},
- explain:'<p>خطوات الطريقة العلمية: تحديد المشكلة، جمع البيانات، وضع الفرضيات، اختبار صحة الفرضيات، تحليل البيانات، استخلاص النتائج. وإذا لم تدعم النتائج الفرضية تُعاد صياغتها.</p>'});
+def('s3',{n:'3 · أين تتشكل البراكين؟',eyebrow:'المحطة 3 · الكتاب صفحة 68–69',title:'أين تتشكل البراكين؟',goal:'معظم البراكين تتكون على حدود الصفائح، وتتشكل بطرق مختلفة.',plan:8,core:1,icon:'<path d="M8 70L32 26h16l24 44z" fill="none" stroke="currentColor" stroke-width="5"/>',
+ body:`<div class="card" id="s3sl"></div><div class="card"><h3>صنّف: أين تتشكل هذه البراكين؟</h3><div id="s3s"></div></div>`,
+ init(){slides($('#s3sl'),[
+  {k:'أين تتشكل البراكين؟',t:'على حدود الصفائح',im:[P('s12_81ba44ab','خريطة البراكين وحدود الصفائح')],html:'<p>معظم البراكين تتكون على <b>حدود الصفائح</b>.</p><p>يتكون الغلاف الصخري للأرض من <b>13 صفيحة</b> رئيسة، وتنتج نشاطات جيولوجية مهمة عند تقارب الصفائح وتباعدها وانزلاق بعضها بمحاذاة بعض عند حدود الصفائح.</p>'},
+  {k:'(1) عند حدود الصفائح المتباعدة',t:'حفر الانهدام',im:[P('s13_e1a45bcb','تباعد الصفائح'),P('s13_49195e00','حفرة الانهدام')],html:'<p>تتحرك الصفائح مبتعدًا بعضها عن بعض في أماكن الحدود المتباعدة، ومع تباعد الصفائح تتكون شقوق طويلة بينها تسمى <b>حفر الانهدام</b>.</p><p>تحوي حفر الانهدام شقوقًا تمثل ممرات تسهّل خروج الصهارة التي نشأت في الستار.</p>'},
+  {k:'(2) عند حدود الصفائح المتقاربة',t:'غوص الصفائح',im:[P('s14_d0d08f18','غوص الصفيحة'),P('s14_74a12287','البراكين عند الغوص')],html:'<p>إذ تغوص الصفيحة المحيطية التي كثافتها أكبر أسفل الصفيحة الأخرى، فتتشكل البراكين تحت هذه الظروف. ومن أشكال البراكين التي تتكون عند هذه الحدود <b>البراكين المركبة</b>.</p><p>تؤدي حرارة الستار عندها إلى صهر جزء من الصفيحة الغاطسة والصخور التي تعلوها، مكونة الصهارة. تصعد هذه الصهارة إلى أعلى مكونة براكين على السطح.</p>'},
+  {k:'(3) فوق البقع الساخنة',t:'البقع الساخنة',im:[P('s15_3679f162','البقعة الساخنة'),P('s15_28f4df5f','جزر هاواي')],html:'<p class="def"><b>البقع الساخنة:</b> مراكز بركانية نشطة، تظهر في بعض الأماكن على الأرض بسبب وجود ارتفاع غير عادي في درجة الحرارة في بقعة في أعماق الأرض، مما يتسبب في اندفاع كتل كبيرة من الصهارة (الماجما) للصعود.</p><p>ولا تكون في حدود الصفائح، بل قد تكون في وسطها، كالتي نتجت عنها <b>جزر هاواي</b> وسط صفيحة المحيط الهادئ.</p>'}],'s3');
+  sortGame($('#s3s'),{bins:['مناطق الانهدام (تباعد)','مناطق غوص الصفائح (تقارب)','فوق البقع الساخنة'],items:[['شقوق طويلة تخرج منها الصهارة',0],['صفيحة محيطية تغوص تحت أخرى',1],['براكين مركبة',1],['جزر هاواي',2],['وسط الصفيحة بعيدًا عن حدودها',2]]},'s3',()=>G.complete('s3'));}});
 
-def('s4',{n:'4 · الأجهزة والنماذج',eyebrow:'المحطة 4 · الكتاب صفحة 29–30',title:'الأجهزة والمواد والنماذج والقياسات العلمية',goal:'اختر أحدث المواد، واستخدم النماذج، وقِس بالنظام العالمي للوحدات SI.',plan:8,core:1,icon:ICO.flask,
- body:`<div class="card" id="s4sl"></div><div class="two"><div class="card"><h3>صنّف النماذج</h3><div id="s4sort"></div></div><div class="card"><h3>الجدول 1: النظام العالمي (SI) لوحدات القياس</h3><div class="tablewrap"><table class="c6-table"><thead><tr><th>القياس</th><th>الوحدة</th><th>الرمز</th><th>يساوي</th></tr></thead><tbody>
-  <tr><td rowspan="4">الطول</td><td>1 ملليمتر</td><td>ملم</td><td>0.001 م (1/1000)</td></tr><tr><td>1 سنتمتر</td><td>سم</td><td>0.01 م (1/100)</td></tr><tr><td>1 متر</td><td>م</td><td>100 سم</td></tr><tr><td>1 كيلومتر</td><td>كم</td><td>1000 م</td></tr>
-  <tr><td rowspan="2">حجم السائل</td><td>1 ملليلتر</td><td>مل</td><td>0.001 لتر</td></tr><tr><td>1 لتر</td><td>لتر</td><td>1000 مل</td></tr>
-  <tr><td rowspan="4">الكتلة</td><td>1 ملجرام</td><td>ملجم</td><td>0.001 جم</td></tr><tr><td>1 جرام</td><td>جم</td><td>1000 ملجم</td></tr><tr><td>1 كيلوجرام</td><td>كجم</td><td>1000 جم</td></tr><tr><td>1 طن</td><td>طن</td><td>1000 كجم = 1 طن</td></tr></tbody></table></div><div id="s4c" class="mt"></div></div></div>`,
- init(){let n=0;const c=()=>{if(++n>=2)G.complete('s4');};
-  slides($('#s4sl'),[
-   {k:'اختيار المواد والأجهزة',t:'أحدث المواد المتوافرة',im:[P('s15_a202a55c','أدوات المختبر'),P('s15_354d1056','طالب يعرض نتائجه')],html:'<p>عندما تنفذ الاستقصاء وتجمع البيانات عليك أن تختار أحدث المواد المتوافرة لديك.</p><p>بعد أن تكمل استقصاءك يمكنك أن تستخدم بعض الوسائل المتاحة لعرض النتائج، كما يمكن استخدام الحاسب الآلي أيضًا.</p>'},
-   {k:'استخدام النماذج',t:'درسنا في الصف الأول المتوسط',im:[P('s16_44887300','نموذج المجموعة الشمسية'),P('s16_d81a960d','نموذج حاسوبي لحركة الصفائح'),P('s16_77c250a5','أينشتاين')],html:'<p class="def"><b>النموذج:</b> محاكاة لشيء ما أو حدث ما، ويستخدم أداةً لفهم العالم الطبيعي؛ حيث تساعد النماذج على تصور أو تخيل الأشياء التي يصعب رؤيتها أو فهمها.</p><p><b>أنواع النماذج:</b> النماذج المادية (نموذج المجموعة الشمسية)، والنماذج الحاسوبية (استخدام الحاسوب لعمل نموذج لحركة الصفائح الأرضية)، والنماذج الفكرية (معادلة المادة والطاقة لأينشتاين).</p><p><b>تفيد النماذج في:</b> توفير المال والجهد، واختبار التوقعات والفرضيات، والتواصل.</p>'},
-   {k:'القياسات العلمية',t:'النظام العالمي للوحدات SI',im:[P('s17_b56c7e76','مخبار مدرج وميزان'),P('s17_7d934c3f','وحدات SI')],html:'<p>استخدم العلماء لجمع الملاحظات في جميع أنحاء العالم نظامًا للقياس يسمى <b>النظام العالمي للوحدات</b> International System of Units.</p><p>من الأدوات التي يستخدمها العلماء: المخبار المدرج لقياس حجم السائل، والميزان لقياس الكتلة، ومقياس الحرارة لقياس درجة الحرارة.</p>'}],'s4');
-  sortGame($('#s4sort'),{bins:['مادي','حاسوبي','فكري'],items:[['نموذج المجموعة الشمسية',0],['مجسم الخلية',0],['محاكاة حركة الصفائح الأرضية',1],['محاكاة الطقس على الحاسوب',1],['معادلة المادة والطاقة لأينشتاين',2]]},'s4',c);
-  K.calcQ($('#s4c'),{p:'كم سنتمترًا في 2.5 متر؟',v:250,unit:'سم',given:'1 م = 100 سم',law:'سم = م × 100',sol:'2.5 × 100 = 250 سم'},'s4',c);},
- explain:'<p>نختار أحدث المواد، ونستخدم النماذج المادية والحاسوبية والفكرية، ونقيس بالنظام العالمي للوحدات SI. (مثالا مجسم الخلية ومحاكاة الطقس مقترحان.)</p>'});
+def('s4',{n:'4 · الصفائح تسبب الزلازل',eyebrow:'المحطة 4 · الكتاب صفحة 69–70',title:'حركة الصفائح تسبب الزلازل',goal:'إذا قارنت بين الصورتين فستلاحظ العلاقة بين المواقع السطحية للزلازل وحدود الصفائح.',plan:5,core:1,icon:'<path d="M4 40h12l6-16 8 32 8-40 8 48 8-24 6 12h16" fill="none" stroke="currentColor" stroke-width="5"/>',
+ body:`<div class="two"><div class="card">${grid([['s16_81ba44ab','حدود الصفائح'],['s16_c7a9a3fe','مواقع الزلازل']])}<p class="step-text">تحدث الزلازل عند: حدود التباعد ✓ · حدود التقارب ✓ · حدود التحول ✓</p><p class="step-text">إذا قارنت بين الصورتين فستلاحظ العلاقة بين المواقع السطحية للزلازل وحدود الصفائح. وتنتج عن حركة الصفائح قوى تعمل على توليد الطاقة المسببة للزلازل.</p></div>
+  <div class="card">${fig('s17_c7a9a3fe','خريطة تمثل مواقع الزلازل التي حدثت بين عامي 1990–2000م',360)}<div id="s4q"></div></div></div>`,
+ init(){mcq($('#s4q'),{q:'ماذا تلاحظ عند مقارنة خريطة الزلازل بخريطة حدود الصفائح؟',o:['تتركز الزلازل على امتداد حدود الصفائح','تتوزع الزلازل عشوائيًّا','تحدث الزلازل وسط القارات فقط','لا تحدث زلازل في المحيطات'],a:0},'s4',()=>G.complete('s4'));}});
 
-def('s5',{n:'5 · البيانات والنتائج',eyebrow:'المحطة 5 · الكتاب صفحة 31–32',title:'جمع البيانات، واستخلاص النتائج، وتواصل العلماء',goal:'لماذا تُنظَّم البيانات؟ وماذا يفعل العلماء إذا لم تدعم النتائج توقعاتهم؟',plan:6,core:1,icon:'<rect x="12" y="44" width="12" height="24" fill="currentColor"/><rect x="34" y="28" width="12" height="40" fill="currentColor" opacity=".7"/><rect x="56" y="14" width="12" height="54" fill="currentColor" opacity=".4"/>',
- body:`<div class="card" id="s5sl"></div>`,
- init(){slides($('#s5sl'),[
-  {k:'جمع البيانات',t:'لماذا تُنظّم البيانات؟',im:[P('s19_1b575145','جدول بيانات'),P('s19_ee947fd6','رسم بياني')],html:'<p>يجب أن تُجمع البيانات في البحوث العلمية، وتُنظّم بصورة صحيحة. <b>لماذا؟</b> لأن التنظيم الجيد للبيانات يسهّل عمليتي التفسير والتحليل.</p><p>وهي تكون على شكل: <b>جداول البيانات</b>، و<b>الرسوم البيانية</b>.</p>'},
-  {k:'استخلاص النتائج',t:'البحث عن مضاد حيوي',im:[P('s20_2494bf57','المضادات الحيوية'),P('s20_c1b9085f','البكتيريا')],html:'<p>يقضي العلماء عدة سنوات في البحث عن مضاد حيوي يقتل بكتيريا معينة لاكتشاف أي المضادات الحيوية تؤثر فيها، وأيها لا تؤثر. فيتوصل العلماء إلى بعض المعلومات الجديدة في كل مرة يجدون فيها مضادًا حيويًّا لا تأثير له.</p><ul><li>التوصل للعلاج، وهو المطلوب.</li><li>عدم التوصل للعلاج، واستخدام المعلومات التي تم استقصاؤها في إنتاج مضادات حيوية أخرى.</li></ul><p class="def"><b>نستنتج:</b> إذا كانت النتائج لا تدعم توقعك فيتم الاحتفاظ بها للاستفادة منها في مجال آخر.</p>'},
-  {k:'تواصل العلماء',t:'اقرأ النص صفحة 30',im:[P('s21_ad434be3','لقاء علمي')],html:'<p>يُعد التواصل بنتائج التجارب جزءًا مهمًّا من الخبرات المختبرية.</p><p><b>لماذا يعد تواصل العلماء ونقل البيانات بينهم أمرًا مهمًّا لهم؟</b> لأن ذلك يُمكّن العلماء الآخرين من الاستفادة من المعلومات والبيانات التي تم التوصل لها، ويتيح لهم الحصول على أفكار جديدة تساهم في التوصل لنتائج أفضل.</p>'}],'s5',()=>G.complete('s5'));}});
+def('ev1',{n:'تقويم 1–4',eyebrow:'تقويم · الأسئلة 1–4',title:'تقويم: البراكين والزلازل وحدود الصفائح',goal:'أسئلة التقويم كما في العرض.',plan:5,core:1,icon:ICO.check,
+ body:'<div class="two"><div class="card"><h3>1 · أين تتشكل البراكين؟</h3><div id="h1"></div></div><div class="card"><h3>2</h3><div id="h2"></div></div></div><div class="card"><h3>3</h3><div id="h3"></div></div><div class="card"><h3>4 · صح أم خطأ</h3><div id="h4"></div></div>',
+ init(){let n=0;const c=()=>{if(++n>=4)G.complete('ev1');};
+  order($('#h1'),['في مناطق الانهدام (مناطق الشقوق الناتجة عن التباعد)','في مناطق غوص الصفائح (المناطق التي تغوص فيها صفيحة تحت أخرى عند التقارب)','فوق البقع الساخنة'],'ev1',c,'كما في العرض: ثلاثة أماكن.');
+  mcq($('#h2'),{q:'عندما تبتعد الصفائح بعضها عن بعض يتكون فيما بينها شقوق طويلة تسمى:',o:['البقع الساخنة','حفر الانهدام','غوص الصفائح','الحرات'],a:1},'ev1',c);
+  mcq($('#h3'),{q:'تحدث معظم الزلازل والبراكين:',o:['داخل الصفائح','عند خط الاستواء','في المحيطات','عند حدود الصفائح'],a:3},'ev1',c);
+  tfx($('#h4'),[['عند حدود الصفائح المتباعدة تتحرك الصفائح مبتعدًا بعضها عن بعض.',true],['تتميز الصفائح <u>القارية</u> بأنها أكبر كثافة وأقل سمكًا من الصفائح المحيطية.',false,'المحيطية',['المحيطية','الصلبة','القديمة']],['جزر هاواي من الأمثلة على البراكين التي تتكون بفعل البقع الساخنة.',true],['يتكون الغلاف الصخري للأرض من 13 صفيحة رئيسة.',true]],'ev1',c);}});
 
-def('ev1',{n:'تقويم 1–3',eyebrow:'تقويم · الأسئلة 1–3',title:'تقويم: الطرائق العلمية',goal:'أسئلة التقويم كما في العرض.',plan:6,core:1,icon:ICO.check,
- body:`<div class="two"><div class="card"><h3>1-1</h3><div id="a1"></div></div><div class="card"><h3>1-2</h3><div id="a2"></div></div></div><div class="card"><h3>1-3</h3><div id="a3"></div></div>
-  <div class="card"><h3>2 · أكمل الفراغات التالية بما يناسبها</h3><div id="a4"></div></div><div class="card"><h3>3 · أجب بكلمة (صح) للعبارة الصحيحة، و(خطأ) للعبارة الخاطئة</h3><div id="a5"></div></div>`,
- init(){let n=0;const c=()=>{if(++n>=5)G.complete('ev1');};
-  mcq($('#a1'),{q:'أول خطوة من خطوات الطرائق العلمية هي:',o:['استخلاص النتائج','تحديد المشكلة','وضع الفرضيات','اختبار الفرضيات'],a:1},'ev1',c);
-  mcq($('#a2'),{q:'أي مما يلي ليس من خطوات البحث الوصفي:',o:['تحديد الهدف من البحث','وصف تصميم البحث','التحيز','الموضوعية'],a:2},'ev1',c);
-  mcq($('#a3'),{q:'ماذا تفعل إذا كانت نتائج تجربتك لا تدعم فرضيتك؟',o:['تعيد التجربة','تستخلص النتائج','تحلل البيانات','تغير الفرضية'],a:3},'ev1',c);
-  fill($('#a4'),{bank:['جمع الملاحظات','البحث التجريبي','النموذج','النظام الدولي للوحدات SI'],items:[['البحث الوصفي يُجيب عن الأسئلة العلمية من خلال ___','جمع الملاحظات'],['يستخدم العلماء لجمع الملاحظات في جميع أنحاء العالم نظامًا للقياس يسمى ___','النظام الدولي للوحدات SI']]},'ev1',c);
-  tfx($('#a5'),[['النظريات العلمية <u>ثابتة لا تتغير</u>.',false,'قابلة للتغيير',['قابلة للتغيير','نهائية','سرية']],['من فوائد استخدام النماذج توفير المال والوقت والجهد.',true],['المعلومات عن الاكتشافات العلمية الحديثة متوافرة <u>للعلماء فقط</u>.',false,'للجميع',['للجميع','للأطباء فقط','للمعلمين فقط']],['اختبار الفرضيات هي الخطوة <u>الأخيرة</u> من خطوات الطريقة العلمية.',false,'الرابعة',['الرابعة','الأولى','الثانية']]],'ev1',c);},
- explain:'<p>إجابات «صح أم خطأ» من العرض؛ والتصحيح بالكلمة المقترحة مبني على شرائح الدرس: الخطوة الأخيرة هي «استخلاص النتائج».</p>'});
+def('s5',{n:'5 · صفائح الأرض وباطنها',eyebrow:'المحطة 5 · الكتاب صفحة 71',title:'كيف توصل العلماء إلى معرفة مكونات باطن الأرض؟',goal:'توصل العلماء إلى معرفة الكثير عن باطن الأرض والصفائح من خلال دراسة الموجات الزلزالية.',plan:8,core:1,icon:'<circle cx="40" cy="40" r="30" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="40" cy="40" r="18" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="40" cy="40" r="8" fill="currentColor"/>',
+ body:`<div class="card" id="s5sl"></div><div class="card"><h3>تطبيق الرياضيات: زمن وصول موجات P</h3><div class="two"><div><p class="step-text">تختلف سرعة موجات P تبعًا لكثافة الوسط الذي تنتقل خلاله في باطن الأرض.</p><div class="tablewrap"><table class="c6-table"><thead><tr><th>الوسط</th><th>الكثافة</th><th>سرعة موجة P</th></tr></thead><tbody><tr><td>القشرة</td><td>2.8 جم/سم³</td><td>6 كم/ث</td></tr><tr><td>الستار العلوي</td><td>3.3 جم/سم³</td><td>8 كم/ث</td></tr></tbody></table></div>
+   <div class="story mt"><b>مثال محلول:</b> كيف يمكنك حساب الزمن الذي تستغرقه موجات P للانتقال عبر 100 كم من قشرة الأرض؟<br>المعطيات: السرعة = 6 كم/ث ، المسافة = 100 كم · المطلوب: الزمن<br>الزمن = المسافة ÷ السرعة = 100 ÷ 6 = <b>16.7 ثانية</b></div></div>
+   <div><h3>مسائل تدريبية · خمس دقائق</h3><div id="s5c1"></div><div id="s5c2" class="mt"></div></div></div></div>`,
+ init(){let n=0;const c=()=>{if(++n>=2)G.complete('s5');};
+  slides($('#s5sl'),[
+   {k:'صفائح الأرض وباطنها',t:'الموجات الزلزالية',im:[P('s22_fdcd2ec6','طبقات الأرض'),P('s22_f39c9295','باطن الأرض')],html:'<p>لقد توصل العلماء إلى معرفة الكثير عن باطن الأرض والصفائح الأرضية من خلال دراسة <b>الموجات الزلزالية</b>.</p><p>تختلف سرعة انتقال الموجات الزلزالية حسب الوسط الذي تمر فيه (صلب – سائل – غاز)، وكيفية انتقالها في طبقات الأرض مكّنت العلماء من رسم المناطق الرئيسة للأرض.</p>'},
+   {k:'على سبيل المثال',t:'اكتشاف الغلاف المائع (اللدن)',im:[P('s23_092ec8f6','طبقات الأرض'),P('s23_703d172b','سرعة الموجات')],html:'<p>تم اكتشاف الغلاف المائع (اللدن) عندما لاحظ العلماء أن <b>سرعة الموجات الزلزالية تنخفض</b> عندما تتخطى قاع الغلاف الصخري.</p><p>وتشكّل هذه الطبقة المنصهرة جزئيًّا طبقة أكثر سخونة وأقل صلابة، مما يسهل حركة الصفائح الصخرية الباردة فوقها.</p>'}],'s5');
+  K.calcQ($('#s5c1'),{p:'1. احسب الزمن الذي تستغرقه موجات P للانتقال مسافة 300 كم في الستار العلوي.',v:37.5,unit:'ثانية',given:'المسافة = 300 كم ، السرعة = 8 كم/ث',want:'الزمن = ؟',law:'الزمن = المسافة ÷ السرعة',sol:'300 ÷ 8 = 37.5 ثانية'},'s5',c);
+  K.calcQ($('#s5c2'),{p:'2. ما الزمن الذي تستغرقه موجات P للانتقال 500 كم في القشرة؟ (منزلة عشرية واحدة)',v:83.3,unit:'ثانية',given:'المسافة = 500 كم ، السرعة = 6 كم/ث',want:'الزمن = ؟',law:'الزمن = المسافة ÷ السرعة',sol:'500 ÷ 6 ≈ 83.3 ثانية'},'s5',c);},
+ explain:'<p>حلول المسائل التدريبية محسوبة بالقانون نفسه في مثال الكتاب (لم ترد في العرض).</p>'});
 
-def('s6',{n:'6 · البحث التجريبي',eyebrow:'المحطة 6 · الكتاب صفحة 34',title:'البحث التجريبي: خطوات التجربة المضبوطة',goal:'التجريب عمل أساس في العلوم: الإجابة عن سؤال علمي من خلال ملاحظة حالات قابلة للتحكم فيها وضبطها.',plan:7,core:1,icon:ICO.flask,
- body:`<div class="card" id="s6sl"></div><div class="two"><div class="card"><h3>رتّب خطوات البحث التجريبي</h3><div id="s6o"></div></div><div class="card"><h3>كوّن فرضية</h3><p class="step-text">إذا لاحظت أن سقي نباتاتك كل يوم يجعلها تنمو بشكل أسرع…</p><div id="s6q"></div></div></div>`,
- init(){let n=0;const c=()=>{if(++n>=2)G.complete('s6');};
-  slides($('#s6sl'),[
-   {k:'البحث التجريبي',t:'التجريب عمل أساس في العلوم',im:[P('s25_586433d3','عالم يجرب')],html:'<p>التجريب: الإجابة عن سؤال علمي من خلال ملاحظة حالات قابلة للتحكم فيها وضبطها.</p><p><b>خطواته:</b> وضع فرضية ← التخطيط للتجربة ← استخدام عينة ضابطة ← إجراء عدة محاولات للتجربة ← تحليل البيانات ← استخلاص النتائج.</p>'},
-   {k:'وضع الفرضية',t:'توقع قابل للاختبار',im:[P('s27_bc844e1b','الفرضية'),P('s27_bd9a7979','سقي النبات')],html:'<p class="def"><b>الفرضية:</b> توقع أو عبارة قابلة للاختبار.</p><p>عادة ما تستخدم خبراتك السابقة في وضع الفرضيات. بعدها يمكنك بدء التجارب لاختبار فرضيتك.</p>'},
-   {k:'التخطيط للتجربة',t:'التجربة المضبوطة',im:[P('s28_1724cb00','طبق بكتيريا')],html:'<p>وذلك عن طريق التجربة المضبوطة التي تحتاج لضبط ثوابتها ومتغيراتها.</p><p><b>مثال:</b> سنختبر أثر مضادين حيويين في نمو البكتيريا.</p>'}],'s6');
-  order($('#s6o'),['وضع فرضية','التخطيط للتجربة','استخدام عينة ضابطة','إجراء عدة محاولات للتجربة','تحليل البيانات','استخلاص النتائج'],'s6',c);
-  mcq($('#s6q'),{q:'أي العبارات التالية فرضية قابلة للاختبار؟',o:['إذا سُقي النبات كل يوم فإنه ينمو أسرع من النبات الذي يُسقى مرة في الأسبوع','النباتات جميلة','أحب سقي النباتات','النبات كائن حي'],a:0,why:'الفرضية توقع يمكن اختباره بتجربة.'},'s6',c);}});
+def('s6',{n:'6 · الصفيحة العربية',eyebrow:'المحطة 6 · الكتاب صفحة 72',title:'حركة الصفائح والنشاط البركاني في المملكة العربية السعودية',goal:'المس حدود الصفيحة العربية لتتعرف نوع كل حد.',plan:7,core:1,icon:'<path d="M20 20l30-8 14 20-8 30-22 6-16-24z" fill="none" stroke="currentColor" stroke-width="5"/>',
+ body:`<div class="two"><div class="stage"><svg id="ar" viewBox="0 0 400 360" aria-label="الصفيحة العربية" style="direction:ltr"></svg></div>
+  <div class="side"><div class="card"><div id="arfb" class="step-text">المس حدًّا من حدود الصفيحة العربية.</div></div><div class="card">${lst(['يتركز تأثير حركة الصفائح الأرضية في المملكة العربية السعودية حول حواف الصفيحة العربية.','يتركز في الجهة الغربية على امتداد ساحل البحر الأحمر؛ حيث تمثل حدود الصفيحة العربية مع الصفيحة الإفريقية.','يتركز النشاط الزلزالي في المملكة على امتداد البحر الأحمر وحتى خليج العقبة، حيث تمثل هذه المناطق حدود تباعد بين الصفيحة العربية والصفيحة الإفريقية.'])}</div></div></div>
+  <div class="card"><h3>ماذا قرأت؟ ما حدود الصفائح المحيطة بالصفيحة العربية؟</h3><div id="s6m"></div></div>`,
+ init(){const B=[{id:'rs',n:'البحر الأحمر',t:'حدود تباعد',c:'#16a34a',d:'M90 70 L150 170 L200 280 L230 300',x:120,y:190,txt:'حدود تباعد مع الصفيحة الإفريقية على امتداد البحر الأحمر: تتباعد الصفيحتان ويتسع البحر الأحمر ببطء.'},{id:'aq',n:'خليج العقبة والبحر الميت',t:'حدود جانبية (تحويلية)',c:'#2563eb',d:'M90 70 L100 20',x:60,y:40,txt:'حدود جانبية تنزلق فيها الصفيحتان بمحاذاة بعضهما على امتداد خليج العقبة والبحر الميت.'},{id:'za',n:'جبال زاغروس',t:'حدود تقارب',c:'#dc2626',d:'M110 20 L230 40 L330 130 L370 200',x:280,y:70,txt:'حدود تقارب مع صفيحة أوراسيا على امتداد الجانب الشرقي والشمالي، وتكونت جبال زاغروس.'},{id:'ad',n:'خليج عدن',t:'حدود تباعد',c:'#16a34a',d:'M230 300 L360 260',x:300,y:300,txt:'حدود تباعد في خليج عدن جنوب الصفيحة.'}];const seen=new Set();
+  const draw=sel=>{let s=`<rect width="400" height="360" fill="#bfdbfe"/><path d="M100 20 L230 40 L330 130 L370 200 L360 260 L230 300 L200 280 L150 170 L90 70z" fill="#fde68a" stroke="#a16207"/><text x="230" y="180" text-anchor="middle" ${'font-family="IBM Plex Sans Arabic"'} font-size="18" font-weight="800" fill="#92400e">الصفيحة العربية</text><text x="50" y="240" ${'font-family="IBM Plex Sans Arabic"'} font-size="14" fill="#334155">الصفيحة الإفريقية</text><text x="250" y="20" ${'font-family="IBM Plex Sans Arabic"'} font-size="14" fill="#334155">صفيحة أوراسيا</text>`;
+   B.forEach(b=>s+=`<path class="bd" data-b="${b.id}" d="${b.d}" stroke="${b.c}" stroke-width="${sel===b.id?12:8}" fill="none" stroke-linecap="round" style="cursor:pointer"/>`);$('#ar').innerHTML=s;
+   $$('#ar .bd').forEach(p=>p.onclick=()=>{const b=B.find(x=>x.id===p.dataset.b);seen.add(b.id);SFX.pop();draw(b.id);say($('#arfb'),'info',`<b>${b.n}:</b> ${b.t}. ${b.txt}`);if(seen.size===4)G.add(4,'s6');});};draw();
+  match($('#s6m'),[['حدود تباعد','مع صفيحة إفريقيا على امتداد البحر الأحمر'],['حدود جانبية (تحويلية)','على امتداد خليج العقبة'],['حدود تقارب','مع صفيحة أوراسيا على امتداد الجانب الشرقي والشمالي']],'s6',()=>G.complete('s6'));},
+ explain:'<p><b>تصحيح:</b> ورد في شريحة العرض «حدود جانبية مع صفيحة إفريقيا على امتداد البحر الأحمر»، بينما ذكرت الشريحة السابقة لها أن البحر الأحمر حدود تباعد. الصواب: البحر الأحمر حدود تباعد، والحدود الجانبية على امتداد خليج العقبة والبحر الميت، وحدود التقارب مع أوراسيا. الخريطة مبسطة ومقترحة.</p>'});
 
-def('s7',{n:'7 · المتغيرات والعينة الضابطة',eyebrow:'المحطة 7 · الكتاب صفحة 34–35',title:'تجربة المضادين الحيويين: المتغيرات والعينة الضابطة',goal:'أضيف مضادان حيويان مختلفان إلى الطبقين (أ) و(ب)، ولم يُضف أي مضاد إلى طبق العينة الضابطة. ماذا نلاحظ؟',plan:8,core:1,icon:'<circle cx="22" cy="40" r="14" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="58" cy="40" r="14" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="18" cy="36" r="3" fill="currentColor"/><circle cx="26" cy="44" r="3" fill="currentColor"/>',
- body:`<div class="two"><div class="card">${grid([['s29_f7b95ce1','أولًا: بداية التجربة'],['s29_f4383349','ثانيًا: النتائج']])}<p class="step-text"><b>نلاحظ أن:</b> البكتيريا نمت في طبق العينة الضابطة وفي الطبق الذي أضفنا له المضاد الحيوي (أ)، بينما لم تنمُ في الطبق الذي أضفنا له المضاد الحيوي (ب). جميع العوامل كانت ثابتة ما عدا نوع المضاد الحيوي الذي أضيف.</p></div>
-  <div class="card"><h3>تعاريف</h3><div class="tablewrap"><table class="c6-table"><thead><tr><th>المصطلح</th><th>التعريف</th><th>المثال في تجربتنا</th></tr></thead><tbody><tr><td>المتغير المستقل</td><td>العامل الذي يتم تغييره في التجربة</td><td>نوع المضاد</td></tr><tr><td>المتغير التابع</td><td>العامل الذي يتم قياسه في التجربة</td><td>نمو البكتيريا</td></tr><tr><td>الثوابت</td><td>المتغيرات التي تبقى ثابتة دون أن تتغير</td><td>درجة الحرارة · الزمن · كمية المضاد</td></tr></tbody></table></div>
-   <h3 class="mt">ماذا عن العينة الضابطة؟</h3><p class="step-text">هي عينة تعامل مثل بقية المجموعات التجريبية، إلا أنها لم تتعرض إلى أثر المتغير المستقل. ففي تجربتنا: العينة الضابطة هي عينة البكتيريا التي لم نُضف إليها أي مضاد حيوي، وتوضح كيف تنمو البكتيريا عندما لا يضاف إليها أي مضاد.</p>${reveal('ماذا تفيدنا العينة الضابطة؟','لكي نقارن نتائجها بنتائج تلك العينات التي تعرضت لأثر المتغير المستقل.')}</div></div>
-  <div class="two"><div class="card"><h3>صنّف عناصر تجربتنا</h3><div id="s7sort"></div></div><div class="card" id="s7sl"></div></div>`,
- init(){sortGame($('#s7sort'),{bins:['متغير مستقل','متغير تابع','ثابت','عينة ضابطة'],items:[['نوع المضاد الحيوي',0],['نمو البكتيريا',1],['درجة الحرارة',2],['الزمن',2],['كمية المضاد',2],['طبق بلا مضاد حيوي',3]]},'s7',()=>G.complete('s7'));
-  slides($('#s7sl'),[{k:'إجراء عدة محاولات',t:'لماذا؟',im:[P('s32_36005894','جدول المحاولات')],html:'<p>للتأكد من صحة نتائجك، ولتكون النتائج أكثر دقة.</p>'},{k:'تحليل البيانات',t:'التعريف',im:[P('s33_d22bf43d','تحليل البيانات')],html:'<p class="def"><b>تحليل البيانات:</b> عملية فحص وتدقيق البيانات وانتقائها، وتحويلها وتخزينها ونمذجتها؛ بهدف استخلاص استنتاجات.</p>'}],'s7');},
- explain:'<p>المتغير المستقل: نوع المضاد. التابع: نمو البكتيريا. الثوابت: الحرارة والزمن وكمية المضاد. العينة الضابطة: طبق بلا مضاد للمقارنة.</p>'});
+def('s7',{n:'7 · ما الذي يحرك الصفائح؟',eyebrow:'المحطة 7 · الكتاب صفحة 72',title:'ما الذي يحرك الصفائح؟ تيارات الحمل',goal:'هناك العديد من الفرضيات حول مصدر الطاقة المحركة للصفائح، إحداها: تيارات الحمل.',plan:6,core:1,icon:'<path d="M20 60c-10-20 0-40 20-40s30 20 20 40" fill="none" stroke="currentColor" stroke-width="5"/><path d="M56 56l4 8 6-8" fill="currentColor"/>',
+ body:`<div class="two"><div class="card">${grid([['s29_7ba552ba','تيارات الحمل في الستار'],['s29_fbb365f2','باطن الأرض']])}<p class="step-text">هناك العديد من الفرضيات حول مصدر الطاقة المحركة للصفائح، تنص إحداها على أن مادة الستار يتم تسخينها بوساطة لب الأرض، فتقل كثافتها، وتصعد إلى أعلى، ثم تبرد هذه المادة، فتنزل إلى أسفل في اتجاه اللب، مكونة <b>تيارات الحمل</b>.</p><p class="def">تيارات الحمل في باطن الأرض تؤدي إلى تحريك الصفائح.</p></div>
+  <div class="card"><h3>رتّب دورة تيار الحمل</h3><div id="s7o"></div></div></div>`,
+ init(){order($('#s7o'),['يسخّن لب الأرض مادة الستار','تقل كثافة المادة الساخنة فتصعد إلى أعلى','تبرد المادة قرب الغلاف الصخري فتزداد كثافتها','تنزل المادة إلى أسفل في اتجاه اللب'],'s7',()=>G.complete('s7'),'دورة تيار الحمل كاملة؛ وهي تجرّ الصفائح فوقها.');}});
 
-def('ev2',{n:'تقويم 4–5',eyebrow:'تقويم · الأسئلة 4–5',title:'تقويم: البحث التجريبي',goal:'ضع المصطلح المناسب، ثم صح أم خطأ.',plan:4,core:1,icon:ICO.check,
- body:'<div class="card"><h3>4 · ضع المصطلح العلمي المناسب لما يأتي</h3><div id="b1"></div></div><div class="card"><h3>5 · صح أم خطأ</h3><div id="b2"></div></div>',
+def('ev2',{n:'تقويم 5–6',eyebrow:'تقويم · الأسئلة 5–6',title:'تقويم: توقّع وارسم',goal:'أسئلة التقويم كما في العرض.',plan:4,core:1,icon:ICO.check,
+ body:`<div class="two"><div class="card"><h3>5 · توقّع على أي نوع من حدود الصفائح يحدث نشاط بركاني مصاحب لحفر الانهدام؟</h3><div id="q5"></div></div><div class="card"><h3>6 · ارسم أسهمًا لإظهار اتجاه حركة الصفيحة الأرضية لكل نوع</h3><div id="q6"></div></div></div>`,
  init(){let n=0;const c=()=>{if(++n>=2)G.complete('ev2');};
-  fill($('#b1'),{bank:['الثوابت','العينة الضابطة','المتغير المستقل','الفرضية','المتغير التابع','القانون العلمي'],items:[['العامل الذي يتم قياسه في التجربة هو ___','المتغير التابع'],['___ المتغيرات التي تبقى ثابتة دون أن تتغير.','الثوابت'],['___ هي عينة تعامل مثل بقية المجموعات التجريبية، إلا أنها لم تتعرض إلى أثر المتغير المستقل.','العينة الضابطة'],['العامل الذي يتم تغييره في التجربة ___','المتغير المستقل']]},'ev2',c);
-  tfx($('#b2'),[['الفرضية هي عبارة <u>تصف حقيقة</u>.',false,'قابلة للاختبار',['قابلة للاختبار','ثابتة','لا تتغير']],['كلما أكثرت من عدد المحاولات في التجربة كانت النتائج أكثر صحة.',true],['<u>تتأثر</u> العينة الضابطة بتغير المتغير المستقل.',false,'لا تتأثر',['لا تتأثر','تتغير','تتضاعف']],['عند تصميم البحث التجريبي يتم تحليل البيانات <u>بعد</u> استخلاص النتائج.',false,'قبل',['قبل','أثناء','بدل']]],'ev2',c);}});
+  mcq($('#q5'),{q:'نوع الحد:',o:['عند حدود الصفائح المتباعدة','عند حدود الصفائح المتقاربة','عند الحدود الجانبية','وسط الصفيحة'],a:0},'ev2',c);
+  const T=[['حدود تقارب','→ ←'],['حدود تباعد','← →'],['حدود جانبية','↑ ↓']];const box=$('#q6');const opts=['→ ←','← →','↑ ↓'];let ok=0;
+  box.innerHTML=T.map(([n],i)=>`<div class="c6-q"><b>${i+1}. ${n}</b><div class="c6-chips">${opts.map(o=>`<button class="c6-chip" type="button" data-t="${i}" data-o="${o}" style="direction:ltr;font-size:1.3rem">${o}</button>`).join('')}</div></div>`).join('')+'<div class="qfb"></div>';
+  box.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const i=+b.dataset.t;if(b.dataset.o===T[i][1]){b.setAttribute('aria-pressed','true');box.querySelectorAll(`[data-t="${i}"]`).forEach(x=>x.disabled=true);G.good();G.add(3,'ev2');if(++ok===3){say(box.querySelector('.qfb'),'ok','أحسنت! تقارب: تتجه الصفيحتان نحو بعض، تباعد: تبتعدان، جانبية: تنزلقان بمحاذاة بعض.');c();}}else{G.bad();b.disabled=true;}});}});
 
-def('sum',{n:'الخلاصة',eyebrow:'الخلاصة · الكتاب صفحة 37',title:'الخلاصة',goal:'أهم أفكار الدرس.',plan:2,icon:ICO.doc,
- body:`<div class="two"><div class="card"><h3>حل المشكلات</h3>${lst(['الطرائق العلمية خطوات تتبع لحل مشكلة ما.','يستخدم البحث الوصفي عندما يصعب إجراء التجارب.'])}<h3 class="mt">الأجهزة والموادّ والنماذج</h3>${lst(['النماذج أدوات مهمة في العلم.','يُستخدم النظام العالمي للوحدات (SI) لأخذ القياسات.','تجمع البيانات وتسجل وتنظم.'])}</div>
-  <div class="card"><h3>استخلاص النتائج</h3>${lst(['يبحث العلماء عن أنماط أو علاقات في البيانات التي يجمعونها، ثم يتواصلون بنتائجهم مع الآخرين.'])}<h3 class="mt">تصميم البحث التجريبي</h3>${lst(['تبدأ التجربة بفرضية.','المتغيرات عوامل تتغير خلال التجربة.','العينات الضابطة لا تتعرض لأثر المتغير المستقل لكي تقارن نتائجها بنتائج تلك العينات التي تعرضت لأثر المتغير المستقل.','بعد أن تُستخلص النتائج يتم التواصل بها مع علماء آخرين.'])}</div></div>`,enter(){G.complete('sum');}});
-def('self',{n:'اختبر نفسك',eyebrow:'الواجب · الكتاب صفحة 37 · التسليم يوم الخميس',title:'اختبر نفسك',goal:'أسئلة «اختبر نفسك» مع إجابات نموذجية مقترحة.',plan:3,icon:ICO.check,body:'<div class="card" id="selfBox"></div>',
+def('sum',{n:'الخلاصة',eyebrow:'الخلاصة · الكتاب صفحة 73',title:'الخلاصة',goal:'أهم أفكار الدرس.',plan:2,icon:ICO.doc,
+ body:`<div class="two"><div class="card"><h3>حدود الصفائح المتحركة</h3>${lst(['ينقسم غلاف الأرض الصخري إلى قطع تسمى صفائح، يتحرك بعضها بالنسبة إلى بعض.'])}<h3 class="mt">أين تتشكل البراكين؟</h3>${lst(['تتحرك الصفائح مبتعدة عن بعضها عند الحدود المتباعدة مكوّنة ثورانًا بركانيًّا بين الشقوق.','تتصادم الصفائح عند حدود الصفائح المتقاربة.','يتشكل الكثير من البراكين عند حدود الصفائح المتقاربة.','قد تتشكل البراكين على امتداد حفر الانهدام وفوق البقع الساخنة، وحيث تغوص الصفائح بعضها أسفل بعض.'])}</div>
+  <div class="card"><h3>حركة الصفائح تسبب الزلازل</h3>${lst(['تحدث الزلازل عادة على حدود الصفائح.','يستفاد من الموجات الزلزالية في معرفة خصائص باطن الأرض.','قد تؤدي تيارات الحمل إلى تحريك الصفائح.'])}</div></div>`,enter(){G.complete('sum');}});
+def('self',{n:'اختبر نفسك',eyebrow:'الواجب · الكتاب صفحة 73 · التسليم يوم الخميس',title:'اختبر نفسك',goal:'إجابات نموذجية مقترحة.',plan:3,icon:ICO.check,body:'<div class="card" id="selfBox"></div>',
  init(){STN.self.s=solutions($('#selfBox'),[
-  {k:'1 · وضّح',q:'لماذا يستخدم العلماء النماذج؟ اذكر ثلاثة أمثلة عليها.',a:[['لماذا','لتصور الأشياء التي يصعب رؤيتها أو فهمها، ولتوفير المال والجهد، واختبار التوقعات والفرضيات، والتواصل.'],['أمثلة','نموذج المجموعة الشمسية (مادي)، ونموذج حاسوبي لحركة الصفائح (حاسوبي)، ومعادلة المادة والطاقة لأينشتاين (فكري).']]},
-  {k:'2 · عرّف',q:'المقصود بالفرضية.',a:[['الإجابة','توقع أو عبارة قابلة للاختبار.']]},
-  {k:'3 · اذكر',q:'الخطوات الثلاث (الأساسية) التي يستخدمها العلماء عند تصميم استقصاء لحل مشكلة ما.',a:[['الإجابة','تحديد الهدف من البحث، ووصف تصميم البحث، والموضوعية (في البحث الوصفي).']]},
-  {k:'4 · حدّد',q:'لماذا يُعدّ تحديد المشكلة التي يتعين حلها بدقة أمرًا مهمًّا؟',a:[['الإجابة','لأنها الخطوة الأولى التي توجّه بقية الخطوات؛ فتحديدها بدقة يحدد البيانات المطلوبة والفرضية المناسبة ويوفر الوقت والجهد.']]},
-  {k:'5 · قِس',q:'طول مكتبك مستخدمًا المسطرة المترية، وعبّر عن ذلك بوحدة الأمتار والسنتمترات والملمترات.',a:[['مثال','إذا كان الطول 1.2 م فهو 120 سم = 1200 ملم (1 م = 100 سم = 1000 ملم).']]},
-  {k:'6 · التفكير الناقد',q:'إذا لم تدعم البيانات التي جمعتها وسجلتها في أثناء التجربة فرضيتك، فهل يعني ذلك أن تجربتك فاشلة؟ وضّح إجابتك.',a:[['الإجابة','لا؛ فالنتائج تعطي معلومات جديدة، ويُحتفظ بها للاستفادة منها في مجال آخر، ويُعاد تكوين الفرضية واختبارها.']]}],'self',()=>G.complete('self'));},
- reset(){STN.self.s.reset();},explain:'<p>الأسئلة من العرض، والإجابات نموذجية مقترحة.</p>'});
+  {k:'1 · حدّد',q:'ما نوع حدود الصفائح التي تشكّل عندها بركان حرة رهط؟',a:[['الإجابة','حدود تباعد؛ فحرة رهط من نشاط بركاني مرتبط بتباعد الصفيحة العربية عن الإفريقية (البحر الأحمر).']]},
+  {k:'2 · توقع',q:'على أي نوع من حدود الصفائح يحدث نشاط بركاني مصاحب لحفر الانهدام؟',a:[['الإجابة','عند حدود الصفائح المتباعدة.']]},
+  {k:'3 · اشرح',q:'كيف تكوّنت براكين هاواي؟',a:[['الإجابة','فوق بقعة ساخنة وسط صفيحة المحيط الهادئ؛ تصعد الصهارة من أعماق الأرض، ومع تحرك الصفيحة فوق البقعة تتكون سلسلة من الجزر البركانية.']]},
+  {k:'4 · السبب والنتيجة',q:'لماذا تكون الزلازل ذات البؤر العميقة مصاحبة للحدود المتقاربة؟',a:[['الإجابة','لأن الصفيحة المحيطية تغوص إلى أعماق كبيرة تحت الصفيحة الأخرى، فتحدث الكسور والزلازل على امتداد الصفيحة الغاطسة في العمق.']]},
+  {k:'5 · التفكير الناقد',q:'عندما تغطس صفيحة أسفل صفيحة أخرى عند حدود التقارب تنزل الرسوبيات الغنية بالماء والبازلت إلى أعماق كبيرة في الستار. اشرح كيف تساعد المياه على تكوّن البراكين.',a:[['الإجابة','الماء يخفض درجة انصهار الصخور في الستار، فتنصهر جزئيًّا وتتكون صهارة أقل كثافة تصعد إلى السطح مكونة براكين.']]}],'self',()=>G.complete('self'));},reset(){STN.self.s.reset();},explain:'<p>إجابات نموذجية مقترحة.</p>'});
 
-def('x1',{n:'إثرائي · المسابقات',eyebrow:'إثرائي · تنافس المجموعات',title:'غرفة الهروب ومزاد المعرفة',goal:'افتحوا «ملف القضية» ثم زايدوا على صحة العبارات.',plan:5,icon:ICO.lock,
- body:'<div class="card"><div id="x1esc"></div></div><div class="card"><div class="nb-head"><h2>🔨 مزاد المعرفة</h2></div><div id="x1auc"></div></div>',
- init(){STN.x1.e=escape($('#x1esc'),{title:'ملف قضية الكوليرا',story:'أُغلق ملف قضية الكوليرا بأربعة أقفال. كل إجابة صحيحة تكشف رقمًا!',secs:300,
-  locks:[{q:'أول خطوة في الطريقة العلمية:',o:['تحديد المشكلة','تحليل البيانات','استخلاص النتائج','وضع الفرضيات'],a:0,code:'1'},{q:'العامل الذي يتم تغييره في التجربة:',o:['المتغير المستقل','المتغير التابع','الثابت','العينة الضابطة'],a:0,code:'8'},{q:'مصدر وباء الكوليرا في استقصاء جون سنو:',o:['المضخة اليدوية في الشارع','الهواء','الطعام','الحيوانات'],a:0,code:'5'},{q:'وحدة قياس الكتلة في SI:',o:['كيلوجرام','لتر','متر','ثانية'],a:0,code:'4'}],outro:'أغلقتم القضية بنجاح!'},'x1');
-  STN.x1.a=auction($('#x1auc'),[['البحث الوصفي يجيب عن الأسئلة من خلال الملاحظات.',true],['العينة الضابطة تتعرض لأثر المتغير المستقل.',false,'لا تتعرض له.'],['الفرضية توقع قابل للاختبار.',true],['النظريات العلمية ثابتة لا تتغير.',false,'قابلة للتغيير.'],['1 كم = 1000 م.',true],['تحليل البيانات يكون بعد استخلاص النتائج.',false,'قبل استخلاص النتائج.']],'x1');},
- reset(){STN.x1.e.reset();STN.x1.a.reset();}});
-def('x2',{n:'إثرائي · من أنا؟',eyebrow:'إثرائي · ألغاز ولوحة خيارات',title:'من أنا؟ ولوحة الخيارات',goal:'خمّن المصطلح بأقل الأدلة، ثم اختر ثلاث مهام.',plan:4,icon:ICO.lens,
- body:'<div class="card"><div id="x2r"></div></div><div class="card"><h3>لوحة الخيارات</h3><div id="x2cb"></div></div>',
- init(){riddles($('#x2r'),[{clues:['أنا عامل في التجربة.','الباحث يغيّرني عمدًا.','في تجربة المضادات كنت «نوع المضاد».'],o:['المتغير المستقل','المتغير التابع','الثابت','العينة الضابطة'],a:0},{clues:['أنا عينة.','لا أتعرض للمتغير المستقل.','تُقارن نتائج الآخرين بي.'],o:['العينة الضابطة','العينة العشوائية','الفرضية','النموذج'],a:0},{clues:['أنا محاكاة لشيء أو حدث.','قد أكون ماديًّا أو حاسوبيًّا أو فكريًّا.','أوفر المال والجهد.'],o:['النموذج','القانون','الجدول','الفرضية'],a:0},{clues:['أنا طبيب بريطاني.','تتبعت مصدر وباء.','وجدت أن المضخة اليدوية مصدر التلوث.'],o:['جون سنو','نيوتن','أينشتاين','رذرفورد'],a:0}],'x2');
-  STN.x2.cb=choiceBoard($('#x2cb'),[{ic:'🔬',t:'صمّم تجربة',kind:'تجربة',p:'صمّم تجربة لاختبار أثر الضوء في نمو النبات، وحدد المتغيرات والعينة الضابطة.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'1 لتر =',o:['1000 مل','100 مل','10 مل','1 مل'],a:0},{ic:'✍️',t:'اكتب',kind:'كتابة',p:'اكتب فرضية لسؤال: هل يذوب السكر أسرع في الماء الساخن؟'},
-   {ic:'❓',t:'سؤال',kind:'اختيار',q:'نمو البكتيريا في تجربتنا:',o:['متغير تابع','متغير مستقل','ثابت','عينة ضابطة'],a:0},{ic:'📊',t:'مثّل',kind:'رسم',p:'مثّل بيانات أطوال 5 من زملائك برسم بياني بالأعمدة.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'لتكون النتائج أكثر دقة:',o:['نجري عدة محاولات','نجري محاولة واحدة','نغير كل العوامل','لا نسجل البيانات'],a:0},
-   {ic:'🗺',t:'خريطة',kind:'تنظيم',p:'ارسم مخططًا لخطوات الطريقة العلمية الست.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'من طرق الموضوعية:',o:['استخدام عينات عشوائية','اختيار ما يوافق توقعك','تجاهل الأرقام','التخمين'],a:0},{ic:'📏',t:'قِس',kind:'قياس',p:'قِس طول غرفتك بالمتر، وحوّله إلى سنتمترات.'}],'x2',()=>G.complete('x2'));},
- reset(){STN.x2.cb.reset();}});
+def('x1',{n:'إثرائي · المسابقات',eyebrow:'إثرائي · تنافس المجموعات',title:'أحجية الصفائح ومزاد المعرفة',goal:'غرفة الهروب ثم المزاد.',plan:5,icon:ICO.lock,
+ body:'<div class="card"><div id="x1e"></div></div><div class="card"><div class="nb-head"><h2>🔨 مزاد المعرفة</h2></div><div id="x1a"></div></div>',
+ init(){STN.x1.e=escape($('#x1e'),{title:'أحجية الصفائح',story:'تبعثرت قطع أحجية الأرض! أجيبوا لتعيدوا تركيبها.',secs:300,locks:[{q:'عدد الصفائح الرئيسة:',o:['13','7','18','3'],a:0,code:'1'},{q:'سُمك الغلاف الصخري تقريبًا:',o:['100 كم','10 كم','1000 كم','1 كم'],a:0,code:'3'},{q:'جزر هاواي تكونت فوق:',o:['بقعة ساخنة','حفرة انهدام','حد جانبي','غوص'],a:0,code:'7'},{q:'تطورت نظرية الصفائح عام:',o:['1960م','1860م','2000م','1700م'],a:0,code:'2'}],outro:'أعدتم تركيب الأحجية!'},'x1');
+  STN.x1.a=auction($('#x1a'),[['الصفائح المحيطية أكبر كثافة من القارية.',true],['تحدث معظم الزلازل داخل الصفائح.',false,'عند حدود الصفائح.'],['تيارات الحمل قد تحرك الصفائح.',true],['البحر الأحمر حدود تقارب.',false,'حدود تباعد.'],['تنخفض سرعة الموجات الزلزالية في الغلاف المائع.',true],['البقع الساخنة توجد دائمًا عند حدود الصفائح.',false,'قد تكون وسط الصفيحة.']],'x1');},reset(){STN.x1.e.reset();STN.x1.a.reset();}});
+def('x2',{n:'إثرائي · من أنا؟',eyebrow:'إثرائي',title:'من أنا؟ ولوحة الخيارات',goal:'ألغاز ولوحة خيارات.',plan:4,icon:ICO.lens,
+ body:'<div class="card"><div id="x2r"></div></div><div class="card"><div id="x2cb"></div></div>',
+ init(){riddles($('#x2r'),[{clues:['أنا طبقة في الستار.','أنا لدنة وأكثر سخونة.','تتحرك الصفائح فوقي.'],o:['الغلاف المائع','الغلاف الصخري','القشرة','اللب'],a:0},{clues:['أنا مركز بركاني.','قد أكون وسط الصفيحة.','كوّنت جزر هاواي.'],o:['البقعة الساخنة','حفرة الانهدام','الصدع','الحد الجانبي'],a:0},{clues:['أنا شقوق طويلة.','أتكون عند تباعد الصفائح.','تخرج مني الصهارة.'],o:['حفر الانهدام','غوص الصفائح','البقع الساخنة','الجبال'],a:0},{clues:['أنا تيارات.','أتكون من تسخين مادة الستار.','قد أحرك الصفائح.'],o:['تيارات الحمل','الموجات الزلزالية','التسونامي','الرياح'],a:0}],'x2');
+  STN.x2.cb=choiceBoard($('#x2cb'),[{ic:'🧩',t:'نمذجة',kind:'تجربة',p:'قص خريطة العالم إلى قطع على حدود الصفائح وحاول تركيبها.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'الصفائح تطفو فوق:',o:['الغلاف المائع','اللب الداخلي','الغلاف الجوي','المحيط'],a:0},{ic:'🧮',t:'احسب',kind:'حساب',p:'زمن موجة P لمسافة 240 كم في الستار العلوي (8 كم/ث)؟',v:30,unit:'ثانية',law:'الزمن = المسافة ÷ السرعة',sol:'240 ÷ 8 = 30 ثانية'},
+   {ic:'❓',t:'سؤال',kind:'اختيار',q:'الحدود مع أوراسيا:',o:['تقارب','تباعد','جانبية','لا حدود'],a:0},{ic:'🎨',t:'ارسم',kind:'رسم',p:'ارسم دورة تيار الحمل في الستار بالأسهم.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'البراكين المركبة تتكون عند:',o:['غوص الصفائح','البقع الساخنة فقط','حفر الانهدام فقط','وسط القارات'],a:0},
+   {ic:'🗺',t:'خريطة',kind:'بحث',p:'حدّد على خريطة العالم ثلاث مناطق زلزالية نشطة ونوع حدودها.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'اكتُشف الغلاف المائع لأن سرعة الموجات فيه:',o:['تنخفض','تزداد','تتوقف','لا تتغير'],a:0},{ic:'✍️',t:'اكتب',kind:'كتابة',p:'اكتب فقرة: لماذا تتركز الزلازل في غرب المملكة؟'}],'x2',()=>G.complete('x2'));},reset(){STN.x2.cb.reset();}});
 
 def('ch',{n:'تحدي العلماء',plan:3,icon:ICO.cup,eyebrow:'التقويم الختامي',title:'تحدي العلماء',goal:'أسئلة من تقويم العرض.',body:'<div class="card" id="chBox"></div>',
  init(){STN.ch.c=challenge($('#chBox'),[
-  {k:'الطريقة العلمية',q:'أول خطوة من خطوات الطرائق العلمية هي:',o:['استخلاص النتائج','تحديد المشكلة','وضع الفرضيات','اختبار الفرضيات'],a:1},
-  {k:'البحث الوصفي',q:'أي مما يلي ليس من خطوات البحث الوصفي:',o:['تحديد الهدف من البحث','وصف تصميم البحث','التحيز','الموضوعية'],a:2},
-  {k:'الفرضية',q:'ماذا تفعل إذا كانت نتائج تجربتك لا تدعم فرضيتك؟',o:['تعيد التجربة','تستخلص النتائج','تحلل البيانات','تغير الفرضية'],a:3},
-  {k:'المتغيرات',q:'العامل الذي يتم قياسه في التجربة:',o:['المتغير التابع','المتغير المستقل','الثابت','العينة الضابطة'],a:0},
-  {k:'SI',q:'النظام المستخدم عالميًّا للقياس:',o:['النظام الدولي للوحدات SI','النظام الإنجليزي','نظام الأشبار','النظام القديم'],a:0},
-  {k:'النماذج',t:'multi',q:'اختر فوائد النماذج:',items:[['توفير المال والجهد',1],['اختبار التوقعات والفرضيات',1],['التواصل',1],['إخفاء النتائج',0]]},
-  {k:'العينة الضابطة',q:'فائدة العينة الضابطة:',o:['مقارنة نتائجها بنتائج العينات التي تعرضت للمتغير المستقل','زيادة عدد البكتيريا','تغيير الفرضية','قياس الحرارة'],a:0}],'ch');},
- reset(){STN.ch.c.reset();}});
+  {k:'حفر الانهدام',q:'عندما تبتعد الصفائح بعضها عن بعض يتكون فيما بينها شقوق طويلة تسمى:',o:['البقع الساخنة','حفر الانهدام','غوص الصفائح','الحرات'],a:1},
+  {k:'الحدود',q:'تحدث معظم الزلازل والبراكين:',o:['داخل الصفائح','عند خط الاستواء','في المحيطات','عند حدود الصفائح'],a:3},
+  {k:'الكثافة',q:'الصفائح الأكبر كثافة والأقل سمكًا:',o:['المحيطية','القارية','كلاهما','لا شيء'],a:0},
+  {k:'الحمل',q:'ما الذي يحرك الصفائح وفق إحدى الفرضيات؟',o:['تيارات الحمل في الستار','الرياح','المد والجزر','دوران القمر'],a:0},
+  {k:'P',t:'calc',p:'زمن موجات P لمسافة 300 كم في الستار العلوي (8 كم/ث):',v:37.5,unit:'ثانية',law:'الزمن = المسافة ÷ السرعة',sol:'300 ÷ 8 = 37.5 ث'},
+  {k:'البراكين',t:'multi',q:'اختر أماكن تشكل البراكين:',items:[['مناطق الانهدام',1],['مناطق غوص الصفائح',1],['فوق البقع الساخنة',1],['وسط الصحاري دائمًا',0]]},
+  {k:'التوقع',q:'النشاط البركاني المصاحب لحفر الانهدام يحدث عند:',o:['حدود الصفائح المتباعدة','الحدود المتقاربة','الحدود الجانبية','وسط الصفيحة'],a:0}],'ch');},reset(){STN.ch.c.reset();}});
 
-C6.plan({intro:{s:['poe','brain'],g:'١ و٢',sk:'التنبؤ',ev:'سؤال التوقع'},goals:{s:['frayer'],g:'١ و٢',sk:'التذكر',ev:'المطابقة'},s1:{s:['prob','cards'],g:'١',sk:'التصنيف',ev:'وصفي أم تجريبي'},s2:{s:['story','tl'],g:'٢',sk:'الترتيب',ev:'خطوات البحث الوصفي'},
- lab1:{s:['inq','role'],g:'٢',sk:'الاستدلال',ev:'محقق الكوليرا'},s3:{s:['time','heads'],g:'١',sk:'الترتيب',ev:'خطوات الطريقة العلمية'},s4:{s:['jigsaw','cards'],g:'٢',sk:'التصنيف والتحويل',ev:'تصنيف النماذج'},s5:{s:['tps'],g:'١',sk:'الاستنتاج',ev:'شرائح البيانات'},
- ev1:{s:['spot','heads'],g:'١ و٢',sk:'التطبيق',ev:'تقويم 1–3'},s6:{s:['inq','coop'],g:'٢',sk:'الترتيب',ev:'كوّن فرضية'},s7:{s:['venn','sticks'],g:'٢',sk:'التمييز',ev:'تصنيف المتغيرات'},lab2:{s:['poe','inq'],g:'٢',sk:'ضبط المتغيرات',ev:'طبق البكتيريا'},lab3:{s:['inq','prob'],g:'٢',sk:'تحليل البيانات',ev:'المحاولات والمتوسط'},
- ev2:{s:['spot','cards'],g:'٢',sk:'التطبيق',ev:'تقويم 4–5'},sum:{s:['tl'],g:'١ و٢',sk:'التلخيص',ev:'إشارة المرور'},self:{s:['heads','sticks'],g:'١ و٢',sk:'التفكير الناقد',ev:'اختبر نفسك'},x1:{s:['game','champ'],g:'١ و٢',sk:'الاستدعاء',ev:'الهروب والمزاد'},x2:{s:['who','game'],g:'١ و٢',sk:'الاستنتاج',ev:'من أنا؟'},ch:{s:['exit'],g:'١ و٢',sk:'التقويم الختامي',ev:'تحدي العلماء'}},'g9c1l2');
-K.boot({chapter:'الفصل الأول: طبيعة العلم',chapterShort:'الفصل الأول',title:'مختبر المحققين',lesson:'الدرس الثاني: عمل العلم',accent:'#1d4ed8',accentDark:'#60a5fa',hook:'كل مشكلة… لها طريقة علمية لحلها!',
- riddle:'ما الخطوات التي يتبعها العلماء لحل المشكلات؟',predict:{o:['يحددون المشكلة ويجمعون البيانات ويضعون فرضية ويختبرونها ثم يحللون ويستنتجون','يجربون أي شيء حتى ينجح','يسألون الناس فقط'],a:0},
- answer:'الطريقة العلمية خطوات متسلسلة: تحديد المشكلة، جمع البيانات، وضع الفرضيات، اختبار صحتها، تحليل البيانات، استخلاص النتائج. وقد يكون البحث وصفيًّا بالملاحظة أو تجريبيًّا باختبار الفرضية.',
- finalTitle:'مبارك! أصبحت محققًا علميًّا',goals:GOALS,homework:'<b>الواجب:</b> «اختبر نفسك» ص 37 · التسليم يوم الخميس.',
- concepts:[{n:'الطريقة العلمية',t:'خطوات متسلسلة تؤدي إلى حل المشكلات.',ic:'<path d="M6 40h10V28h10V16h10V6" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'البحث الوصفي',t:'يجيب من خلال الملاحظات.',ic:'<circle cx="20" cy="20" r="12" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'البحث التجريبي',t:'يختبر الفرضية بالتجربة.',ic:'<path d="M18 6v14L8 40h32L30 20V6" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'المتغيرات',t:'مستقل يُغيّر، وتابع يُقاس، وثوابت لا تتغير.',ic:'<rect x="8" y="10" width="10" height="28" fill="var(--accent)"/><rect x="28" y="20" width="10" height="18" fill="var(--amber)"/>'},{n:'العينة الضابطة',t:'لا تتعرض للمتغير المستقل، للمقارنة.',ic:'<circle cx="24" cy="24" r="14" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'SI',t:'النظام العالمي لوحدات القياس.',ic:'<text x="24" y="32" text-anchor="middle" font-size="18" font-weight="800" fill="var(--accent)">SI</text>'}]});
-$$('.top h1').forEach(h=>h.dataset.sym='🧪');
+C6.plan({intro:{s:['poe','brain'],g:'١–٣',sk:'التنبؤ',ev:'سؤال التوقع'},goals:{s:['frayer'],g:'١–٣',sk:'التذكر',ev:'المطابقة'},s1:{s:['analogy','venn'],g:'٢',sk:'المقارنة',ev:'عنونة المقطع'},s2:{s:['role','coop'],g:'٣',sk:'النمذجة',ev:'مطابقة الحدود'},lab1:{s:['poe','inq'],g:'١ و٣',sk:'التجريب والاستنتاج',ev:'محاكي الحدود'},
+ s3:{s:['jigsaw','cards'],g:'١',sk:'التصنيف',ev:'أماكن البراكين'},lab2:{s:['inq','poe'],g:'١',sk:'الاستنتاج',ev:'سلسلة الجزر'},s4:{s:['disc','tps'],g:'١',sk:'المقارنة',ev:'سؤال المقارنة'},ev1:{s:['spot','cards'],g:'١ و٣',sk:'التطبيق',ev:'تقويم 1–4'},
+ s5:{s:['prob','heads'],g:'٢',sk:'الحساب',ev:'المسائل التدريبية'},s6:{s:['disc','cmap'],g:'١ و٣',sk:'قراءة الخرائط',ev:'حدود الصفيحة العربية'},s7:{s:['time','analogy'],g:'٢',sk:'الترتيب',ev:'دورة تيار الحمل'},lab3:{s:['poe','inq'],g:'٢',sk:'التجريب',ev:'خزان الحمل'},ev2:{s:['cards'],g:'٣',sk:'التطبيق',ev:'تقويم 5–6'},
+ sum:{s:['tl'],g:'١–٣',sk:'التلخيص',ev:'إشارة المرور'},self:{s:['heads','sticks'],g:'١–٣',sk:'التفكير الناقد',ev:'اختبر نفسك'},x1:{s:['game','champ'],g:'١–٣',sk:'الاستدعاء',ev:'الهروب والمزاد'},x2:{s:['who','game'],g:'١–٣',sk:'الاستنتاج',ev:'من أنا؟'},ch:{s:['exit'],g:'١–٣',sk:'التقويم الختامي',ev:'تحدي العلماء'}},'g9c2l3');
+K.boot({chapter:'الفصل الثاني: تغيرات الأرض',chapterShort:'الفصل الثاني',title:'أحجية الأرض',lesson:'الدرس الثالث: الصفائح الأرضية وعلاقتها بالزلازل والبراكين',accent:'#4d7c0f',accentDark:'#a3e635',hook:'قشرة الأرض… قطع أحجية تتحرك!',
+ riddle:'لماذا تتجمع الزلازل والبراكين في أماكن محددة؟',predict:{o:['لأن الغلاف الصخري مقسم إلى صفائح تتحرك، وتحدث الزلازل والبراكين عند حدودها','بسبب المناخ','لأن الأرض ثابتة لا تتحرك'],a:0},
+ answer:'الغلاف الصخري مقسم إلى صفائح تتحرك فوق الغلاف المائع بفعل تيارات الحمل، وعند حدودها (تقارب، تباعد، جانبية) تتولد القوى المسببة للزلازل وتتكون البراكين، إضافة إلى البقع الساخنة.',
+ finalTitle:'مبارك! أكملت أحجية الأرض',goals:GOALS,homework:'<b>الواجب:</b> «اختبر نفسك» ص 73 · التسليم يوم الخميس.',
+ concepts:[{n:'الصفيحة',t:'قطعة من الغلاف الصخري (القشرة وأعلى الستار).',ic:'<path d="M6 20h20l6 8h12M6 32h16" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'الغلاف المائع',t:'طبقة لدنة تتحرك فوقها الصفائح.',ic:'<path d="M4 28c8-6 14 6 20 0s12 6 20 0" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'حدود الصفائح',t:'تقارب، تباعد، جانبية (تحويلية).',ic:'<path d="M6 24h12M30 24h12M14 18l6 6-6 6M34 18l-6 6 6 6" fill="none" stroke="var(--accent)" stroke-width="3"/>'},{n:'أماكن البراكين',t:'الانهدام، غوص الصفائح، البقع الساخنة.',ic:'<path d="M8 40L20 16h8l12 24z" fill="var(--accent)"/>'},{n:'تيارات الحمل',t:'تسخين مادة الستار وصعودها ثم بردها ونزولها.',ic:'<path d="M14 36c-8-14 0-26 10-26s18 12 10 26" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'الصفيحة العربية',t:'تباعد في البحر الأحمر، وجانبية في العقبة، وتقارب مع أوراسيا.',ic:'<path d="M14 10l20 4 8 14-6 14-14 2-10-16z" fill="var(--accent)"/>'}]});
+$$('.top h1').forEach(h=>h.dataset.sym='🧩');
 })();
 

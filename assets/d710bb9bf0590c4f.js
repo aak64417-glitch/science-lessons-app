@@ -134,7 +134,7 @@ W.tl=function(el,w,lid){var D=load('tl-'+lid,{});el.innerHTML='<div class="sgw">
 /* ===== كشف الطلاب الموحّد لكل المنصة (الدروس والأنشطة والمسابقات وأوراق العمل) — durus-classes ===== */
 window.DROS = window.DROS || (function () {
   var AR = '٠١٢٣٤٥٦٧٨٩', KEY = 'durus-classes', API = 'https://script.google.com/macros/s/AKfycbxp-t4JgGO5WiK6hoacjTyBqFnG-9bSWClplOpVV4VDuTV7T4tY0swB1Ll36kr_djJ7nQ/exec';
-  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/3', '2/3', '3/3', '4/3']];
+  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/2'], ['1/3', '2/3', '3/3', '4/3']];
   function kz(k) { return String(k == null ? '' : k).replace(/\s/g, '').replace(/\d/g, function (d) { return AR[d]; }); }
   function nz(s) { return String(s).replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+بن\s+/g, ' ').replace(/\s+/g, ' ').trim(); }
   function ld() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) return { cur: s.cur || '', classes: s.classes || {}, stars: s.stars || {}, moves: s.moves || {} }; } catch (e) {} return { cur: '', classes: {}, stars: {}, moves: {} }; }
@@ -179,7 +179,7 @@ window.DROS = window.DROS || (function () {
   }
   // تحميل كشوف الفصول من منصة رحلة العلوم لكل الصفوف
   function importAll(cb) {
-    var all = LISTS[0].concat(LISTS[1]), G = {}, done = 0, okc = 0;
+    var all = [].concat.apply([], LISTS), G = {}, done = 0, okc = 0;
     all.forEach(function (k) {
       jsonp({ action: 'getStudents', className: k }, function (r) {
         if (r && r.ok) okc++;
@@ -564,213 +564,196 @@ function start(){
     else if(e.key==='f'||e.key==='F'){ $('[data-c=full]').click() } });
   stamps(); show(Math.min(Number(ls(KEY+'_cur'))||0,SCR.length-1),true) }
 
-/* ===== الدرس الثاني: النماذج العلمية — ملف القضية رقم ٢ ===== */
-var OBJ=['تصف أنواعًا مختلفة من النماذج','تناقش كيفية تغير النماذج بتطور المعرفة'];
-var OMAP=[['model','types','classify','uses','lab'],['change']];
+/* ===== الدرس الثالث: تقويم التفسيرات العلمية — ملف القضية رقم ٣ ===== */
+var OBJ=['تقوّم التفسيرات العلمية'];
+var OMAP=[['critical','data','notes','repeat','ads']];
+
+function voteBox(labels){ return '<div class="vote">'+labels.map(function(l,i){return '<button data-vt="'+i+'" class="v'+i+'"><span>'+l+'</span><b data-vc="'+i+'">٠</b></button>'}).join('')+'</div><div class="muted" style="font-size:14px;color:#9FB0CC">اضغط الزر مرة لكل طالب يرفع يده</div>' }
+function voteKit(el){ var V={}; el.addEventListener('click',function(e){ var b=e.target.closest('[data-vt]'); if(!b) return; var k=b.dataset.vt; V[k]=(V[k]||0)+1; $('[data-vc="'+k+'"]',el).textContent=n(V[k]); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); sfx.pop() }); return V }
 
 /* ١) المقدمة التشويقية */
-add('intro','لغز ما لا يُرى',function(el){
-  el.innerHTML='<div class="intro"><div><span class="case">ملف القضية رقم ٢</span><h1 class="h1">لغز ما لا يُرى</h1><p class="type" id="ty"></p><div class="row" style="margin-top:8px"><button class="btn" data-go="1">افتح الملف</button><span class="kicker">النماذج العلمية · <b>الدرس الثاني</b></span></div></div>'+
-   '<div class="tank" style="height:460px"><svg viewBox="0 0 520 520" class="orb"></svg><div class="lens pop" style="animation-delay:1.2s">'+img('cell')+'<span>صغير جدًا</span></div><span class="tagbig">كبير جدًا</span></div></div>';
-  var txt='خلية لا تراها العين المجردة… ومجموعة شمسية أضخم من أن تحيط بها عينك… واختبار تصادم سيارة لا نريد أن نجرّبه على إنسان! فكيف يدرسها العلماء؟ لنكشف السر.', i=0, ty=$('#ty',el);
-  var iv=setInterval(function(){ i++; ty.innerHTML=esc(txt.slice(0,i))+'<span class="cur"></span>'; if(i>=txt.length) clearInterval(iv) },45);
-  var sim=orbitSim($('svg',el),'helio');
-  return {destroy:function(){ clearInterval(iv); sim.stop() }};
+add('intro','صدّق أو لا تصدّق',function(el){
+  el.innerHTML='<div class="intro" style="grid-template-columns:1fr 560px"><div><span class="case">ملف القضية رقم ٣</span><h1 class="h1">صدّق أو لا تصدّق؟</h1><p class="type" id="ty"></p><div class="row" style="margin-top:8px"><button class="btn" data-go="1">افتح الملف</button><span class="kicker">تقويم التفسيرات العلمية · <b>الدرس الثالث</b></span></div></div>'+
+   '<div class="card ufo pop"><span class="tape"></span>'+img('ufo')+'<b class="disp" style="font-size:26px">هل تصدّق ما تراه في هذه الصورة؟</b>'+voteBox(['أصدّق','لا أصدّق'])+
+   '<button class="btn sm coral" data-ev>قبل أن تحكم… ما الدليل؟</button><div class="evq" data-evq></div></div></div>';
+  var txt='صورة لجسم غريب يحلّق فوق الصحراء… وإعلانات حولك تَعِدك بالمعجزات… فكيف تعرف ما يُصدَّق وما لا يُصدَّق؟ في هذا الملف تتدرّب على الحكم على أي ادعاء كما يفعل العلماء: بالبيانات والأدلة.', i=0, ty=$('#ty',el);
+  var iv=setInterval(function(){ i++; ty.innerHTML=esc(txt.slice(0,i))+'<span class="cur"></span>'; if(i>=txt.length) clearInterval(iv) },42);
+  voteKit(el);
+  el.addEventListener('click',function(e){ if(e.target.closest('[data-ev]')){ $('[data-evq]',el).innerHTML=['من التقط الصورة؟ ومتى؟ وأين؟','هل صوّر آخرون الشيء نفسه؟','هل يمكن التحقق منها؟'].map(function(q,k){return '<span class="pop" style="animation-delay:'+(k*0.15)+'s">'+q+'</span>'}).join(''); sfx.whoosh() } });
+  return {destroy:function(){ clearInterval(iv) }};
 });
 
-/* ٢) التهيئة: هل تستطيع دراسته مباشرة؟ */
+/* ٢) التهيئة: صفقة أم خدعة؟ */
 add('warm','التهيئة',function(el){
-  var P=[['cell','خلية نباتية','صغيرة جدًا: لا تراها العين المجردة'],['planets','المجموعة الشمسية','كبيرة جدًا: لا تحيط بها العين'],['crash','تصادم سيارة','خطِر ومكلف: لا نجرّبه على الناس'],['weather','الطقس غدًا','لم يحدث بعد: كيف نتوقعه؟']];
-  el.innerHTML=head('تهيئة','هل تستطيع أن تدرس هذه الأشياء مباشرة؟',36,'<p class="lead" style="margin:0;font-size:18px;max-width:34ch">اضغط كل بطاقة بعد أن يصوّت الطلاب: نعم أم لا؟</p>')+
-   '<div class="flip4">'+P.map(function(p,i){return '<button class="fl" style="animation:pop .5s '+(i*0.08)+'s both">'+img(p[0])+'<b>'+p[1]+'</b><span class="bk">'+p[2]+'</span></button>'}).join('')+'</div>'+
-   '<div class="row" style="justify-content:center"><button class="btn coral" data-sol>إذن… ما الحل؟</button><span class="sol disp" data-solt></span></div>';
-  el.addEventListener('click',function(e){ var b=e.target.closest('.fl'); if(b){ b.classList.add('on'); sfx.pop(); return }
-    if(e.target.closest('[data-sol]')){ $('[data-solt]',el).textContent='نصنع لها نموذجًا! 🧩'; $('[data-solt]',el).classList.add('pop'); sfx.win(); done('warm') } });
-  return {next:function(){ var c=$$('.fl',el).filter(function(x){return !x.classList.contains('on')})[0]; if(c){ c.classList.add('on'); sfx.pop(); return true } if(!$('[data-solt]',el).textContent){ $('[data-sol]',el).click(); return true } return false }};
+  var Qs=['لماذا السعر منخفض إلى هذا الحد؟','هل المنتج أصلي؟ ومن البائع؟','هل توجد بيانات أو تقييمات موثوقة تدعم الإعلان؟','هل يمكن التحقق من الادعاء قبل الدفع؟'];
+  el.innerHTML=head('تهيئة','صفقة العمر… أم خدعة؟',38)+
+   '<div class="deal"><div class="adw pop">'+img('phones')+'<span class="was">قبل ٤٩٩٩ ريال</span><span class="now">الآن ٥٠ ريال</span></div>'+
+   '<div class="card" style="display:flex;flex-direction:column;gap:10px"><span class="tape"></span><b class="disp" style="font-size:26px">رأيت هذا الإعلان. ماذا ستفعل؟</b>'+voteBox(['أشتريه فورًا','أحتاج معلومات أكثر'])+
+    '<b style="margin-top:4px">ما الأسئلة التي ستطرحها قبل أن تدفع؟ <button class="btn sm ghost" data-q>اكشف سؤالًا</button></b><div class="qs" data-qs></div>'+
+    '<div class="reveal" data-rv><div class="ans fb ok">من المهم تقييم معلومات المنتج وبياناته التي تدعم الادعاء قبل اتخاذ قرار شراء المنتج وإنفاق أموالك. <b>فتقويم الادعاءات والتفسيرات العلمية يساعد على اتخاذ قرارات صائبة.</b></div></div></div></div>';
+  voteKit(el); var qi=0;
+  function more(){ if(qi<Qs.length){ var s=document.createElement('span'); s.className='pop'; s.textContent=Qs[qi++]; $('[data-qs]',el).appendChild(s); sfx.pop(); return true }
+    var r=$('[data-rv]',el); if(!r.classList.contains('open')){ r.classList.add('open'); sfx.ok(); done('warm'); return true } return false }
+  el.addEventListener('click',function(e){ if(e.target.closest('[data-q]')) more() });
+  return {next:more};
 });
 
-/* ٣) مهام الملف + مراجعة المفردات */
-goalsScreen(OBJ,OMAP,'<div class="rev"><b>مراجعة المفردات السابقة</b><span><b style="color:var(--coral)">الطريقة العلمية:</b> هي عمليات يستخدمها العلماء لجمع المعلومات والإجابة عن الأسئلة.</span></div>');
+goalsScreen(OBJ,OMAP,'<div class="rev"><b>الأهمية</b><span>تقويم الادعاءات والتفسيرات العلمية يساعد على اتخاذ قرارات صائبة.</span></div>');
 
-/* ٤) ما النموذج؟ */
-add('model','ما النموذج؟',function(el){
-  el.innerHTML=head('المفهوم الأول','النموذج: محاكاة لشيء ما أو حدث ما')+
-   '<div class="mdl"><div class="card pop"><span class="tape"></span><b class="disp" style="font-size:28px;color:var(--sky)">النموذج</b><p style="margin:4px 0 0">محاكاة لشيء ما أو حدث ما، ويُستخدم أداةً لفهم العالم الطبيعي؛ حيث تساعد النماذج على تصوّر أو تخيّل الأشياء التي يصعب رؤيتها أو فهمها.</p></div>'+
-   '<div class="card pop reveal" style="animation-delay:.1s"><span class="tape l"></span><div class="mrowx">'+img('cell')+'<div><b class="disp" style="font-size:24px;color:var(--coral)">نمذجة الأجسام الصغيرة</b><p class="ans" style="margin:0;font-size:19px">بعض الأجسام تكون صغيرة جدًا بحيث لا يمكن رؤيتها؛ فنلجأ إلى نمذجتها بعدة طرق.</p><span class="muted hint">اضغط للكشف</span></div></div></div>'+
-   '<div class="card pop reveal" style="animation-delay:.2s"><span class="tape"></span><div class="mrowx">'+img('solar')+'<div><b class="disp" style="font-size:24px;color:var(--violet)">نمذجة الأجسام الكبيرة</b><p class="ans" style="margin:0;font-size:19px">بعض الأجسام تكون كبيرة جدًا بحيث لا يمكن احتواؤها بالعين؛ فنلجأ إلى نمذجتها بعدة طرق.</p><span class="muted hint">اضغط للكشف</span></div></div></div></div>'+
+/* ٤) التفكير الناقد */
+add('critical','التفكير الناقد',function(el){
+  el.innerHTML=head('المفهوم الأول','التفكير الناقد: لا تقبل قبل أن تقوّم')+
+   '<div class="crit"><div class="card pop"><span class="tape"></span><b class="disp" style="font-size:28px;color:var(--violet)">التفكير الناقد</b><p style="margin:4px 0 0">عندما تقوّم شيئًا ما فإنك تستخدم التفكير الناقد؛ وهو الربط بين ما تعرفه من معلومات مع الحقائق الجديدة لتقرر ما إذا كنت توافق على شيء ما.</p><div class="split"><span>ويمكن تقويم أي تفسير من خلال تقسيمه إلى جزأين</span></div></div>'+
+    '<div class="card pop reveal" style="animation-delay:.1s"><span class="tape l"></span><span class="badge" style="background:var(--sky)">أولًا: تقويم الملاحظات</span><p class="ans" style="margin:6px 0 0">بالاعتماد على المعلومات المتوافرة لديك، ثم تقدّر مدى دقتها.</p><span class="muted hint">اضغط للكشف</span></div>'+
+    '<div class="card pop reveal" style="animation-delay:.2s"><span class="tape"></span><span class="badge" style="background:var(--coral)">ثانيًا: تقويم الاستنتاجات</span><p class="ans" style="margin:6px 0 0">التي تم بناؤها اعتمادًا على الملاحظات، وتقرير ما إذا كانت تلك الاستنتاجات معقولة أم لا.</p><span class="muted hint">اضغط للكشف</span></div></div>'+
    '<div class="card" data-quick style="padding:12px 22px"></div>';
   quick($('[data-quick]',el),[
-    {q:'محاكاة لشيء ما أو لحدث ما، وتُستخدم أداةً لفهم العالم الطبيعي، هي:',o:['النموذج','النظرية','الفرضية','الاستدلال'],a:0,ex:'النموذج محاكاة لشيء أو حدث تساعدنا على تصوّر ما يصعب رؤيته أو فهمه.'},
-    {q:'لماذا يستخدم العلماء نموذجًا بدل الشيء الحقيقي أحيانًا؟',o:['لأن النموذج لا يتغير أبدًا','لأن بعض الأشياء يصعب رؤيتها أو تصورها مباشرة','لأن الأشياء الحقيقية غير موجودة','لأن النموذج يلغي الحاجة للمعرفة'],a:1,ex:'تساعد النماذج على تصور أشياء قد يصعب رؤيتها أو التعامل معها مباشرة.'}],'model','تحقق سريع');
-  var r=revealer(el,'.reveal','',null); return r;
+    {q:'الربط بين ما تعرفه من معلومات مع الحقائق الجديدة لتقرر مدى موافقتك لشيء ما هو:',o:['التوقع','التفكير الناقد','الفرضية','النظرية'],a:1,ex:'هذا تعريف التفكير الناقد كما في الدرس.'},
+    {q:'عند وجود تفسيرين لنتيجة واحدة، ماذا يفعل الباحث؟',o:['يختار الأقرب لرأيه','يتجاهل البيانات','يقارن الأدلة التي تدعم كل تفسير','يختار الأقصر'],a:2,ex:'المقارنة بين الأدلة جزء من التفكير الناقد.'}],'critical');
+  return revealer(el,'.reveal','');
 });
 
-/* ٥) أنواع النماذج */
-add('types','أنواع النماذج',function(el){
-  var T=[['النماذج المادية','نماذج يمكن لمسها أو رؤيتها.','#F2545B','🧪',[['cell','التركيب الداخلي للخلية'],['solar','المجموعة الشمسية'],['chem','مركب كيميائي']]],
-         ['النماذج الحاسوبية','نماذج يتم بناؤها من خلال برامج حاسوبية، ولا يمكن لمسها، ولكن يمكن عرضها على شاشة الحاسوب.','#3D8BFD','💻',[['weather','عرض حالة الطقس'],['plates','حركة الصفائح الأرضية']]],
-         ['النماذج الفكرية','عبارة عن أفكار ومفاهيم تصف كيف يفكر شخص ما في شيء معين في العالم الطبيعي.','#7B6CF6','💡',[['emc','معادلة المادة والطاقة لآينشتاين'],['einstein','ألبرت آينشتاين']]]];
-  el.innerHTML=head('المفهوم الثاني','ثلاثة أنواع من النماذج: افتحها واحدًا واحدًا')+
-   '<div class="br">'+T.map(function(p,i){return '<button class="portal pop tp" style="background:linear-gradient(160deg,'+p[2]+',#14223C 125%);animation-delay:'+(i*0.1)+'s"><span class="ic">'+p[3]+'</span><b>'+n(i+1)+') '+p[0]+'</b><p>'+p[1]+'</p><div class="thumbs">'+p[4].map(function(x){return '<figure>'+img(x[0])+'<figcaption>'+x[1]+'</figcaption></figure>'}).join('')+'</div></button>'}).join('')+'</div>';
-  return revealer(el,'.portal','types');
+/* ٥) تقويم البيانات */
+add('data','تقويم البيانات',function(el){
+  var D={book:[37,28],cls:ls(KEY+'_survey')||[0,0]}, src='book', form='table', seen={};
+  var F=[['desc','وصف'],['table','جدول تكراري'],['chart','رسم بياني']];
+  el.innerHTML=head('المفهوم الثاني','تقويم البيانات: هل البيانات محددة؟')+
+   '<div class="dat"><div class="card"><span class="tape"></span><b class="disp" style="font-size:25px;color:var(--sky)">البيانات</b><p style="margin:2px 0 6px;font-size:19px">معلومات يتم تجميعها أثناء البحث العلمي من خلال الملاحظات، ويمكن تدوينها على شكل <b>وصف</b>، أو <b>جداول</b>، أو <b>رسوم بيانية</b>، أو <b>أشكال</b>.</p>'+
+     '<p style="margin:0;font-size:18px" class="muted">عندما تقوّم ادعاءً علميًا فقد تطلب أولًا أي بيانات مقدّمة معه، وعليك أن تحذر من تصديق أي ادعاء غير مدعوم بالبيانات.</p><div style="margin-top:auto">'+img('wheat','width:100%;height:120px;object-fit:cover;border-radius:12px')+'</div></div>'+
+    '<div class="card" style="display:flex;flex-direction:column;gap:8px"><span class="tape l"></span><div class="fb" style="background:#FFF7E0;font-size:18px">يخبرك صديقك بأن أكثر أفراد بلدته يفضلون أكل لحم الغنم على الدجاج. ما البيانات التي تحتاجها لتتفق معه في الرأي؟</div>'+
+     '<div class="row" style="flex-wrap:nowrap;gap:14px"><div class="seg" data-src style="flex:1"><button data-v="book" class="on">بيانات الكتاب</button><button data-v="cls">استطلاع فصلنا</button></div>'+
+     '<div class="seg" data-form style="flex:1.4">'+F.map(function(f){return '<button data-v="'+f[0]+'" class="'+(f[0]===form?'on':'')+'">'+f[1]+'</button>'}).join('')+'</div></div>'+
+     '<div class="dview" data-view></div><div class="row" data-survey style="display:none;justify-content:center"><button class="btn sm coral" data-add="0">+ لحم الغنم</button><button class="btn sm aqua" data-add="1">+ الدجاج</button><button class="btn sm ghost" data-clr>تصفير</button></div></div></div>'+
+   '<div class="note" style="text-align:center">من خلال الجدول التكراري يمكنك تحديد هل المعلومة موثوقة أم لا · <b>تكون البيانات موثوقة ومعتمدة إذا كانت محددة وقابلة للتكرار</b></div>';
+  function tally(c){ var s='', x=0; for(var g=0;g<Math.ceil(c/5);g++){ var k=Math.min(5,c-g*5); for(var j=0;j<Math.min(k,4);j++){ s+='<line x1="'+(x+j*7)+'" y1="4" x2="'+(x+j*7)+'" y2="30"/>' } if(k===5) s+='<line x1="'+(x-4)+'" y1="26" x2="'+(x+25)+'" y2="8"/>'; x+=38 } return '<svg viewBox="0 0 '+Math.max(40,x)+' 34" height="30" style="max-width:100%;stroke:#14213D;stroke-width:2.6;stroke-linecap:round">'+s+'</svg>' }
+  function view(){ var d=D[src], L=['لحم الغنم','الدجاج'], C=['var(--coral)','var(--aqua)'], v=$('[data-view]',el); seen[form]=1;
+    $('[data-survey]',el).style.display=src==='cls'?'flex':'none';
+    if(form==='desc') v.innerHTML='<p class="pop" style="font-size:24px;margin:auto;text-align:center;line-height:1.7">'+(src==='book'?'في جدول الطعام المفضل':'في استطلاع فصلنا')+': فضّل <b style="color:var(--coral)">'+n(d[0])+'</b> لحم الغنم، وفضّل <b style="color:var(--aqua)">'+n(d[1])+'</b> الدجاج.</p>';
+    else if(form==='table') v.innerHTML='<table class="res ftab pop"><thead><tr><th colspan="3" style="background:var(--good);color:#fff;text-align:center">'+(src==='book'?'جدول ٢: الطعام المفضل':'استطلاع فصلنا: الطعام المفضل')+'</th></tr><tr><th>رغبات الناس</th><th>السجل / التعداد</th><th>التكرار</th></tr></thead><tbody>'+L.map(function(l,i){return '<tr><td>'+l+'</td><td>'+tally(d[i])+'</td><td><b>'+n(d[i])+'</b></td></tr>'}).join('')+'</tbody></table>';
+    else { var mx=Math.max(5,d[0],d[1])*1.15; v.innerHTML='<svg viewBox="40 0 480 220" class="pop" style="width:100%;height:100%;max-height:100%"><line x1="60" y1="185" x2="500" y2="185" stroke="#C3CCDA" stroke-width="2"/>'+d.map(function(c,i){ var h=c/mx*160, x=140+i*200; return '<rect x="'+x+'" y="'+(185-h)+'" width="110" height="'+h+'" rx="8" fill="'+C[i]+'"><animate attributeName="height" from="0" to="'+h+'" dur=".6s"/><animate attributeName="y" from="185" to="'+(185-h)+'" dur=".6s"/></rect><text x="'+(x+55)+'" y="'+(178-h)+'" text-anchor="middle" font-size="22" font-weight="700" fill="#14213D">'+n(c)+'</text><text x="'+(x+55)+'" y="210" text-anchor="middle" font-size="18" font-weight="600" fill="#55627A">'+L[i]+'</text>' }).join('')+'<text x="30" y="100" text-anchor="middle" font-size="15" fill="#55627A" transform="rotate(-90 30 100)">عدد الأشخاص</text></svg>' }
+    if(seen.desc&&seen.table&&seen.chart) done('data') }
+  el.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; var g=b.closest('[data-src],[data-form]');
+    if(g){ $$('button',g).forEach(function(x){x.classList.toggle('on',x===b)}); if(g.hasAttribute('data-src')) src=b.dataset.v; else form=b.dataset.v; sfx.pop(); view(); return }
+    if(b.dataset.add!==undefined){ D.cls[Number(b.dataset.add)]++; ls(KEY+'_survey',D.cls); sfx.pop(); view(); return }
+    if(b.hasAttribute('data-clr')){ D.cls=[0,0]; ls(KEY+'_survey',D.cls); view() } });
+  view();
+  return {next:function(){ var o=['desc','table','chart'].filter(function(f){return !seen[f]})[0]; if(o){ form=o; $$('[data-form] button',el).forEach(function(x){x.classList.toggle('on',x.dataset.v===o)}); sfx.pop(); view(); return true } return false }};
 });
 
-/* ٦) نشاط التصنيف */
-classifyScreen({id:'classify',title:'نشاط التصنيف',h:'صنّف كل نموذج في نوعه الصحيح',seed:21,
-  bins:[['نموذج مادي','يمكن لمسه أو رؤيته','coral'],['نموذج حاسوبي','يُبنى ببرامج ويُعرض على الشاشة','sky'],['نموذج فكري','أفكار ومفاهيم','violet']],
-  why:['النموذج المادي يمكن لمسه أو رؤيته.','النموذج الحاسوبي يُبنى ببرامج حاسوبية ويُعرض على الشاشة، ولا يمكن لمسه.','النموذج الفكري أفكار ومفاهيم تصف كيف يفكر شخص ما في شيء معين في العالم الطبيعي.'],
-  items:[['نموذج التركيب الداخلي للخلية',0],['نموذج المجموعة الشمسية',0],['نموذج مركب كيميائي',0],['مجسم الكرة الأرضية',0],
-    ['استخدام الحاسوب في عرض حالة الطقس',1],['نموذج حاسوبي لحركة الصفائح الأرضية',1],['محاكاة حركة إعصار على الحاسوب',1],
-    ['معادلة المادة والطاقة لآينشتاين',2],['فكرة أو معادلة تساعد على تصوّر ظاهرة',2]]});
-
-/* ٧) استخدامات النماذج */
-add('uses','استخدامات النماذج',function(el){
-  el.innerHTML=head('المفهوم الثالث','لماذا يستخدم العلماء النماذج؟')+
-   '<div class="uses">'+
-    '<div class="card reveal pop"><span class="tape"></span><span class="badge" style="background:var(--sky)">١) التواصل</span><div class="uimg"><span style="font-size:74px">🗣️</span></div><p class="ans">تُستخدم بعض النماذج في عمليات التواصل العلمي لنقل الملاحظات والأفكار للآخرين؛ فنقل بعض الأفكار عن طريق عمل نموذج يوضحها أسهل من الكتابة عنها، كما أن النماذج تيسّر على الآخرين تصوّر الأفكار بطريقة محسوسة.</p><span class="muted hint">اضغط للكشف</span></div>'+
-    '<div class="card reveal pop" style="animation-delay:.1s"><span class="tape l"></span><span class="badge" style="background:var(--coral)">٢) اختبار التوقعات والفرضيات</span><div class="uimg">'+img('windcar')+img('plane')+'</div><p class="ans">يستخدم المهندسون الأنفاق الهوائية لدراسة أثر الرياح على أداء السيارات والطائرات التي يصممونها.</p><span class="muted hint">اضغط للكشف</span></div>'+
-    '<div class="card reveal pop" style="animation-delay:.2s"><span class="tape"></span><span class="badge" style="background:var(--aqua)">٣) توفير الوقت والمال والمحافظة على الأرواح</span><div class="uimg">'+img('crash')+img('shuttle')+'</div><p class="ans">في بعض الحالات تُستخدم النماذج لأن التعامل معها وإجراء الاختبارات عليها أكثر أمانًا وأقل تكلفة من استخدام الجسم الأصلي.</p><span class="muted hint">اضغط للكشف</span></div>'+
-   '</div><div class="note">وتُستخدم النماذج كذلك لتمثيل المعلومات المهمة، ومنها <b>الخرائط</b> و<b>الجداول</b>.</div>';
-  return revealer(el,'.reveal','uses');
+/* ٦) تدوين الملاحظات: تحدّي الذاكرة */
+add('notes','تدوين الملاحظات',function(el){
+  var Q=[{q:'كم ورقة كانت في النبتة؟',o:['٤','٥','٦','٧'],a:1},{q:'أي كأس كانت تخرج منها فقاعات؟',o:['الحمراء','الصفراء','الزرقاء','الخضراء'],a:2},{q:'كم كانت قراءة مقياس الحرارة؟',o:['٢٠°','٢٥°','٣٠°','٣٥°'],a:1}], st='idle', qi=0, sc=0, iv=null;
+  el.innerHTML=head('المفهوم الثالث','تحدّي الذاكرة: لماذا ندوّن الملاحظات في وقتها؟',32)+
+   '<div class="mem"><div class="card memc" data-mc></div>'+
+   '<div class="card" style="display:flex;flex-direction:column;gap:8px"><span class="tape l"></span>'+img('divers','width:100%;height:150px;object-fit:cover;border-radius:12px')+
+    '<b class="disp" style="font-size:24px;color:var(--coral)">تدوين ملاحظات جيدة</b><p style="margin:0;font-size:17.5px;line-height:1.55">يجب على العلماء أن يدوّنوا ملاحظاتهم تدوينًا شاملًا وكاملًا أثناء إجراء الاستقصاء؛ إذ من الممكن فقدان كثير من التفاصيل المهمة إذا لم يتم تدوين الملاحظات في وقتها. كما يجب تدوين أي ملاحظة مهما كانت بسيطة أو غير متوقعة.</p>'+
+    '<div class="reveal" data-why><div class="ans fb ok" style="font-size:17px">ما أهمية تدوين الملاحظات؟ يجب تدوين الملاحظات أثناء التجربة حتى يمكن قراءتها وفهمها من جديد وإعادة التجربة إذا لزم الأمر.</div></div></div></div>';
+  function scene(){ var lv=''; for(var k=0;k<5;k++){ var a=-70+k*35, y=150-k*16; lv+='<ellipse cx="'+(470+(k%2?18:-18))+'" cy="'+y+'" rx="20" ry="9" fill="#18A058" transform="rotate('+(k%2?-25:25)+' '+(470+(k%2?18:-18))+' '+y+')"/>' }
+    var cols=['#F2545B','#FFC53D','#3D8BFD','#18A058'], bk=cols.map(function(c,i){ var x=60+i*80; return '<path d="M'+x+' 130 h50 v80 q0 10 -10 10 h-30 q-10 0 -10 -10z" fill="'+c+'" opacity=".85" stroke="#14213D" stroke-width="2.5"/>'+(i===2?'<g fill="none" stroke="#fff" stroke-width="2"><circle cx="'+(x+18)+'" cy="160" r="4"><animate attributeName="cy" values="200;135" dur="1.2s" repeatCount="indefinite"/></circle><circle cx="'+(x+32)+'" cy="180" r="3"><animate attributeName="cy" values="205;135" dur="1.6s" repeatCount="indefinite"/></circle></g>':'') }).join('');
+    return '<svg viewBox="0 0 640 260" style="width:100%;height:100%"><rect x="20" y="220" width="600" height="14" rx="6" fill="#C8A26B"/>'+bk+
+      '<rect x="390" y="190" width="70" height="32" rx="6" fill="#B5643C"/><line x1="425" y1="190" x2="465" y2="80" stroke="#18A058" stroke-width="5"/>'+lv+
+      '<rect x="560" y="60" width="18" height="150" rx="9" fill="#fff" stroke="#14213D" stroke-width="2.5"/><rect x="564" y="120" width="10" height="86" rx="5" fill="#F2545B"/><circle cx="569" cy="210" r="14" fill="#F2545B" stroke="#14213D" stroke-width="2.5"/><text x="612" y="125" font-size="22" font-weight="700" fill="#14213D" text-anchor="middle" direction="ltr">٢٥°</text></svg>' }
+  function draw(){ var m=$('[data-mc]',el);
+    if(st==='idle') m.innerHTML='<span class="tape"></span><b class="disp" style="font-size:26px">ستظهر لكم صورة تجربة لمدة ٨ ثوانٍ فقط</b><p style="margin:0">المجموعة (أ) تشاهد فقط، والمجموعة (ب) تدوّن ملاحظاتها على ورقة. ثم نجيب عن أسئلة التفاصيل!</p><div class="row" style="margin:auto"><button class="btn" data-go2>ابدأ التحدي</button></div>';
+    else if(st==='show') m.innerHTML='<span class="tape"></span><div class="row" style="justify-content:space-between"><b class="disp" style="font-size:24px">لاحظ جيدًا!</b><span class="tmr" data-t>٨</span></div><div class="scene">'+scene()+'</div>';
+    else if(st==='ask'){ var q=Q[qi]; m.innerHTML='<span class="tape"></span><span class="muted">السؤال '+n(qi+1)+' من '+n(Q.length)+' · أُخفيت الصورة!</span><div class="qtext pop" style="font-size:30px">'+q.q+'</div><div class="qopts">'+q.o.map(function(o,j){return '<button class="opt" data-j="'+j+'"><span class="k" style="background:'+KC[j]+'">'+KL[j]+'</span>'+o+'</button>'}).join('')+'</div><div data-qf></div>' }
+    else m.innerHTML='<span class="tape"></span><b class="disp" style="font-size:30px">تذكّرتم '+n(sc)+' من '+n(Q.length)+'</b><p style="margin:0">هل أجابت المجموعة التي دوّنت ملاحظاتها إجابات أدق؟ هذا ما يحدث في الاستقصاء: التفاصيل التي لا تُدوَّن في وقتها قد تضيع.</p><div class="scene" style="max-height:200px">'+scene()+'</div><div class="row"><button class="btn sm ghost" data-again>أعد التحدي</button></div>' }
+  el.addEventListener('click',function(e){ var b=e.target.closest('button'); if(e.target.closest('[data-why]')){ $('[data-why]',el).classList.add('open'); sfx.pop(); done('notes'); return } if(!b) return;
+    if(b.hasAttribute('data-go2')){ st='show'; draw(); sfx.whoosh(); var t=8; iv=setInterval(function(){ t--; var x=$('[data-t]',el); if(x) x.textContent=n(t); if(t<=3&&t>0) sfx.tick(); if(t<=0){ clearInterval(iv); st='ask'; qi=0; sc=0; draw(); sfx.thud() } },1000); return }
+    if(b.dataset.j!==undefined&&!$('[data-qf] .fb',el)){ var q=Q[qi], j=Number(b.dataset.j); $$('.opt',el).forEach(function(x,k){ x.classList.add(k===q.a?'ok':k===j?'no':'dim') }); if(j===q.a){ sc++; sfx.ok() } else sfx.no();
+      $('[data-qf]',el).innerHTML='<div class="row"><button class="btn sm" data-nq>'+(qi<Q.length-1?'السؤال التالي':'النتيجة')+'</button></div>'; return }
+    if(b.hasAttribute('data-nq')){ if(qi<Q.length-1){ qi++; draw() } else { st='end'; draw(); $('[data-why]',el).classList.add('open'); done('notes'); sfx.win() } return }
+    if(b.hasAttribute('data-again')){ st='idle'; draw() } });
+  draw();
+  return {destroy:function(){ clearInterval(iv) }, next:function(){ var w=$('[data-why]',el); if(!w.classList.contains('open')){ w.classList.add('open'); sfx.pop(); done('notes'); return true } return false }};
 });
 
-/* ٨) المحاكاة: النفق الهوائي */
-add('lab','محاكاة النفق الهوائي',function(el){
-  var S={pred:null,des:0,speed:2,res:[null,null]};
-  el.innerHTML=head('محاكاة تفاعلية','اختبر توقعك في النفق الهوائي قبل تصنيع السيارة',34,'<span class="kicker" data-stepk></span>')+
-   '<div class="lab"><div class="tankw"><canvas data-cv style="position:absolute;inset:0"></canvas><div class="restab" style="width:300px"><table class="res"><thead><tr><th>التصميم</th><th>الاضطراب خلفه</th></tr></thead><tbody data-tb></tbody></table></div>'+
-    '<div class="meter"><span>مقاومة الهواء (تقدير نسبي)</span><div class="mbar"><i data-mt style="width:0"></i></div></div><span class="illu">الأشكال والقيم في المحاكاة توضيحية</span></div><div class="side">'+
-   '<div class="card"><b class="disp" style="font-size:21px">١) توقّع: أي التصميمين يواجه مقاومة هواء أقل؟</b><div class="seg" data-pred style="margin-top:6px"><button data-v="0">التصميم أ: صندوقي</button><button data-v="1">التصميم ب: انسيابي</button></div></div>'+
-   '<div class="card"><b class="disp" style="font-size:21px">٢) ضع النموذج في النفق</b><div class="seg" data-des style="margin-top:6px"><button data-v="0" class="on">التصميم أ</button><button data-v="1">التصميم ب</button></div>'+
-    '<div style="margin-top:8px;font-size:17px;font-weight:600">سرعة الرياح:</div><div class="seg" data-sp><button data-v="1">بطيئة</button><button data-v="2" class="on">متوسطة</button><button data-v="3">سريعة</button></div>'+
-    '<div class="row" style="margin-top:10px"><button class="btn sm aqua" data-run>شغّل النفق الهوائي</button></div></div>'+
-   '<button class="btn coral" data-explain disabled>٣) ماذا نستنتج؟</button></div></div>';
-  var sim=windSim($('[data-cv]',el));
-  function lbl(v){ return v==null?'<span class="pill q">—</span>':v?'<span class="pill s">مرتفع</span>':'<span class="pill f">منخفض</span>' }
-  function ui(){ $('[data-tb]',el).innerHTML=['أ: صندوقي','ب: انسيابي'].map(function(t,i){return '<tr><td>'+t+(S.pred===i?' <small style="color:var(--sky)">(توقعنا)</small>':'')+'</td><td>'+lbl(S.res[i])+'</td></tr>'}).join('');
-    $('[data-explain]',el).disabled=!(S.res[0]!=null&&S.res[1]!=null);
-    $('[data-stepk]',el).textContent=S.pred==null?'الخطوة ١: توقّع':!(S.res[0]!=null&&S.res[1]!=null)?'الخطوة ٢: اختبر التصميمين':'الخطوة ٣: استنتج' }
-  ui();
+/* ٧) المحاكاة: هل تتكرر البيانات؟ */
+add('repeat','محاكاة التكرار',function(el){
+  var SC={friend:{claim:100,who:'صديقك',seq:[46,52,44,49,51]},team:{claim:45,who:'فريق العلوم',seq:[44,46,45,43,47]}}, sc='friend', T={friend:[],team:[]}, busy=false;
+  el.innerHTML=head('محاكاة تفاعلية','هل يمكن الحصول على البيانات ذاتها مرة أخرى؟',34,'<span class="kicker" data-k></span>')+
+   '<div class="lab"><div class="tankw"><svg viewBox="0 0 900 470" data-f preserveAspectRatio="xMidYMid meet"></svg><span class="illu">المسافات في المحاكاة قيم توضيحية</span></div><div class="side">'+
+    '<div class="card"><b class="disp" style="font-size:21px">١) اختر الادعاء</b><div class="seg" data-sc style="margin-top:6px;flex-direction:column"><button data-v="friend" class="on">صديقك: «قذفت الكرة ١٠٠ م بالمضرب!»</button><button data-v="team">فريق العلوم: «نقذفها ٤٥ م»</button></div></div>'+
+    '<div class="card"><b class="disp" style="font-size:21px">٢) اطلب تكرار الضربة</b><div class="row" style="margin-top:6px"><button class="btn sm aqua" data-throw>كرّر الضربة</button><button class="btn sm ghost" data-rst>مسح</button></div>'+
+     '<div class="trials" data-tb></div></div>'+
+    '<div data-verd></div><button class="btn coral" data-explain disabled>٣) ماذا يعني ذلك؟</button></div></div>';
+  var svg=$('[data-f]',el), GY=400, BX=830, PX=7.4;
+  function X(d){ return BX-d*PX }
+  function field(){ var s='<defs><linearGradient id="sky3" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#1B3A6B"/><stop offset="1" stop-color="#2B5C8F"/></linearGradient></defs><rect width="900" height="470" fill="url(#sky3)"/><rect y="'+GY+'" width="900" height="70" fill="#2E7D4F"/>';
+    for(var d=0;d<=100;d+=10){ s+='<line x1="'+X(d)+'" y1="'+GY+'" x2="'+X(d)+'" y2="'+(GY+14)+'" stroke="#fff" stroke-width="2"/><text x="'+X(d)+'" y="'+(GY+36)+'" text-anchor="middle" font-size="16" fill="#E6EDF8" font-weight="600">'+n(d)+' م</text>' }
+    var c=SC[sc].claim; s+='<line x1="'+X(c)+'" y1="'+(GY-230)+'" x2="'+X(c)+'" y2="'+GY+'" stroke="#FFC53D" stroke-width="3" stroke-dasharray="8 6"/><rect x="'+(X(c)-70)+'" y="'+(GY-266)+'" width="140" height="34" rx="10" fill="#FFC53D"/><text x="'+X(c)+'" y="'+(GY-243)+'" text-anchor="middle" font-size="18" font-weight="700" fill="#14223C">الادعاء: '+n(c)+' م</text>';
+    s+='<g transform="translate('+(BX+22)+','+(GY-62)+')"><circle cx="0" cy="0" r="12" fill="#FFD9B3"/><line x1="0" y1="12" x2="0" y2="44" stroke="#fff" stroke-width="6" stroke-linecap="round"/><line x1="0" y1="44" x2="-10" y2="62" stroke="#fff" stroke-width="6" stroke-linecap="round"/><line x1="0" y1="44" x2="10" y2="62" stroke="#fff" stroke-width="6" stroke-linecap="round"/><line x1="0" y1="22" x2="-26" y2="8" stroke="#fff" stroke-width="5" stroke-linecap="round"/><line x1="-26" y1="8" x2="-40" y2="-22" stroke="#C8901A" stroke-width="7" stroke-linecap="round"/></g>';
+    T[sc].forEach(function(d,i){ s+='<g><circle cx="'+X(d)+'" cy="'+(GY-6)+'" r="7" fill="#fff"/><text x="'+X(d)+'" y="'+(GY-18)+'" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">'+n(i+1)+'</text></g>' });
+    s+='<circle data-ball r="8" fill="#fff" cx="-20" cy="-20"/>'; svg.innerHTML=s }
+  function ui(){ var t=T[sc]; $('[data-tb]',el).innerHTML=t.length?t.map(function(d,i){return '<span class="pop"><i>'+n(i+1)+'</i><bdi>'+n(d)+' م</bdi></span>'}).join(''):'<span class="muted" style="background:none">لم تُسجَّل محاولات بعد</span>';
+    var ok=t.length>=3, rep=t.every(function(d){return Math.abs(d-SC[sc].claim)<=5});
+    $('[data-verd]',el).innerHTML=ok?'<div class="fb '+(rep?'ok':'no')+' pop">'+(rep?'✓ النتائج تكررت قريبة من الادعاء: البيانات قابلة للتكرار.':'✗ لم تتكرر النتيجة المدّعاة: هناك شك في مصداقية الادعاء.')+'</div>':'';
+    $('[data-k]',el).textContent=t.length<3?'سجّل ٣ محاولات على الأقل':'قارن المحاولات بالادعاء';
+    $('[data-explain]',el).disabled=!(T.friend.length>=3&&T.team.length>=3); if(T.friend.length>=3&&T.team.length>=3) done('repeat') }
+  function thr(){ if(busy) return; var t=T[sc]; if(t.length>=SC[sc].seq.length){ toast('سجّلت كل المحاولات. امسح الجدول لتبدأ من جديد.'); return } busy=true; var d=SC[sc].seq[t.length], x0=BX-10, y0=GY-80, x1=X(d), h=150+d*1.2, t0=performance.now(), ball=$('[data-ball]',svg); sfx.thud();
+    (function f(now){ var u=Math.min(1,(now-t0)/1100); ball.setAttribute('cx',x0+(x1-x0)*u); ball.setAttribute('cy',y0+(GY-6-y0)*u-h*4*u*(1-u)); if(u<1) requestAnimationFrame(f); else { t.push(d); busy=false; sfx.pop(); field(); ui() } })(t0) }
   el.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return;
-    var g=b.closest('[data-pred],[data-des],[data-sp]'); if(g){ $$('button',g).forEach(function(x){x.classList.toggle('on',x===b)}); sfx.pop(); var v=Number(b.dataset.v);
-      if(g.hasAttribute('data-pred')) S.pred=v; else if(g.hasAttribute('data-des')){ S.des=v; sim.set(S.des,S.speed,false); $('[data-mt]',el).style.width='0' } else { S.speed=v; if(sim.running()) run() } ui(); return }
-    if(b.hasAttribute('data-run')){ if(S.pred==null){ toast('سجّل توقعك أولًا: هذا هو الهدف من النموذج!',false); sfx.no(); return } run(); return }
-    if(b.hasAttribute('data-explain')){ var ok=S.pred===1;
-      zoom('<h2 class="h2" style="margin-bottom:10px">ماذا نستنتج؟</h2><p style="margin:0 0 8px">'+(ok?'✓ توقعكم صحيح: ':'لاحظنا عكس توقعكم: ')+'التصميم الانسيابي يشق الهواء بسلاسة، فتبقى خطوط الهواء منتظمة حوله ويقل الاضطراب خلفه، أما التصميم الصندوقي فيصطدم به الهواء ويضطرب خلفه، فتزيد مقاومة الهواء.</p>'+
-        '<div class="expl">هذا ما يفعله المهندسون: يستخدمون <b>النماذج</b> في الأنفاق الهوائية لدراسة أثر الرياح على أداء السيارات والطائرات التي يصممونها، أي <b>لاختبار التوقعات والفرضيات</b> قبل التصنيع، وهو أكثر أمانًا وأقل تكلفة من التجربة على السيارة الحقيقية.</div>') } });
-  function run(){ sim.set(S.des,S.speed,true); sfx.whoosh(); var d=S.des; setTimeout(function(){ if(cur<0) return; S.res[d]=d===0; $('[data-mt]',el).style.width=(d===0?55+S.speed*13:18+S.speed*7)+'%'; $('[data-mt]',el).style.background=d===0?'var(--coral)':'var(--aqua)'; ui(); if(S.pred!=null&&S.res[0]!=null&&S.res[1]!=null){ done('lab'); sfx.ok() } },1600) }
-  return {destroy:function(){ sim.stop() }};
+    var g=b.closest('[data-sc]'); if(g){ if(busy) return; sc=b.dataset.v; $$('button',g).forEach(function(x){x.classList.toggle('on',x===b)}); sfx.pop(); field(); ui(); return }
+    if(b.hasAttribute('data-throw')){ thr(); return }
+    if(b.hasAttribute('data-rst')){ if(busy) return; T[sc]=[]; field(); ui(); return }
+    if(b.hasAttribute('data-explain')) zoom('<h2 class="h2" style="margin-bottom:8px">البيانات القابلة للتكرار</h2><p style="margin:0 0 8px;font-size:19px">إذا أخبرك صديقك أنه تمكّن من قذف كرة مسافة ١٠٠ م باستخدام مضرب فلعلك تطلب إليه أن يكرر ذلك أمامك، ولعلك تشكّك في مصداقية روايته إن لم يتمكن من تكرار الضربة! بالمثل يطلب العلماء أدلة قابلة للتكرار؛ وعندما يصف عالم استقصاءً ما لا بد أن يكون العلماء الآخرون قادرين على الحصول على النتائج نفسها عند تكرارهم للاستقصاء، وهذا ما يُقصد بالبيانات القابلة للتكرار.</p><div class="expl">عندما تقوّم بيانات علمية عليك أن تبحث فيما إذا تمكّن علماء آخرون من تكرار الحصول على هذه البيانات، وإلا فإن هناك شكًّا في مصداقيتها.</div>',880) });
+  field(); ui();
+  return {};
 });
 
-/* ٩) تغيّر النماذج بتطور المعرفة */
-add('change','تغيّر النماذج',function(el){
-  var A=[['ذرة دالتون','١٨٠٣'],['ذرة طومسون','١٩٠٤'],['ذرة رذرفورد','١٩١١'],['ذرة بور','١٩١٣'],['شرودنجر: نموذج السحابة الإلكترونية','١٩٢٦']], ai=0, seen={geo:0,helio:0};
-  el.innerHTML=head('المفهوم الرابع','النماذج تتغير بتطور المعرفة')+
-   '<div class="chg"><div class="card"><span class="tape"></span><div class="row" style="flex-wrap:nowrap;justify-content:space-between"><b class="disp" style="font-size:23px;white-space:nowrap">نماذج المجموعة الشمسية</b><div class="seg" data-m style="flex:1;max-width:330px"><button data-v="geo">أ) نموذج قديم</button><button data-v="helio">ب) نموذج جديد</button></div></div>'+
-     '<div class="orbw"><svg viewBox="0 0 520 520" data-orb></svg></div><p data-cap class="cap">عمل العلماء نماذج للنظام الشمسي منذ القدم؛ لأنه من الضخامة بحيث يصعب تصوّره بشكل متكامل، وبذلك يسّرت النماذج فهمه. اختر نموذجًا.</p></div>'+
-   '<div class="card"><span class="tape l"></span><b class="disp" style="font-size:23px">تطور نموذج الذرة إلى عصرنا الحالي</b><div class="tl">'+A.map(function(a,i){return '<button data-a="'+i+'"><i>'+a[1]+'</i></button>'}).join('')+'</div>'+
-     '<div class="atomw"><svg viewBox="0 0 220 220" data-atom></svg><div><b class="disp" data-an style="font-size:26px;color:var(--violet)"></b><div class="muted" data-ay style="font-size:20px"></div></div></div>'+
-     '<div class="row"><button class="btn sm ghost" data-ap>السابق</button><button class="btn sm" data-anx>النموذج التالي</button></div></div></div>'+
-   '<div class="note" style="font-size:18px;padding:6px 16px"><b>كلما كانت معلوماتك أوسع كان نموذجك أدق، وقدرته على توضيح الأفكار والمفاهيم أفضل.</b></div>';
-  var sim=orbitSim($('[data-orb]',el),'geo');
-  var CAP={geo:'أ) في نموذج قديم للنظام الشمسي ظهرت الأرض في المركز، بينما تدور بقية الأجرام حولها.',helio:'ب) تطوّر نموذج جديد فيما بعد ظهرت فيه الشمس في المركز وبقية الأجرام تدور حولها.'};
-  function atom(){ $('[data-atom]',el).innerHTML=atomSVG(ai); $('[data-an]',el).textContent=A[ai][0]; $('[data-ay]',el).textContent='عام '+A[ai][1];
-    $$('.tl button',el).forEach(function(b,i){ b.classList.toggle('on',i<=ai) }); if(ai===A.length-1) chk() }
-  function chk(){ if(seen.geo&&seen.helio&&ai===A.length-1) done('change') }
-  function mode(v){ seen[v]=1; sim.mode(v); $$('[data-m] button',el).forEach(function(x){x.classList.toggle('on',x.dataset.v===v)}); $('[data-cap]',el).textContent=CAP[v]; sfx.whoosh(); chk() }
-  el.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return;
-    if(b.closest('[data-m]')){ mode(b.dataset.v); return }
-    if(b.dataset.a!==undefined){ ai=Number(b.dataset.a); atom(); sfx.pop(); return }
-    if(b.hasAttribute('data-anx')){ if(ai<A.length-1){ ai++; atom(); sfx.pop() } return }
-    if(b.hasAttribute('data-ap')){ if(ai>0){ ai--; atom(); sfx.pop() } } });
-  atom();
-  return {destroy:function(){ sim.stop() }, next:function(){ if(!seen.geo){ mode('geo'); return true } if(!seen.helio){ mode('helio'); return true } if(ai<A.length-1){ ai++; atom(); sfx.pop(); return true } return false }};
+/* ٨) تقويم المواد الدعائية: محقق الإعلانات */
+add('ads','محقق الإعلانات',function(el){
+  var H=[{x:24,y:12,w:54,h:6,c:'«أول حل نهائي لمشاكل الشعر»',q:'«أول» و«نهائي»: ما الدليل؟ لم يقدّم الإعلان أي بيانات تدعم هاتين الكلمتين.'},
+         {x:4,y:70,w:27,h:16,c:'«مضمون طبيعي ١٠٠٪»',q:'من فحص المنتج وضمنه؟ هل فحصته مختبرات مستقلة موثوقة للتأكد من صلاحيته؟'},
+         {x:30,y:80,w:67,h:5.5,c:'«إنبات شعر . تساقط . قشرة»',q:'ثلاث فوائد في سطر واحد: هل قُدّمت بيانات لكل فائدة منها؟'},
+         {x:3,y:86,w:94,h:8,c:'«تم البحث عن ٢٠٠ شخص… وكانت نسبة النجاح ٨٣٪»',q:'هذا ادعاء معه بيانات! لكن: من أجرى البحث؟ كيف قيس النجاح؟ وهل كرره علماء آخرون وحصلوا على النتيجة نفسها؟'},
+         {x:3,y:94,w:94,h:5,c:'«يعمل على إيقاف التساقط والقشرة بشكل نهائي ١٠٠٪»',q:'١٠٠٪ نهائيًا؟ الإعلان نفسه ذكر نجاحًا بنسبة ٨٣٪! الاستنتاج هنا أكبر مما تدعمه البيانات.'}], found={};
+  el.innerHTML=head('المفهوم الرابع','محقق الإعلانات: اضغط على كل ادعاء في الإعلان',32,'<div class="score">اكتشفت <b data-fc>٠</b> من '+n(H.length)+'</div>')+
+   '<div class="ads"><div class="adbox"><div class="adimg">'+img('hair')+H.map(function(h,i){return '<button class="hs" data-h="'+i+'" style="left:'+h.x+'%;top:'+h.y+'%;width:'+h.w+'%;height:'+h.h+'%" title="ادعاء"></button>'}).join('')+'</div></div>'+
+   '<div class="card" style="display:flex;flex-direction:column;gap:8px;overflow:hidden"><span class="tape"></span><b class="disp" style="font-size:24px">سجل التحقيق</b><div class="clog" data-log><p class="muted" style="margin:0">ابحث عن العبارات التي يدّعي فيها الإعلان شيئًا، واضغط عليها.</p></div>'+
+    '<div data-vd style="display:none"><b>حكمكم على الإعلان:</b><div class="seg" style="margin-top:4px"><button data-v="r">واقعي</button><button data-v="m">مضلل</button><button data-v="s">علمي</button></div><div data-vf style="margin-top:6px"></div></div></div></div>'+
+   '<div class="note">من المهم <b>تقييم معلومات المنتج وبياناته</b> التي تدعم الادعاء قبل اتخاذ قرار الشراء، وتقوم <b>المختبرات المستقلة الموثوقة</b> بفحص المنتجات للتأكد من صلاحيتها.</div>';
+  var VF={r:'تمهّل: هل قدّم الإعلان بيانات تدعم «نهائي» و«١٠٠٪»؟ راجعوا سجل التحقيق قبل الحكم.',m:'حكم تدعمه أدلتكم: الإعلان يدّعي «نهائي ١٠٠٪» بينما يذكر نجاحًا بنسبة ٨٣٪، ولا يذكر من أجرى البحث أو هل كُرّر.',s:'الادعاء العلمي تدعمه بيانات محددة وقابلة للتكرار من مصدر موثوق. هل وجدتم ذلك في هذا الإعلان؟'};
+  function hit(i){ if(found[i]) return; found[i]=1; var h=H[i]; $('[data-h="'+i+'"]',el).classList.add('got'); var lg=$('[data-log]',el); if(Object.keys(found).length===1) lg.innerHTML='';
+    var d=document.createElement('div'); d.className='clue pop'; d.innerHTML='<b>'+n(Object.keys(found).length)+') '+h.c+'</b><span>'+h.q+'</span>'; lg.appendChild(d); lg.scrollTop=lg.scrollHeight; sfx.ok();
+    var k=Object.keys(found).length; $('[data-fc]',el).textContent=n(k); if(k===H.length){ $('[data-vd]',el).style.display='block'; sfx.win(); confetti(); done('ads') } }
+  el.addEventListener('click',function(e){ var h=e.target.closest('[data-h]'); if(h){ hit(Number(h.dataset.h)); return }
+    var v=e.target.closest('[data-vd] button'); if(v){ $$('[data-vd] button',el).forEach(function(x){x.classList.toggle('on',x===v)}); $('[data-vf]',el).innerHTML='<div class="fb '+(v.dataset.v==='m'?'ok':'')+' pop" style="font-size:17px;'+(v.dataset.v==='m'?'':'background:#FFF7E0')+'">'+VF[v.dataset.v]+'</div>'; sfx.pop() } });
+  return {next:function(){ for(var i=0;i<H.length;i++){ if(!found[i]){ hit(i); return true } } return false }};
 });
+
+/* ٩) نشاط التصنيف */
+classifyScreen({id:'classify',title:'دليل أم ادعاء؟',h:'دليل موثوق أم ادعاء يحتاج إلى دليل؟',seed:5,
+  bins:[['بيانات موثوقة','محددة وقابلة للتكرار','aqua'],['ادعاء يحتاج إلى دليل','غير مدعوم أو لم يتكرر','coral']],
+  why:['البيانات الموثوقة محددة ودقيقة وقابلة للتكرار.','الادعاء غير المدعوم بالبيانات، أو الذي لم يتكرر، لا يُقبل قبل التحقق منه.'],
+  items:[['كرّرت ثلاث مجموعات التجربة نفسها وحصلت على النتائج نفسها',0],['جدول تكراري: ٣٧ يفضلون لحم الغنم و٢٨ يفضلون الدجاج',0],['منتج فحصته مختبرات مستقلة موثوقة وأكدت صلاحيته',0],['ملاحظات دُوّنت كاملة أثناء التجربة',0],
+    ['«قذفت الكرة ١٠٠ م» ولم يستطع تكرارها',1],['«أكثر أهل بلدتي يفضلون لحم الغنم» بلا أي بيانات',1],['«أول حل نهائي لمشاكل الشعر»',1],['نتيجة تجربة على شخص واحد عُمّمت على الجميع',1],['«هذا المنتج يجعل الجميع أفضل بنسبة ١٠٠٪»',1],['ملاحظات كُتبت من الذاكرة بعد أسبوع من التجربة',1,'الملاحظات التي لا تُدوَّن في وقتها قد تفقد كثيرًا من التفاصيل المهمة.']]});
 
 /* ١٠) البطاقة العملية */
-sheetScreen({id:'sheet',title:'بطاقة نموذجنا',h:'بطاقة نموذجنا: مزاياه وحدود إمكاناته',
-  task:'اختاروا شيئًا يصعب دراسته مباشرة (مثل الخلية، أو المجموعة الشمسية، أو الطقس)، ثم اصنعوا له نموذجًا أو اختاروا نموذجًا من الكتاب، وسجّلوا:',
-  fields:[{k:'what',label:'ماذا يمثّل نموذجنا؟',t:'input',ph:'مثال: الخلية النباتية'},
-    {k:'why',label:'لماذا يصعب دراسته مباشرة؟',t:'seg',opts:[['s','صغير جدًا'],['b','كبير جدًا'],['d','خطِر أو مكلف'],['o','سبب آخر']]},
-    {k:'type',label:'نوع نموذجنا',t:'seg',opts:[['m','مادي'],['c','حاسوبي'],['f','فكري']]},
-    {k:'desc',label:'كيف صنعناه؟ (المواد أو الطريقة)',t:'input',ph:'اكتبوا باختصار'},
-    {k:'pro',label:'مزايا النموذج: ماذا يوضح؟',t:'area',ph:'يساعدنا على…'},
-    {k:'con',label:'حدود إمكاناته: ماذا لا يوضح؟',t:'area',ph:'لا يوضح…'},
-    {k:'up',label:'كيف نطوّر نموذجنا إذا حصلنا على معلومات جديدة؟',t:'input',full:true,ph:'سنضيف… / سنغيّر…'}]});
+sheetScreen({id:'sheet',title:'بطاقة تقويم إعلان',h:'بطاقة تقويم إعلان تجاري',
+  task:'شاهدوا إعلانًا تجاريًا (في التلفاز أو الصحف أو الإنترنت)، وسجّلوا ما يدّعيه، ثم قوّموه:',
+  fields:[{k:'ad',label:'المنتج أو الإعلان',t:'input',ph:'اسم المنتج'},
+    {k:'src',label:'أين شاهدناه؟',t:'seg',opts:[['tv','التلفاز'],['np','الصحف'],['web','الإنترنت'],['o','أخرى']]},
+    {k:'claim',label:'ماذا يدّعي الإعلان؟',t:'area',ph:'يدّعي أن…'},
+    {k:'data',label:'هل قدّم بيانات تدعم ادعاءه؟',t:'seg',opts:[['y','نعم'],['p','جزئيًا'],['n','لا']],k2:'dataw',ph2:'ما البيانات؟'},
+    {k:'rep',label:'هل البيانات محددة وقابلة للتكرار؟',t:'seg',opts:[['y','نعم'],['n','لا'],['u','لا نعرف']]},
+    {k:'lab',label:'هل فحصته جهة مستقلة موثوقة؟',t:'seg',opts:[['y','نعم'],['n','لا'],['u','لم يُذكر']]},
+    {k:'cls',label:'تصنيفنا للإعلان',t:'seg',opts:[['r','واقعي'],['m','مضلل'],['s','علمي']]},
+    {k:'why',label:'لماذا صنّفناه هكذا؟',t:'input',ph:'لأن…'}]});
 
-/* ١١) سباق الاستخدامات */
-raceScreen({id:'race',title:'سباق الاستخدامات',h:'سباق النماذج: لماذا استُخدم النموذج هنا؟',unit:'الموقف',
-  lanes:[['التواصل','var(--sky)'],['اختبار التوقعات','var(--coral)'],['توفير الوقت والمال والأرواح','var(--aqua)']],
+/* ١١) سباق المحققين */
+raceScreen({id:'race',title:'سباق المحققين',h:'سباق المحققين: نقوّم الملاحظات أم الاستنتاجات؟',unit:'سؤال المحقق',
+  lanes:[['تقويم الملاحظات','var(--sky)'],['تقويم الاستنتاجات','var(--violet)']],
   cases:[
-   {name:'النفق الهوائي',img:'windcar',desc:'يدرس المهندسون أثر الرياح على أداء السيارة التي يصممونها.',f:[['هل يقلّ أثر الرياح إذا غيّرنا شكل مقدمة السيارة؟ نجرّب على النموذج',1,'النموذج يختبر توقعًا قبل التصنيع.']]},
-   {name:'نموذج الخلية',img:'cell',desc:'رسم يوضح أجزاء الخلية النباتية.',f:[['معلمة تشرح لطالباتها أجزاء الخلية بنموذج بدل الكتابة عنها',0,'النموذج يسهّل نقل الفكرة وتصوّرها بطريقة محسوسة.']]},
-   {name:'اختبار التصادم',img:'crash',desc:'اختبار أمان سيارة في حادث تصادم.',f:[['نختبر أمان السيارة على نموذج بدل تعريض الناس للخطر',2,'التعامل مع النموذج أكثر أمانًا وأقل تكلفة.']]},
-   {name:'الطائرة',img:'plane',desc:'رسم يوضح القوى المؤثرة في الطائرة: الرفع والدفع والمقاومة والجاذبية.',f:[['ندرس أثر الرياح على أداء الطائرة قبل بنائها',1,'من استخدامات النماذج اختبار التوقعات والفرضيات.']]},
-   {name:'المركب الكيميائي',img:'chem',desc:'نموذج مادي لمركب كيميائي.',f:[['عالم يعرض لزملائه في مؤتمر علمي كيف تترابط ذرات المركب',0,'النموذج ينقل الأفكار والملاحظات إلى الآخرين.']]},
-   {name:'مكوك الفضاء',img:'shuttle',desc:'رحلات الفضاء مكلفة جدًا وخطرة.',f:[['تُجرى الاختبارات على نموذج للمكوك بدل المكوك الحقيقي',2,'النموذج يوفر الوقت والمال ويحافظ على الأرواح.']]},
-   {name:'خريطة الطقس',img:'weather',desc:'نموذج حاسوبي يعرض حالة الطقس.',f:[['مذيع يعرض خريطة الطقس ليوضح للناس حالة الطقس',0,'تمثيل المعلومات ونقلها للناس من التواصل.']]}]});
+   {name:'الطعام المفضل',img:'freq',desc:'يقول صديقك: أكثر أفراد بلدته يفضلون لحم الغنم على الدجاج، ويعرض عليك هذا الجدول.',f:[['هل التعداد في الجدول مسجّل بدقة ووضوح؟',0,'نقدّر مدى دقة البيانات المسجّلة.'],['هل يكفي هذا الجدول للقول إن «أكثر أفراد البلدة» يفضلون لحم الغنم؟',1,'نقرر هل الاستنتاج معقول في ضوء البيانات.'],['هل يمكن لشخص آخر أن يكرر الاستطلاع ويحصل على نتائج مشابهة؟',0,'قابلية تكرار البيانات جزء من تقويمها.']]},
+   {name:'إعلان علاج الشعر',img:'hair',desc:'«تم البحث عن ٢٠٠ شخص… وكانت نسبة النجاح ٨٣٪» ثم «يعمل بشكل نهائي ١٠٠٪».',f:[['من أجرى البحث على ٢٠٠ شخص؟ وكيف قيس النجاح؟',0,'نتحقق من مصدر البيانات ودقتها.'],['هل نجاح ٨٣٪ يبرر عبارة «نهائي ١٠٠٪»؟',1,'الاستنتاج أكبر مما تدعمه البيانات.']]},
+   {name:'ضربة الـ ١٠٠ متر',img:'',desc:'أخبرك صديقك أنه قذف كرة مسافة ١٠٠ م باستخدام مضرب.',f:[['هل قيست المسافة فعلًا أم قُدّرت بالنظر؟',0,'نقدّر دقة الملاحظة نفسها.'],['هل ضربة واحدة تكفي للقول إنه يستطيع قذف الكرة ١٠٠ م دائمًا؟',1,'التعميم من محاولة واحدة استنتاج ضعيف.']]}]});
 
-/* ١٢-١٤ */
-compScreen({h:'تحدّي صانعي النماذج'});
-evalScreen({cn:{model:'تعريف النموذج',types:'أنواع النماذج',uses:'استخدامات النماذج',change:'تغيّر النماذج'}});
-endScreen({title:'حُلّ اللغز',h:'حُلّ لغز ما لا يُرى: إنها النماذج!',recapTitle:'خلاصة الملف',
-  recap:[['أهمية النماذج','يضع العلماء النماذج لمساعدتهم على تصوّر المفاهيم المعقدة.'],['أنواع النماذج','هناك ثلاثة أنواع من النماذج، هي: النماذج المادية، والنماذج الحاسوبية، والنماذج الفكرية.'],['استخدامات النماذج','تُستخدم النماذج لتمثيل المعلومات المهمة، ومنها الخرائط والجداول.'],['تغيّر النماذج بتطور المعرفة','يمكن أن يتغير النموذج مع الزمن بزيادة المعلومات المتوافرة.'],['عمل النماذج','كلما كانت معلوماتك أوسع كان نموذجك أدق، وقدرته على توضيح الأفكار والمفاهيم أفضل.']],
-  objs:OBJ,map:OMAP,hw:['استنتج: ما أنواع النماذج التي تُستخدم لنمذجة الطقس؟ وكيف تُستخدم لتوقع الطقس؟','وضّح كيف تُستخدم النماذج في العلوم؟','صِف مزايا أنواع النماذج الثلاثة وحدود إمكاناتها.']});
-
-/* ================= رسوم ومحاكيات الدرس ================= */
-function orbitSim(svg,m){
-  var NS='http://www.w3.org/2000/svg', alive=true, raf=0, t=0, M=m;
-  var B={sun:['الشمس','#FFB020',22],mercury:['عطارد','#B7A99A',6],venus:['الزهرة','#E8C27A',9],earth:['الأرض','#3D8BFD',10],moon:['القمر','#D9DEE6',4],mars:['المريخ','#E2603A',8],jupiter:['المشتري','#D9A066',16],saturn:['زحل','#E6CF8B',13]};
-  var L={helio:{c:'sun',o:[['mercury',52,0.9],['venus',84,0.6],['earth',118,0.45],['mars',152,0.33],['jupiter',196,0.16],['saturn',236,0.1]]},
-         geo:{c:'earth',o:[['moon',40,1.6],['mercury',70,0.9],['venus',100,0.6],['sun',140,0.45],['mars',176,0.33],['jupiter',208,0.16],['saturn',240,0.1]]}};
-  function build(){ var c=L[M], h='<defs><radialGradient id="sg'+M+'"><stop offset="0" stop-color="#FFF3B0"/><stop offset="1" stop-color="#FFB020"/></radialGradient></defs>';
-    c.o.forEach(function(o){ h+='<circle cx="260" cy="260" r="'+o[1]+'" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.5" stroke-dasharray="4 5"/>' });
-    h+=body(c.c,260,260,true,'center');
-    c.o.forEach(function(o,i){ h+='<g data-b="'+i+'">'+body(o[0],0,0,false)+'</g>' });
-    svg.innerHTML=h; svg.style.opacity=0; setTimeout(function(){ svg.style.transition='opacity .6s'; svg.style.opacity=1 },30) }
-  function body(k,x,y,big,cls){ var b=B[k], r=big?b[2]*1.6:b[2], fill=k==='sun'?'url(#sg'+M+')':b[1];
-    return (k==='saturn'?'<ellipse cx="'+x+'" cy="'+y+'" rx="'+(r*1.9)+'" ry="'+(r*0.55)+'" fill="none" stroke="#C9B57A" stroke-width="2.5"/>':'')+(k==='sun'?'<circle cx="'+x+'" cy="'+y+'" r="'+(r*1.5)+'" fill="#FFB020" opacity=".18"/>':'')+
-      '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+fill+'"/>'+(k==='earth'?'<path d="M'+(x-r*0.5)+' '+(y-r*0.2)+' q'+(r*0.4)+' '+(-r*0.6)+' '+(r*0.8)+' 0 q'+(-r*0.2)+' '+(r*0.5)+' '+(-r*0.8)+' '+(r*0.5)+'z" fill="#18A058"/>':'')+
-      '<text x="'+x+'" y="'+(y+r+(big?20:15))+'" text-anchor="middle" font-size="'+(big?17:13)+'" font-weight="600" fill="#E6EDF8" font-family="IBM Plex Sans Arabic,Tahoma">'+b[0]+'</text>' }
-  function frame(){ if(!alive) return; raf=requestAnimationFrame(frame); t+=0.016;
-    L[M].o.forEach(function(o,i){ var g=svg.querySelector('[data-b="'+i+'"]'); if(!g) return; var a=t*o[2]+i*1.3; g.setAttribute('transform','translate('+(260+Math.cos(a)*o[1])+','+(260+Math.sin(a)*o[1])+')') }) }
-  build(); frame();
-  return {stop:function(){ alive=false; cancelAnimationFrame(raf) }, mode:function(v){ if(v===M) return; M=v; build() }};
-}
-function atomSVG(i){
-  var nuc='<circle cx="110" cy="110" r="9" fill="#F2545B"/><circle cx="106" cy="106" r="5" fill="#FFB020"/><circle cx="114" cy="112" r="5" fill="#FFB020"/>';
-  if(i===0) return '<defs><radialGradient id="ad" cx=".35" cy=".35"><stop offset="0" stop-color="#FFB3A1"/><stop offset="1" stop-color="#D2452B"/></radialGradient></defs><circle cx="110" cy="110" r="70" fill="url(#ad)" class="pop"/>';
-  if(i===1){ var s='<circle cx="110" cy="110" r="74" fill="#FFE07A" stroke="#E8A21B" stroke-width="3" class="pop"/>'; [[80,80],[135,75],[110,115],[70,130],[145,135],[100,160],[125,95]].forEach(function(p,k){ s+=k%2?'<text x="'+p[0]+'" y="'+(p[1]+7)+'" text-anchor="middle" font-size="22" font-weight="700" fill="#B4282E">+</text>':'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="7" fill="#3D8BFD"/>' }); return s }
-  if(i===2){ var r=''; [0,60,120].forEach(function(a,k){ r+='<g transform="rotate('+a+' 110 110)"><ellipse cx="110" cy="110" rx="88" ry="30" fill="none" stroke="#9FB0CC" stroke-width="2"/><circle cx="198" cy="110" r="7" fill="#3D8BFD"><animateTransform attributeName="transform" type="rotate" from="0 110 110" to="360 110 110" dur="'+(2.5+k)+'s" repeatCount="indefinite"/></circle></g>' }); return r+nuc }
-  if(i===3){ var b=''; [40,64,88].forEach(function(r,k){ b+='<circle cx="110" cy="110" r="'+r+'" fill="none" stroke="#7B6CF6" stroke-width="2.5" opacity=".7"/><circle cx="'+(110+r)+'" cy="110" r="7" fill="#3D8BFD"><animateTransform attributeName="transform" type="rotate" from="0 110 110" to="360 110 110" dur="'+(2+k*1.2)+'s" repeatCount="indefinite"/></circle>' }); return b+nuc }
-  var c='<defs><radialGradient id="cl"><stop offset="0" stop-color="#16B5A6" stop-opacity=".9"/><stop offset=".7" stop-color="#16B5A6" stop-opacity=".25"/><stop offset="1" stop-color="#16B5A6" stop-opacity="0"/></radialGradient></defs><circle cx="110" cy="110" r="95" fill="url(#cl)" class="pop"/>';
-  for(var k=0;k<90;k++){ var a=k*2.4, r2=12+Math.pow((k*37%100)/100,0.8)*80; c+='<circle cx="'+(110+Math.cos(a)*r2).toFixed(1)+'" cy="'+(110+Math.sin(a)*r2).toFixed(1)+'" r="1.8" fill="#E6FFFB" opacity=".8"/>' } return c+nuc;
-}
-/* النفق الهوائي: خطوط دخان تتبع شكل السيارة، واضطراب خلف التصميم الصندوقي */
-function windSim(cv){
-  var box=cv.parentNode; cv.width=box.offsetWidth||780; cv.height=box.offsetHeight||470; var g=cv.getContext('2d'), W=cv.width, H=cv.height, GY=H-80, X0=Math.round(W*0.36), X1=X0+260, alive=true, raf=0, on=false, des=0, sp=2, t=0, P=[];
-  function rawH(d,x){ if(x<X0||x>X1) return 0; var u=(x-X0)/(X1-X0);
-    if(d===0){ if(u<0.03) return 70*u/0.03; if(u<0.30) return 70; if(u<0.36) return 70+50*(u-0.30)/0.06; if(u<0.97) return 120; return 120*(1-(u-0.97)/0.03) }
-    var hh=Math.sin(Math.min(1,u/0.62)*Math.PI/2)*112; if(u<0.62) return Math.max(16,hh*(u<0.08?0.5+u/0.16:1)); return 112-(u-0.62)/0.38*70 }
-  var HS=[[],[]];
-  [0,1].forEach(function(d){ var look=d?120:30, back=d?150:40; for(var x=0;x<=W;x++){ var m=0; for(var u=x;u<=x+look;u+=2){ m=Math.max(m,rawH(d,u)*(1-(u-x)/look)) } for(var v=x-back;v<=x;v+=2){ m=Math.max(m,rawH(d,v)*(1-(x-v)/back)) } HS[d][x]=m } });
-  function lift(a,x){ var h=HS[des][Math.max(0,Math.min(W,Math.round(x)))]||0; if(a<h+8) return h+8+a*0.35; return a+h*Math.exp(-(a-h)/150)*0.6+(a<h+40?8*(1-(a-h)/40):0) }
-  function car(){ g.save(); g.beginPath(); g.moveTo(X0,GY); for(var x=X0;x<=X1;x+=2) g.lineTo(x,GY-rawH(des,x)); g.lineTo(X1,GY); g.closePath();
-    var gr=g.createLinearGradient(0,GY-120,0,GY); gr.addColorStop(0,des?'#C9D3DE':'#F2545B'); gr.addColorStop(1,des?'#7D8899':'#A3333A'); g.fillStyle=gr; g.fill(); g.lineWidth=2; g.strokeStyle='rgba(255,255,255,.6)'; g.stroke();
-    [X0+50,X1-55].forEach(function(cx){ g.beginPath(); g.arc(cx,GY,22,0,Math.PI*2); g.fillStyle='#0B1A30'; g.fill(); g.beginPath(); g.arc(cx,GY,9,0,Math.PI*2); g.fillStyle='#9FB0CC'; g.fill() });
-    g.fillStyle='rgba(11,26,48,.85)'; g.fillRect((X0+X1)/2-90,GY-160,180,34); g.fillStyle='#fff'; g.font='600 18px IBM Plex Sans Arabic, Tahoma'; g.textAlign='center'; g.fillText(des?'التصميم ب: انسيابي':'التصميم أ: صندوقي',(X0+X1)/2,GY-137); g.restore() }
-  function bg(a){ g.fillStyle='rgba(15,28,52,'+a+')'; g.fillRect(0,0,W,H); g.fillStyle='rgba(255,255,255,.12)'; g.fillRect(0,GY,W,4) }
-  function frame(){ if(!alive) return; raf=requestAnimationFrame(frame); t+=0.016; bg(on?0.22:1);
-    if(on){ for(var k=0;k<sp+1;k++) P.push({x:-10,a:10+Math.floor(Math.random()*19)*16,s:0.85+Math.random()*0.3,ph:Math.random()*6});
-      g.lineWidth=2.2; g.lineCap='round';
-      P.forEach(function(p){ var x0=p.x, y0=GY-lift(p.a,p.x)+noise(p); var v=(2.2+sp*1.6)*p.s; if(des===0&&p.x>X0-40&&p.x<X0&&p.a<120) v*=0.55; p.x+=v; var y1=GY-lift(p.a,p.x)+noise(p);
-        g.strokeStyle=(des===0&&p.x>X1&&p.x<X1+260&&p.a<140)?'rgba(255,197,61,.9)':'rgba(230,240,255,.85)'; g.beginPath(); g.moveTo(x0,y0); g.lineTo(p.x,y1); g.stroke() });
-      P=P.filter(function(p){return p.x<W+10}) }
-    car() }
-  function noise(p){ if(des!==0||p.x<X1||p.x>X1+260||p.a>140) return des===1&&p.x>X1&&p.x<X1+120&&p.a<60?Math.sin(t*6+p.ph)*3:0; var k=1-(p.x-X1)/260; return Math.sin(t*9+p.ph+p.x/14)*30*k*(0.5+sp*0.25)+Math.cos(t*5+p.ph*2)*14*k }
-  bg(1); frame();
-  return {set:function(d,s,run){ if(d!==des){ P=[]; bg(1) } des=d; sp=s; if(run) on=true; else { on=false; P=[]; bg(1) } }, running:function(){return on}, stop:function(){ alive=false; cancelAnimationFrame(raf) }};
-}
+compScreen({h:'تحدّي المحققين'});
+evalScreen({cn:{critical:'التفكير الناقد',evaluate:'تقويم الملاحظات والاستنتاجات',data:'البيانات وتمثيلها',claims:'فحص الادعاءات والإعلانات',repeat:'تدوين الملاحظات وقابلية التكرار'}});
+endScreen({title:'أُغلق الملف',h:'أُغلق الملف: لا نصدّق قبل أن نقوّم!',recapTitle:'خلاصة الملف',
+  recap:[['صدّق أو لا تصدّق','من خلال دمج معلوماتك السابقة مع المعلومات الجديدة تستطيع أن تقرر ما إذا كان موضوع ما واقعيًا، وقابلًا للتصديق.'],['تقويم البيانات','من المهم تسجيل الملاحظات خلال تنفيذ الاستقصاء. البيانات المعتمدة أو الموثوقة بيانات محددة، وقابلة للتكرار.'],['تقويم الاستنتاج','يجب أن يكون للاستنتاجات معنى حتى يمكن اعتمادها.'],['تقويم المواد الدعائية','تقوم المختبرات المستقلة الموثوقة بفحص المنتجات للتأكد من صلاحيتها.']],
+  objs:OBJ,map:OMAP,hw:['صِف أهمية إعادة التجارب العلمية.','وضّح كيف يمكن أن تكون الإعلانات التجارية مضللة؟','شاهد ثلاثة إعلانات تجارية تُبث في التلفاز، واقرأ ثلاثة من إعلانات الجرائد، ثم سجّل ما يدّعيه كل منها، وصنّفها إلى: واقعية، أو مضللة، أو علمية.']});
 /* ===== أدوات مطابقة العرض للفصل الأول: شاشات المحتوى والتقويم كما في العرض + ربط الاستراتيجيات =====
    تُدمج داخل نطاق المحرك نفسه، وتستخدم: add, SCR, esc, n, sfx, toast, done, $, $$, IMG, confetti, ST, show */
 var K1={};
@@ -859,39 +842,62 @@ K1.strat=function(key,rows){
   SCR.forEach(function(s){var r=s.render;s.render=function(el){var c=r(el);var bar=$('.k1sbar');if(!bar){bar=document.createElement('div');bar.className='k1sbar';$('#stage').appendChild(bar)}bar.innerHTML='';
     var tb=document.createElement('button');tb.className='k1tb';tb.textContent='🧰 الأدوات الصفية';tb.onclick=function(e){e.stopPropagation();SK.toolbox()};bar.appendChild(tb);if(rows[s.id])bar.appendChild(SK.badges(rows[s.id],key));return c}})};
 
-/* ===== الدرس الثاني: النماذج العلمية — مطابقة العرض + الاستراتيجيات ===== */
-K1.quiz('ev','تقييم: الأسئلة ١–٥',{k:'تقييم',h:'أسئلة التقييم كما في العرض',qs:[
- {no:'السؤال رقم ١',q:'محاكاة لشيء أو لحدثٍ ما، ويُستخدم أداةً لفهم العالم الطبيعي؛ حيث تُساعد النماذج على تصوّر أو تخيّل الأشياء التي يصعُب رؤيتها:',o:['النموذج','النظرية','الفرضية','الاستدلال'],a:0},
- {no:'السؤال رقم ٢',q:'النماذج ............ هي مفاهيم تصف كيف يفكر الأشخاص في أشياء معينة في العالم الطبيعي.',o:['المادية','الحاسوبية','الفكرية','لا توجد إجابة صحيحة'],a:2},
- {no:'السؤال رقم ٣',q:'نوع من أنواع النماذج يُمكن رؤيتها ولا يمكن لمسها، وتُصمَّم بواسطة الحاسوب:',o:['المادية','الحاسوبية','الفكرية','لا توجد إجابة صحيحة'],a:1},
- {no:'السؤال رقم ٤',q:'تُستخدم النماذج في:',o:['التواصل','اختبار التوقعات والفرضيات','توفير الوقت والمال والمحافظة على الأرواح','جميع ما ذُكر صحيح'],a:3},
- {no:'السؤال رقم ٥',q:'الصورة التالية تُمثّل نموذجًا:',img:'globe',o:['ماديًّا','حاسوبيًّا','فكريًّا','لا شيء مما ذُكر'],a:0,ex:'مجسم الكرة الأرضية يمكن لمسه ورؤيته.'}]});
-K1.page('sum','الخلاصة',{k:'الخلاصة',h:'الخلاصة',pg:28,html:
- '<div class="k1g" style="grid-template-columns:1fr 1fr">'+[['أهمية النماذج','يضع العلماء النماذج لمساعدتهم على تصوّر المفاهيم المعقدة.'],['استخدامات النماذج','تستخدم النماذج في تمثيل المعلومات المهمة، ومنها الخرائط والجداول.'],['أنواع النماذج','هناك ثلاثة أنواع من النماذج، هي: النماذج المادية، والنماذج الحاسوبية، والنماذج الفكرية.'],['تغير النماذج بتطور المعرفة','يمكن أن يتغير النموذج مع الزمن بزيادة المعلومات المتوافرة.'],['عمل النماذج','كلما كانت معلوماتك أوسع كان نموذجك أدق، وقدرته على توضيح الأفكار والمفاهيم أفضل.']].map(function(x,i){return '<div class="k1c'+(i?' k1r':'')+'"><h3 style="color:#18A058">'+x[0]+'</h3><div class="'+(i?'k1a':'')+'" style="'+(i?'':'')+'">'+x[1]+'</div></div>'}).join('')+'</div>'});
-K1.quiz('hw','الواجب: اختبر نفسك',{k:'اختبر نفسك · الواجب',h:'اختبر نفسك (التسليم يوم الأحد القادم)',pg:29,qs:[
- {no:'١. استنتج',q:'ما أنواع النماذج التي تستخدم لنمذجة الطقس؟ وكيف تستخدم لتوقع الطقس؟',a:'تستخدم النماذج الحاسوبية (وكذلك الخرائط)؛ إذ تُدخل فيها بيانات الطقس (الحرارة والضغط والرياح والرطوبة)، فتعرض حركة الكتل الهوائية والسحب وتساعد على التنبؤ بحالة الطقس.'},
- {no:'٢. وضّح',q:'كيف تستخدم النماذج في العلوم؟',a:'تستخدم في التواصل العلمي لنقل الأفكار، وفي اختبار التوقعات والفرضيات، وفي توفير الوقت والمال والمحافظة على الأرواح، وفي تصور الأشياء الصغيرة جدًّا أو الكبيرة جدًّا.'},
- {no:'٣. صف',q:'صف مزايا أنواع النماذج الثلاثة وحدود إمكاناتها.',a:'المادية: يمكن لمسها ورؤيتها، لكنها قد لا تُظهر كل التفاصيل أو الحجم الحقيقي. الحاسوبية: تعرض العمليات المعقدة والمتغيرة، لكن دقتها تعتمد على البيانات المدخلة. الفكرية: تصف أفكارًا لا يمكن رؤيتها، لكنها قد تكون صعبة التصور.'}]});
-K1.rename('sheet','بطاقة نموذجنا (إثرائي)');K1.rename('race','سباق الاستخدامات (إثرائي)');K1.rename('comp','المسابقة الجماعية (إثرائي)');K1.rename('eval','تقويم إضافي (إثرائي)');
-K1.order(['intro','warm','goals','model','types','classify','uses','lab','ev','change','sum','hw','sheet','race','comp','eval','end']);
-K1.strat('g7c1l2',{
- intro:{s:['poe','brain'],g:'١',sk:'التساؤل',ev:'توقع: كيف ندرس ما لا يُرى؟'},
- warm:{s:['brain','sticks'],g:'١',sk:'الاستدعاء',ev:'حل لغز التهيئة'},
- goals:{s:['kwl'],g:'١ و٢',sk:'الوعي بالأهداف',ev:'مهام الملف',w:{kwl:{type:'kwl',phase:'kw',topic:'النماذج العلمية'}}},
- model:{s:['frayer'],g:'١',sk:'التعريف',ev:'تحقق سريع',w:{frayer:{type:'frayer',term:'النموذج',def:'محاكاة لشيء ما أو حدث ما، ويستخدم أداةً لفهم العالم الطبيعي.',ch:'يساعد على تصور الأشياء التي يصعب رؤيتها أو فهمها؛ الصغيرة جدًّا أو الكبيرة جدًّا.',ex:'نموذج الخلية، نموذج المجموعة الشمسية، خرائط الطقس.',non:'الجسم الحقيقي نفسه.'}}},
- types:{s:['jigsaw'],g:'١',sk:'المقارنة',ev:'أنواع النماذج الثلاثة',w:{jigsaw:{type:'jigsaw',cards:[{ic:'🧩',n:'النماذج المادية',t:'نماذج يمكن لمسها أو رؤيتها، مثل: نموذج التركيب الداخلي للخلية، ونموذج المجموعة الشمسية، ونموذج مركب كيميائي.'},{ic:'💻',n:'النماذج الحاسوبية',t:'نماذج يتم بناؤها من خلال برامج حاسوبية، ولا يمكن لمسها، ولكن يمكن عرضها على شاشة الحاسوب، مثل: نموذج حركة الصفائح الأرضية، وعرض حالة الطقس.'},{ic:'💭',n:'النماذج الفكرية',t:'أفكار ومفاهيم تصف كيف يفكر شخص ما في شيء معين في العالم الطبيعي، مثل: معادلة المادة والطاقة لأينشتاين.'}],after:'يكمل الصف نشاط التصنيف التالي.'}}},
- classify:{s:['game','heads'],g:'١',sk:'التصنيف',ev:'نشاط التصنيف'},
- uses:{s:['tps'],g:'١',sk:'الربط بالحياة',ev:'استخدامات النماذج'},
- lab:{s:['poe','inq'],g:'١',sk:'التجريب والمقارنة',ev:'مقارنة التصميمين في النفق الهوائي'},
- ev:{s:['heads','sticks'],g:'١',sk:'التذكر والتطبيق',ev:'تقييم ١–٥'},
- change:{s:['story','tps'],g:'٢',sk:'التسلسل الزمني',ev:'تطور نموذج الذرة والنظام الشمسي'},
- sum:{s:['tl'],g:'١ و٢',sk:'التلخيص',ev:'إشارة المرور',w:{tl:{type:'tl',goals:['تصف أنواعًا مختلفة من النماذج','تناقش كيفية تغير النماذج بتطور المعرفة']}}},
- hw:{s:['tps','sticks'],g:'١ و٢',sk:'الاستنتاج والوصف',ev:'اختبر نفسك'},
- sheet:{s:['coop'],g:'١',sk:'التقويم',ev:'بطاقة نموذجنا'},
- race:{s:['game'],g:'١',sk:'التطبيق',ev:'سباق الاستخدامات'},
- comp:{s:['game'],g:'١ و٢',sk:'التذكر',ev:'المسابقة'},
- eval:{s:['exit'],g:'١ و٢',sk:'التقويم الختامي',ev:'تقرير الإتقان'},
- end:{s:['kwl'],g:'١ و٢',sk:'التلخيص',ev:'خلاصة الملف',w:{kwl:{type:'kwl',phase:'l',topic:'النماذج العلمية'}}}});
+/* ===== الدرس الثالث: تقويم التفسيرات العلمية + مراجعة الفصل — مطابقة العرض + الاستراتيجيات ===== */
+K1.page('sum','الخلاصة',{k:'الخلاصة',h:'الخلاصة',pg:34,html:
+ '<div class="k1g" style="grid-template-columns:1fr 1fr">'+[['صدّق أو لا تصدّق','من خلال دمج معلوماتك السابقة مع المعلومات الجديدة تستطيع أن تقرر ما إذا كان موضوع ما واقعيًّا، وقابلًا للتصديق.'],['تقويم الاستنتاج','يجب أن يكون للاستنتاجات معنى حتى يمكن اعتمادها.'],['تقويم البيانات','من المهم تسجيل الملاحظات خلال تنفيذ الاستقصاء. البيانات المعتمدة أو الموثوقة بيانات محددة، وقابلة للتكرار.'],['تقويم المواد الدعائية','تقوم المختبرات المستقلة الموثوقة بفحص المنتجات للتأكد من صلاحيتها.']].map(function(x,i){return '<div class="k1c'+(i?' k1r':'')+'"><h3 style="color:#18A058">'+x[0]+'</h3><div class="'+(i?'k1a':'')+'">'+x[1]+'</div></div>'}).join('')+'</div>'});
+K1.quiz('hw','الواجب: اختبر نفسك',{k:'اختبر نفسك · الواجب',h:'اختبر نفسك (التسليم يوم الأربعاء القادم)',pg:33,qs:[
+ {no:'١. صف',q:'صف أهمية إعادة التجارب العلمية.',a:'إعادة التجربة تتحقق من أن البيانات قابلة للتكرار؛ فإذا حصل علماء آخرون على النتائج نفسها أصبحت البيانات موثوقة، وإن لم يحصلوا عليها كان هناك شك في مصداقيتها.'},
+ {no:'٢. وضّح',q:'كيف يمكن أن تكون الإعلانات التجارية مضللة؟',a:'عندما تقدّم ادعاءات غير مدعومة ببيانات محددة وقابلة للتكرار، أو تبالغ في وصف المنتج، أو تعتمد على عبارات عامة وآراء أشخاص بدل نتائج الفحوص المستقلة.'},
+ {no:'٣. صنّف (تطبيق المهارات)',q:'شاهد ثلاثة إعلانات تجارية تُبث من خلال التلفاز، أو ثلاثة من الإعلانات التي تنشر في الجرائد، ثم سجّل ما يدّعيه كل منها، وصنّفها إلى: إعلانات واقعية، أو مضلّلة، أو علمية.',a:'نشاط تطبيقي: يسجّل الطالب ادعاء كل إعلان، ويسأل: هل يدعمه دليل محدد قابل للتكرار؟ فإن دعمته نتائج فحص علمي فهو علمي، وإن كان معقولًا بلا مبالغة فهو واقعي، وإن بالغ بلا دليل فهو مضلّل.'}]});
+K1.quiz('ev','تقييم: الأسئلة ١–٦',{k:'تقييم',h:'أسئلة التقييم كما في العرض',qs:[
+ {no:'السؤال رقم ١',q:'الربط بين ما تعرفه من معلومات مع الحقائق الجديدة لتقرر مدى موافقتك لشيء ما:',o:['التوقع','التفكير الناقد','الفرضية','النظرية'],a:1},
+ {no:'السؤال رقم ٢',q:'ينقسم التقويم إلى قسمين، ما هما؟',a:'١) تقويم الملاحظات. ٢) تقويم الاستنتاجات.'},
+ {no:'السؤال رقم ٣',q:'المعلومات التي يتم جمعها أثناء البحث العلمي من خلال الملاحظات تسمى:',o:['الثوابت','التفكير الناقد','البيانات','التخمين'],a:2},
+ {no:'السؤال رقم ٤',q:'صح أم خطأ: يجب علينا تصديق أي ادعاء غير مدعوم بالبيانات.',o:['صح','خطأ'],tf:1,a:1,ex:'علينا أن نحذر من تصديق أي ادعاء غير مدعوم بالبيانات.'},
+ {no:'السؤال رقم ٥',q:'تكون البيانات معتمدة وموثوقة إذا كانت بيانات:',o:['محددة','قابلة للتكرار','دقيقة','جميع ما سبق صحيح'],a:3},
+ {no:'السؤال رقم ٦',q:'متى تسجل البيانات أثناء إجراء الاستقصاء؟ ولماذا؟',a:'أثناء التجربة؛ حتى يمكن قراءتها وفهمها من جديد، وإعادة التجربة إذا لزم الأمر.'}]});
+/* ===== مراجعة الفصل ===== */
+K1.page('ideas','مراجعة: الأفكار الرئيسة',{k:'مراجعة الفصل',h:'مراجعة الأفكار الرئيسة',pg:39,html:
+ '<div class="k1g" style="grid-template-columns:repeat(3,1fr);font-size:18px">'+[['الدرس الأول: العلم وعملياته',['العلم طريقة التعلم عن العالم الطبيعي، ويمكن أن يقدم تفسيرات عن سبب حدوث الأشياء، وكيفية حدوثها.','الفرضية تخمين لجواب أو تفسير منطقي متوقع مبني على معارف وملاحظات سابقة.','تستخدم التجارب المضبوطة في الاستقصاءات العلمية حيث يتم تغيير عامل وملاحظة تأثيره في عامل آخر.']],
+ ['الدرس الثاني: النماذج العلمية',['النموذج أي تمثيل لشيء أو حدث يستخدم كأداة لفهم العالم الطبيعي، وللتواصل بالأفكار والتحقق من التوقعات وتوفير الجهد والمال.','هناك ثلاثة أنواع من النماذج وهي: المادية، والحاسوبية، والفكرية.','يمكن تعديل النماذج في ضوء المعلومات الجديدة، فهي قابلة للتطور.']],
+ ['الدرس الثالث: تقويم التفسيرات العلمية',['البيانات المعتمدة أو الموثوقة بيانات محددة، وقابلة للتكرار، أي يمكن أن يتوصل إليها علماء آخرون.','يعد الاستنتاج موثوقًا إذا كان مقبولًا ذا معنى، ويشكل التفسير الأقرب للصواب.']]].map(function(x){return '<div class="k1c"><h3 style="color:#C0392B;font-size:21px">'+x[0]+'</h3><ol style="line-height:1.7">'+x[1].map(function(t){return '<li>'+t+'</li>'}).join('')+'</ol></div>'}).join('')+'</div>'});
+K1.tree('cmap2','مراجعة: خريطة مفاهيم',{k:'مراجعة الأفكار الرئيسة',h:'خريطة مفاهيم',pg:37,root:'العلم',link:'يمكن أن يقسم إلى',c:[
+ {t:'علم الأحياء',b:1,k:'يدرس',c:[{t:'الأنظمة الحية وتفاعلاتها'}]},
+ {t:'علم الأرض والفضاء',b:1,k:'يدرس',c:[{t:'أنظمة الأرض وأنظمة الفضاء'}]},
+ {t:'العلوم الطبيعية',b:1,k:'يمكن أن تقسم إلى',c:[{t:'علم الكيمياء',b:1,k:'يدرس',c:[{t:'المادة وتفاعلاتها'}]},{t:'علم الفيزياء',b:1,k:'يدرس',c:[{t:'الطاقة ودورها في تغير المادة'}]}]}]});
+K1.page('rel','مراجعة: استخدام المفردات',{k:'مراجعة الفصل · استخدام المفردات',h:'وضّح العلاقة بين كل مصطلحين مما يلي',pg:40,html:
+ '<div class="k1g" style="grid-template-columns:1fr 1fr;font-size:18px">'+[['١. الفرضية – النظرية العلمية','الفرضية: تخمين لجواب أو تفسير منطقي محتمل يعتمد على المعرفة والملاحظة.','النظرية العلمية: محاولة لتفسير سلوك أو نمط معين تم ملاحظته مرارًا في العالم الطبيعي.'],['٢. الثوابت – المتغيرات','الثوابت: عوامل يتم ضبطها أثناء التجربة ولا تتغير.','المتغيرات: عوامل يمكن أن تتغير أثناء التجربة.'],['٣. علم الأرض – علم الفيزياء','علم الأرض: هو العلم الذي يهتم بدراسة مكونات الأرض.','علم الفيزياء: العلم الذي يهتم بدراسة الطاقة وقدرتها على تغيير المادة.'],['٤. النظرية العلمية – القانون العلمي','النظرية العلمية: محاولة لتفسير سلوك أو نمط معين تم ملاحظته مرارًا في العالم الطبيعي.','القانون العلمي: القاعدة التي تصف نمطًا أو سلوكًا معينًا في الطبيعة.']].map(function(x){return '<div class="k1c k1r"><h3 style="font-size:21px">'+x[0]+'</h3><div class="k1a">'+x[1]+'<br>'+x[2]+'</div></div>'}).join('')+'</div>'});
+K1.quiz('rev','مراجعة: تثبيت المفاهيم',{k:'مراجعة الفصل · تثبيت المفاهيم والتفكير الناقد',h:'تثبيت المفاهيم',pg:40,qs:[
+ {no:'٥',q:'ماذا تعمل إذا كانت نتائج تجاربك لا تدعم فرضيتك؟',o:['لا أعمل شيئًا','أعيد التجربة حتى تتفق مع الفرضية','أغيّر الفرضية','أغيّر بياناتي حتى تطابق فرضيتي'],a:2},
+ {no:'٦',q:'ماذا نسمّي صورة ثلاثية الأبعاد لبناء معين حصلنا عليها باستخدام الحاسوب؟',o:['نموذجًا','ثابتًا','فرضية','متغيرًا'],a:0},
+ {no:'٧',q:'أي مما يلي يمكن أن يفسر حدثًا في العالم الطبيعي؟',o:['قانون علمي','نظرية علمية','تقنية','تجربة علمية'],a:1},
+ {no:'٨',q:'يُعد نموذج الطائرة مثالًا على نموذج:',o:['مادي','فكري','حاسوبي','عقلي'],a:0},
+ {no:'٩',q:'ماذا نعني بالاستدلال؟',o:['عمل ملاحظات','استبدال','استخلاص نتائج','اختبار'],a:2},
+ {no:'١٠. قارن (التفكير الناقد)',q:'قارن بين القانون العلمي والنظرية العلمية من حيث أوجه الشبه والاختلاف.',a:'الشبه: كلاهما مبني على ملاحظات وتجارب متكررة ويساعد على فهم العالم الطبيعي. الاختلاف: القانون يصف نمطًا أو سلوكًا معينًا في الطبيعة دون أن يفسره، أما النظرية فتفسّر سبب حدوثه، وهي قابلة للتغير في ضوء بيانات جديدة.'}]});
+K1.rename('classify','دليل أم ادعاء؟');K1.rename('sheet','بطاقة تقويم إعلان (إثرائي)');K1.rename('race','سباق المحققين (إثرائي)');K1.rename('comp','المسابقة الجماعية (إثرائي)');K1.rename('eval','تقويم إضافي (إثرائي)');
+K1.order(['intro','warm','goals','critical','data','notes','repeat','ads','classify','sum','hw','ev','sheet','race','comp','eval','ideas','cmap2','rel','rev','end']);
+K1.strat('g7c1l3',{
+ intro:{s:['poe','brain'],g:'١',sk:'التساؤل',ev:'صدّق أو لا تصدّق'},
+ warm:{s:['tps'],g:'١',sk:'التفكير الناقد',ev:'هل تصدق ما تراه في الصورة؟'},
+ goals:{s:['kwl'],g:'١',sk:'الوعي بالأهداف',ev:'مهام الملف',w:{kwl:{type:'kwl',phase:'kw',topic:'تقويم التفسيرات العلمية'}}},
+ critical:{s:['hats'],g:'١',sk:'التفكير الناقد',ev:'قسما التقويم',w:{hats:{type:'hats',topic:'إعلان يقول: «هذا المشروب يجعلك أذكى خلال أسبوع!»',q:['ما المعلومات والبيانات المتوافرة فعلًا؟','ما شعورك تجاه هذا الادعاء؟','ما المخاطر إذا صدّقناه دون دليل؟','ما الفائدة لو كان صحيحًا ومثبتًا؟','كيف نختبر الادعاء بتجربة مضبوطة؟','ما الحكم النهائي؟'],a:['لا توجد بيانات محددة ولا قابلة للتكرار.','الحماس أو الشك.','نخسر المال وقد نضر صحتنا.','قد يساعد الطلاب لو أثبتته فحوص مستقلة.','نقارن مجموعتين متماثلتين: إحداهما تشرب المشروب، ونقيس النتائج ونكرر.','لا نصدق الادعاء حتى تدعمه بيانات موثوقة.']}}},
+ data:{s:['inq','heads'],g:'١',sk:'تحليل البيانات',ev:'الجدول التكراري'},
+ notes:{s:['coop'],g:'١',sk:'التوثيق',ev:'أهمية تدوين الملاحظات'},
+ repeat:{s:['poe','inq'],g:'١',sk:'التجريب',ev:'قابلية التكرار'},
+ ads:{s:['crit','tps'],g:'١',sk:'التقويم',ev:'محقق الإعلانات'},
+ classify:{s:['game'],g:'١',sk:'التمييز',ev:'دليل أم ادعاء؟'},
+ sum:{s:['tl'],g:'١',sk:'التلخيص',ev:'إشارة المرور',w:{tl:{type:'tl',goals:['تقوّم التفسيرات العلمية']}}},
+ hw:{s:['tps','sticks'],g:'١',sk:'الوصف والتوضيح',ev:'اختبر نفسك'},
+ ev:{s:['heads','sticks'],g:'١',sk:'التذكر والتطبيق',ev:'تقييم ١–٦'},
+ sheet:{s:['coop'],g:'١',sk:'التقويم',ev:'بطاقة تقويم إعلان'},
+ race:{s:['game'],g:'١',sk:'التمييز',ev:'سباق المحققين'},
+ comp:{s:['game'],g:'١',sk:'التذكر',ev:'المسابقة'},
+ eval:{s:['exit'],g:'١',sk:'التقويم الختامي',ev:'تقرير الإتقان'},
+ ideas:{s:['jigsaw'],g:'الفصل',sk:'التلخيص',ev:'الأفكار الرئيسة',w:{jigsaw:{type:'jigsaw',cards:[{ic:'🔬',n:'الدرس الأول',t:'العلم وعملياته: الطريقة العلمية، والفرضية، والتجربة المضبوطة.'},{ic:'🧩',n:'الدرس الثاني',t:'النماذج العلمية: أنواعها الثلاثة، واستخداماتها، وتطورها.'},{ic:'🕵',n:'الدرس الثالث',t:'تقويم التفسيرات: البيانات الموثوقة محددة وقابلة للتكرار، والاستنتاج الموثوق ذو معنى.'}],after:'يلخّص ممثل كل فريق درسه في جملتين.'}}},
+ cmap2:{s:['cmap'],g:'الفصل',sk:'التنظيم',ev:'خريطة المفاهيم'},
+ rel:{s:['tps'],g:'الفصل',sk:'المقارنة',ev:'العلاقة بين المصطلحات'},
+ rev:{s:['heads','sticks'],g:'الفصل',sk:'التطبيق والتفكير الناقد',ev:'تثبيت المفاهيم ٥–١٠'},
+ end:{s:['kwl'],g:'١',sk:'التلخيص',ev:'خلاصة الملف',w:{kwl:{type:'kwl',phase:'l',topic:'تقويم التفسيرات العلمية'}}}});
 
 start();
 

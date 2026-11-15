@@ -135,7 +135,7 @@ W.tl=function(el,w,lid){var D=load('tl-'+lid,{});el.innerHTML='<div class="sgw">
 /* ===== كشف الطلاب الموحّد لكل المنصة (الدروس والأنشطة والمسابقات وأوراق العمل) — durus-classes ===== */
 window.DROS = window.DROS || (function () {
   var AR = '٠١٢٣٤٥٦٧٨٩', KEY = 'durus-classes', API = 'https://script.google.com/macros/s/AKfycbxp-t4JgGO5WiK6hoacjTyBqFnG-9bSWClplOpVV4VDuTV7T4tY0swB1Ll36kr_djJ7nQ/exec';
-  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/3', '2/3', '3/3', '4/3']];
+  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/2'], ['1/3', '2/3', '3/3', '4/3']];
   function kz(k) { return String(k == null ? '' : k).replace(/\s/g, '').replace(/\d/g, function (d) { return AR[d]; }); }
   function nz(s) { return String(s).replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+بن\s+/g, ' ').replace(/\s+/g, ' ').trim(); }
   function ld() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) return { cur: s.cur || '', classes: s.classes || {}, stars: s.stars || {}, moves: s.moves || {} }; } catch (e) {} return { cur: '', classes: {}, stars: {}, moves: {} }; }
@@ -180,7 +180,7 @@ window.DROS = window.DROS || (function () {
   }
   // تحميل كشوف الفصول من منصة رحلة العلوم لكل الصفوف
   function importAll(cb) {
-    var all = LISTS[0].concat(LISTS[1]), G = {}, done = 0, okc = 0;
+    var all = [].concat.apply([], LISTS), G = {}, done = 0, okc = 0;
     all.forEach(function (k) {
       jsonp({ action: 'getStudents', className: k }, function (r) {
         if (r && r.ok) okc++;
@@ -287,8 +287,7 @@ TOOLS.sticks=function(){/* كشوف الفصول تُحفظ لكل صف دراس
     /* كل سؤال له زر «تحقق» (جداول، إدخال أرقام، قوائم منسدلة…) يحصل على الشريط أيضًا */
     var B=document.querySelectorAll('button');for(var j=0;j<B.length;j++){var bt=B[j];if(bt.getAttribute('data-qp')||!/^[\s✓✔]*تحق/.test(bt.textContent)||bt.textContent.length>40||bt.closest('.sgo,.qpbar'))continue;bt.setAttribute('data-qp','1');
       var blk=bt.closest('form,.qa,.row-actions'),box,ref;if(blk&&blk.parentElement){box=blk.parentElement;ref=blk}else{box=bt.parentElement;ref=bt}
-      if(!box||box.querySelector('.qpbar'))continue;box.insertBefore(mk(),ref)}
-    var R=document.querySelectorAll('.row-actions');for(var r=0;r<R.length;r++){var ra=R[r];if(ra.getAttribute('data-qp')||ra.querySelectorAll('button').length<2||!ra.parentElement||ra.parentElement.querySelector('.qpbar'))continue;ra.setAttribute('data-qp','1');ra.parentElement.insertBefore(mk(),ra)}}
+      if(!box||box.querySelector('.qpbar'))continue;box.insertBefore(mk(),ref)}}
   var tm=0;new MutationObserver(function(){if(!tm)tm=setTimeout(function(){tm=0;deco()},80)}).observe(document.body,{childList:true,subtree:true});setTimeout(deco,300);
   /* تحديث اسم الفصل في الأشرطة بعد تغييره من أداة الأعواد */
   addEventListener('click',function(){setTimeout(function(){var K=curK(),t='🏫 '+(K?lbl(K):'اختر الفصل');var B=document.querySelectorAll('.qpbar .qpc');for(var i=0;i<B.length;i++)if(B[i].textContent!==t)B[i].textContent=t},400)},true);
@@ -389,175 +388,227 @@ const ICO={doc:'<rect x="14" y="10" width="52" height="60" rx="6" fill="none" st
 const lst=a=>`<ul class="step-text" style="margin:0;line-height:1.9">${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
 Object.assign(window.C6,{order,fig,grid,reveal,plan,ICO,lst});})();
 
-/* ===== تجارب افتراضية — العلم والتقنية والمجتمع ===== */
+/* ===== تجارب افتراضية — أسلوب العلم ===== */
 (function(){
 const {$,$$,G,STN,def,say,SFX,mcq}=K;const AR='font-family="IBM Plex Sans Arabic"';
-const MED=[{n:'رسالة مع قافلة',ic:'🐪',t:'نحو 3 أشهر',sec:7776000,c:'#b45309'},{n:'رسالة بريدية بالطائرة',ic:'✉️',t:'نحو أسبوع',sec:604800,c:'#2563eb'},{n:'فاكس عبر الهاتف',ic:'📠',t:'نحو دقيقة',sec:60,c:'#7c3aed'},{n:'بريد إلكتروني عبر الإنترنت',ic:'🌐',t:'أقل من ثانية',sec:.3,c:'#0f766e'}];
-def('lab1',{after:'s2',n:'🧪 سباق نشر الاكتشاف',eyebrow:'تجربة افتراضية · مقترحة',title:'سباق نشر الاكتشاف: كيف تنشر التقنية المعرفة؟',goal:'عالِم في الرياض اكتشف دواءً جديدًا ويريد إرسال بحثه إلى زميله في طوكيو. اختر وسيلة الإرسال وراقب الزمن.',plan:6,core:1,
- icon:'<circle cx="14" cy="40" r="8" fill="currentColor"/><circle cx="66" cy="40" r="8" fill="currentColor"/><path d="M22 40h36" stroke="currentColor" stroke-width="4" stroke-dasharray="6 5"/>',
- body:`<div class="two"><div class="stage"><svg id="r1svg" viewBox="0 0 640 240" aria-label="سباق الرسالة"></svg><div class="toolbar" id="r1b" style="grid-template-columns:repeat(4,minmax(0,1fr))"></div></div>
-  <div class="side"><div class="card"><h3>سجل السباق</h3><div class="tablewrap"><table class="c6-table" id="r1t"></table></div><div id="r1fb"></div></div></div></div>
-  <div class="card"><h3>استنتج</h3><div id="r1q"></div></div>`,
- init(){const done={};let tm=null;
-  const draw=(m,f)=>{let s=`<rect width="640" height="240" fill="#e0f2fe"/><path d="M0 180 Q160 140 320 170 T640 160 V240 H0z" fill="#bbf7d0"/>
-   <g transform="translate(70 150)"><rect x="-30" y="-40" width="60" height="40" fill="#fde68a" stroke="#92400e"/><text x="0" y="22" text-anchor="middle" ${AR} font-size="15" font-weight="800" fill="#0f172a">الرياض</text></g>
-   <g transform="translate(570 150)"><rect x="-30" y="-40" width="60" height="40" fill="#fecaca" stroke="#991b1b"/><text x="0" y="22" text-anchor="middle" ${AR} font-size="15" font-weight="800" fill="#0f172a">طوكيو</text></g><path d="M100 120 Q320 30 540 120" fill="none" stroke="#94a3b8" stroke-width="3" stroke-dasharray="8 6"/>`;
-   if(m){const t=f,x=(1-t)*(1-t)*100+2*(1-t)*t*320+t*t*540,y=(1-t)*(1-t)*120+2*(1-t)*t*30+t*t*120;s+=`<text x="${x}" y="${y+10}" text-anchor="middle" font-size="34">${m.ic}</text>`;}
-   $('#r1svg').innerHTML=s;};
-  const table=()=>{$('#r1t').innerHTML='<thead><tr><th>الوسيلة</th><th>زمن الوصول</th></tr></thead><tbody>'+MED.map(m=>`<tr><td>${m.ic} ${m.n}</td><td>${done[m.n]?m.t:'—'}</td></tr>`).join('')+'</tbody>';};
-  $('#r1b').innerHTML=MED.map((m,i)=>`<button class="tool" type="button" data-i="${i}"><span style="font-size:1.5rem">${m.ic}</span><span>${m.n}</span></button>`).join('');
-  $$('#r1b .tool').forEach(b=>b.onclick=()=>{const m=MED[+b.dataset.i];clearInterval(tm);let f=0;const dur=Math.max(6,Math.log10(m.sec+1)*14);SFX.whoosh&&SFX.whoosh();
-   tm=setInterval(()=>{f+=1/dur;draw(m,Math.min(1,f));if(f>=1){clearInterval(tm);done[m.n]=1;table();SFX.pop();say($('#r1fb'),'info',`وصل البحث بـ«${m.n}» خلال <b>${m.t}</b>.`);if(Object.keys(done).length===MED.length)G.add(6,'lab1');}},40);});
-  draw();table();STN.lab1.stop=()=>clearInterval(tm);
-  mcq($('#r1q'),{q:'ماذا تستنتج عن أثر تقنية المعلومات في انتشار الاكتشافات العلمية؟',o:['تختصر زمن وصول المعرفة من أشهر إلى أجزاء من الثانية، فينتشر الاكتشاف في العالم بسرعة','لا تؤثر في سرعة انتشار المعرفة','تبطئ انتشار المعرفة','تجعل المعرفة سرية'],a:0},'lab1',()=>G.complete('lab1'));},
- leave(){STN.lab1.stop&&STN.lab1.stop();},explain:'<p>محاكاة مقترحة؛ الأزمنة تقريبية للتوضيح. تحقق الهدف الثاني: تحليل كيف تسهم التقنية الحديثة في انتشار الاكتشافات العلمية.</p>'});
 
-const SRC=[{t:'«اكتشاف علاج يشفي كل الأمراض في يوم واحد!» — حساب مجهول على وسائل التواصل، بلا مصدر.',ok:0,why:'ادعاء مبالغ فيه، ومصدر مجهول، ولا توجد أدلة.'},
- {t:'دراسة منشورة في مجلة علمية محكّمة، يذكر فيها أسماء الباحثين وطريقة البحث والبيانات.',ok:1,why:'مجلة محكّمة، ومنهجية واضحة، وبيانات يمكن التحقق منها.'},
- {t:'خبر في موقع جهة رسمية (مثل هيئة المساحة الجيولوجية السعودية) عن رصد هزة أرضية.',ok:1,why:'جهة رسمية مختصة، ومعلومة قابلة للتحقق.'},
- {t:'رسالة متداولة: «انشرها ولك الأجر… العلماء أكدوا أن الهاتف ينفجر عند الشحن ليلًا».',ok:0,why:'«العلماء أكدوا» دون ذكر من هم، وطلب النشر علامة على الشائعة.'},
- {t:'مقال على مدونة شخصية بلا تاريخ ولا مراجع، يعرض صورًا معدلة.',ok:0,why:'لا مراجع، ولا تاريخ، وصور معدلة.'},
- {t:'كتاب علمي حديث لمؤلف متخصص صادر عن دار نشر معروفة، فيه قائمة مراجع.',ok:1,why:'مؤلف متخصص ومراجع موثقة.'}];
-def('lab2',{after:'s5',n:'🧪 كاشف المصادر',eyebrow:'نشاط تفاعلي · مقترح',title:'كاشف المصادر: هل أثق بهذه المعلومة؟',goal:'أكثر ما يقلق العلماء على الإنترنت دقة المعلومات وصحتها. افحص كل مصدر بالعدسة وقرّر: موثوق أم يحتاج تحققًا؟',plan:6,core:1,
- icon:'<circle cx="34" cy="34" r="20" fill="none" stroke="currentColor" stroke-width="6"/><path d="M48 48l20 20" stroke="currentColor" stroke-width="9" stroke-linecap="round"/><path d="M24 34l7 7 13-14" fill="none" stroke="currentColor" stroke-width="5"/>',
- body:`<div class="card"><div id="v2"></div></div>`,
- init(){let i=0,right=0;const box=$('#v2');const list=K.shuffle(SRC);
-  const show=()=>{if(i>=list.length){box.innerHTML=`<div class="final-hero"><h2>انتهى الفحص</h2><span class="big-score">${right} / ${list.length}</span><p class="step-text">أسئلة المحقق: من الكاتب؟ هل هو متخصص؟ هل توجد أدلة ومراجع؟ ما تاريخ النشر؟ هل يطلب منك النشر دون تحقق؟</p></div>`;G.complete('lab2');return;}
-   const s=list[i];box.innerHTML=`<div class="ch-top"><span class="eyebrow">المصدر ${i+1} من ${list.length}</span><div class="prog"><i style="width:${i/list.length*100}%"></i></div></div><div class="story" style="font-size:1.1rem">🔎 ${s.t}</div><div class="row-actions"><button class="btn" type="button" data-v="1">✅ مصدر موثوق</button><button class="btn alt" type="button" data-v="0">⚠️ يحتاج تحققًا</button></div><div class="qfb"></div>`;
-   box.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{const ok=+b.dataset.v===s.ok;if(ok){right++;G.good();G.add(4,'lab2');}else G.bad();say(box.querySelector('.qfb'),ok?'ok':'bad',(ok?'صحيح. ':'ليس تمامًا. ')+s.why);box.querySelectorAll('[data-v]').forEach(x=>x.disabled=true);const n=document.createElement('button');n.className='btn';n.type='button';n.textContent='التالي';n.onclick=()=>{i++;show();};box.querySelector('.row-actions').appendChild(n);n.disabled=false;});};
-  show();},explain:'<p>نشاط مقترح لتحري الدقة في انتقاء المعلومات من الإنترنت (سؤال التقويم 2-1).</p>'});
+/* ---------- 1) هل تخدعك حواسك؟ تجربة الأوعية الثلاثة ---------- */
+def('lab1',{after:'s1',n:'🧪 هل تخدعك حواسك؟',eyebrow:'تجربة افتراضية · مقترحة',title:'تجربة الأوعية الثلاثة: هل تخدعك حواسك؟',goal:'ضع اليد اليسرى في الماء الدافئ واليمنى في الماء البارد دقيقة، ثم ضع اليدين معًا في الماء الفاتر. ماذا تشعر كل يد؟ ثم قِس بالثرمومتر.',plan:7,core:1,
+ icon:'<path d="M6 40h20v24H6zM30 40h20v24H30zM54 40h20v24H54z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M8 50h16M32 50h16M56 50h16" stroke="currentColor" stroke-width="6" opacity=".5"/>',
+ body:`<div class="two"><div class="stage"><svg id="b1svg" viewBox="0 0 640 300" aria-label="ثلاثة أوعية ماء"></svg>
+  <div class="toolbar" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button class="tool" type="button" data-s="1"><span>①</span><span>اليدان في الدافئ والبارد</span></button><button class="tool" type="button" data-s="2"><span>②</span><span>اليدان معًا في الفاتر</span></button><button class="tool" type="button" data-s="3"><span>🌡</span><span>قِس بالثرمومتر</span></button></div></div>
+  <div class="side"><div class="card"><h3>دفتر الملاحظات</h3><div id="b1log" class="step-text muted">ابدأ بالخطوة ①.</div></div></div></div>
+  <div class="card"><h3>استنتج</h3><div id="b1q"></div></div>`,
+ init(){let step=0,t=0,tm=null;const svg=$('#b1svg');
+  const bowl=(x,c,lb,temp)=>`<g transform="translate(${x} 170)"><path d="M-80 0 h160 l-20 90 h-120z" fill="${c}" fill-opacity=".55" stroke="#475569" stroke-width="4"/><path d="M-80 0 h160" stroke="#475569" stroke-width="6"/>${temp?`<text x="0" y="-80" text-anchor="middle" ${AR} font-size="26" font-weight="800" fill="var(--ink)">${temp}</text>`:''}<text x="0" y="118" text-anchor="middle" ${AR} font-size="16" font-weight="700" fill="var(--ink)">${lb}</text></g>`;
+  const hand=(x,y,col,lab)=>`<g transform="translate(${x} ${y})"><rect x="-16" y="-70" width="32" height="70" rx="14" fill="#f2c39b" stroke="#b07a43" stroke-width="2"/><rect x="-18" y="-100" width="36" height="34" rx="8" fill="${col}"/>${lab?`<g transform="translate(0 -122)"><rect x="-70" y="-20" width="140" height="30" rx="15" fill="${lab[1]}"/><text x="0" y="1" text-anchor="middle" ${AR} font-size="15" font-weight="800" fill="#fff">${lab[0]}</text></g>`:''}</g>`;
+  const draw=()=>{let s=`<rect width="640" height="300" fill="var(--wall)"/>`;
+   s+=bowl(110,'#ef4444','ماء دافئ',step===3?'40°س':'')+bowl(320,'#a3e635','ماء فاتر',step===3?'25°س':'')+bowl(530,'#3b82f6','ماء بارد',step===3?'10°س':'');
+   if(step===1){s+=hand(110,190,'#64748b',t>12?['اليسرى: دافئ',`#ef4444`]:null)+hand(530,190,'#64748b',t>12?['اليمنى: بارد','#3b82f6']:null);}
+   if(step===2){s+=hand(295,190,'#64748b',['اليسرى: باااارد!','#3b82f6'])+hand(345,190,'#475569',null);s+=`<g transform="translate(345 68)"><rect x="-70" y="-20" width="140" height="30" rx="15" fill="#ef4444"/><text x="0" y="1" text-anchor="middle" ${AR} font-size="15" font-weight="800" fill="#fff">اليمنى: داااافئ!</text></g>`;}
+   if(step===3)[110,320,530].forEach(x=>s+=`<g transform="translate(${x+50} 120)"><rect x="-5" y="-60" width="10" height="90" rx="5" fill="#fff" stroke="#475569"/><circle cx="0" cy="34" r="10" fill="#dc2626"/><rect x="-2" y="-40" width="4" height="70" fill="#dc2626"/></g>`);
+   svg.innerHTML=s;};
+  const log=[];const L=m=>{log.push(m);$('#b1log').innerHTML='<ol style="margin:0;padding-inline-start:18px">'+log.map(x=>`<li>${x}</li>`).join('')+'</ol>';};
+  $$('#lab1 .tool, #st-lab1 .tool').forEach(b=>b.onclick=()=>{const s=+b.dataset.s;
+   if(s===1){step=1;t=0;clearInterval(tm);tm=setInterval(()=>{t++;draw();if(t>14)clearInterval(tm);},80);SFX.pop();L('اليد اليسرى في الماء الدافئ، واليمنى في الماء البارد لمدة دقيقة.');}
+   if(s===2){if(step<1){say($('#b1log'),'info','ابدأ بالخطوة ① أولًا.');return;}step=2;draw();SFX.tick();L('في الماء الفاتر نفسه: اليسرى تشعر ببرودة، واليمنى تشعر بدفء! الحاستان تعطيان وصفين متعارضين للماء نفسه.');}
+   if(s===3){if(step<2){L('أكمل الخطوتين ① و② أولًا.');return;}step=3;draw();SFX.correct();L('الثرمومتر: الدافئ 40°س، الفاتر 25°س، البارد 10°س. القياس لا يتأثر بإحساسنا.');G.add(5,'lab1');}});
+  draw();STN.lab1.stop=()=>clearInterval(tm);
+  mcq($('#b1q'),{q:'ماذا تستنتج من التجربة؟',o:['الحواس قد تخدعنا، ولذلك نستخدم أدوات القياس للحصول على وصف دقيق','الحواس دقيقة دائمًا','الثرمومتر غير دقيق','اليد اليمنى أدق من اليسرى'],a:0,why:'وهذا ما يقوله الدرس: لا يمكن الاعتماد على الحواس الخمس في وصف دقيق للكميات الفيزيائية مثل درجة الحرارة.'},'lab1',()=>G.complete('lab1'));},
+ leave(){STN.lab1.stop&&STN.lab1.stop();},
+ explain:'<p>تجربة مقترحة: بعد تعوّد اليد على الدفء يبدو الفاتر باردًا، وبعد تعوّدها على البرودة يبدو الفاتر دافئًا. القيم الحرارية افتراضية. <b>سلامتي:</b> لا تستخدم ماءً ساخنًا في البيت.</p>'});
+
+/* ---------- 2) محطة أدوات العالم ---------- */
+const OB=[{id:'pen',n:'قلم رصاص',L:'17.5 سم',m:'6 جم',T:'—',V:'—'},{id:'stone',n:'حجر',L:'6.2 سم',m:'84 جم',T:'—',V:'—'},{id:'water',n:'كأس ماء',L:'—',m:'—',T:'24°س',V:'150 مل'},{id:'tea',n:'كوب شاي',L:'—',m:'—',T:'70°س',V:'200 مل'}];
+const TL=[{id:'L',n:'المسطرة',ic:'📏',k:'الطول'},{id:'m',n:'الميزان',ic:'⚖️',k:'الكتلة'},{id:'T',n:'الثرمومتر',ic:'🌡',k:'درجة الحرارة'},{id:'V',n:'المخبار المدرج',ic:'🧪',k:'الحجم'}];
+def('lab2',{after:'s5',n:'🧪 محطة الأدوات',eyebrow:'تجربة افتراضية · مقترحة',title:'محطة أدوات العالِم: قِس وسجّل',goal:'اختر أداة، ثم المس الجسم لتقيسه. سجّل القياسات في الجدول، وتعرّف الأداة المناسبة لكل كمية.',plan:6,core:1,
+ icon:'<path d="M10 60L60 10l10 10-50 50z" fill="none" stroke="currentColor" stroke-width="5"/><path d="M22 48l6 6M32 38l6 6M42 28l6 6" stroke="currentColor" stroke-width="4"/>',
+ body:`<div class="two"><div class="stage"><svg id="t2svg" viewBox="0 0 640 260" aria-label="طاولة الأدوات"></svg><div class="toolbar" id="t2tools" style="grid-template-columns:repeat(4,minmax(0,1fr))"></div></div>
+  <div class="side"><div class="card"><h3>القراءة</h3><div id="t2out" class="step-text muted">اختر أداة ثم جسمًا.</div></div></div></div>
+  <div class="card"><h3>جدول القياسات</h3><div class="tablewrap"><table class="c6-table" id="t2t"></table></div><p class="hint-line">القيم افتراضية للتجربة.</p></div>`,
+ init(){let tool=null;const rec={};OB.forEach(o=>rec[o.id]={});
+  const draw=()=>{let s=`<rect width="640" height="260" fill="var(--wall)"/><rect y="200" width="640" height="14" fill="var(--bench-top)"/><rect y="214" width="640" height="46" fill="var(--bench)"/>`;
+   const art={pen:'<rect x="-50" y="-8" width="90" height="16" fill="#facc15" stroke="#92400e"/><path d="M40 -8 L60 0 L40 8z" fill="#f2c39b"/>',stone:'<path d="M-36 10 Q-40 -26 -4 -30 Q34 -30 36 0 Q30 22 -4 24 Q-30 26 -36 10z" fill="#8b8f94"/>',water:'<path d="M-26 -50 h52 l-6 76 h-40z" fill="rgba(125,200,240,.6)" stroke="#64748b" stroke-width="3"/>',tea:'<path d="M-30 -36 h56 v50 a10 10 0 0 1 -10 10 h-36 a10 10 0 0 1 -10 -10z" fill="#b45309" stroke="#78350f" stroke-width="3"/><path d="M26 -24 q20 0 20 16 q0 16 -20 16" fill="none" stroke="#78350f" stroke-width="4"/><path d="M-10 -46 q6 -10 0 -20 M6 -46 q6 -10 0 -20" stroke="#cbd5e1" stroke-width="3" fill="none"/>'};
+   OB.forEach((o,i)=>{const x=90+i*155;s+=`<g class="t2o" data-o="${o.id}" style="cursor:pointer" transform="translate(${x} 170)"><rect x="-64" y="-90" width="128" height="120" fill="transparent"/>${art[o.id]}</g><text x="${x}" y="244" text-anchor="middle" ${AR} font-size="15" font-weight="700" fill="#fff">${o.n}</text>`;});
+   $('#t2svg').innerHTML=s;$$('#t2svg .t2o').forEach(g=>g.onclick=()=>use(g.dataset.o));};
+  const table=()=>{$('#t2t').innerHTML=`<thead><tr><th>الجسم</th>${TL.map(t=>`<th>${t.k} (${t.n})</th>`).join('')}</tr></thead><tbody>${OB.map(o=>`<tr><td>${o.n}</td>${TL.map(t=>`<td>${rec[o.id][t.id]||'—'}</td>`).join('')}</tr>`).join('')}</tbody>`;};
+  $('#t2tools').innerHTML=TL.map(t=>`<button class="tool" type="button" data-t="${t.id}" aria-pressed="false"><span style="font-size:1.5rem">${t.ic}</span><span>${t.n}</span></button>`).join('');
+  $$('#t2tools .tool').forEach(b=>b.onclick=()=>{tool=b.dataset.t;$$('#t2tools .tool').forEach(x=>x.setAttribute('aria-pressed',x===b));G.tick();});
+  function use(id){const o=OB.find(x=>x.id===id);if(!tool){say($('#t2out'),'info','اختر أداة أولًا.');return;}const t=TL.find(x=>x.id===tool),v=o[tool];
+   if(v==='—'){SFX.wrong();say($('#t2out'),'bad',`${t.n} لا يناسب قياس ${o.n} في هذه التجربة. اختر أداة أخرى.`);return;}
+   rec[id][tool]=v;SFX.correct();G.add(2,'lab2');say($('#t2out'),'ok',`${t.n}: ${t.k} ${o.n} = <b>${v}</b>`);table();
+   const n=Object.values(rec).reduce((a,r)=>a+Object.keys(r).length,0);if(n>=8)G.complete('lab2');}
+  draw();table();},
+ explain:'<p>تجربة مقترحة لمهارة القياس: لكل كمية أداة مناسبة؛ المسطرة للطول، والميزان للكتلة، والثرمومتر لدرجة الحرارة، والمخبار المدرج لحجم السائل.</p>'});
 })();
 
 /*@css c1.css*/
-/*@include lab3.js*/
+/*@include lab1.js*/
 /*@include kit.js*/
 /*@include skit.js*/
-/* ===== الفصل الأول · الدرس الثالث: العلم والتقنية والمجتمع — «جسر الاكتشافات» ===== */
+/* ===== الفصل الأول · الدرس الأول: أسلوب العلم — «دفتر العالِم الصغير» ===== */
 (function(){
-const {$,$$,G,STN,def,mcq,flips,match,sortGame,challenge,say,SFX,pic,slides,beforeAfter,escape,bingo,tfRound,choiceBoard,solutions,ayah}=K;
-const {fig,grid,reveal,ICO,lst,order,fill,tfx}=C6;const P=(n,c)=>[n,c];
+const {$,$$,G,STN,def,mcq,flips,match,sortGame,challenge,say,SFX,pic,slides,anticip,escape,bingo,tfRound,choiceBoard,solutions}=K;
+const {fig,grid,reveal,ICO,lst,order}=C6;const P=(n,c)=>[n,c];
 
-def('intro',{n:'الافتتاحية',plan:3,icon:'<path d="M6 60h68M14 60V36h52v24M24 36V24h32v12" fill="none" stroke="currentColor" stroke-width="5"/>',
- body:`<div class="hero"><div class="hero-photo">${pic('s09_03cd3644','الأقمار الصناعية')}<span class="cap">من فكرة علمية إلى قمر صناعي يدور حول الأرض.</span></div>
-  <div><span class="eyebrow">جسر الاكتشافات</span><h2 class="hero-h">كيف غيّر العلم والتقنية حياتك؟</h2>
-   <p class="riddle">قبل عقود كان المسافر يقطع الصحراء على الجمل أسابيع، واليوم يقطعها القطار في ساعات، ويرشدك تطبيق الخرائط إلى أي مكان. ما الذي يربط الاكتشاف العلمي بحياتك اليومية؟</p>
+def('intro',{n:'الافتتاحية',plan:3,icon:'<circle cx="40" cy="36" r="24" fill="none" stroke="currentColor" stroke-width="6"/><path d="M28 64h24M32 72h16" stroke="currentColor" stroke-width="5"/>',
+ body:`<div class="hero"><div class="hero-photo">${pic('s01_9d93a282','العقل والمعرفة')}<span class="cap">العلم طريقة نفكّر بها، لا مجرد معلومات نحفظها.</span></div>
+  <div><span class="eyebrow">دفتر العالِم الصغير</span><h2 class="hero-h">كيف يفكّر العلماء… وكيف تفكّر مثلهم؟</h2>
+   <p class="riddle">ضع يدك اليمنى في ماء بارد واليسرى في ماء دافئ، ثم ضعهما معًا في ماء فاتر. ستخبرك يدك اليمنى أن الماء دافئ، واليسرى أنه بارد! فأيهما تصدّق؟ وكيف يصل العلماء إلى إجابات يثقون بها؟</p>
    <p class="q">ما توقعك قبل أن تبدأ؟</p><div class="opts" id="introOpts"></div><div id="introFb"></div></div></div>
   <div class="card teacher-only"><h3>مسار الحصة</h3><div id="introPlan"></div></div>`,init(){}});
 
-def('nafs',{n:'سؤال نافس',eyebrow:'برنامج التهيئة لاختبارات نافس · مجال علوم الأرض',title:'ورد هذا السؤال في اختبار نافس',goal:'من نواتج التعلم المستهدفة في مجال علوم الأرض: توضيح أسباب الإجهادات المؤثرة في الصخور المكوّنة لباطن الأرض، ووصف الآثار الناتجة عنها.',plan:2,icon:ICO.check,
- body:`<div class="two"><div class="card"><h3>نواتج التعلم المستهدفة (6-2-3-5-9)</h3>${lst(['يحدد مفهوم الصدع، ويعدد أنواع الصدوع (العادي والعكسي والجانبي أو الانزلاقي)، ويميز بالرسم كل نوع منها.','يعرف الزلزال، والموجات الزلزالية وأنواعها، ويعرف بؤرة الزلزال والمركز السطحي للزلزال، ويميز من خلال الرسم كلًّا منهما.','يوضح الظواهر الناتجة عن الزلازل، ويفسر أسباب حدوثها، ويبين آثارها التدميرية ويشرح طرق السلامة منها.','يعدد أشكال البراكين (الدرعية والمخروطية والمركبة وثوران الشقوق)، ويعرف كلًّا منها، ويميزها، ويذكر مثالًا عليه.'])}</div>
-  <div class="card"><h3>القسم الثالث: اختبار العلوم – ثالث متوسط (نموذج 02)</h3><div id="nq"></div><p class="hint-line">ستدرس هذه الموضوعات في الفصل الثاني: تغيرات الأرض.</p></div></div>`,
- init(){mcq($('#nq'),{q:'ما هو التسونامي؟',o:['الموجات الزلزالية المائية','البراكين','قوة الزلزال','صخور منصهرة'],a:0,why:'التسونامي موجات مائية كبيرة تتولد عندما يحدث زلزال في قاع المحيط.'},'nafs',()=>G.complete('nafs'));}});
+def('fold',{n:'توجيه القراءة',eyebrow:'الكتاب صفحة 19',title:'توجيه القراءة وتركيزها',goal:'اكتب (م) إذا كنت موافقًا على العبارة، و(غ) إذا كنت غير موافق عليها، قبل القراءة، ثم عُد إليها بعد دروس الفصل.',plan:4,icon:ICO.doc,
+ body:'<div class="card"><div id="foldAg"></div></div>',
+ init(){anticip($('#foldAg'),[
+  ['يسترشد العلماء عادةً بمعرفتهم السابقة لتوقع نتائج تجاربهم.',true],
+  ['يفضل معظم العلماء أن تبقى اكتشافاتهم سرية.',false,'يتواصل العلماء بنتائجهم وينشرونها ليستفيد منها الآخرون.'],
+  ['هناك طريقة واحدة فقط للمنهج العلمي في حل المشكلات.',false,'هناك طرائق علمية متعددة لحل المشكلات، منها البحث الوصفي والبحث التجريبي.'],
+  ['الملاحظة هي الطريقة الوحيدة التي تؤدي إلى الاكتشافات العلمية.',false,'يستخدم العلماء مهارات كثيرة: الملاحظة والقياس والتجريب والاستدلال وغيرها.'],
+  ['التجربة المخطط لها بصورة جيدة تحوي متغيرًا واحدًا فقط في كل مرة.',true],
+  ['يَعُدّ العلماء إعادة التجربة ضياعًا للوقت.',false,'إجراء عدة محاولات يتأكد به العلماء من صحة نتائجهم ويجعلها أكثر دقة.'],
+  ['يُعدّ الشخص عالمًا إذا تخرّج في الجامعة فقط.',false,'كل من يستقصي ما حوله بطريقة علمية يمارس سلوك العلماء.'],
+  ['يضمن النظام العالمي للوحدات التواصل الصحيح بين العلماء.',true],
+  ['إذا لم تدعم التجربة الفرضية فلن يستفيد العلماء منها شيئًا.',false,'يحتفظ العلماء بالنتائج للاستفادة منها في مجال آخر، ويعيدون تكوين الفرضية.']]);},
+ enter(){G.complete('fold');},reset(){STN.fold.init();},explain:'<p>عبارات «توجيه القراءة وتركيزها» ص 19 تخص الفصل كله.</p>'});
 
-const GOALS=['تحدد أثر كل من العلم والتقنية في حياتك.','تحلل كيف تسهم التقنية الحديثة في انتشار الاكتشافات العلمية حول العالم.'];
-def('goals',{n:'الأهداف والمفردات',eyebrow:'الكتاب صفحة 36',title:'الأهداف والمفردات',goal:'نفتح الكتاب على الصفحة 36، ونكتب اليوم والتاريخ.',plan:3,icon:ICO.doc,
- body:`<div class="two"><div class="card"><h3>أهداف الدرس</h3><ol class="goals">${GOALS.map(g=>`<li>${g}</li>`).join('')}</ol><div class="story mt"><b>أهمية الدرس:</b> تمكّن أنظمة الاتصال الحديثة الناس من التواصل، والتعرف على الاكتشافات العلمية، وتشارك المعلومات في جميع أنحاء العالم.</div></div>
-  <div class="card"><h3>مراجعة المفردات</h3><p class="step-text"><b>الحاسوب:</b> جهاز كهربائي يمكن برمجته لتخزين البيانات واسترجاعها ومعالجتها.</p><h3 class="mt">المفردات الجديدة</h3><ul class="tasks plain"><li>تقنية المعلومات</li></ul>
-   <h3 class="mt">العلم والتقنية والمجتمع</h3><div id="g3m"></div></div></div>`,
- init(){match($('#g3m'),[['العلم','طريقة أو عملية تستخدم في استقصاء ما يجري حولك، ويعينك على توفير إجابات لأسئلتك'],['التقنية','تطبيق العلم لصنع منتجات أو أدوات يستخدمها الناس'],['المجتمع','مجموعة من الأفراد يعيشون في منطقة جغرافية تربطهم أواصر متعددة: اقتصادية، دينية، ثقافية']],'goals',()=>G.complete('goals'));}});
+const GOALS=['تحدد كيف تشكّل العلوم جزءًا من حياتك اليومية.','تصف المهارات والأدوات التي تستخدم في العلوم.'];
+const TERMS=[{t:'الملاحظة',d:'جمع بيانات باستخدام حاسة أو أكثر. (مراجعة المفردات)'},{t:'العلم',d:'طريقة أو عملية تستخدم في استقصاء ما يجري حولك، ويعينك على توفير إجابات لأسئلتك.'},{t:'التقنية',d:'تطبيق العلم لصنع منتجات أو أدوات يستخدمها الناس.'}];
+def('goals',{n:'الأهداف والمفردات',eyebrow:'الكتاب صفحة 20',title:'الأهداف والمفردات',goal:'تعرّف أهداف الدرس وأهميته ومفرداته.',plan:3,icon:ICO.doc,
+ body:`<div class="two"><div class="card"><h3>أهداف الدرس</h3><ol class="goals">${GOALS.map(g=>`<li>${g}</li>`).join('')}</ol><div class="story mt"><b>أهمية الدرس:</b> كثير مما تتعلمه في حصص العلوم قابل للتطبيق في الحياة اليومية.</div></div>
+  <div class="card"><h3>مراجعة المفردات</h3><p class="step-text"><b>الملاحظة:</b> جمع بيانات باستخدام حاسة أو أكثر.</p><h3 class="mt">المفردات الجديدة</h3><ul class="tasks plain"><li>العلم</li><li>التقنية</li></ul><div id="g1flips" class="mt"></div></div></div>`,
+ init(){flips($('#g1flips'),TERMS,()=>G.complete('goals'));}});
 
-def('s1',{n:'1 · العلم في الحياة',eyebrow:'المحطة 1 · الكتاب صفحة 36',title:'العلم في الحياة اليومية والاكتشافات العلمية',goal:'تؤدي الاكتشافات العلمية إلى إنتاج منتجات جديدة تؤثر في نمط حياتك.',plan:6,core:1,icon:'<circle cx="20" cy="54" r="12" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="60" cy="54" r="12" fill="none" stroke="currentColor" stroke-width="5"/><path d="M20 54l14-24h16l10 24M34 30l-4-10" fill="none" stroke="currentColor" stroke-width="5"/>',
- body:`<div class="card" id="s1sl"></div><div class="card"><h3>صنّف: في أي مظهر من مظاهر الحياة أثّرت التقنية؟</h3><div id="s1sort"></div></div>`,
+/* ---- S1 العلم والمجتمع ---- */
+def('s1',{n:'1 · العلم والمجتمع',eyebrow:'المحطة 1 · الكتاب صفحة 20',title:'العلم والمجتمع: الحواس وحدودها',goal:'العلم طريقة نستقصي بها ما يجري حولنا. هل تكفي حواسنا الخمس لوصف دقيق للأشياء؟',plan:7,core:1,icon:'<circle cx="40" cy="40" r="12" fill="currentColor"/><circle cx="14" cy="22" r="7" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="66" cy="22" r="7" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="14" cy="58" r="7" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="66" cy="58" r="7" fill="none" stroke="currentColor" stroke-width="4"/>',
+ body:`<div class="card" id="s1sl"></div><div class="two"><div class="card"><h3>هل تستطيع تحديد درجة حرارة الجو داخل الصف؟</h3><div id="s1q"></div></div><div class="card"><h3>طابق الكمية بأداة قياسها</h3><div id="s1m"></div></div></div>`,
  init(){slides($('#s1sl'),[
-  {k:'العلم في الحياة اليومية',t:'قال تعالى',im:[P('s07_50a1f1ca','الجهاز النقال'),P('s07_5aa3272f','الدراجة'),P('s07_1406372e','السيارة')],html:`<p style="text-align:center">${ayah('قُلْ هَلْ يَسْتَوِي الَّذِينَ يَعْلَمُونَ وَالَّذِينَ لَا يَعْلَمُونَ إِنَّمَا يَتَذَكَّرُ أُولُو الْأَلْبَابِ','الزمر: 9')}</p><p>تعلمنا سابقًا أهمية العلم وفائدته في تسهيل الحياة والقيام بالأنشطة المختلفة؛ فمثلًا: الدراجة، وجهازك النقال، والسيارة.</p>`},
-  {k:'الاكتشافات العلمية',t:'منتجات جديدة تغيّر نمط الحياة',im:[P('s08_22a20851','أجهزة حديثة')],html:'<p>تؤدي الاكتشافات العلمية إلى إنتاج منتجات جديدة تؤثر في نمط حياتك، ومن مظاهر الحياة التي تأثرت بالتقنية: <b>الصحة، ووسائل الراحة، ووسائل التسلية</b>.</p><p>غيّرت التقنية الحديثة طريقة عمل الناس ووسائل راحتهم.</p>'},
-  {k:'الاكتشافات العلمية',t:'الأقمار الصناعية',im:[P('s09_03cd3644','قمر صناعي')],html:'<p>الأقمار الصناعية من الاكتشافات العلمية التي غيّرت الاتصالات والملاحة ورصد الطقس.</p>'}],'s1');
-  sortGame($('#s1sort'),{bins:['الصحة','وسائل الراحة','وسائل التسلية'],items:[['جهاز قياس ضغط الدم الرقمي',0],['أجهزة التصوير الطبية',0],['الميكروويف',1],['المكيف',1],['الألعاب الإلكترونية',2],['التلفاز',2]]},'s1',()=>G.complete('s1'));},
- explain:'<p>تؤدي الاكتشافات العلمية إلى منتجات تؤثر في الصحة ووسائل الراحة والتسلية. (أمثلة التصنيف مقترحة.)</p>'});
+  {k:'العلم والمجتمع',t:'ما العلم؟',im:[P('s06_f9589572','العلم'),P('s06_2e003ad0','الإنسان القديم يلاحظ')],html:'<p class="def"><b>العلم:</b> طريقة أو عملية تستخدم في استقصاء ما يجري حولك، ويعينك على توفير إجابات لأسئلتك.</p><p>حاول الناس عبر التاريخ تفسير ما يحدث للأشياء حولهم معتمدين على ملاحظاتهم التي توصلوا إليها عبر حواسهم الخمس.</p>'},
+  {k:'العلم والمجتمع',t:'الحواس الخمس',im:[P('s07_7f727a88','الحواس الخمس')],html:'<p>يلاحظ العلماء ويستقصون ويجربون للتوصل إلى الإجابات، ويستخدمون <b>الحواس الخمس</b>: البصر واللمس والشم والتذوق والسمع.</p><p class="q">هل يمكن الاعتماد على الحواس الخمس في الوصول إلى وصف دقيق للأشياء؟</p>'},
+  {k:'حدود الحواس',t:'نحتاج إلى أدوات القياس',im:[P('s08_dffa2d11','الفصل الدراسي'),P('s08_5c81ca90','مقياس الحرارة')],html:'<p>بالتأكيد لا يمكن الاعتماد على الحواس الخمس في إعطاء وصف دقيق للكميات الفيزيائية، مثل:</p><ul><li><b>درجة الحرارة</b>: نستخدم الثرمومتر.</li><li><b>الطول والمسافة</b>: نستخدم المسطرة.</li><li><b>الكتلة</b>: نستخدم الميزان.</li></ul>'}],'s1');
+  mcq($('#s1q'),{q:'لتحديد درجة حرارة الجو داخل الصف بدقة نعتمد على:',o:['حاسة اللمس','الثرمومتر','الإحساس بالعرق','رأي أغلب الطلاب'],a:1,why:'الحواس تعطي وصفًا تقريبيًّا يختلف من شخص لآخر، أمّا الثرمومتر فيعطي قيمة دقيقة.'},'s1');
+  match($('#s1m'),[['درجة الحرارة','الثرمومتر'],['الطول والمسافة','المسطرة'],['الكتلة','الميزان']],'s1',()=>G.complete('s1'));},
+ quiz:[{q:'طريقة أو عملية تستخدم في استقصاء ما يجري حولك:',o:['العلم','التقنية','الفلسفة','التواصل'],a:0}],
+ explain:'<p>العلم طريقة لاستقصاء ما يجري حولنا. نلاحظ بحواسنا، لكنها لا تكفي لوصف دقيق للكميات الفيزيائية، فنستخدم أدوات القياس: الثرمومتر والمسطرة والميزان.</p>'});
 
-const PAIRS=[['s11_31628e3e','s11_b32ed4f2','الدفع النقدي','الدفع الإلكتروني'],['s12_64487e28','s12_ab14d7ee','السفر على الجمال','القطار الحديث'],['s13_3fd90a37','s13_91f4eb02','الهاتف القديم','الهاتف الذكي'],['s14_a3935429','s14_9b85b36d','قياس الضغط اليدوي','الجهاز الرقمي'],['s15_48c2a1d3','s15_13cc211d','الخريطة الورقية','تطبيق الخرائط']];
-def('s2',{n:'2 · قراءة الصور',eyebrow:'المحطة 2 · استراتيجية قراءة الصور',title:'استراتيجية قراءة الصور: حاول أن تكتشف ماذا تقول الصورة',goal:'اسحب الشريط بين «قبل» و«بعد»، ثم اكتب ملاحظتك عن أثر التقنية.',plan:7,core:1,icon:'<rect x="8" y="14" width="64" height="52" rx="5" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="26" cy="32" r="6" fill="currentColor"/><path d="M8 58l20-16 14 10 12-8 18 14" fill="none" stroke="currentColor" stroke-width="4"/>',
- body:`<div class="card"><div class="c6-chips" id="s2c"></div><div id="s2ba"></div><div id="s2n" class="mt"></div></div>`,
- init(){const seen=new Set();const show=i=>{const [a,b,la,lb]=PAIRS[i];$$('#s2c [data-i]').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.i===i));
-   beforeAfter($('#s2ba'),{a:pic(a,la,'ph'),b:pic(b,lb,'ph'),la:'قبل: '+la,lb:'بعد: '+lb});
-   $('#s2n').innerHTML=`<label class="step-text"><b>ملاحظتك:</b><textarea rows="2" style="width:100%;font:inherit;border-radius:10px;border:2px solid var(--line);padding:8px;background:var(--surface);color:var(--ink)" placeholder="ماذا تقول الصورة؟ كيف غيّرت التقنية هذا الجانب من الحياة؟"></textarea></label>`;
-   seen.add(i);SFX.whoosh&&SFX.whoosh();if(seen.size===PAIRS.length)G.complete('s2');};
-  $('#s2c').innerHTML=PAIRS.map((p,i)=>`<button type="button" class="c6-chip" data-i="${i}">${i+1}. ${p[2]} ← ${p[3]}</button>`).join('');
-  $$('#s2c [data-i]').forEach(b=>b.onclick=()=>show(+b.dataset.i));show(0);},
- explain:'<p>استراتيجية قراءة الصور كما في العرض (5 أزواج من الصور)؛ ملاحظات الطلاب مفتوحة.</p>'});
+/* ---- S2 العلم أداة لفهم العالم ---- */
+const INFO=[['رأي',0,'وجهة نظر شخصية قد تختلف من شخص لآخر.'],['حقيقة',1,'معلومة ثبتت صحتها بالملاحظة.'],['نظرية',1,'تفسير لسلوك تمت ملاحظته مرارًا.'],['قانون',1,'قاعدة تصف نمطًا في الطبيعة.'],['فرضية',1,'توقع قابل للاختبار.'],['فكرة',0,'تحتاج إلى اختبار قبل أن تصبح معرفة علمية.'],['نموذج',1,'أداة تساعد على تصور الأشياء وفهمها.']];
+def('s2',{n:'2 · العلم أداة للفهم',eyebrow:'المحطة 2 · الكتاب صفحة 21',title:'العلم أداة لفهم العالم من حولنا',goal:'أحمد وبدر يقومان بعمل استقصاء حول مرض الكوليرا. توقّع نوع الأسئلة التي سيسألون أنفسهم لجمع معلومات عن المرض.',plan:7,core:1,icon:ICO.lens,
+ body:`<div class="two"><div class="card">${fig('s09_133bd066','أحمد وبدر يقومان بعمل استقصاء حول مرض الكوليرا',360)}<h3 class="mt">صنّف أسئلة الاستقصاء</h3><div id="s2sort"></div></div>
+  <div class="card">${fig('s10_b12bbbd4','ما يمكن الوصول له من معلومات',300)}<p class="step-text">يمكن أن يصل الاستقصاء إلى: رأي، حقيقة، نظرية، قانون، فرضية، فكرة، نموذج.</p><h3 class="mt">أيها معرفة علمية مدعومة بالأدلة؟</h3><div id="s2sort2"></div></div></div>`,
+ init(){let n=0;const c=()=>{if(++n>=2)G.complete('s2');};
+  sortGame($('#s2sort'),{bins:['لماذا؟','كيف؟','متى؟'],items:[['لماذا ينتشر المرض في مكان دون آخر؟',0],['لماذا يصاب بعض الناس ولا يصاب آخرون؟',0],['كيف ينتقل المرض من شخص لآخر؟',1],['كيف نقي أنفسنا منه؟',1],['متى تظهر الأعراض بعد العدوى؟',2],['متى بدأ انتشار المرض؟',2]],hint:'انظر إلى أداة الاستفهام في بداية السؤال.'},'s2',c);
+  sortGame($('#s2sort2'),{bins:['تحتاج إلى أدلة/وجهة نظر','معرفة علمية أو أداة علمية'],items:INFO.map(x=>[x[0],x[1],x[2]]),hint:'هل تدعمها الملاحظات والتجارب؟'},'s2',c);},
+ explain:'<p>يبدأ الاستقصاء بأسئلة: لماذا؟ كيف؟ متى؟ ويمكن أن يصل إلى أنواع مختلفة من المعلومات: رأي، حقيقة، نظرية، قانون، فرضية، فكرة، نموذج. (تصنيف المعلومات في اللعبة الثانية مقترح للتوضيح.)</p>'});
 
-def('s3',{n:'3 · اكتشافات غيّرت حياتنا',eyebrow:'المحطة 3 · الكتاب صفحة 36–37',title:'الاكتشافات العلمية والمعرفة التراكمية',goal:'أجهزة التصوير الطبية، والرافعات، والميكروويف… والمعرفة العلمية إنتاج تراكمي.',plan:6,core:1,icon:'<path d="M10 70V20l30-12 30 12v50" fill="none" stroke="currentColor" stroke-width="5"/>',
- body:`<div class="card" id="s3sl"></div><div class="card"><h3>رتّب تطور الهاتف من الأقدم إلى الأحدث</h3><div id="s3o"></div></div>`,
- init(){slides($('#s3sl'),[
-  {k:'الاكتشافات العلمية',t:'أجهزة التصوير الطبية',im:[P('s16_23c8b9a5','أجهزة التصوير الطبية')],html:'<p>ساعدت أجهزة التصوير الطبية الأطباء على رؤية داخل الجسم وتشخيص الأمراض دون جراحة.</p>'},
-  {k:'الاكتشافات العلمية',t:'الرافعات',im:[P('s17_5fe8396d','الرافعات')],html:'<p>سهّلت الرافعات رفع الأحمال الثقيلة في البناء.</p>'},
-  {k:'الاكتشافات العلمية',t:'الميكروويف',im:[P('s18_352e0f88','الميكروويف')],html:'<p>غيّر الميكروويف طريقة إعداد الطعام وتسخينه.</p>'},
-  {k:'المعرفة العلمية إنتاج تراكمي',t:'ابدأ من حيث انتهى الآخرون',im:[P('s19_24784474','تطور الهواتف')],html:'<p>تقول الحكمة: <b>«ابدأ من حيث انتهى الآخرون»</b>.</p><p>تتنافس الشركات في إنتاج الهواتف الذكية باستخدام المعرفة التراكمية، بحيث تستفيد من منافسيها في الوصول لتقنيات أفضل.</p>'}],'s3');
-  order($('#s3o'),['هاتف أرضي بقرص دوّار','هاتف نقال كبير بهوائي','هاتف نقال صغير بأزرار','هاتف ذكي بشاشة لمس'],'s3',()=>G.complete('s3'),'كل جيل بُني على معرفة الجيل الذي قبله.');},
- explain:'<p>المعرفة العلمية تراكمية: كل تقنية جديدة تبني على ما سبقها. (شروح الصور الثلاث الأولى مقترحة لأن الشرائح صور فقط.)</p>'});
+/* ---- S3 القانون والنظرية ---- */
+def('s3',{n:'3 · القانون والنظرية',eyebrow:'المحطة 3 · الكتاب صفحة 21',title:'الفرق بين القانون العلمي والنظرية العلمية',goal:'القانون يصف، والنظرية تفسّر. صنّف الأمثلة.',plan:6,core:1,icon:'<rect x="8" y="14" width="28" height="52" rx="5" fill="currentColor" opacity=".5"/><rect x="44" y="14" width="28" height="52" rx="5" fill="none" stroke="currentColor" stroke-width="5"/>',
+ body:`<div class="card"><div class="tablewrap"><table class="c6-table"><thead><tr><th>وجه المقارنة</th><th>القانون العلمي</th><th>النظرية العلمية</th></tr></thead><tbody>
+  <tr><th>التعريف</th><td>قواعد تصف نمطًا أو سلوكًا معيّنًا في الطبيعة.</td><td>محاولة لتفسير سلوك تمّت ملاحظته مرارًا في الطبيعة.</td></tr>
+  <tr><th>التفسير</th><td>لا تحتاج إلى تفسير الظاهرة (لا تشرح).</td><td>تحتاج إلى تفسير الظاهرة (تشرح).</td></tr>
+  <tr><th>أمثلة</th><td>قوانين نيوتن الثلاثة في الحركة · تشرق الشمس من الشرق كل يوم · تتمدد الأجسام بالحرارة.</td><td>نظرية أينشتاين · يسقط القلم نحو الأرض بسبب الجاذبية · يتبخر الماء من الملابس بفعل الحرارة.</td></tr></tbody></table></div></div>
+  <div class="card"><h3>قانون أم نظرية؟</h3><div id="s3sort"></div></div>`,
+ init(){sortGame($('#s3sort'),{bins:['قانون علمي (يصف)','نظرية علمية (تفسّر)'],items:[['تشرق الشمس من الشرق كل يوم',0],['تتمدد الأجسام بالحرارة',0],['قوانين نيوتن الثلاثة في الحركة',0],['يسقط القلم نحو الأرض بسبب الجاذبية',1],['يتبخر الماء من الملابس بفعل الحرارة',1],['نظرية أينشتاين',1]],hint:'هل العبارة تشرح السبب (بسبب، بفعل)؟'},'s3',()=>G.complete('s3'));},
+ quiz:[{q:'محاولة لتفسير سلوك تمّت ملاحظته مرارًا في الطبيعة:',o:['القانون العلمي','النظرية العلمية','الرأي','الملاحظة'],a:1}],
+ explain:'<p>القانون العلمي يصف نمطًا دون تفسيره، والنظرية العلمية تفسّر سبب الظاهرة. تُشير كلمات «بسبب» و«بفعل» إلى التفسير.</p>'});
 
-const SCI=[{n:'ستيفن هوكينغ',y:'1942 – 2018',d:'عالم فيزيائي، درس الكون والثقوب السوداء. وهو ألمع فيزيائي بعد أينشتاين.',im:'s21_38bec04e'},{n:'فريد بيجي',y:'',d:'عالم فيزيائي، درس طرائق إنتاج الطاقة الحرارية دون إلحاق ضرر بالبيئة.',im:'s22_4a3ca7bb'},{n:'د. دانيل هال وليمز',y:'',d:'طبيب، أجرى أول عملية قلب مفتوح وأسس مستشفى.',im:'s24_db7f1abe'},{n:'د. عبدالله بن عبدالعزيز الربيعة',y:'',d:'من أشهر أطباء جراحة فصل التوائم الملتصقة «السيامية» في العالم، ووزير الصحة السعودي سابقًا.',im:'s26_18372667'}];
-def('s4',{n:'4 · جهود الناس',eyebrow:'المحطة 4 · الكتاب صفحة 38',title:'العلم والتقنية نتائج لجهود كثير من الناس',goal:'المس بطاقة كل عالِم لتتعرف إسهامه، ثم طابق العالِم بإسهامه.',plan:6,core:1,icon:'<circle cx="26" cy="26" r="10" fill="currentColor"/><circle cx="54" cy="26" r="10" fill="currentColor" opacity=".6"/><path d="M8 66c2-14 10-22 18-22s16 8 18 22M36 66c2-14 10-22 18-22s16 8 18 22" fill="none" stroke="currentColor" stroke-width="5"/>',
- body:`<div class="card"><div class="c6-grid">${SCI.map((s,i)=>`<button type="button" class="tbtn" data-i="${i}" style="display:block;padding:8px;text-align:center;height:auto"><div style="height:150px">${pic(s.im,s.n)}</div><b>${s.n}</b>${s.y?`<br><small>${s.y}</small>`:''}<div class="step-text" data-d hidden style="margin-top:6px">${s.d}</div></button>`).join('')}</div></div>
-  <div class="card"><h3>طابق العالِم بإسهامه</h3><div id="s4m"></div></div>`,
- init(){$$('#st-s4 [data-i]').forEach(b=>b.onclick=()=>{b.querySelector('[data-d]').hidden=false;SFX.pop();});
-  match($('#s4m'),SCI.map(s=>[s.n,s.d]),'s4',()=>G.complete('s4'));},
- explain:'<p>العلم والتقنية نتاج جهود علماء من شعوب مختلفة. <b>ملاحظة:</b> ورد في العرض «ستيف هوكينغ» والصواب «ستيفن هوكينغ». ويُعدّ دانيل هال وليمز من أوائل من أجروا عمليات القلب المفتوح الناجحة (1893م).</p>'});
+/* ---- S4 سلوك العلماء ---- */
+def('s4',{n:'4 · سلوك العلماء',eyebrow:'المحطة 4 · الكتاب صفحة 22',title:'كيف يمكننا أن نمارس سلوك العلماء؟',goal:'العالم يستخدم خبراته السابقة، والأدلة، والعلم والتقنية.',plan:6,core:1,icon:ICO.lens,
+ body:`<div class="card" id="s4sl"></div><div class="two"><div class="card"><h3>ناقش</h3><p class="step-text">كيف يمكن الاستفادة من الروبوتات في اكتشاف الفضاء وجمع المعلومات؟</p>${fig('s15_7f5dcf74','روبوت استكشاف',300)}${reveal('','<p class="step-text">تصل الروبوتات إلى أماكن يصعب أو يستحيل على الإنسان الوصول إليها، فتجمع الصور والعينات وتقيس درجات الحرارة وتركيب التربة وترسل البيانات إلى الأرض. (إجابة مقترحة)</p>','إجابة مقترحة')}</div>
+  <div class="card"><h3>من يتصرّف كعالِم؟</h3><div id="s4sort"></div></div></div>`,
+ init(){slides($('#s4sl'),[
+  {k:'سلوك العلماء',t:'كيف يمكننا أن نمارس سلوك العلماء؟',im:[P('s12_03cb4285','عالم يدرس الضوء')],html:'<p>يمارس كل منا سلوك العلماء عندما يستقصي ما حوله بطريقة منظمة.</p>'},
+  {k:'سلوك العلماء',t:'(1) الخبرات السابقة · (2) الأدلة',im:[P('s13_cf146073','عالم يتطلع للمستقبل'),P('s13_8a3a8117','المحقق')],html:'<ol><li>يستخدم العالِم خبراته السابقة ليتوقع ما سيحدث في أثناء الاستقصاءات.</li><li>يستخدم العالِم الأدلة، ويتصرف كمحقق في جمعه وتتبّعه للأدلة كي يصل إلى حل المشكلات.</li></ol>'},
+  {k:'(3) العلم والتقنية',t:'التقنية',im:[P('s14_15540af0','طلاب يستخدمون الحاسوب')],html:'<p class="def"><b>التقنية:</b> تطبيق العلم لصنع منتجات أو أدوات يستخدمها الناس.</p><p>يستخدم العلماء: الكتب، والمجلات، والأفلام العلمية، والحاسب الآلي.</p><p>الحاسوب أحد الأمثلة على التقنية، وغالبًا ما توفر المكتبات والمدارس الحواسيب للطلاب لإجراء البحوث والطباعة.</p>'}],'s4');
+  sortGame($('#s4sort'),{bins:['سلوك علمي','ليس سلوكًا علميًّا'],items:[['يتوقع النتيجة من خبرته السابقة',0],['يجمع الأدلة ويتتبعها كالمحقق',0],['يستعين بالكتب والحاسوب في البحث',0],['يصدّق أول معلومة يسمعها',1],['يتجاهل الأدلة التي تخالف رأيه',1]]},'s4',()=>G.complete('s4'));},
+ quiz:[{q:'تطبيق العلم لصنع منتجات أو أدوات يستخدمها الناس:',o:['الفرضية','القانون','النظرية','التقنية'],a:3}],
+ explain:'<p>يمارس العالم: استخدام الخبرات السابقة للتوقع، وتتبّع الأدلة كالمحقق، واستخدام العلم والتقنية (الكتب، المجلات، الأفلام العلمية، الحاسب الآلي).</p>'});
 
-def('s5',{n:'5 · استخدام المعلومات',eyebrow:'المحطة 5 · الكتاب صفحة 38',title:'استخدام المعلومات العلمية',goal:'يوفر العلم معلومات مهمة، لكنه لا يقرر إن كانت جيدة أم سيئة. فما دور الإنترنت؟ وما الذي يقلق العلماء؟',plan:7,core:1,icon:'<circle cx="40" cy="40" r="28" fill="none" stroke="currentColor" stroke-width="5"/><path d="M12 40h56M40 12c-12 14-12 42 0 56M40 12c12 14 12 42 0 56" fill="none" stroke="currentColor" stroke-width="4"/>',
- body:`<div class="card" id="s5sl"></div><div class="two"><div class="card"><h3>برأيك: أي مما يلي يقلق العلماء أكثر عندما يستخدمون الإنترنت؟ ولماذا؟</h3><div id="s5q"></div></div><div class="card"><h3>ما دور شبكة الإنترنت في نشر الاكتشافات الجديدة إلى العالم؟</h3>${fig('s30_755a64d6','شبكة الإنترنت',300)}${reveal('','أسهمت شبكة الإنترنت في سرعة نشر الأبحاث والتواصل بين العلماء، فأصبحت الاكتشافات الجديدة تصل إلى العالم كله خلال وقت قصير.')}</div></div>`,
- init(){slides($('#s5sl'),[
-  {k:'استخدام المعلومات العلمية',t:'العلم يوفر المعلومات',im:[P('s28_d609d56b','اتخاذ القرارات'),P('s28_3c7395d2','إنتاج الكهرباء')],html:'<p>يوفر العلم الكثير من المعلومات المهمة التي يحتاجها الناس في: اتخاذ القرارات، واكتشاف الأدوية، وإنتاج الكهرباء، والأقمار الصناعية، وغيرها الكثير…</p><p><b>لا يستطيع العلم</b> أن يقرر ما إذا كانت المعلومات جيدة أم سيئة، أخلاقية أم لا؛ لأن العلوم التجريبية لا تتعرض لمثل هذه الأمور. وبالتالي نقوم بعرضها على <b>الشريعة الإسلامية السمحاء</b> لكي تجيز أو تمنع تلك العلوم أو تطبيقاتها.</p>'},
-  {k:'استخدام المعلومات العلمية',t:'مهمة العلم',im:[P('s29_1b12ad5f','المفاعلات النووية'),P('s29_32a46169','الأسلحة البيولوجية')],html:'<p>إن مهمة العلم هي الإجابة عن الأسئلة وتوفير المعلومات، وليس إعطاء قرار إذا كانت المعلومات نافعة أو ضارة. فالمعرفة نفسها قد تُستخدم في المفاعلات النووية لإنتاج الطاقة، أو في صنع الأسلحة.</p>'}],'s5');
-  mcq($('#s5q'),{q:'يقلق العلماء أكثر:',o:['توافر المعلومات','سرعة الوصول لها','اللغة','دقة المعلومات وصحتها'],a:3,why:'لأن أي شخص يمكنه نشر معلومات على الإنترنت، فلا بد من التحقق من دقة المصدر وصحته قبل الاعتماد عليه.'},'s5',()=>G.complete('s5'));},
- explain:'<p>العلم يوفر المعلومات ولا يحكم بأنها نافعة أو ضارة؛ نعرضها على الشريعة الإسلامية. والإنترنت سرّع نشر الاكتشافات، لكن دقة المعلومات وصحتها أكثر ما يقلق العلماء.</p>'});
+/* ---- S5 مهارات العلم ---- */
+const SK9=['التحليل','التفسير','القياس','النمذجة','الملاحظة','الاستدلال','التنبؤ','المقارنة','التجريب'];
+def('s5',{n:'5 · مهارات العلم',eyebrow:'المحطة 5 · الكتاب صفحة 23–24',title:'مهارات العلم',goal:'ما المهارات التي يمتلكها العلماء للحصول على العلم؟ المس كل مهارة لترى مثالًا عليها.',plan:6,core:1,icon:'<circle cx="40" cy="40" r="10" fill="currentColor"/><path d="M40 8v14M40 58v14M8 40h14M58 40h14M17 17l10 10M53 53l10 10M17 63l10-10M53 27l10-10" stroke="currentColor" stroke-width="5"/>',
+ body:`<div class="two"><div class="card"><h3>ما المهارات التي يمتلكها العلماء للحصول على العلم؟</h3><div class="c6-chips" id="s5c"></div><div id="s5fb"></div></div>
+  <div class="card"><h3>ماذا قرأت؟ ما المهارات الثلاث الأكثر استخدامًا في العلوم؟</h3><div id="s5q"></div></div></div>`,
+ init(){const EX={'التحليل':'فحص البيانات بعد جمعها للبحث عن أنماط.','التفسير':'شرح سبب حدوث ما لاحظته.','القياس':'استخدام المسطرة لتحديد طول الطاولة.','النمذجة':'صنع نموذج للمجموعة الشمسية.','الملاحظة':'ملاحظة تغيّر لون أوراق النبات.','الاستدلال':'استنتاج أن الأرض مبللة لأن المطر هطل.','التنبؤ':'توقّع ما سيحدث للنبات إذا لم يُسقَ.','المقارنة':'تحديد أوجه الشبه والاختلاف بين صخرتين.','التجريب':'اختبار أثر الضوء في نمو النبات.'};const seen=new Set();
+  $('#s5c').innerHTML=SK9.map(s=>`<button type="button" class="c6-chip" data-s="${s}">${s}</button>`).join('');
+  $$('#s5c [data-s]').forEach(b=>b.onclick=()=>{seen.add(b.dataset.s);b.setAttribute('aria-pressed','true');SFX.pop();say($('#s5fb'),'info',`<b>${b.dataset.s}:</b> ${EX[b.dataset.s]} <span class="muted">(مثال مقترح)</span>`);if(seen.size===9)G.complete('s5');});
+  const box=$('#s5q');const items=[['القياس',1],['الملاحظة',1],['المقارنة',1],['النمذجة',0],['التنبؤ',0]];
+  box.innerHTML=`<p class="step-text">اختر ثلاث مهارات:</p><div class="c6-chips">${items.map(([t],i)=>`<button type="button" class="c6-chip" data-i="${i}" aria-pressed="false">${t}</button>`).join('')}</div><div class="row-actions"><button class="btn" type="button" data-chk>تحقق</button></div><div class="qfb"></div>`;
+  box.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true');G.tick();});
+  box.querySelector('[data-chk]').onclick=()=>{const ok=items.every(([,c],i)=>(box.querySelector(`[data-i="${i}"]`).getAttribute('aria-pressed')==='true')===!!c);if(ok){G.good();G.add(8,'s5');say(box.querySelector('.qfb'),'ok','القياس والملاحظة والمقارنة (كما في العرض).');}else{G.bad();say(box.querySelector('.qfb'),'bad','راجع الشريحة: ثلاث مهارات.');}};},
+ explain:'<p>مهارات العلم التسع: التحليل، التفسير، القياس، النمذجة، الملاحظة، الاستدلال، التنبؤ، المقارنة، التجريب. والثلاث الأكثر استخدامًا في العرض: القياس، الملاحظة، المقارنة. الأمثلة على كل مهارة مقترحة.</p>'});
 
-def('s6',{n:'6 · نظرة إلى المستقبل',eyebrow:'المحطة 6 · الكتاب صفحة 39',title:'نظرة إلى المستقبل وتقنية المعلومات',goal:'يساهم تطور التقنية في تطور العلم والمعرفة. ناقش أثر تطور التقنية في كل جانب.',plan:6,core:1,icon:'<path d="M10 50 Q40 10 70 50" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="70" cy="50" r="6" fill="currentColor"/>',
- body:`<div class="two"><div class="card" id="s6sl"></div><div class="card"><h3>ما هي تقنية المعلومات؟</h3><p class="def">هي وسائل يستخدمها العلماء أو الناس ليتواصلوا مع الآخرين، مثل: الهاتف النقال، والحاسوب، وشبكة الإنترنت، والأقمار الصناعية.</p><div id="s6sort"></div></div></div>`,
+/* ---- S6 التواصل ---- */
+def('s6',{n:'6 · التواصل في العلم',eyebrow:'المحطة 6 · الكتاب صفحة 24',title:'التواصل في العلم ودفتر العلوم',goal:'ماذا يفعل العلماء بنتائج تجاربهم؟ وما أهمية دفتر العلوم؟',plan:6,core:1,icon:'<rect x="16" y="10" width="44" height="60" rx="5" fill="none" stroke="currentColor" stroke-width="5"/><path d="M26 26h24M26 38h24M26 50h16" stroke="currentColor" stroke-width="4"/>',
+ body:`<div class="card" id="s6sl"></div><div class="card"><h3>ماذا أسجّل في دفتر العلوم؟</h3><div id="s6sort"></div></div>`,
  init(){slides($('#s6sl'),[
-  {k:'على مستوى الطب',t:'المجهر الإلكتروني',im:[P('s32_b86f7f8f','المجهر الإلكتروني')],html:'<p>ناقش أثر تطور التقنية في هذا الجانب.</p>'},
-  {k:'على مستوى علم الفلك',t:'المراصد الفلكية',im:[P('s33_a1b9e4c1','المراصد الفلكية')],html:'<p>ناقش أثر تطور التقنية في هذا الجانب.</p>'},
-  {k:'على مستوى المواصلات',t:'القطارات الكهربائية',im:[P('s34_4d868a42','القطار الكهربائي')],html:'<p>ناقش أثر تطور التقنية في هذا الجانب.</p>'}],'s6');
-  sortGame($('#s6sort'),{bins:['من تقنية المعلومات','ليست منها'],items:[['الهاتف النقال',0],['الحاسوب',0],['شبكة الإنترنت',0],['الأقمار الصناعية',0],['الرافعة',1],['الميكروويف',1]]},'s6',()=>G.complete('s6'));}});
+  {k:'التواصل في العلم',t:'ماذا يفعل العلماء بنتائج تجاربهم؟',im:[P('s18_cb7fe01c','عالم في المختبر'),P('s18_915707f5','المجلات العلمية')],html:'<p>يقوم العلماء بتوثيق نتائج التجارب والاستنتاجات عن طريق <b>المجلات العلمية</b> التي تُنشر دوريًّا.</p>'},
+  {k:'التواصل في العلم',t:'دفتر العلوم',im:[P('s19_27cc3494','دفتر العلوم'),P('s19_c671fe39','رسم بياني في الدفتر')],html:'<p>الاحتفاظ بدفتر العلوم طريقة أخرى للتواصل بالبيانات العلمية والنتائج؛ حيث يمكن أن تسجّل الملاحظات وخطط الاستقصاءات، بالإضافة إلى الخطوات المتبعة في تنفيذ الاستقصاءات.</p><p><b>ما أهمية دفتر العلوم؟</b> تكمن أهميته في تسجيل الملاحظات والعمليات الحسابية وتحليل البيانات وتدوين المشكلات وطرح الأسئلة وحلولها، وتلخيص البيانات في صور وجداول.</p>'}],'s6');
+  sortGame($('#s6sort'),{bins:['يُسجَّل في دفتر العلوم','لا علاقة له بالدفتر'],items:[['الملاحظات',0],['خطط الاستقصاء وخطواته',0],['العمليات الحسابية',0],['الجداول والرسوم البيانية',0],['الأسئلة والمشكلات وحلولها',0],['كلمات مرور حساباتي',1]]},'s6',()=>G.complete('s6'));},
+ explain:'<p>يتواصل العلماء بنتائجهم عبر المجلات العلمية الدورية، ويسجلون في دفتر العلوم الملاحظات والخطط والخطوات والحسابات والبيانات في جداول وصور.</p>'});
 
-def('ev1',{n:'تقويم',eyebrow:'تقويم',title:'تقويم الدرس',goal:'أسئلة التقويم كما في العرض.',plan:5,core:1,icon:ICO.check,
- body:`<div class="card"><h3>1 · أجب بكلمة (صح) أو (خطأ)</h3><div id="c1"></div></div><div class="two"><div class="card"><h3>2-1</h3><div id="c2"></div></div><div class="card"><h3>2-2</h3><div id="c3"></div></div></div><div class="card"><h3>2-3</h3><div id="c4"></div></div>`,
+/* ---- تقويم ---- */
+def('ev1',{n:'تقويم',eyebrow:'تقويم · الأسئلة 1–3',title:'تقويم الدرس',goal:'أسئلة التقويم كما في العرض.',plan:5,core:1,icon:ICO.check,
+ body:`<div class="two"><div class="card"><h3>1-1</h3><div id="e1"></div></div><div class="card"><h3>1-2</h3><div id="e2"></div></div></div><div class="two"><div class="card"><h3>1-3</h3><div id="e3"></div></div><div class="card"><h3>2 · ما أهمية الاحتفاظ بدفتر العلوم؟</h3>${reveal('','يحتاج العلماء عادة إلى إعادة التجارب على أن تكون كل الظروف متشابهة. إن وصفك التجربة في دفتر العلوم يساعد على إعادة التجربة، وكتابة النتائج والمشكلات والأسئلة؛ للاستفادة منها مستقبلًا.')}</div></div>
+  <div class="two"><div class="card"><h3>3-1 · ما المهارات الثلاث الأكثر استخدامًا في العلوم؟</h3>${reveal('','إجابة هذه الشريحة في العرض: <b>الملاحظة، التفسير، التصنيف</b> (وهي المهارات في خلاصة الكتاب: «الملاحظة والتصنيف والتفسير مهارات علمية مهمة»).<br><span class="hint-line">لاحظ: في شريحة «ماذا قرأت؟» ذكر العرض: القياس، الملاحظة، المقارنة. ارجع إلى نص الكتاب ص 24 لاعتماد الإجابة.</span>')}</div>
+   <div class="card"><h3>3-2 · اذكر بعض أشكال البيانات التي يمكن تسجيلها في دفتر العلوم</h3><div id="e5"></div></div></div>`,
  init(){let n=0;const c=()=>{if(++n>=4)G.complete('ev1');};
-  tfx($('#c1'),[['يوفر العلم معلومات يستخدمها الناس لاتخاذ القرارات.',true],['يساهم تطور التقنية في تطور العلم والمعرفة.',true],['<u>يمكن</u> للعلم أن يقرر إذا كانت هذه المعلومات نافعة أو ضارة، أخلاقية أو لا أخلاقية.',false,'لا يمكن',['لا يمكن','يجب','يُفضَّل']],['تؤدي الاكتشافات العلمية إلى إنتاج منتجات جديدة تؤثر في نمط الحياة.',true]],'ev1',c);
-  mcq($('#c2'),{q:'أي معلومات تُجمع من الإنترنت يلزم:',o:['الاعتماد عليها','تحري الدقة في انتقائها','التحيز في انتقائها','جميع ما سبق صحيح'],a:1},'ev1',c);
-  mcq($('#c3'),{q:'أسهمت ……… إلى سرعة نشر الأبحاث والتواصل بين العلماء:',o:['اللقاءات العلمية','المؤتمرات العلمية','شبكة الإنترنت','أجهزة تحديد المواقع'],a:2},'ev1',c);
-  mcq($('#c4'),{q:'وسائل يستخدمها العلماء أو الناس ليتواصلوا مع الآخرين:',o:['جهاز الحاسوب','شبكة الإنترنت','الهاتف النقال','تقنية المعلومات'],a:3},'ev1',c);}});
+  mcq($('#e1'),{q:'طريقة تستخدم في استقصاء ما يحدث حولنا:',o:['المعرفة','العلم','الفلسفة','التواصل'],a:1},'ev1',c);
+  mcq($('#e2'),{q:'هي تطبيق العلوم لصنع المنتجات والأدوات التي يستخدمها الناس:',o:['الفرضية','النظرية','القانون','التقنية'],a:3},'ev1',c);
+  mcq($('#e3'),{q:'أي مما يلي يُستخدم للتواصل العلمي:',o:['المجلات العلمية','الكتب','اللقاءات العلمية','جميع ما سبق صحيح'],a:3},'ev1',c);
+  sortGame($('#e5'),{bins:['أشكال بيانات','ليست أشكال بيانات'],items:[['الرسوم البيانية',0],['الجداول',0],['الصور',0],['الشائعات',1]]},'ev1',c);}});
 
-def('sum',{n:'الخلاصة',eyebrow:'الخلاصة',title:'الخلاصة',goal:'خلاصة الدرس كما في العرض.',plan:2,icon:ICO.doc,
- body:`<div class="card"><p class="lead">يختلف العلم عن التقنية في أن العلم نظري بينما التقنية تطبيقية، كما أن العلم يتم بالملاحظة والتعلم والحفظ والفهم بشكل قد يكون مقصودًا أو غير مقصود، بينما التقنية تحتاج إلى تدريب وتأهيل مسبق للتمكن من التعامل معها. ويشترك كل منهما في أنهما يخدمان البشرية بشكل كبير، وأنهما أداة حتمية لمستقبل وحياة أفضل.</p></div>`,enter(){G.complete('sum');}});
-def('self',{n:'اختبر نفسك',eyebrow:'الواجب · الكتاب صفحة 39 · منصة مدرستي',title:'اختبر نفسك',goal:'الواجب في منصة مدرستي، والتسليم يوم الخميس. إجابات نموذجية مقترحة.',plan:3,icon:ICO.check,body:'<div class="card" id="selfBox"></div>',
+/* ---- الخلاصة واختبر نفسك ---- */
+def('sum',{n:'الخلاصة',eyebrow:'الخلاصة · الكتاب صفحة 25',title:'الخلاصة',goal:'أهم أفكار الدرس.',plan:2,icon:ICO.doc,
+ body:`<div class="two"><div class="card"><h3>العلم في المجتمع</h3>${lst(['يستعمل الناس حواسهم ليلاحظوا ما يحيط بهم.','تُستخدم العمليات العلمية في حل المشكلات والإجابة عن الأسئلة.'])}<h3 class="mt">استخدام المعرفة السابقة</h3>${lst(['يستعين العلماء بالمعارف السابقة لتوقع نتائج الاستقصاءات.','توضع النظريات بعد اختبار الفرضيات عدة مرات.'])}</div>
+  <div class="card"><h3>استخدام العلم والتقنية</h3>${lst(['المجلات والصحف والكتب والإنترنت مصادر لمعلومات مفيدة.','الملاحظة والتصنيف والتفسير مهارات علمية مهمة.'])}<h3 class="mt">التواصل في العلم</h3>${lst(['يتواصل العلماء بملاحظاتهم وتجاربهم ونتائجهم مع الآخرين.'])}</div></div>`,
+ enter(){G.complete('sum');}});
+def('self',{n:'اختبر نفسك',eyebrow:'الواجب · الكتاب صفحة 25 · التسليم يوم الخميس',title:'اختبر نفسك',goal:'أسئلة «اختبر نفسك» مع إجابات نموذجية مقترحة.',plan:3,icon:ICO.check,body:'<div class="card" id="selfBox"></div>',
  init(){STN.self.s=solutions($('#selfBox'),[
-  {k:'1 · حدّد',q:'أحد إسهامات العلم أو التقنية في تحسن صحتك.',a:[['مثال','أجهزة التصوير الطبية، واللقاحات، وجهاز قياس ضغط الدم الرقمي.']]},
-  {k:'2 · استنتج',q:'ما الذي يجعل العلماء يغيرون نظرية قديمة عمرها 100 عام؟',a:[['الإجابة','ظهور أدلة وبيانات جديدة لا تدعمها، غالبًا بفضل أدوات وتقنيات أحدث تسمح بملاحظات أدق.']]},
-  {k:'3 · اعمل قائمة',q:'بخمس طرائق تمكّن العلماء من التواصل مع بعضهم لنشر آخر مكتشفاتهم.',a:[['الإجابة','المجلات العلمية، الإنترنت والبريد الإلكتروني، المؤتمرات واللقاءات العلمية، الكتب، الهاتف النقال والأقمار الصناعية.']]},
-  {k:'4 · صف',q:'تقدمًا تقنيًّا يجعل حياتك أكثر متعة. ما الاكتشافات التي ساهمت في تطور هذه التقنية؟',a:[['مثال','الهاتف الذكي: ساهمت فيه اكتشافات الكهرباء والموجات الكهرومغناطيسية وأشباه الموصلات والحاسوب.']]},
-  {k:'5 · التفكير الناقد',q:'وضّح لماذا تعدّ أنظمة الاتصالات الحديثة مهمة للعلماء في أنحاء العالم؟',a:[['الإجابة','لأنها تنقل نتائج الأبحاث بسرعة، فيستفيد منها العلماء الآخرون ويبنون عليها (المعرفة التراكمية) ويحصلون على أفكار جديدة.']]},
-  {k:'6 · ابحث',q:'عن أحد علماء المسلمين مستعينًا بمصدرين على الأقل من مصادر المعلومات، ودوّن عشر حقائق حول هذا العالم، ثم اكتب سيرته الذاتية باختصار مستخدمًا برنامج معالج النصوص.',a:[['توجيه','مهمة بحثية؛ يختار الطالب عالمًا (مثل ابن الهيثم أو البيروني أو الخوارزمي) ويوثق مصادره.']]}],'self',()=>G.complete('self'));},
- reset(){STN.self.s.reset();},explain:'<p>الأسئلة من العرض، والإجابات نموذجية مقترحة.</p>'});
+  {k:'1 · استنتج',q:'لماذا يستخدم العلماء أدوات – منها مقياس الحرارة والمسطرة المترية – عند أخذ الملاحظات؟',a:[['الإجابة','لأن الحواس لا تعطي وصفًا دقيقًا للكميات الفيزيائية، والأدوات تعطي قياسات دقيقة يمكن مقارنتها وتكرارها.']]},
+  {k:'2 · حدّد',q:'بعض المهارات المستخدمة في العلوم. سمِّ مهارة علمية استخدمتها اليوم.',a:[['الإجابة','الملاحظة، القياس، المقارنة، التنبؤ… مثال: قِست طول قلمي بالمسطرة (مهارة القياس).']]},
+  {k:'3 · قوّم',q:'اذكر مثالًا واحدًا على التقنية. فيمَ تختلف التقنية عن العلم؟',a:[['مثال','الحاسوب.'],['الاختلاف','العلم طريقة لاستقصاء ما يجري حولنا والإجابة عن الأسئلة، أمّا التقنية فهي تطبيق العلم لصنع منتجات وأدوات يستخدمها الناس.']]},
+  {k:'4 · التفكير الناقد',q:'لماذا يُستخدم دفتر العلوم في تسجيل البيانات؟ ما الطرائق الثلاث المختلفة التي تسجّل أو تلخّص بها البيانات في دفتر العلوم؟',a:[['لماذا','لكي يمكن إعادة التجربة بالظروف نفسها، وللاستفادة من النتائج والمشكلات والأسئلة مستقبلًا.'],['الطرائق','الجداول، والرسوم البيانية، والصور.']]},
+  {k:'5 · قارن',q:'تستخدم أحيانًا حواسك لملاحظة أشياء حولك؛ لتتوصل إلى إجابة عن سؤال ما، وأحيانًا أخرى تستخدم أدوات وقياسات. قارن بين هاتين الطريقتين في الإجابة عن الأسئلة العلمية.',a:[['الحواس','سريعة ومتاحة لكنها تقريبية وتختلف من شخص لآخر وقد تخدعنا.'],['الأدوات','أدق وتعطي أرقامًا يمكن تسجيلها ومقارنتها وتكرارها.']]},
+  {k:'6 · تواصل',q:'سجّل في دفتر العلوم خمسة أشياء قمت بملاحظتها في غرفة صفك أو خارجها.',a:[['مثال','السبورة بيضاء ولامعة · المكيف يصدر صوتًا · الشجرة خارج النافذة أوراقها خضراء · حرارة الصف مناسبة · عدد الطلاب 28.']]}],'self',()=>G.complete('self'));},
+ reset(){STN.self.s.reset();},explain:'<p>أسئلة «اختبر نفسك» من العرض، والإجابات نموذجية مقترحة لأن العرض لم يتضمنها.</p>'});
 
-def('x1',{n:'إثرائي · المسابقات',eyebrow:'إثرائي · تنافس المجموعات',title:'خزنة الاكتشافات وبنغو التقنية',goal:'افتحوا الخزنة ثم تنافسوا في البنغو.',plan:5,icon:ICO.lock,
- body:'<div class="card"><div id="x1e"></div></div><div class="card"><div class="nb-head"><h2>🎯 بنغو التقنية</h2></div><div id="x1b"></div></div>',
- init(){STN.x1.e=escape($('#x1e'),{title:'خزنة الاكتشافات',story:'أربعة أقفال تحمي خزنة الاكتشافات العلمية!',secs:300,locks:[{q:'تطبيق العلم لصنع منتجات:',o:['التقنية','المجتمع','الرأي','الفرضية'],a:0,code:'3'},{q:'جرّاح فصل التوائم السيامية:',o:['د. عبدالله الربيعة','ستيفن هوكينغ','فريد بيجي','دانيل وليمز'],a:0,code:'6'},{q:'أكثر ما يقلق العلماء في الإنترنت:',o:['دقة المعلومات','اللغة','السرعة','التوافر'],a:0,code:'9'},{q:'«ابدأ من حيث انتهى الآخرون» تعني أن المعرفة:',o:['تراكمية','ثابتة','سرية','عشوائية'],a:0,code:'1'}],outro:'فتحتم خزنة الاكتشافات!'},'x1');
-  bingo($('#x1b'),[['العلم','طريقة لاستقصاء ما يجري حولك'],['التقنية','تطبيق العلم لصنع منتجات'],['المجتمع','أفراد في منطقة جغرافية تربطهم أواصر'],['الحاسوب','جهاز يُبرمج لتخزين البيانات ومعالجتها'],['تقنية المعلومات','وسائل للتواصل مع الآخرين'],['الأقمار الصناعية','من وسائل تقنية المعلومات'],['الإنترنت','سرّع نشر الأبحاث'],['ستيفن هوكينغ','درس الثقوب السوداء'],['فريد بيجي','الطاقة الحرارية دون ضرر للبيئة'],['دانيل هال وليمز','أجرى أول عملية قلب مفتوح'],['عبدالله الربيعة','فصل التوائم السيامية'],['المجهر الإلكتروني','تطور التقنية في الطب'],['المراصد الفلكية','تطور التقنية في الفلك'],['القطار الكهربائي','تطور التقنية في المواصلات'],['المعرفة التراكمية','ابدأ من حيث انتهى الآخرون'],['الميكروويف','اكتشاف غيّر إعداد الطعام']],'x1');},reset(){STN.x1.e.reset();}});
-def('x2',{n:'إثرائي · جولة البرق',eyebrow:'إثرائي',title:'جولة البرق ولوحة الخيارات',goal:'صح أم خطأ بسرعة، ثم لوحة الخيارات.',plan:4,icon:'<path d="M44 6L18 46h18l-6 28 28-42H40z" fill="currentColor"/>',
- body:'<div class="card"><div id="x2t"></div></div><div class="card"><div id="x2cb"></div></div>',
- init(){tfRound($('#x2t'),[['العلم نظري والتقنية تطبيقية.',true],['يقرر العلم إن كانت المعلومة أخلاقية.',false,'نعرضها على الشريعة.'],['كل ما على الإنترنت دقيق.',false,'يجب تحري الدقة.'],['المعرفة العلمية تراكمية.',true],['الأقمار الصناعية من تقنية المعلومات.',true],['التقنية لا تحتاج إلى تدريب.',false,'تحتاج إلى تدريب وتأهيل.']],'x2',{secs:10});
-  STN.x2.cb=choiceBoard($('#x2cb'),[{ic:'✍️',t:'اكتب',kind:'كتابة',p:'اكتب فقرة عن جهاز في بيتك وكيف غيّر حياة أسرتك.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'مثال على تقنية المعلومات:',o:['الهاتف النقال','الرافعة','الدراجة','الملعقة'],a:0},{ic:'🔍',t:'تحقق',kind:'بحث',p:'اختر خبرًا علميًّا من الإنترنت وتحقق من صحته من مصدرين موثوقين.'},
-   {ic:'❓',t:'سؤال',kind:'اختيار',q:'العالم الذي درس الثقوب السوداء:',o:['ستيفن هوكينغ','فريد بيجي','دانيل وليمز','جون سنو'],a:0},{ic:'🎨',t:'خط زمني',kind:'رسم',p:'ارسم خطًّا زمنيًّا لتطور وسيلة نقل.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'يُعرض حكم استخدام العلم على:',o:['الشريعة الإسلامية','الإنترنت','الشركات','الإعلانات'],a:0},
-   {ic:'🗣',t:'قابل',kind:'حوار',p:'اسأل أحد كبار أسرتك: كيف كان التواصل قبل الهاتف النقال؟ وسجّل إجابته.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'من مظاهر تأثر الحياة بالتقنية:',o:['الصحة','الراحة','التسلية','جميع ما سبق'],a:3},{ic:'🗺',t:'خريطة',kind:'تنظيم',p:'خريطة مفاهيم تربط: العلم ← التقنية ← المجتمع.'}],'x2',()=>G.complete('x2'));},reset(){STN.x2.cb.reset();}});
+/* ---- إثرائي ---- */
+def('x1',{n:'إثرائي · المسابقات',eyebrow:'إثرائي · تنافس المجموعات',title:'خزانة دفتر العالِم وبنغو المفردات',goal:'افتحوا الخزانة قبل انتهاء الوقت، ثم تنافسوا في البنغو.',plan:5,icon:ICO.lock,
+ body:'<div class="card"><div id="x1esc"></div></div><div class="card"><div class="nb-head"><h2>🎯 بنغو العلم</h2><span>اختاروا المصطلح المناسب</span></div><div id="x1bg"></div></div>',
+ init(){STN.x1.e=escape($('#x1esc'),{title:'خزانة دفتر العالِم',story:'أُغلقت خزانة دفتر العالِم بأربعة أقفال! كل إجابة صحيحة تكشف رقمًا.',secs:300,
+  locks:[{q:'جمع بيانات باستخدام حاسة أو أكثر:',o:['الملاحظة','التقنية','النمذجة','القانون'],a:0,code:'5'},{q:'لقياس درجة الحرارة نستخدم:',o:['الميزان','المسطرة','الثرمومتر','المخبار'],a:2,code:'2'},{q:'«يسقط القلم بسبب الجاذبية» مثال على:',o:['قانون','نظرية','رأي','تقنية'],a:1,code:'8'},{q:'يوثق العلماء نتائجهم في:',o:['المجلات العلمية','الألعاب','الإعلانات','الرسائل الخاصة'],a:0,code:'4'}],outro:'أحسنتم! العلماء يلاحظون ويقيسون ويتواصلون.'},'x1');
+  bingo($('#x1bg'),[['العلم','طريقة لاستقصاء ما يجري حولك'],['التقنية','تطبيق العلم لصنع منتجات وأدوات'],['الملاحظة','جمع بيانات بحاسة أو أكثر'],['الثرمومتر','أداة قياس درجة الحرارة'],['المسطرة','أداة قياس الطول'],['الميزان','أداة قياس الكتلة'],['القانون العلمي','يصف نمطًا في الطبيعة'],['النظرية العلمية','تفسّر سلوكًا تمت ملاحظته مرارًا'],['دفتر العلوم','تُسجّل فيه الملاحظات والبيانات'],['المجلات العلمية','تُنشر دوريًّا لتوثيق النتائج'],['التنبؤ','توقّع ما سيحدث'],['المقارنة','تحديد أوجه الشبه والاختلاف'],['الحاسوب','مثال على التقنية'],['الاستدلال','الاستنتاج من الأدلة'],['النمذجة','صنع نموذج لشيء يصعب رؤيته'],['التجريب','اختبار الفرضية بتجربة'],['الأدلة','يجمعها العالم كالمحقق'],['الخبرات السابقة','يتوقع بها العالم النتائج']],'x1');},
+ reset(){STN.x1.e.reset();},explain:'<p>مسابقتان إثرائيتان مقترحتان.</p>'});
+def('x2',{n:'إثرائي · جولة البرق',eyebrow:'إثرائي · جولة البرق ولوحة الخيارات',title:'جولة البرق ولوحة الخيارات',goal:'صح أم خطأ بسرعة، ثم اختر ثلاث مهام في خط واحد.',plan:4,icon:'<path d="M44 6L18 46h18l-6 28 28-42H40z" fill="currentColor"/>',
+ body:'<div class="card"><div id="x2tf"></div></div><div class="card"><h3>لوحة الخيارات 3 × 3</h3><div id="x2cb"></div></div>',
+ init(){tfRound($('#x2tf'),[['يمكن الاعتماد على الحواس وحدها في قياس درجة الحرارة بدقة.',false,'نحتاج الثرمومتر.'],['التقنية تطبيق للعلم.',true],['القانون العلمي يفسر سبب الظاهرة.',false,'القانون يصف، والنظرية تفسر.'],['المجلات العلمية تُنشر دوريًّا.',true],['يستخدم العالم الأدلة كالمحقق.',true],['الحاسوب مثال على التقنية.',true],['دفتر العلوم لتسجيل الملاحظات فقط.',false,'وأيضًا الحسابات والخطط والجداول والرسوم.']],'x2',{secs:10});
+  STN.x2.cb=choiceBoard($('#x2cb'),[
+   {ic:'✍️',t:'اكتب',kind:'كتابة',p:'اكتب في دفترك الفرق بين العلم والتقنية بمثال لكل منهما.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'أداة قياس الكتلة:',o:['الميزان','المسطرة','الثرمومتر','الساعة'],a:0},{ic:'🔬',t:'جرّب',kind:'تجربة',p:'جرّب تجربة الأوعية الثلاثة في البيت بماء آمن (فاتر وبارد ودافئ غير ساخن) وسجّل ما شعرت به.'},
+   {ic:'❓',t:'سؤال',kind:'اختيار',q:'«تتمدد الأجسام بالحرارة»:',o:['قانون','نظرية','رأي','فرضية'],a:0},{ic:'🗺',t:'خريطة مفاهيم',kind:'تنظيم',p:'ارسم خريطة مفاهيم لمهارات العلم التسع.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'يتوقع العالم النتائج مستعينًا بـ:',o:['خبراته السابقة','الحظ','آراء الآخرين','الألوان'],a:0},
+   {ic:'📸',t:'لاحظ',kind:'ملاحظة',p:'سجّل خمس ملاحظات عن مطبخ بيتك مستخدمًا ثلاث حواس على الأقل (دون تذوق أي مادة غير معروفة).'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'من وسائل التواصل العلمي:',o:['المجلات العلمية','الكتب','اللقاءات العلمية','جميع ما سبق'],a:3},{ic:'🎨',t:'صمّم',kind:'رسم',p:'صمّم غلافًا لدفتر العلوم الخاص بك يعبّر عن مهارات العلماء.'}],'x2',()=>G.complete('x2'));},
+ reset(){STN.x2.cb.reset();},explain:'<p>نشاطان إثرائيان مقترحان.</p>'});
 
-def('ch',{n:'تحدي العلماء',plan:3,icon:ICO.cup,eyebrow:'التقويم الختامي',title:'تحدي العلماء',goal:'أسئلة من تقويم العرض.',body:'<div class="card" id="chBox"></div>',
+def('ch',{n:'تحدي العلماء',plan:3,icon:ICO.cup,eyebrow:'التقويم الختامي',title:'تحدي العلماء',goal:'أسئلة من تقويم العرض. لكل سؤال محاولتان.',body:'<div class="card" id="chBox"></div>',
  init(){STN.ch.c=challenge($('#chBox'),[
-  {k:'المعلومات',q:'أي معلومات تُجمع من الإنترنت يلزم:',o:['الاعتماد عليها','تحري الدقة في انتقائها','التحيز في انتقائها','جميع ما سبق صحيح'],a:1},
-  {k:'الإنترنت',q:'أسهمت ……… إلى سرعة نشر الأبحاث:',o:['اللقاءات العلمية','المؤتمرات العلمية','شبكة الإنترنت','أجهزة تحديد المواقع'],a:2},
-  {k:'تقنية المعلومات',q:'وسائل يستخدمها العلماء أو الناس ليتواصلوا مع الآخرين:',o:['جهاز الحاسوب','شبكة الإنترنت','الهاتف النقال','تقنية المعلومات'],a:3},
-  {k:'العلم',q:'هل يمكن للعلم أن يقرر إذا كانت المعلومات نافعة أو ضارة؟',o:['لا، مهمته الإجابة عن الأسئلة وتوفير المعلومات','نعم دائمًا','نعم في الطب فقط','نعم إذا كانت حديثة'],a:0},
-  {k:'العلماء',q:'الطبيب الذي أجرى أول عملية قلب مفتوح وأسس مستشفى:',o:['دانيل هال وليمز','فريد بيجي','ستيفن هوكينغ','عبدالله الربيعة'],a:0},
-  {k:'التقنية',t:'multi',q:'اختر وسائل تقنية المعلومات:',items:[['الهاتف النقال',1],['الحاسوب',1],['الأقمار الصناعية',1],['الرافعة',0]]}],'ch');},reset(){STN.ch.c.reset();}});
+  {k:'العلم',q:'طريقة تستخدم في استقصاء ما يحدث حولنا:',o:['المعرفة','العلم','الفلسفة','التواصل'],a:1},
+  {k:'التقنية',q:'تطبيق العلوم لصنع المنتجات والأدوات التي يستخدمها الناس:',o:['الفرضية','النظرية','القانون','التقنية'],a:3},
+  {k:'التواصل',q:'أي مما يلي يُستخدم للتواصل العلمي:',o:['المجلات العلمية','الكتب','اللقاءات العلمية','جميع ما سبق صحيح'],a:3},
+  {k:'القياس',q:'نقيس الكتلة باستخدام:',o:['الميزان','المسطرة','الثرمومتر','الحاسوب'],a:0},
+  {k:'القانون',q:'قواعد تصف نمطًا أو سلوكًا معيّنًا في الطبيعة:',o:['القانون العلمي','النظرية العلمية','الفرضية','الرأي'],a:0},
+  {k:'المهارات',t:'multi',q:'اختر كل مهارات العلم:',items:[['الملاحظة',1],['القياس',1],['التنبؤ',1],['التخمين العشوائي',0],['النسخ دون فهم',0]],why:'المهارات العلمية منظمة ومبنية على الأدلة.'},
+  {k:'سلوك العلماء',q:'يتصرف العالم كمحقق عندما:',o:['يجمع الأدلة ويتتبعها','يحفظ المعلومات','يرسم صورة جميلة','يغيّر رأيه بلا سبب'],a:0}],'ch');},
+ reset(){STN.ch.c.reset();}});
 
-C6.plan({intro:{s:['poe','brain'],g:'١ و٢',sk:'التنبؤ',ev:'سؤال التوقع'},nafs:{s:['cards'],g:'—',sk:'الاستدعاء',ev:'سؤال نافس'},goals:{s:['frayer'],g:'١ و٢',sk:'التذكر',ev:'المطابقة'},s1:{s:['brain','coop'],g:'١',sk:'التصنيف',ev:'مظاهر الحياة'},s2:{s:['tps','analogy'],g:'١',sk:'قراءة الصور',ev:'ملاحظات الطلاب'},lab1:{s:['time','game'],g:'١',sk:'الترتيب',ev:'آلة الزمن'},
- s3:{s:['time','disc'],g:'١',sk:'الترتيب',ev:'تطور الهاتف'},s4:{s:['jigsaw','who'],g:'١',sk:'الربط',ev:'مطابقة العلماء'},s5:{s:['hats','crit'],g:'٢',sk:'التفكير الناقد',ev:'ما يقلق العلماء'},lab2:{s:['crit','inq'],g:'٢',sk:'تقويم المصادر',ev:'كاشف المصادر'},s6:{s:['disc','cards'],g:'٢',sk:'التصنيف',ev:'تقنية المعلومات'},
- ev1:{s:['spot','cards'],g:'١ و٢',sk:'التطبيق',ev:'التقويم'},sum:{s:['tl'],g:'١ و٢',sk:'التلخيص',ev:'إشارة المرور'},self:{s:['heads','sticks'],g:'١ و٢',sk:'التفكير الناقد',ev:'اختبر نفسك'},x1:{s:['game','champ'],g:'١ و٢',sk:'الاستدعاء',ev:'الخزنة والبنغو'},x2:{s:['cards','game'],g:'١ و٢',sk:'الاستدعاء',ev:'جولة البرق'},ch:{s:['exit'],g:'١ و٢',sk:'التقويم الختامي',ev:'تحدي العلماء'}},'g9c1l3');
-K.boot({chapter:'الفصل الأول: طبيعة العلم',chapterShort:'الفصل الأول',title:'جسر الاكتشافات',lesson:'الدرس الثالث: العلم والتقنية والمجتمع',accent:'#0f766e',accentDark:'#2dd4bf',hook:'كيف غيّر العلم والتقنية حياتك؟',
- riddle:'ما الذي يربط الاكتشاف العلمي بحياتك اليومية؟',predict:{o:['التقنية: تطبيق العلم لصنع منتجات وأدوات تغير نمط حياتنا','لا علاقة بينهما','الإعلانات التجارية فقط'],a:0},
- answer:'الاكتشافات العلمية تتحول عبر التقنية إلى منتجات تغيّر الصحة ووسائل الراحة والتسلية والتواصل، والمعرفة العلمية تراكمية تنتشر بسرعة عبر تقنية المعلومات.',
- finalTitle:'مبارك! عبرت جسر الاكتشافات',goals:GOALS,homework:'<b>الواجب:</b> «اختبر نفسك» ص 39 في منصة مدرستي · التسليم يوم الخميس.',
- concepts:[{n:'العلم',t:'نظري: يجيب عن الأسئلة ويوفر المعلومات.',ic:'<circle cx="24" cy="24" r="14" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'التقنية',t:'تطبيقية: منتجات وأدوات.',ic:'<rect x="8" y="12" width="32" height="22" rx="3" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'المعرفة التراكمية',t:'ابدأ من حيث انتهى الآخرون.',ic:'<path d="M6 40h10V30h10V20h10V10" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'جهود العلماء',t:'هوكينغ، بيجي، وليمز، الربيعة.',ic:'<circle cx="24" cy="18" r="8" fill="var(--accent)"/>'},{n:'استخدام المعلومات',t:'العلم لا يحكم أخلاقيًّا؛ نعرضه على الشريعة.',ic:'<path d="M24 6v36M10 16h28" stroke="var(--accent)" stroke-width="4"/>'},{n:'تقنية المعلومات',t:'الهاتف والحاسوب والإنترنت والأقمار الصناعية.',ic:'<circle cx="24" cy="24" r="14" fill="none" stroke="var(--accent)" stroke-width="4"/><path d="M10 24h28" stroke="var(--accent)" stroke-width="3"/>'}]});
-$$('.top h1').forEach(h=>h.dataset.sym='🛰');
+C6.plan({intro:{s:['poe','brain'],g:'١ و٢',sk:'التنبؤ',ev:'سؤال التوقع'},fold:{s:['kwl'],g:'١ و٢',sk:'الاستدعاء',ev:'توجيه القراءة'},goals:{s:['frayer'],g:'١ و٢',sk:'التذكر',ev:'بطاقات المفردات'},
+ s1:{s:['disc','cards'],g:'١',sk:'الملاحظة',ev:'مطابقة الأدوات'},lab1:{s:['poe','inq'],g:'١ و٢',sk:'التجريب والمقارنة',ev:'تجربة الأوعية'},s2:{s:['brain','coop'],g:'١',sk:'التصنيف',ev:'تصنيف الأسئلة'},s3:{s:['venn','cards'],g:'١',sk:'المقارنة',ev:'قانون أم نظرية'},
+ s4:{s:['story','disc'],g:'١',sk:'الاستنتاج',ev:'سلوك العلماء'},s5:{s:['jigsaw','sticks'],g:'٢',sk:'التصنيف',ev:'المهارات الثلاث'},lab2:{s:['inq','game'],g:'٢',sk:'القياس',ev:'محطة الأدوات'},s6:{s:['tps'],g:'٢',sk:'التواصل',ev:'دفتر العلوم'},
+ ev1:{s:['heads','cards'],g:'١ و٢',sk:'التطبيق',ev:'تقويم 1–3'},sum:{s:['tl'],g:'١ و٢',sk:'التلخيص',ev:'إشارة المرور'},self:{s:['heads','sticks'],g:'١ و٢',sk:'التفكير الناقد',ev:'اختبر نفسك'},x1:{s:['game','champ'],g:'١ و٢',sk:'الاستدعاء',ev:'الخزانة والبنغو'},x2:{s:['cards','game'],g:'١ و٢',sk:'الاستدعاء',ev:'جولة البرق'},ch:{s:['exit'],g:'١ و٢',sk:'التقويم الختامي',ev:'تحدي العلماء'}},'g9c1l1');
+K.boot({chapter:'الفصل الأول: طبيعة العلم',chapterShort:'الفصل الأول',title:'دفتر العالِم الصغير',lesson:'الدرس الأول: أسلوب العلم',accent:'#9f1239',accentDark:'#fb7185',hook:'كيف يفكّر العلماء… وكيف تفكّر مثلهم؟',
+ riddle:'أيهما تصدّق: يدك اليمنى أم اليسرى؟ وكيف يصل العلماء إلى إجابات يثقون بها؟',predict:{o:['بالملاحظة المنظمة واستخدام أدوات القياس والتواصل بالنتائج','بالاعتماد على الحواس وحدها','بالتخمين وآراء الناس'],a:0},
+ answer:'الحواس مفيدة لكنها قد تخدعنا، لذلك يستخدم العلماء أدوات القياس (الثرمومتر والمسطرة والميزان) ومهارات العلم، ويسجلون بياناتهم في دفتر العلوم ويتواصلون بنتائجهم.',
+ finalTitle:'مبارك! أصبح لديك دفتر عالِم',goals:GOALS,homework:'<b>الواجب:</b> «اختبر نفسك» ص 25 · التسليم يوم الخميس.',
+ concepts:[{n:'العلم',t:'طريقة لاستقصاء ما يجري حولك والإجابة عن أسئلتك.',ic:'<circle cx="24" cy="24" r="14" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'التقنية',t:'تطبيق العلم لصنع منتجات وأدوات.',ic:'<rect x="8" y="12" width="32" height="22" rx="3" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'أدوات القياس',t:'الثرمومتر للحرارة، والمسطرة للطول، والميزان للكتلة.',ic:'<path d="M24 6v28" stroke="var(--accent)" stroke-width="6"/><circle cx="24" cy="38" r="6" fill="var(--accent)"/>'},{n:'القانون والنظرية',t:'القانون يصف، والنظرية تفسّر.',ic:'<text x="24" y="32" text-anchor="middle" font-size="18" font-weight="800" fill="var(--accent)">⚖</text>'},{n:'مهارات العلم',t:'الملاحظة والقياس والمقارنة والتنبؤ وغيرها.',ic:'<circle cx="24" cy="24" r="8" fill="var(--accent)"/>'},{n:'التواصل',t:'المجلات العلمية ودفتر العلوم.',ic:'<rect x="12" y="6" width="24" height="36" rx="3" fill="none" stroke="var(--accent)" stroke-width="4"/>'}]});
+$$('.top h1').forEach(h=>h.dataset.sym='🔬');
 })();
 

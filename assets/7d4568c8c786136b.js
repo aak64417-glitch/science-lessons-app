@@ -135,7 +135,7 @@ W.tl=function(el,w,lid){var D=load('tl-'+lid,{});el.innerHTML='<div class="sgw">
 /* ===== كشف الطلاب الموحّد لكل المنصة (الدروس والأنشطة والمسابقات وأوراق العمل) — durus-classes ===== */
 window.DROS = window.DROS || (function () {
   var AR = '٠١٢٣٤٥٦٧٨٩', KEY = 'durus-classes', API = 'https://script.google.com/macros/s/AKfycbxp-t4JgGO5WiK6hoacjTyBqFnG-9bSWClplOpVV4VDuTV7T4tY0swB1Ll36kr_djJ7nQ/exec';
-  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/3', '2/3', '3/3', '4/3']];
+  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/2'], ['1/3', '2/3', '3/3', '4/3']];
   function kz(k) { return String(k == null ? '' : k).replace(/\s/g, '').replace(/\d/g, function (d) { return AR[d]; }); }
   function nz(s) { return String(s).replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+بن\s+/g, ' ').replace(/\s+/g, ' ').trim(); }
   function ld() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) return { cur: s.cur || '', classes: s.classes || {}, stars: s.stars || {}, moves: s.moves || {} }; } catch (e) {} return { cur: '', classes: {}, stars: {}, moves: {} }; }
@@ -180,7 +180,7 @@ window.DROS = window.DROS || (function () {
   }
   // تحميل كشوف الفصول من منصة رحلة العلوم لكل الصفوف
   function importAll(cb) {
-    var all = LISTS[0].concat(LISTS[1]), G = {}, done = 0, okc = 0;
+    var all = [].concat.apply([], LISTS), G = {}, done = 0, okc = 0;
     all.forEach(function (k) {
       jsonp({ action: 'getStudents', className: k }, function (r) {
         if (r && r.ok) okc++;
@@ -388,213 +388,172 @@ const ICO={doc:'<rect x="14" y="10" width="52" height="60" rx="6" fill="none" st
 const lst=a=>`<ul class="step-text" style="margin:0;line-height:1.9">${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
 Object.assign(window.C6,{order,fig,grid,reveal,plan,ICO,lst});})();
 
-/* ===== تجارب افتراضية — الصفائح الأرضية ===== */
+/* ===== تجارب افتراضية — البراكين ===== */
 (function(){
 const {$,$$,G,STN,def,say,SFX,mcq}=K;const AR='font-family="IBM Plex Sans Arabic"';
 
-/* ---------- 1) محاكي حدود الصفائح ---------- */
-const BD=[{k:'div',n:'حدود تباعد',ic:'← →',out:'تتباعد الصفيحتان فتتكون حفرة انهدام وشقوق تخرج منها الصهارة، ويحدث نشاط بركاني وزلازل.'},{k:'con',n:'حدود تقارب (غوص)',ic:'→ ←',out:'تغوص الصفيحة المحيطية الأكبر كثافة أسفل القارية، فتنصهر جزئيًّا وتصعد الصهارة مكونة براكين مركبة، وتحدث زلازل عميقة.'},{k:'tr',n:'حدود جانبية (تحويلية)',ic:'↑ ↓',out:'تنزلق الصفيحتان بمحاذاة بعضهما، فتتراكم الإجهادات وتحدث الزلازل، ولا تتكون براكين عادة.'}];
-def('lab1',{after:'s2',n:'🧪 محاكي الحدود',eyebrow:'تجربة افتراضية · مقترحة',title:'محاكي حدود الصفائح: حرّك الصفائح وشاهد النتيجة',goal:'اختر نوع الحد، ثم اسحب منزلق الزمن (ملايين السنين). ماذا يتكون عند الحد؟ وأين تحدث الزلازل والبراكين؟',plan:8,core:1,
- icon:'<path d="M6 40h28M46 40h28M26 32l8 8-8 8M54 32l-8 8 8 8" fill="none" stroke="currentColor" stroke-width="5"/>',
- body:`<div class="two"><div class="stage"><svg id="p1svg" viewBox="0 0 640 300" aria-label="مقطع في صفيحتين"></svg><div style="padding:10px"><div class="c6-chips" id="p1b"></div><label class="step-text">⏳ الزمن: <b id="p1v">0</b> مليون سنة<input type="range" id="p1r" min="0" max="100" value="0" style="width:100%"></label></div></div>
-  <div class="side"><div class="card"><h3>ماذا يحدث؟</h3><div id="p1o" class="step-text muted">اختر نوع الحد وحرّك الزمن.</div></div></div></div>
-  <div class="card"><h3>استنتج</h3><div id="p1q"></div></div>`,
- init(){let k=0;const seen=new Set();
-  const draw=()=>{const t=+$('#p1r').value/100,b=BD[k];$('#p1v').textContent=Math.round(t*20);let s=`<rect width="640" height="300" fill="#e0f2fe"/><rect y="200" width="640" height="100" fill="#f59e0b" opacity=".55"/><text x="20" y="290" ${AR} font-size="12" fill="#7c2d12">الغلاف المائع</text>`;
-   const qk=[];
-   if(b.k==='div'){const g=t*80;s+=`<rect x="${20-g}" y="120" width="${300}" height="80" fill="#1e3a8a" opacity=".85"/><rect x="${320+g}" y="120" width="300" height="80" fill="#1e3a8a" opacity=".85"/><rect y="90" width="640" height="30" fill="#60a5fa" opacity=".5"/>`;
-    if(g>4)s+=`<path d="M${320-g} 120 L320 200 L${320+g} 120z" fill="#ea580c"/><path d="M320 300 V200" stroke="#ea580c" stroke-width="${6+g/8}"/>`;
-    if(t>.3)s+=`<path d="M300 120 l20 -30 l20 30z" fill="#7c2d12"/>`;qk.push([320,150]);
-    s+=`<path d="M220 160 h-60 M420 160 h60" stroke="#fff" stroke-width="5" marker-end="url(#pa)"/>`;}
-   else if(b.k==='con'){const g=t*90;s+=`<path d="M20 120 H${300+g*0.6} L${330+g} 200 L${290+g} 230 L${270+g*0.4} 200 H20z" fill="#1e3a8a" opacity=".85"/><rect y="90" width="${300+g*.6}" height="30" fill="#60a5fa" opacity=".5"/>`;
-    s+=`<path d="M${330+g*.2} 70 H620 V200 H${330+g*.2}z" fill="#a16207"/><path d="M${330+g*.2} 70 H620" stroke="#7c9a4b" stroke-width="10"/>`;
-    if(t>.3){s+=`<path d="M${420} 70 l30 -50 l30 50z" fill="#57534e"/><path d="M450 200 Q440 120 450 25" stroke="#ea580c" stroke-width="6" fill="none"/>`;}
-    qk.push([340+g*.4,170],[360+g*.5,220]);s+=`<path d="M160 105 h60 M560 140 h-60" stroke="#fff" stroke-width="5" marker-end="url(#pa)"/>`;}
-   else{const g=t*120;s+=`<g transform="translate(0 ${-g*.0})"><rect x="20" y="110" width="300" height="90" fill="#a16207"/><path d="M20 110 H320" stroke="#7c9a4b" stroke-width="10"/></g><rect x="322" y="110" width="298" height="90" fill="#b45309"/><path d="M322 110 H620" stroke="#7c9a4b" stroke-width="10"/>`;
-    s+=`<path d="M321 100 V210" stroke="#7f1d1d" stroke-width="4"/><text x="170" y="${160}" text-anchor="middle" font-size="26" fill="#fff">⬆</text><text x="470" y="160" text-anchor="middle" font-size="26" fill="#fff">⬇</text>`;
-    for(let i=0;i<5;i++){const y=((i*40+g*2)%100);s+=`<rect x="140" y="${112+y*.8}" width="16" height="8" fill="#fde68a"/><rect x="480" y="${190-y*.8}" width="16" height="8" fill="#fde68a"/>`;}
-    s+=`<text x="320" y="240" text-anchor="middle" ${AR} font-size="13" fill="#7c2d12">منظر جانبي: الكتلتان تنزلقان أفقيًّا؛ الأولى نحو الداخل والثانية نحو الخارج</text>`;qk.push([321,140],[321,180]);}
-   if(t>.15)qk.forEach(([x,y])=>s+=`<g transform="translate(${x} ${y})"><circle r="${8+((Date.now()/80)%10)}" fill="none" stroke="#dc2626" stroke-width="2"/><circle r="4" fill="#dc2626"/></g>`);
-   s+='<defs><marker id="pa" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="#fff"/></marker></defs>';
-   $('#p1svg').innerHTML=s;if(t>.5){seen.add(b.k);$('#p1o').innerHTML=`<b>${b.n}:</b> ${b.out}<br><span style="color:#dc2626">● زلازل</span>`;if(seen.size===3)G.add(6,'lab1');}};
-  $('#p1b').innerHTML=BD.map((b,i)=>`<button class="c6-chip" type="button" data-i="${i}" aria-pressed="${i===0}"><span style="direction:ltr;display:inline-block">${b.ic}</span> ${b.n}</button>`).join('');
-  $$('#p1b [data-i]').forEach(x=>x.onclick=()=>{k=+x.dataset.i;$$('#p1b [data-i]').forEach(y=>y.setAttribute('aria-pressed',y===x));$('#p1r').value=0;SFX.tick();draw();});
-  $('#p1r').oninput=draw;draw();
-  mcq($('#p1q'),{q:'عند أي الحدود تتكون عادة البراكين المركبة؟',o:['حدود التقارب حيث تغوص صفيحة تحت أخرى','الحدود الجانبية','وسط الصفيحة','لا تتكون عند أي حد'],a:0},'lab1',()=>G.complete('lab1'));},
- explain:'<p>محاكاة مبسطة مقترحة لأنواع حدود الصفائح الثلاثة ونتائجها.</p>'});
+/* ---------- 1) تشريح البركان ---------- */
+const VOL=`<svg viewBox="0 0 320 300" style="max-width:340px;direction:ltr"><rect width="320" height="300" fill="#e0f2fe"/><path d="M0 230 L110 70 h100 L320 230z" fill="#7c4a1e"/><path d="M0 230h320v70H0z" fill="#a16207"/>
+ <ellipse cx="160" cy="270" rx="70" ry="22" fill="#ea580c"/><path d="M152 248 L150 72 h20 l-2 176z" fill="#f97316"/><path d="M168 90 Q220 130 250 210" stroke="#f97316" stroke-width="10" fill="none"/>
+ <path d="M140 70 q-20 -40 10 -50 q10 -20 30 -5 q30 -5 25 25 q20 15 -5 30z" fill="#94a3b8" opacity=".85"/><circle cx="90" cy="40" r="7" fill="#292524"/><circle cx="240" cy="55" r="6" fill="#292524"/>
+ ${[['1',160,62],['2',236,170],['3',176,160],['4',160,276],['5',170,22],['6',240,48]].map(([t,x,y])=>`<circle cx="${x}" cy="${y}" r="11" fill="#fff" stroke="#111"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="13" font-weight="800">${t}</text>`).join('')}</svg>`;
+def('lab1',{after:'s1',n:'🧪 تشريح البركان',eyebrow:'نشاط تفاعلي · مقترح',title:'مختبر تشريح البركان: سمِّ الأجزاء',goal:'اختر اسم الجزء من البطاقات ثم المس رقمه في القائمة.',plan:5,core:1,
+ icon:'<path d="M8 70L32 26h16l24 44z" fill="none" stroke="currentColor" stroke-width="5"/><path d="M40 26v44" stroke="currentColor" stroke-width="4"/>',body:'<div class="card"><div id="v1"></div></div>',
+ init(){C6.label($('#v1'),{fig:VOL,slots:[['1','الفوهة'],['2','اللابة'],['3','قناة الصهارة (المدخنة)'],['4','غرفة الصهارة'],['5','سحابة الرماد والغازات'],['6','القنابل البركانية']],done:'أحسنت! عرفت أجزاء البركان الرئيسة.'},'lab1',()=>G.complete('lab1'));const ck=$('#v1 .c6-key');if(ck)ck.style.gridTemplateColumns='minmax(0,1fr) minmax(0,1fr)';},
+ explain:'<p>رسم مبسط مقترح (ليس رسم الكتاب) لأجزاء البركان الواردة في الدرس.</p>'});
 
-/* ---------- 2) سلسلة جزر البقعة الساخنة ---------- */
-def('lab2',{after:'s3',n:'🧪 البقعة الساخنة',eyebrow:'تجربة افتراضية · مقترحة',title:'صانع الجزر: الصفيحة فوق البقعة الساخنة',goal:'البقعة الساخنة ثابتة في أعماق الأرض، والصفيحة تتحرك فوقها. حرّك الزمن وراقب تكوّن سلسلة جزر مثل هاواي. أي الجزر أقدم؟',plan:6,core:1,
- icon:'<circle cx="40" cy="60" r="10" fill="currentColor"/><path d="M10 30l8-8 8 8M34 30l8-12 8 12M58 30l6-6 6 6" fill="none" stroke="currentColor" stroke-width="4"/>',
- body:`<div class="two"><div class="stage"><svg id="h2svg" viewBox="0 0 640 300" aria-label="بقعة ساخنة"></svg><div style="padding:10px"><label class="step-text">⏳ الزمن: <b id="h2v">0</b> مليون سنة<input type="range" id="h2r" min="0" max="10" value="0" style="width:100%"></label></div></div>
-  <div class="side"><div class="card"><div id="h2o" class="step-text"></div></div></div></div><div class="card"><div id="h2q"></div></div>`,
- init(){const draw=()=>{const t=+$('#h2r').value;$('#h2v').textContent=t*1;let s=`<rect width="640" height="300" fill="#e0f2fe"/><rect y="110" width="640" height="10" fill="#3b82f6" opacity=".4"/><rect y="120" width="640" height="60" fill="#1e3a8a"/><rect y="180" width="640" height="120" fill="#f59e0b" opacity=".6"/>`;
-   s+=`<path d="M320 300 Q300 230 320 180 Q340 230 320 300" fill="#dc2626"/><text x="320" y="290" text-anchor="middle" ${AR} font-size="13" font-weight="800" fill="#fff">البقعة الساخنة</text>`;
-   for(let i=0;i<=t;i+=2){const x=320-(t-i)*28,age=t-i,h=Math.max(18,60-age*5);if(x<10)continue;s+=`<path d="M${x-30} 120 L${x} ${120-h} L${x+30} 120z" fill="${age<1?'#7c2d12':age<4?'#57534e':'#78716c'}"/>${age<1?`<path d="M${x} ${120-h} q-6 -20 6 -30" stroke="#ea580c" stroke-width="4" fill="none"/>`:''}<text x="${x}" y="${100-h}" text-anchor="middle" ${AR} font-size="11" fill="var(--ink)">${age} م.س</text>`;}
-   s+=`<path d="M560 150 h-80" stroke="#fff" stroke-width="5" marker-end="url(#ha)"/><text x="520" y="170" text-anchor="middle" ${AR} font-size="12" fill="#fff">اتجاه حركة الصفيحة</text><defs><marker id="ha" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="#fff"/></marker></defs>`;
-   $('#h2svg').innerHTML=s;$('#h2o').innerHTML=t?`تكوّنت <b>${Math.floor(t/2)+1}</b> جزيرة. الجزيرة النشطة فوق البقعة الساخنة مباشرة، والجزر الأبعد عنها أقدم وخامدة.`:'حرّك الزمن.';if(t>=8)G.add(0,'lab2');};
-  $('#h2r').oninput=()=>{SFX.tick();draw();};draw();
-  mcq($('#h2q'),{q:'في سلسلة جزر البقعة الساخنة، أي الجزر أقدم؟',o:['الأبعد عن البقعة الساخنة في اتجاه حركة الصفيحة','الجزيرة النشطة فوق البقعة','جميعها بالعمر نفسه','الأقرب إلى البقعة'],a:0,why:'لأن الصفيحة تحملها بعيدًا بعد تكوّنها، وتتكون جزيرة جديدة فوق البقعة الثابتة.'},'lab2',()=>G.complete('lab2'));},
- explain:'<p>محاكاة مقترحة لتكوّن سلسلة جزر هاواي فوق بقعة ساخنة وسط صفيحة المحيط الهادئ؛ الأعمار توضيحية.</p>'});
+/* ---------- 2) مختبر السليكا ---------- */
+def('lab2',{after:'s3',n:'🧪 مختبر السليكا',eyebrow:'تجربة افتراضية · مقترحة',title:'مختبر السليكا والغازات: هادئ أم عنيف؟',goal:'غيّر نسبة السليكا وكمية الغازات وبخار الماء، ثم اضغط «ثوران». لاحظ لزوجة اللابة وشدة الثوران.',plan:7,core:1,
+ icon:'<path d="M20 70L36 30h8l16 40z" fill="currentColor"/><circle cx="30" cy="16" r="5" fill="currentColor"/><circle cx="50" cy="12" r="4" fill="currentColor"/>',
+ body:`<div class="two"><div class="stage"><svg id="l2svg" viewBox="0 0 640 320" aria-label="بركان"></svg><div style="padding:10px"><label class="step-text">نسبة السليكا: <b id="l2sv">50</b>%<input type="range" id="l2s" min="45" max="75" value="50" style="width:100%"></label><label class="step-text">الغازات وبخار الماء: <b id="l2gv">قليلة</b><input type="range" id="l2g" min="0" max="2" value="0" style="width:100%"></label><button class="btn" type="button" id="l2go">🌋 ثوران</button></div></div>
+  <div class="side"><div class="card"><h3>اختبار اللزوجة</h3><svg id="l2v" viewBox="0 0 260 150" style="direction:ltr"></svg><p class="hint-line">قطرة من اللابة على سطح مائل.</p></div><div class="card"><div id="l2o" class="step-text"></div></div></div></div>
+  <div class="card"><div id="l2q"></div></div>`,
+ init(){let tm=null,t=0;const tried=new Set();
+  const S=()=>+$('#l2s').value,Gs=()=>+$('#l2g').value;const visc=()=>(S()-45)/30;const pow=()=>Math.min(1,visc()*.7+Gs()*.2);
+  const draw=()=>{const v=visc(),p=pow(),run=t>0;let s=`<rect width="640" height="320" fill="#e0f2fe"/><path d="M80 300 L280 120 h80 L560 300z" fill="#57534e"/><rect y="300" width="640" height="20" fill="#a16207"/>`;
+   if(run){if(p>.55){const r=t*6;for(let i=0;i<22;i++){const a=-Math.PI/2+(i-11)*.12,d=r*(0.6+((i*37)%10)/14);s+=`<circle cx="${320+Math.cos(a)*d}" cy="${120+Math.sin(a)*d+t*t*.05}" r="${4+i%4}" fill="${i%3?'#292524':'#f97316'}"/>`;}s+=`<path d="M300 120 q-${30+t*3} -${60+t*5} 20 -${90+t*6} q${40+t*2} -${10+t} ${30} ${80+t*4}z" fill="#78716c" opacity=".8"/>`;}
+    else{const L=Math.min(200,t*4*(1.2-v));s+=`<path d="M300 120 h40 Q${360+L*.6} ${200} ${360+L} 300 L${280-L} 300 Q${280-L*.6} 200 300 120z" fill="#f97316" opacity=".9"/>`;}}
+   $('#l2svg').innerHTML=s;
+   const dx=(1-v)*190*Math.min(1,t/30);$('#l2v').innerHTML=`<path d="M10 40 L250 120" stroke="#475569" stroke-width="5"/><circle cx="${30+dx}" cy="${42+dx*.33}" r="${12+v*6}" fill="#f97316"/>`;
+   $('#l2sv').textContent=S();$('#l2gv').textContent=['قليلة','متوسطة','كثيرة'][Gs()];};
+  $('#l2go').onclick=()=>{t=0;clearInterval(tm);const p=pow();tried.add(p>.55?'v':'q');p>.55?SFX.thud&&SFX.thud():SFX.pop();
+   tm=setInterval(()=>{t++;draw();if(t>40)clearInterval(tm);},50);
+   $('#l2o').innerHTML=p>.55?`<b style="color:#b91c1c">ثوران عنيف (متفجر)!</b> اللابة لزجة (سليكا ${S()}%) تقاوم التدفق وتحبس الغازات فيتراكم الضغط حتى الانفجار، فتُقذف المقذوفات والرماد.`:`<b style="color:#c2410c">ثوران هادئ:</b> اللابة قليلة اللزوجة (سليكا ${S()}%) تتدفق بسهولة كالنهر، وتتسرب الغازات منها بهدوء.`;
+   if(tried.size===2)G.add(5,'lab2');};
+  ['l2s','l2g'].forEach(i=>$('#'+i).oninput=()=>{t=0;draw();});STN.lab2.stop=()=>clearInterval(tm);draw();
+  mcq($('#l2q'),{q:'ماذا تستنتج؟',o:['كلما زادت السليكا والغازات زادت لزوجة اللابة وشدة الثوران','السليكا تقلل اللزوجة','الغازات لا تؤثر في الثوران','كل البراكين تثور بالطريقة نفسها'],a:0},'lab2',()=>G.complete('lab2'));},
+ leave(){STN.lab2.stop&&STN.lab2.stop();},explain:'<p>محاكاة مقترحة؛ نسب السليكا وحد الانفجار تقريبية للتوضيح.</p>'});
 
-/* ---------- 3) خزان تيارات الحمل ---------- */
-def('lab3',{after:'s7',n:'🧪 تيارات الحمل',eyebrow:'تجربة افتراضية · مقترحة',title:'خزان تيارات الحمل: كيف تتحرك الصفائح؟',goal:'شغّل مصدر الحرارة (لب الأرض) وزِد شدته. راقب حركة مادة الستار والصفيحتين فوقها.',plan:6,core:1,
- icon:'<path d="M20 60c-10-20 0-40 20-40s30 20 20 40" fill="none" stroke="currentColor" stroke-width="5"/><path d="M30 70h20" stroke="currentColor" stroke-width="6"/>',
- body:`<div class="two"><div class="stage"><svg id="c3svg" viewBox="0 0 640 300" aria-label="خزان الحمل"></svg><div style="padding:10px"><label class="step-text">🔥 شدة التسخين: <b id="c3v">0</b><input type="range" id="c3r" min="0" max="3" value="0" style="width:100%"></label></div></div>
-  <div class="side"><div class="card"><div id="c3o" class="step-text">التسخين متوقف: لا حركة.</div></div></div></div><div class="card"><div id="c3q"></div></div>`,
- init(){let ph=0,tm=null,off=0;const P=[...Array(70)].map((_,i)=>({a:i/70*6.28*2,side:i%2}));
-  const draw=()=>{const h=+$('#c3r').value;$('#c3v').textContent=['متوقف','ضعيف','متوسط','قوي'][h];let s=`<rect width="640" height="300" fill="#fed7aa"/><rect y="270" width="640" height="30" fill="#7f1d1d"/><text x="320" y="290" text-anchor="middle" ${AR} font-size="13" fill="#fff">لب الأرض (مصدر الحرارة)</text>`;
-   s+=`<rect x="${10-off}" y="20" width="300" height="34" fill="#1e3a8a"/><rect x="${330+off}" y="20" width="300" height="34" fill="#1e3a8a"/><text x="${160-off}" y="42" text-anchor="middle" ${AR} font-size="13" fill="#fff">صفيحة</text><text x="${480+off}" y="42" text-anchor="middle" ${AR} font-size="13" fill="#fff">صفيحة</text>`;
-   P.forEach(p=>{const cx=p.side?480:160,dir=p.side?-1:1,a=p.a+ph*dir,x=cx+Math.cos(a)*130*dir,y=160+Math.sin(a)*90;const hot=x>250&&x<390||Math.sin(a)>0.5;s+=`<circle cx="${x}" cy="${y}" r="5" fill="${hot?'#dc2626':'#f59e0b'}" opacity=".85"/>`;});
-   if(h)s+=`<path d="M320 250 V80" stroke="#dc2626" stroke-width="4" stroke-dasharray="6 6" marker-end="url(#ca)"/><path d="M40 90 V230 M600 90 V230" stroke="#2563eb" stroke-width="4" stroke-dasharray="6 6" marker-end="url(#cb)"/><defs><marker id="ca" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="#dc2626"/></marker><marker id="cb" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0L6 3L0 6z" fill="#2563eb"/></marker></defs>`;
-   $('#c3svg').innerHTML=s;};
-  $('#c3r').oninput=()=>{const h=+$('#c3r').value;clearInterval(tm);if(h){tm=setInterval(()=>{ph+=.01*h;off=Math.min(60,off+.08*h);draw();},40);$('#c3o').innerHTML='المادة الساخنة في الوسط تقل كثافتها فتصعد، ثم تبرد عند الأعلى وتتحرك أفقيًّا ساحبة الصفيحتين بعيدًا عن بعضهما، ثم تنزل عند الأطراف. كلما زاد التسخين أسرعت الحركة.';G.add(3,'lab3');}else $('#c3o').textContent='التسخين متوقف: لا حركة.';draw();};
-  STN.lab3.stop=()=>clearInterval(tm);draw();
-  mcq($('#c3q'),{q:'لماذا تصعد مادة الستار الساخنة إلى أعلى؟',o:['لأن كثافتها تقل عند تسخينها','لأن كثافتها تزداد','لأن الصفائح تسحبها','بسبب جاذبية القمر'],a:0},'lab3',()=>G.complete('lab3'));},
- leave(){STN.lab3.stop&&STN.lab3.stop();},explain:'<p>نموذج مقترح لفرضية تيارات الحمل.</p>'});
+/* ---------- 3) باني البراكين ---------- */
+const BT=[{n:'درعي',f:(x,k)=>Math.max(0,1-Math.abs(x)/1)*0.28*k,sl:'قليل الانحدار وواسع',ly:'طبقات لابة بازلتية منبسطة'},{n:'مخروطي',f:(x,k)=>Math.max(0,1-Math.abs(x)/.25)*0.38*k,sl:'شديد الانحدار وصغير',ly:'رماد وفتات بركاني'},{n:'مركب',f:(x,k)=>Math.max(0,1-Math.abs(x)/.6)*0.85*k,sl:'شديد الانحدار وكبير',ly:'طبقات متعاقبة: رماد ثم لابة'}];
+def('lab3',{after:'s4',n:'🧪 باني البراكين',eyebrow:'تجربة افتراضية · مقترحة',title:'باني البراكين: ثورانًا بعد ثوران',goal:'اختر نوع البركان، ثم اضغط «ثوران» عدة مرات، وراقب كيف تتراكم الطبقات ويتشكل الشكل والانحدار.',plan:6,core:1,
+ icon:'<path d="M4 64Q40 40 76 64z" fill="currentColor"/><path d="M28 64L40 30 52 64z" fill="currentColor" opacity=".5"/>',
+ body:`<div class="two"><div class="stage"><svg id="b3svg" viewBox="0 0 640 300" aria-label="مقطع بركان"></svg><div class="row-actions" style="padding:10px"><div class="c6-chips" id="b3t"></div><button class="btn" type="button" id="b3go">🌋 ثوران</button><button class="tbtn" type="button" id="b3r">إعادة</button></div></div>
+  <div class="side"><div class="card"><h3>البطاقة</h3><div id="b3o" class="step-text"></div></div></div></div>`,
+ init(){let ty=0,k=0;const built=new Set();
+  const draw=()=>{const T=BT[ty];let s=`<rect width="640" height="300" fill="#e0f2fe"/><rect y="270" width="640" height="30" fill="#a16207"/>`;
+   for(let L=k;L>=1;L--){let d='M20 270';for(let X=0;X<=600;X+=6){const x=(X-300)/300;d+=` L${20+X} ${270-T.f(x,L/6)*250}`;}const ash=ty===1||(ty===2&&L%2===1);s+=`<path d="${d} L620 270z" fill="${ash?(L%2?'#78716c':'#a8a29e'):(L%2?'#7c2d12':'#9a3412')}"/>`;}
+   if(k)s+=`<path d="M320 ${270-T.f(0,k/6)*250} V270" stroke="#f97316" stroke-width="5"/>`;$('#b3svg').innerHTML=s;
+   $('#b3o').innerHTML=`<b>البركان ال${T.n}</b><br>المواد: ${T.ly}.<br>الشكل: ${T.sl}.<br>عدد الثورانات: ${k}`;};
+  $('#b3t').innerHTML=BT.map((b,i)=>`<button class="c6-chip" type="button" data-i="${i}" aria-pressed="${i===0}">${b.n}</button>`).join('');
+  $$('#b3t [data-i]').forEach(b=>b.onclick=()=>{ty=+b.dataset.i;k=0;$$('#b3t [data-i]').forEach(x=>x.setAttribute('aria-pressed',x===b));draw();});
+  $('#b3go').onclick=()=>{if(k<6){k++;SFX.pop();draw();if(k===6){built.add(ty);G.add(3,'lab3');if(built.size===3)G.complete('lab3');}}};$('#b3r').onclick=()=>{k=0;draw();};draw();},
+ explain:'<p>نموذج مقترح مبسط: الدرعي واسع قليل الانحدار، والمخروطي صغير شديد الانحدار، والمركب كبير بطبقات متعاقبة.</p>'});
 })();
 
 /*@css c2.css*/
-/*@include lab6.js*/
+/*@include lab5.js*/
 /*@include kit.js*/
 /*@include skit.js*/
-/* ===== الفصل الثاني · الدرس الثالث: الصفائح الأرضية وعلاقتها بالزلازل والبراكين — «أحجية الأرض» ===== */
+/* ===== الفصل الثاني · الدرس الثاني: البراكين — «فوهة النار» ===== */
 (function(){
-const {$,$$,G,STN,def,mcq,flips,match,sortGame,challenge,say,SFX,pic,slides,escape,auction,riddles,choiceBoard,solutions}=K;
+const {$,$$,G,STN,def,mcq,flips,match,sortGame,challenge,say,SFX,pic,slides,escape,bingo,tfRound,choiceBoard,solutions}=K;
 const {fig,grid,reveal,ICO,lst,order,fill,tfx,label}=C6;const P=(n,c)=>[n,c];
-const PIC='<path d="M6 30h30l6 10h32M6 50h22l8-10" fill="none" stroke="currentColor" stroke-width="5"/>';
+const VIC='<path d="M8 70L32 26h16l24 44z" fill="none" stroke="currentColor" stroke-width="5"/><path d="M36 26c0-10 8-14 4-22M44 26c2-8 10-10 8-18" fill="none" stroke="currentColor" stroke-width="4"/>';
 
-def('intro',{n:'الافتتاحية',plan:3,icon:'<circle cx="40" cy="40" r="28" fill="none" stroke="currentColor" stroke-width="5"/><path d="M14 30h20l6 10 10-4 16 6M20 56l14-6 8 8" fill="none" stroke="currentColor" stroke-width="4"/>',
- body:`<div class="hero"><div class="hero-photo">${pic('s01_bdbd1c64','صدع في سطح الأرض')}<span class="cap">الفصل الثاني: تغيرات الأرض.</span></div>
-  <div><span class="eyebrow">أحجية الأرض</span><h2 class="hero-h">قشرة الأرض… قطع أحجية تتحرك!</h2>
-   <p class="riddle">يعتقد العلماء أن الأرض تشكلت منذ نحو 4.54 مليار عام. فهل تغيّر شكل الأرض على مدى عمرها؟ ولماذا تتجمع الزلازل والبراكين في أماكن محددة؟</p>
+def('intro',{n:'الافتتاحية',plan:3,icon:VIC,
+ body:`<div class="hero"><div class="hero-photo">${pic('s01_6c612d53','ثوران بركاني')}<span class="cap">الفصل الثاني: تغيرات الأرض.</span></div>
+  <div><span class="eyebrow">فوهة النار</span><h2 class="hero-h">لماذا يثور بركان بهدوء… ويثور آخر بعنف؟</h2>
+   <p class="riddle">في حرة رهط بالمملكة تدفقت اللابة كأنهار هادئة، وفي براكين أخرى انفجرت الصخور والرماد آلاف الأمتار في الهواء. ما سر هذا الاختلاف؟</p>
    <p class="q">ما توقعك قبل أن تبدأ؟</p><div class="opts" id="introOpts"></div><div id="introFb"></div></div></div>
   <div class="card teacher-only"><h3>مسار الحصة</h3><div id="introPlan"></div></div>`,init(){}});
 
-const GOALS=['توضح علاقة مواقع البراكين ومراكز الزلازل السطحية بحدود الصفائح.','تشرح كيف تسبب الحرارة في باطن الأرض حركة الصفائح.','تبين الفرق بين أنواع حدود الصفائح.'];
-const TERMS=[{t:'اللابة (الحمم)',d:'الصهارة المتدفقة على سطح الأرض. (مراجعة المفردات)'},{t:'الصفيحة',d:'قطعة من الغلاف الصخري المكون من القشرة الأرضية وأعلى الستار.'},{t:'الغلاف المائع',d:'طبقة لدنة من الستار تتحرك عليها الصفائح.'},{t:'البقعة الساخنة',d:'مركز بركاني نشط يظهر بسبب ارتفاع غير عادي في درجة الحرارة في بقعة في أعماق الأرض، وقد يكون وسط الصفيحة.'},{t:'الغلاف الصخري',d:'نطاق صلب سمكه حوالي 100 كم، يتكون من القشرة الأرضية والجزء العلوي من الستار.'},{t:'حفرة الانهدام',d:'شقوق طويلة تتكون بين الصفائح المتباعدة.'}];
-def('goals',{n:'الأهداف والمفردات',eyebrow:'الكتاب صفحة 66',title:'الأهداف والمفردات',goal:'تعرّف أهداف الدرس وأهميته ومفرداته.',plan:4,icon:ICO.doc,
- body:`<div class="two"><div class="card"><h3>أهداف الدرس</h3><ol class="goals">${GOALS.map(g=>`<li>${g}</li>`).join('')}</ol><div class="story mt"><b>أهمية الدرس:</b> توضح نظرية الصفائح التكتونية كيف تتشكل الكثير من المعالم الأرضية، وتنتج عن حركتها معظم الزلازل والبراكين.</div></div>
-  <div class="card"><h3>مراجعة المفردات</h3><p class="step-text"><b>اللابة (الحمم):</b> الصهارة المتدفقة على سطح الأرض.</p><h3 class="mt">المفردات الجديدة</h3><ul class="tasks plain"><li>الصفيحة</li><li>الغلاف المائع</li><li>البقعة الساخنة</li><li>الغلاف الصخري</li><li>حفرة الانهدام</li></ul></div></div>
-  <div class="card"><div class="nb-head"><h2>بطاقات المفردات</h2></div><div id="g6f"></div></div><div class="card"><div class="nb-head"><h2>لعبة المطابقة</h2></div><div id="g6m"></div></div>`,
- init(){flips($('#g6f'),TERMS);this.reset();},reset(){match($('#g6m'),TERMS.slice(1).map(t=>[t.t,t.d]),'goals',()=>G.complete('goals'));}});
+const GOALS=['تشرح كيف تؤثر البراكين في الناس.','تصف كيف تنتج البراكين مواد مختلفة.','تقارن بين كيفية تكون الأشكال الثلاثة من البراكين.'];
+const TERMS=[{t:'الصهارة',d:'صخور مصهورة في باطن الأرض. (مراجعة المفردات)'},{t:'البركان',d:'تلال أو جبال مخروطية (قمعية) الشكل تكونت بفعل ثورانات الصهارة.'},{t:'اللابة',d:'الصهارة عندما تتدفق على سطح الأرض من فوهة البركان.'},{t:'البركان الدرعي',d:'بركان واسع الامتداد، قليل الانحدار، يتكون من تراكم طبقات اللابة البازلتية.'},{t:'البركان المخروطي',d:'مخروط صغير من المواد البركانية يتكون عندما يقذف البركان الرماد واللابة إلى ارتفاعات كبيرة ثم تبرد وتعود إلى الأرض.'},{t:'البركان المركب',d:'بركان شديد الانحدار يتشكل نتيجة تراكم طبقات متعاقبة من الانفجارات العنيفة والثورانات الهادئة.'}];
+def('goals',{n:'الأهداف والمفردات',eyebrow:'الكتاب صفحة 61',title:'الأهداف والمفردات',goal:'تعرّف أهداف الدرس وأهميته ومفرداته.',plan:4,icon:ICO.doc,
+ body:`<div class="two"><div class="card"><h3>أهداف الدرس</h3><ol class="goals">${GOALS.map(g=>`<li>${g}</li>`).join('')}</ol><div class="story mt"><b>أهمية الدرس:</b> قد تعرّض الثورانات البركانية الإنسان والمخلوقات الحية لمخاطر كبيرة.</div></div>
+  <div class="card"><h3>مراجعة المفردات</h3><p class="step-text"><b>الصهارة:</b> صخور مصهورة في باطن الأرض.</p><h3 class="mt">المفردات الجديدة</h3><ul class="tasks plain"><li>البركان</li><li>اللابة</li><li>البركان الدرعي</li><li>البركان المخروطي</li><li>البركان المركب</li></ul></div></div>
+  <div class="card"><div class="nb-head"><h2>بطاقات المفردات</h2></div><div id="g5f"></div></div><div class="card"><div class="nb-head"><h2>لعبة المطابقة</h2></div><div id="g5m"></div></div>`,
+ init(){flips($('#g5f'),TERMS);this.reset();},reset(){match($('#g5m'),TERMS.slice(1).map(t=>[t.t,t.d]),'goals',()=>G.complete('goals'));}});
 
-def('s1',{n:'1 · الصفائح الأرضية',eyebrow:'المحطة 1 · الكتاب صفحة 66',title:'نظرية الصفائح الأرضية وتركيبها',goal:'هل تغيّر شكل الأرض على مدى عمرها؟',plan:7,core:1,icon:PIC,
- body:`<div class="card" id="s1sl"></div><div class="two"><div class="card"><h3>عنون مقطع الصفائح</h3><div id="s1l"></div></div><div class="card"><h3>قارن: الصفائح المحيطية والقارية</h3><div id="s1s"></div></div></div>`,
- init(){let n=0;const c=()=>{if(++n>=2)G.complete('s1');};
-  slides($('#s1sl'),[
-   {k:'الصفائح الأرضية',t:'منذ 4.54 مليار عام',im:[P('s05_3a4745d3','الأرض')],html:'<p>يعتقد العلماء أن الأرض تشكلت منذ نحو <b>4.54 مليار عام</b>. فهل تغيّر شكل الأرض على مدى عمرها؟</p>'},
-   {k:'نظرية الصفائح الأرضية',t:'1960م',im:[P('s06_81cae385','مقطع في الصفائح'),P('s06_9cd4801c','البراكين'),P('s06_78621292','الزلازل')],html:'<p>طوّر العلماء عام 1960م نظرية الصفائح الأرضية اعتمادًا على فرضيات سابقة وضعت لتفسير المعالم والأحداث الجيولوجية على سطح الأرض.</p><p>إن الغلاف الصخري المكون من القشرة الأرضية وأعلى الستار مقسم إلى قطع يسمى كل منها <b>صفيحة</b>. تتحرك هذه القطع على طبقة لدنة من الستار تسمى <b>الغلاف المائع</b>. وينتج عن هذه الحركة جميع المعالم والأحداث الجيولوجية، ومنها الزلازل والبراكين وتكوّن الجبال وتشكّل المحيطات.</p>'},
-   {k:'تركيب الصفائح الأرضية',t:'الغلاف الصخري',im:[P('s07_9dadbf17','الغلاف الصخري')],html:'<p>تتكون الصفائح الأرضية من القشرة الأرضية والجزء العلوي من الستار، في ما يعرف بـ<b>الغلاف الصخري</b>، وهو عبارة عن نطاق صلب سمكه حوالي <b>100 كم</b>، وكثافته غالبًا أقل من كثافة المواد التي تقع أسفل منه. وتطفو الصفائح الصلبة، وتتحرك فوق الغلاف المائع.</p>'},
-   {k:'تركيب الصفائح الأرضية',t:'محيطية وقارية',im:[P('s09_9dadbf17','الصفائح المحيطية والقارية'),P('s09_dd41d422','خريطة الصفائح')],html:'<p>تقسم الصفائح الأرضية إلى <b>صفائح محيطية</b> تقع أسفل المحيط، و<b>صفائح قارية</b> تشكّل القارات. وتتميز الصفائح المحيطية بأنها <b>أكبر كثافة وأقل سمكًا</b> من الصفائح القارية.</p>'}],'s1');
-  label($('#s1l'),{fig:`<svg viewBox="0 0 260 200" style="max-width:280px"><rect width="260" height="40" fill="#bae6fd"/><path d="M0 40h120v20H0z" fill="#1d4ed8"/><path d="M120 30h140v40H120z" fill="#a3c76d"/><path d="M0 60h120v30H0zM120 70h140v30H120z" fill="#b07a43"/><rect y="100" width="260" height="40" fill="#f59e0b"/><rect y="140" width="260" height="60" fill="#dc2626" opacity=".7"/>${[['1',60,52],['2',190,52],['3',130,90],['4',130,124],['5',130,174]].map(([t,x,y])=>`<circle cx="${x}" cy="${y}" r="11" fill="#fff" stroke="#111"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="13" font-weight="800">${t}</text>`).join('')}</svg>`,slots:[['1','القشرة المحيطية'],['2','القشرة القارية'],['3','الغلاف الصخري (صفيحة)'],['4','الغلاف المائع'],['5','الستار']]},'s1',c);
-  sortGame($('#s1s'),{bins:['الصفائح المحيطية','الصفائح القارية'],items:[['تقع أسفل المحيط',0],['أكبر كثافة',0],['أقل سمكًا',0],['تشكّل القارات',1],['أقل كثافة',1],['أكبر سمكًا',1]]},'s1',c);},
- explain:'<p>رسم المقطع المرقّم مبسط ومقترح.</p>'});
+def('s1',{n:'1 · كيف تتشكل البراكين؟',eyebrow:'المحطة 1 · الكتاب صفحة 61',title:'كيف تتشكل البراكين؟',goal:'تأمل ما يحدث في الشكل: تتحرك الصخور المنصهرة وتصعد إلى سطح الأرض.',plan:7,core:1,icon:VIC,
+ body:`<div class="card" id="s1sl"></div><div class="card"><h3>نظرة عامة: أجزاء البركان</h3><div class="two">${fig('s08_744be083','حاول أن تتعرف على بعض هذه الأجزاء',360)}<div><p class="step-text">حاول أن تتعرف على بعض أجزاء البركان في الشكل، ثم جرّب «مختبر تشريح البركان» التالي.</p></div></div></div>`,
+ init(){slides($('#s1sl'),[
+  {k:'كيف تتشكل البراكين؟',t:'البركان Volcano',im:[P('s05_67786d02','تشكل البركان')],html:'<p>تتحرك الصخور المنصهرة بفعل الصخور ذات الكثافة العالية وتجبرها على الصعود إلى سطح الأرض، وتؤدي الصهارة الصاعدة إلى حدوث ثوران بركاني، لا يلبث أن يأخذ في التصلب، بينما تستمر الغازات في الخروج منه، ويتشكل في النهاية جبل قمعي الشكل يسمى <b>البركان</b>.</p>'},
+  {k:'البركان',t:'التعريف والفوهة واللابة',im:[P('s06_37f49141','لابة'),P('s06_fb1974ba','ثوران'),P('s06_1b6c037b','بركان')],html:'<p class="def"><b>البركان:</b> تلال أو جبال مخروطية (قمعية) الشكل تكونت بفعل ثورانات الصهارة.</p><p>تحتوي البراكين على فتحات دائرية عند قممها تسمى <b>فوهة البركان</b>.</p><p>عندما تتدفق الصهارة على سطح الأرض من فوهة البركان فإنها تسمى <b>اللابة</b>.</p>'},
+  {k:'المقذوفات الصلبة',t:'الفتات البركاني',im:[P('s07_3f05d929','سحب الرماد'),P('s07_38b0436f','قنابل بركانية')],html:'<p>تُلقي بعض الثورانات المتفجرة اللابة والصخور في الهواء آلاف الأمتار، وتسمى هذه القطع الصخرية أو اللابة المتصلبة المتساقطة من الهواء <b>المقذوفات</b> (الفتات البركاني).</p><p>يتراوح حجم المقذوفات الصلبة بين غبار ورماد بركاني، وصخور كبيرة تسمى <b>قنابل بركانية</b>.</p>'}],'s1',()=>G.complete('s1'));}});
 
-def('s2',{n:'2 · حدود الصفائح',eyebrow:'المحطة 2 · نشاط صفي · 5 دقائق · الكتاب صفحة 65–67',title:'حدود الصفائح المتحركة',goal:'تسمى الحدود الفاصلة بين هذه الصفائح حدود الصفائح. ما أنواعها؟',plan:6,core:1,icon:PIC,
- body:`<div class="two"><div class="card">${fig('s10_65207767','نشاط صفي: نمذجة حركة الصفائح بالطاولات',300)}<div class="tablewrap"><table class="c6-table"><thead><tr><th>نوع الحد</th><th>كيف ينتج؟</th></tr></thead><tbody><tr><td>1 · حدود تقارب</td><td>تنتج عندما تتحرك الصفائح بعضها نحو بعض وتتقارب أو تتصادم.</td></tr><tr><td>2 · حدود تباعد</td><td>تنتج عندما تتحرك الصفائح مبتعدة عن بعضها البعض.</td></tr><tr><td>3 · حدود جانبية (تحويلية)</td><td>تنتج عندما تتحرك الصفائح أو تنزلق بعضها بمحاذاة بعض.</td></tr></tbody></table></div><p class="step-text">وينجم عن حركة الصفائح الزلازل والبراكين.</p></div>
-  <div class="card"><h3>ماذا قرأت؟ طابق نوع الحد بحركته</h3><div id="s2m"></div>${grid([['s11_10969790','أنواع حدود الصفائح']])}</div></div>`,
- init(){match($('#s2m'),[['حدود تقارب','الصفائح تتحرك بعضها نحو بعض وتتصادم'],['حدود تباعد','الصفائح تتحرك مبتعدة عن بعضها'],['حدود جانبية (تحويلية)','الصفائح تنزلق بعضها بمحاذاة بعض']],'s2',()=>G.complete('s2'));}});
+def('s2',{n:'2 · أخطار البراكين',eyebrow:'المحطة 2 · الكتاب صفحة 62',title:'أخطار البراكين',goal:'كيف تؤثر البراكين في الناس؟',plan:5,core:1,icon:'<path d="M40 8L74 68H6z" fill="none" stroke="currentColor" stroke-width="5"/><path d="M40 28v20M40 56v4" stroke="currentColor" stroke-width="6"/>',
+ body:`<div class="card"><div class="c6-grid">${[['s09_843990f0','تدمير المدن والقرى','بسبب الانهيارات والتدفقات الطينية الملتهبة.'],['s09_51d38df2','إغلاق المطارات والموانئ','قد يؤثر الغبار والمقذوفات البركانية على الحركة.'],['s09_dd38bb0e','تدفقات الفتات البركاني','وهي انهيارات سريعة لصخور حارة متوهجة مصحوبة بغازات حارة.']].map(([n,t,d])=>`<div class="card" style="padding:8px">${pic(n,t)}<h3 class="mt">${t}</h3><p class="step-text">${d}</p></div>`).join('')}</div><p class="step-text mt">ويُشكّل الرماد البركاني تدفقًا طينيًّا إذا امتزج بالأمطار.</p></div>
+  <div class="card"><h3>طابق الخطر بسببه</h3><div id="s2m"></div></div>`,
+ init(){match($('#s2m'),[['تدمير المدن والقرى','الانهيارات والتدفقات الطينية الملتهبة'],['إغلاق المطارات والموانئ','الغبار والمقذوفات البركانية'],['تدفقات الفتات البركاني','انهيارات سريعة لصخور حارة متوهجة مع غازات حارة'],['التدفق الطيني','امتزاج الرماد البركاني بالأمطار']],'s2',()=>G.complete('s2'));}});
 
-def('s3',{n:'3 · أين تتشكل البراكين؟',eyebrow:'المحطة 3 · الكتاب صفحة 68–69',title:'أين تتشكل البراكين؟',goal:'معظم البراكين تتكون على حدود الصفائح، وتتشكل بطرق مختلفة.',plan:8,core:1,icon:'<path d="M8 70L32 26h16l24 44z" fill="none" stroke="currentColor" stroke-width="5"/>',
- body:`<div class="card" id="s3sl"></div><div class="card"><h3>صنّف: أين تتشكل هذه البراكين؟</h3><div id="s3s"></div></div>`,
- init(){slides($('#s3sl'),[
-  {k:'أين تتشكل البراكين؟',t:'على حدود الصفائح',im:[P('s12_81ba44ab','خريطة البراكين وحدود الصفائح')],html:'<p>معظم البراكين تتكون على <b>حدود الصفائح</b>.</p><p>يتكون الغلاف الصخري للأرض من <b>13 صفيحة</b> رئيسة، وتنتج نشاطات جيولوجية مهمة عند تقارب الصفائح وتباعدها وانزلاق بعضها بمحاذاة بعض عند حدود الصفائح.</p>'},
-  {k:'(1) عند حدود الصفائح المتباعدة',t:'حفر الانهدام',im:[P('s13_e1a45bcb','تباعد الصفائح'),P('s13_49195e00','حفرة الانهدام')],html:'<p>تتحرك الصفائح مبتعدًا بعضها عن بعض في أماكن الحدود المتباعدة، ومع تباعد الصفائح تتكون شقوق طويلة بينها تسمى <b>حفر الانهدام</b>.</p><p>تحوي حفر الانهدام شقوقًا تمثل ممرات تسهّل خروج الصهارة التي نشأت في الستار.</p>'},
-  {k:'(2) عند حدود الصفائح المتقاربة',t:'غوص الصفائح',im:[P('s14_d0d08f18','غوص الصفيحة'),P('s14_74a12287','البراكين عند الغوص')],html:'<p>إذ تغوص الصفيحة المحيطية التي كثافتها أكبر أسفل الصفيحة الأخرى، فتتشكل البراكين تحت هذه الظروف. ومن أشكال البراكين التي تتكون عند هذه الحدود <b>البراكين المركبة</b>.</p><p>تؤدي حرارة الستار عندها إلى صهر جزء من الصفيحة الغاطسة والصخور التي تعلوها، مكونة الصهارة. تصعد هذه الصهارة إلى أعلى مكونة براكين على السطح.</p>'},
-  {k:'(3) فوق البقع الساخنة',t:'البقع الساخنة',im:[P('s15_3679f162','البقعة الساخنة'),P('s15_28f4df5f','جزر هاواي')],html:'<p class="def"><b>البقع الساخنة:</b> مراكز بركانية نشطة، تظهر في بعض الأماكن على الأرض بسبب وجود ارتفاع غير عادي في درجة الحرارة في بقعة في أعماق الأرض، مما يتسبب في اندفاع كتل كبيرة من الصهارة (الماجما) للصعود.</p><p>ولا تكون في حدود الصفائح، بل قد تكون في وسطها، كالتي نتجت عنها <b>جزر هاواي</b> وسط صفيحة المحيط الهادئ.</p>'}],'s3');
-  sortGame($('#s3s'),{bins:['مناطق الانهدام (تباعد)','مناطق غوص الصفائح (تقارب)','فوق البقع الساخنة'],items:[['شقوق طويلة تخرج منها الصهارة',0],['صفيحة محيطية تغوص تحت أخرى',1],['براكين مركبة',1],['جزر هاواي',2],['وسط الصفيحة بعيدًا عن حدودها',2]]},'s3',()=>G.complete('s3'));}});
+def('s3',{n:'3 · أشكال البراكين',eyebrow:'المحطة 3 · الكتاب صفحة 62–63',title:'أشكال البراكين: ثوران عنيف أم هادئ؟',goal:'تصنف البراكين حسب اختلاف أنواع الثوران. فما الذي يحدد ذلك؟',plan:7,core:1,icon:VIC,
+ body:`<div class="card" id="s3sl"></div><div class="two"><div class="card"><h3>تقويم 1 · ناقش طريقة ثوران البركانين من خلال الصورتين</h3>${fig('s11_0f9ce9aa','(أ) كمية سليكا عالية · (ب) كمية سليكا قليلة',360)}<div id="s3q"></div></div><div class="card"><h3>صنّف</h3><div id="s3s"></div></div></div>`,
+ init(){let n=0;const c=()=>{if(++n>=2)G.complete('s3');};
+  slides($('#s3sl'),[
+   {k:'أشكال البراكين',t:'فما الذي يحدد ذلك؟',im:[P('s10_73ee13c0','ثوران عنيف وهادئ')],html:'<p>تُصنف البراكين حسب اختلاف أنواع الثوران: <b>ثوران عنيف</b> و<b>ثوران هادئ</b>. فما الذي يحدد ذلك؟</p><p>تعتمد شدة الثوران على <b>تركيب الصهارة</b>: نسبة السليكا، وكمية بخار الماء والغازات فيها.</p>'},
+   {k:'ثوران عنيف',t:'سليكا عالية',im:[P('s11_b892c2e9','ثوران عنيف')],html:'<p>عندما تحتوي اللابة على <b>نسبة عالية من السليكا</b> تكون ذات لزوجة أكبر، ومن ثم تقاوم التدفق أكثر، مما يؤدي إلى ثوران البركان بعنف.</p><p class="hint-line">تصحيح: ورد في العرض «كثافة (لزوجة)»، والمقصود هنا اللزوجة (مقاومة السائل للتدفق) وليس الكثافة.</p>'},
+   {k:'ثوران هادئ',t:'سليكا قليلة',im:[P('s12_a327f815','لابة متدفقة')],html:'<p>تتدفق اللابة المحتوية على <b>نسبة قليلة من السليكا</b> ونسبة عالية من <b>الحديد والماغنسيوم</b> بسهولة؛ فتكون ذات لزوجة أقل، مما يؤدي إلى ثوران البركان بهدوء.</p>'}],'s3');
+  mcq($('#s3q'),{q:'أي البركانين ثورانه أعنف؟',o:['(أ) لأن كمية السليكا عالية فاللابة أكثر لزوجة','(ب) لأن كمية السليكا قليلة','كلاهما بالشدة نفسها','لا علاقة للسليكا بالثوران'],a:0},'s3',c);
+  sortGame($('#s3s'),{bins:['ثوران عنيف','ثوران هادئ'],items:[['سليكا عالية',0],['لابة لزجة تقاوم التدفق',0],['كمية كبيرة من بخار الماء والغازات المحتبسة',0],['سليكا قليلة',1],['غنية بالحديد والماغنسيوم',1],['لابة سائلة سهلة التدفق',1]]},'s3',c);}});
 
-def('s4',{n:'4 · الصفائح تسبب الزلازل',eyebrow:'المحطة 4 · الكتاب صفحة 69–70',title:'حركة الصفائح تسبب الزلازل',goal:'إذا قارنت بين الصورتين فستلاحظ العلاقة بين المواقع السطحية للزلازل وحدود الصفائح.',plan:5,core:1,icon:'<path d="M4 40h12l6-16 8 32 8-40 8 48 8-24 6 12h16" fill="none" stroke="currentColor" stroke-width="5"/>',
- body:`<div class="two"><div class="card">${grid([['s16_81ba44ab','حدود الصفائح'],['s16_c7a9a3fe','مواقع الزلازل']])}<p class="step-text">تحدث الزلازل عند: حدود التباعد ✓ · حدود التقارب ✓ · حدود التحول ✓</p><p class="step-text">إذا قارنت بين الصورتين فستلاحظ العلاقة بين المواقع السطحية للزلازل وحدود الصفائح. وتنتج عن حركة الصفائح قوى تعمل على توليد الطاقة المسببة للزلازل.</p></div>
-  <div class="card">${fig('s17_c7a9a3fe','خريطة تمثل مواقع الزلازل التي حدثت بين عامي 1990–2000م',360)}<div id="s4q"></div></div></div>`,
- init(){mcq($('#s4q'),{q:'ماذا تلاحظ عند مقارنة خريطة الزلازل بخريطة حدود الصفائح؟',o:['تتركز الزلازل على امتداد حدود الصفائح','تتوزع الزلازل عشوائيًّا','تحدث الزلازل وسط القارات فقط','لا تحدث زلازل في المحيطات'],a:0},'s4',()=>G.complete('s4'));}});
+const VT=[{n:'البراكين الدرعية',im:'s15_c4c95aee',sk:'s15_05518c19',d:'تتدفق اللابة البازلتية الغنية بالحديد والماغنسيوم، التي تحوي نسبة قليلة من السليكا، في صورة طبقات أفقية منبسطة. ويؤدي تراكم هذه الطبقات إلى تكوّن بركان واسع الامتداد، له جوانب قليلة الانحدار.',ex:'بركان جبل مار في حرة رهط في المملكة العربية السعودية.'},
+ {n:'البراكين المخروطية',im:'s16_8666457c',sk:'s16_4c4c6431',d:'يقذف البركان الرماد البركاني واللابة لتصل إلى ارتفاعات كبيرة في الهواء، ثم تبرد وتعود إلى الأرض مكونة مخروطًا صغيرًا من المواد البركانية. توجد على ارتفاعات أقل من 300 م، وتتشكل عادة على هيئة مجموعات بجانب براكين كبيرة، ولا يدوم ثورانها فترة طويلة؛ لأن الثوران يحدث بسبب المحتوى الغازي العالي، إذ يتوقف بعد تحرر الغازات.',ex:'بركان حرة البرك من الحرات البركانية الكبيرة جنوب المملكة العربية السعودية.'},
+ {n:'البراكين المركبة',im:'s17_8a4c5384',sk:'s17_4c4c6431',d:'براكين شديدة الانحدار، تتشكل نتيجة تراكم الطبقات المتعاقبة الناتجة عن الانفجارات البركانية العنيفة، ويتبع ذلك ثوران هادئ للبركان مشكلًا طبقة اللابة.',ex:'بركان جبل القدر شمال شرق المدينة المنورة.'},
+ {n:'ثوران الشقوق',im:'s18_7a796a32',sk:'s14_21773049',d:'نوع من البراكين تتميز اللابة فيه بأنها ذات سيولة عالية ولزوجة قليلة، مما يجعل انسيابها سهلًا فوق سطح الأرض.',ex:'حرة رهط.'}];
+def('s4',{n:'4 · أنواع البراكين',eyebrow:'المحطة 4 · الكتاب صفحة 63–64',title:'أنواع البراكين',goal:'البراكين الدرعية والمخروطية والمركبة، وهناك نوع رابع يسمى ثوران الشقوق.',plan:8,core:1,icon:VIC,
+ body:`<div class="card"><div class="c6-chips" id="s4c"></div><div id="s4v" class="mt" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px"></div></div><div class="card"><h3>طابق النوع بالمثال من المملكة</h3><div id="s4m"></div></div>`,
+ init(){const seen=new Set();const show=i=>{const v=VT[i];$$('#s4c [data-i]').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.i===i));
+   $('#s4v').innerHTML=`<div>${grid([[v.sk,'مقطع'],[v.im,v.ex.split(' في ')[0]]])}</div><div><h3>${i+1}. ${v.n}</h3><p class="step-text">${v.d}</p><p class="step-text"><b>مثال:</b> ${v.ex}</p></div>`;seen.add(i);SFX.pop();if(seen.size===4)G.add(0,'s4');};
+  $('#s4c').innerHTML=VT.map((v,i)=>`<button type="button" class="c6-chip" data-i="${i}">${i+1}. ${v.n}</button>`).join('');$$('#s4c [data-i]').forEach(b=>b.onclick=()=>show(+b.dataset.i));show(0);
+  match($('#s4m'),[['البراكين الدرعية','جبل مار في حرة رهط'],['البراكين المخروطية','حرة البرك جنوب المملكة'],['البراكين المركبة','جبل القدر شمال شرق المدينة المنورة'],['ثوران الشقوق','حرة رهط (تدفق لابة واسع)']],'s4',()=>G.complete('s4'));}});
 
-def('ev1',{n:'تقويم 1–4',eyebrow:'تقويم · الأسئلة 1–4',title:'تقويم: البراكين والزلازل وحدود الصفائح',goal:'أسئلة التقويم كما في العرض.',plan:5,core:1,icon:ICO.check,
- body:'<div class="two"><div class="card"><h3>1 · أين تتشكل البراكين؟</h3><div id="h1"></div></div><div class="card"><h3>2</h3><div id="h2"></div></div></div><div class="card"><h3>3</h3><div id="h3"></div></div><div class="card"><h3>4 · صح أم خطأ</h3><div id="h4"></div></div>',
- init(){let n=0;const c=()=>{if(++n>=4)G.complete('ev1');};
-  order($('#h1'),['في مناطق الانهدام (مناطق الشقوق الناتجة عن التباعد)','في مناطق غوص الصفائح (المناطق التي تغوص فيها صفيحة تحت أخرى عند التقارب)','فوق البقع الساخنة'],'ev1',c,'كما في العرض: ثلاثة أماكن.');
-  mcq($('#h2'),{q:'عندما تبتعد الصفائح بعضها عن بعض يتكون فيما بينها شقوق طويلة تسمى:',o:['البقع الساخنة','حفر الانهدام','غوص الصفائح','الحرات'],a:1},'ev1',c);
-  mcq($('#h3'),{q:'تحدث معظم الزلازل والبراكين:',o:['داخل الصفائح','عند خط الاستواء','في المحيطات','عند حدود الصفائح'],a:3},'ev1',c);
-  tfx($('#h4'),[['عند حدود الصفائح المتباعدة تتحرك الصفائح مبتعدًا بعضها عن بعض.',true],['تتميز الصفائح <u>القارية</u> بأنها أكبر كثافة وأقل سمكًا من الصفائح المحيطية.',false,'المحيطية',['المحيطية','الصلبة','القديمة']],['جزر هاواي من الأمثلة على البراكين التي تتكون بفعل البقع الساخنة.',true],['يتكون الغلاف الصخري للأرض من 13 صفيحة رئيسة.',true]],'ev1',c);}});
+def('ev1',{n:'تقويم 2–6',eyebrow:'تقويم · الأسئلة 2–6',title:'تقويم: المقذوفات وأنواع البراكين',goal:'أسئلة التقويم كما في العرض.',plan:6,core:1,icon:ICO.check,
+ body:'<div class="card" id="ev1b"></div><div class="card"><h3>6 · صحّح العبارات التالية</h3><div id="ev1c"></div></div>',
+ init(){let n=0;const c=()=>{if(++n>=2)G.complete('ev1');};
+  STN.ev1.c=challenge($('#ev1b'),[
+   {k:'2',q:'القطع الصخرية أو اللابة المتصلبة المتساقطة من الهواء بعد قذفها بالثورانات المتفجرة:',o:['المقذوفات البركانية','اللابة','الفتات البركاني','الصهارة'],a:0,why:'وتسمى أيضًا الفتات البركاني.'},
+   {k:'3',q:'تُعد أكبر أنواع البراكين من حيث المساحة التي تغطيها:',o:['الدرعية','المخروطية','المركبة','ثوران الشقوق'],a:0,why:'مثل بركان جبل مار في حرة رهط؛ أمّا ثوران الشقوق فليس بركانًا مخروطيًّا بل تدفقات لابة واسعة.'},
+   {k:'4',q:'بركان يتكون بفعل الثوران الهادئ، حيث تتراكم طبقات من اللابة بعضها فوق بعض:',o:['الدرعية','المخروطية','ثوران الشقوق','المركبة'],a:0},
+   {k:'5',q:'براكين واسعة الامتداد وارتفاعها قليل، وجوانبها تتكون من اللابة:',o:['ثوران الشقوق','المخروطية','الدرعية','المركبة'],a:2}],'ev1');
+  setTimeout(c,0);
+  tfx($('#ev1c'),[['تكون اللابة ذات <u>لزوجة عالية</u> إذا احتوت على نسبة قليلة من السليكا.',false,'لزوجة قليلة',['لزوجة قليلة','كثافة عالية','حرارة منخفضة']],['تعتمد شدة ثوران البركان على <u>طقس المنطقة</u>.',false,'تركيب الصهارة',['تركيب الصهارة','عمر البركان','لون الصخور']],['عند تدفق الصهارة على سطح الأرض من فوهة أو فتحة تسمى <u>الرماد البركاني</u>.',false,'اللابة',['اللابة','الفوهة','القنبلة البركانية']]],'ev1',c);},reset(){STN.ev1.c.reset();},
+ explain:'<p>في السؤال 3 لم تظهر إجابة العرض نصًّا، واعتمدنا «الدرعية» لأن الشريحة أرفقت صورة بركان جبل مار (درعي)، وهي أكبر البراكين امتدادًا.</p>'});
 
-def('s5',{n:'5 · صفائح الأرض وباطنها',eyebrow:'المحطة 5 · الكتاب صفحة 71',title:'كيف توصل العلماء إلى معرفة مكونات باطن الأرض؟',goal:'توصل العلماء إلى معرفة الكثير عن باطن الأرض والصفائح من خلال دراسة الموجات الزلزالية.',plan:8,core:1,icon:'<circle cx="40" cy="40" r="30" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="40" cy="40" r="18" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="40" cy="40" r="8" fill="currentColor"/>',
- body:`<div class="card" id="s5sl"></div><div class="card"><h3>تطبيق الرياضيات: زمن وصول موجات P</h3><div class="two"><div><p class="step-text">تختلف سرعة موجات P تبعًا لكثافة الوسط الذي تنتقل خلاله في باطن الأرض.</p><div class="tablewrap"><table class="c6-table"><thead><tr><th>الوسط</th><th>الكثافة</th><th>سرعة موجة P</th></tr></thead><tbody><tr><td>القشرة</td><td>2.8 جم/سم³</td><td>6 كم/ث</td></tr><tr><td>الستار العلوي</td><td>3.3 جم/سم³</td><td>8 كم/ث</td></tr></tbody></table></div>
-   <div class="story mt"><b>مثال محلول:</b> كيف يمكنك حساب الزمن الذي تستغرقه موجات P للانتقال عبر 100 كم من قشرة الأرض؟<br>المعطيات: السرعة = 6 كم/ث ، المسافة = 100 كم · المطلوب: الزمن<br>الزمن = المسافة ÷ السرعة = 100 ÷ 6 = <b>16.7 ثانية</b></div></div>
-   <div><h3>مسائل تدريبية · خمس دقائق</h3><div id="s5c1"></div><div id="s5c2" class="mt"></div></div></div></div>`,
- init(){let n=0;const c=()=>{if(++n>=2)G.complete('s5');};
-  slides($('#s5sl'),[
-   {k:'صفائح الأرض وباطنها',t:'الموجات الزلزالية',im:[P('s22_fdcd2ec6','طبقات الأرض'),P('s22_f39c9295','باطن الأرض')],html:'<p>لقد توصل العلماء إلى معرفة الكثير عن باطن الأرض والصفائح الأرضية من خلال دراسة <b>الموجات الزلزالية</b>.</p><p>تختلف سرعة انتقال الموجات الزلزالية حسب الوسط الذي تمر فيه (صلب – سائل – غاز)، وكيفية انتقالها في طبقات الأرض مكّنت العلماء من رسم المناطق الرئيسة للأرض.</p>'},
-   {k:'على سبيل المثال',t:'اكتشاف الغلاف المائع (اللدن)',im:[P('s23_092ec8f6','طبقات الأرض'),P('s23_703d172b','سرعة الموجات')],html:'<p>تم اكتشاف الغلاف المائع (اللدن) عندما لاحظ العلماء أن <b>سرعة الموجات الزلزالية تنخفض</b> عندما تتخطى قاع الغلاف الصخري.</p><p>وتشكّل هذه الطبقة المنصهرة جزئيًّا طبقة أكثر سخونة وأقل صلابة، مما يسهل حركة الصفائح الصخرية الباردة فوقها.</p>'}],'s5');
-  K.calcQ($('#s5c1'),{p:'1. احسب الزمن الذي تستغرقه موجات P للانتقال مسافة 300 كم في الستار العلوي.',v:37.5,unit:'ثانية',given:'المسافة = 300 كم ، السرعة = 8 كم/ث',want:'الزمن = ؟',law:'الزمن = المسافة ÷ السرعة',sol:'300 ÷ 8 = 37.5 ثانية'},'s5',c);
-  K.calcQ($('#s5c2'),{p:'2. ما الزمن الذي تستغرقه موجات P للانتقال 500 كم في القشرة؟ (منزلة عشرية واحدة)',v:83.3,unit:'ثانية',given:'المسافة = 500 كم ، السرعة = 6 كم/ث',want:'الزمن = ؟',law:'الزمن = المسافة ÷ السرعة',sol:'500 ÷ 6 ≈ 83.3 ثانية'},'s5',c);},
- explain:'<p>حلول المسائل التدريبية محسوبة بالقانون نفسه في مثال الكتاب (لم ترد في العرض).</p>'});
+def('s5',{n:'5 · تطبيق الرياضيات',eyebrow:'تدريب · الكتاب صفحة 65',title:'تطبيق الرياضيات: حل معادلة بسيطة',goal:'يرتفع بركان حرة ثنان 1650 م عن سطح البحر، ويرتفع بركان حرة البرك 381 م. كم مرة يساوي ارتفاع بركان حرة ثنان ارتفاع بركان حرة البرك؟',plan:3,core:1,icon:'<path d="M14 40h20M24 30v20M46 34h20M46 46h20" stroke="currentColor" stroke-width="6"/>',
+ body:`<div class="two"><div class="card"><svg viewBox="0 0 400 240" style="direction:ltr"><path d="M20 230 L140 30 L260 230z" fill="#7c4a1e"/><path d="M140 30 V230" stroke="#111" stroke-dasharray="5 5"/><text x="150" y="130" font-size="16" font-weight="800" fill="#1d4ed8">1650 م</text><path d="M260 230 L320 160 L380 230z" fill="#b45309"/><path d="M320 160 V230" stroke="#111" stroke-dasharray="5 5"/><text x="326" y="200" font-size="14" font-weight="800" fill="#1d4ed8">381 م</text><text x="140" y="20" text-anchor="middle" ${'font-family="IBM Plex Sans Arabic"'} font-size="13">حرة ثنان</text><text x="320" y="150" text-anchor="middle" ${'font-family="IBM Plex Sans Arabic"'} font-size="13">حرة البرك</text></svg></div><div class="card"><div id="s5c"></div></div></div>`,
+ init(){K.calcQ($('#s5c'),{p:'كم مرة يساوي ارتفاع بركان حرة ثنان ارتفاع بركان حرة البرك؟ (قرّب إلى منزلة عشرية واحدة)',v:4.3,unit:'مرة',given:'ارتفاع حرة ثنان = 1650 م ، ارتفاع حرة البرك = 381 م',law:'عدد المرات = 1650 ÷ 381',sol:'1650 ÷ 381 ≈ 4.3 مرة'},'s5',()=>G.complete('s5'));}});
 
-def('s6',{n:'6 · الصفيحة العربية',eyebrow:'المحطة 6 · الكتاب صفحة 72',title:'حركة الصفائح والنشاط البركاني في المملكة العربية السعودية',goal:'المس حدود الصفيحة العربية لتتعرف نوع كل حد.',plan:7,core:1,icon:'<path d="M20 20l30-8 14 20-8 30-22 6-16-24z" fill="none" stroke="currentColor" stroke-width="5"/>',
- body:`<div class="two"><div class="stage"><svg id="ar" viewBox="0 0 400 360" aria-label="الصفيحة العربية" style="direction:ltr"></svg></div>
-  <div class="side"><div class="card"><div id="arfb" class="step-text">المس حدًّا من حدود الصفيحة العربية.</div></div><div class="card">${lst(['يتركز تأثير حركة الصفائح الأرضية في المملكة العربية السعودية حول حواف الصفيحة العربية.','يتركز في الجهة الغربية على امتداد ساحل البحر الأحمر؛ حيث تمثل حدود الصفيحة العربية مع الصفيحة الإفريقية.','يتركز النشاط الزلزالي في المملكة على امتداد البحر الأحمر وحتى خليج العقبة، حيث تمثل هذه المناطق حدود تباعد بين الصفيحة العربية والصفيحة الإفريقية.'])}</div></div></div>
-  <div class="card"><h3>ماذا قرأت؟ ما حدود الصفائح المحيطة بالصفيحة العربية؟</h3><div id="s6m"></div></div>`,
- init(){const B=[{id:'rs',n:'البحر الأحمر',t:'حدود تباعد',c:'#16a34a',d:'M90 70 L150 170 L200 280 L230 300',x:120,y:190,txt:'حدود تباعد مع الصفيحة الإفريقية على امتداد البحر الأحمر: تتباعد الصفيحتان ويتسع البحر الأحمر ببطء.'},{id:'aq',n:'خليج العقبة والبحر الميت',t:'حدود جانبية (تحويلية)',c:'#2563eb',d:'M90 70 L100 20',x:60,y:40,txt:'حدود جانبية تنزلق فيها الصفيحتان بمحاذاة بعضهما على امتداد خليج العقبة والبحر الميت.'},{id:'za',n:'جبال زاغروس',t:'حدود تقارب',c:'#dc2626',d:'M110 20 L230 40 L330 130 L370 200',x:280,y:70,txt:'حدود تقارب مع صفيحة أوراسيا على امتداد الجانب الشرقي والشمالي، وتكونت جبال زاغروس.'},{id:'ad',n:'خليج عدن',t:'حدود تباعد',c:'#16a34a',d:'M230 300 L360 260',x:300,y:300,txt:'حدود تباعد في خليج عدن جنوب الصفيحة.'}];const seen=new Set();
-  const draw=sel=>{let s=`<rect width="400" height="360" fill="#bfdbfe"/><path d="M100 20 L230 40 L330 130 L370 200 L360 260 L230 300 L200 280 L150 170 L90 70z" fill="#fde68a" stroke="#a16207"/><text x="230" y="180" text-anchor="middle" ${'font-family="IBM Plex Sans Arabic"'} font-size="18" font-weight="800" fill="#92400e">الصفيحة العربية</text><text x="50" y="240" ${'font-family="IBM Plex Sans Arabic"'} font-size="14" fill="#334155">الصفيحة الإفريقية</text><text x="250" y="20" ${'font-family="IBM Plex Sans Arabic"'} font-size="14" fill="#334155">صفيحة أوراسيا</text>`;
-   B.forEach(b=>s+=`<path class="bd" data-b="${b.id}" d="${b.d}" stroke="${b.c}" stroke-width="${sel===b.id?12:8}" fill="none" stroke-linecap="round" style="cursor:pointer"/>`);$('#ar').innerHTML=s;
-   $$('#ar .bd').forEach(p=>p.onclick=()=>{const b=B.find(x=>x.id===p.dataset.b);seen.add(b.id);SFX.pop();draw(b.id);say($('#arfb'),'info',`<b>${b.n}:</b> ${b.t}. ${b.txt}`);if(seen.size===4)G.add(4,'s6');});};draw();
-  match($('#s6m'),[['حدود تباعد','مع صفيحة إفريقيا على امتداد البحر الأحمر'],['حدود جانبية (تحويلية)','على امتداد خليج العقبة'],['حدود تقارب','مع صفيحة أوراسيا على امتداد الجانب الشرقي والشمالي']],'s6',()=>G.complete('s6'));},
- explain:'<p><b>تصحيح:</b> ورد في شريحة العرض «حدود جانبية مع صفيحة إفريقيا على امتداد البحر الأحمر»، بينما ذكرت الشريحة السابقة لها أن البحر الأحمر حدود تباعد. الصواب: البحر الأحمر حدود تباعد، والحدود الجانبية على امتداد خليج العقبة والبحر الميت، وحدود التقارب مع أوراسيا. الخريطة مبسطة ومقترحة.</p>'});
-
-def('s7',{n:'7 · ما الذي يحرك الصفائح؟',eyebrow:'المحطة 7 · الكتاب صفحة 72',title:'ما الذي يحرك الصفائح؟ تيارات الحمل',goal:'هناك العديد من الفرضيات حول مصدر الطاقة المحركة للصفائح، إحداها: تيارات الحمل.',plan:6,core:1,icon:'<path d="M20 60c-10-20 0-40 20-40s30 20 20 40" fill="none" stroke="currentColor" stroke-width="5"/><path d="M56 56l4 8 6-8" fill="currentColor"/>',
- body:`<div class="two"><div class="card">${grid([['s29_7ba552ba','تيارات الحمل في الستار'],['s29_fbb365f2','باطن الأرض']])}<p class="step-text">هناك العديد من الفرضيات حول مصدر الطاقة المحركة للصفائح، تنص إحداها على أن مادة الستار يتم تسخينها بوساطة لب الأرض، فتقل كثافتها، وتصعد إلى أعلى، ثم تبرد هذه المادة، فتنزل إلى أسفل في اتجاه اللب، مكونة <b>تيارات الحمل</b>.</p><p class="def">تيارات الحمل في باطن الأرض تؤدي إلى تحريك الصفائح.</p></div>
-  <div class="card"><h3>رتّب دورة تيار الحمل</h3><div id="s7o"></div></div></div>`,
- init(){order($('#s7o'),['يسخّن لب الأرض مادة الستار','تقل كثافة المادة الساخنة فتصعد إلى أعلى','تبرد المادة قرب الغلاف الصخري فتزداد كثافتها','تنزل المادة إلى أسفل في اتجاه اللب'],'s7',()=>G.complete('s7'),'دورة تيار الحمل كاملة؛ وهي تجرّ الصفائح فوقها.');}});
-
-def('ev2',{n:'تقويم 5–6',eyebrow:'تقويم · الأسئلة 5–6',title:'تقويم: توقّع وارسم',goal:'أسئلة التقويم كما في العرض.',plan:4,core:1,icon:ICO.check,
- body:`<div class="two"><div class="card"><h3>5 · توقّع على أي نوع من حدود الصفائح يحدث نشاط بركاني مصاحب لحفر الانهدام؟</h3><div id="q5"></div></div><div class="card"><h3>6 · ارسم أسهمًا لإظهار اتجاه حركة الصفيحة الأرضية لكل نوع</h3><div id="q6"></div></div></div>`,
- init(){let n=0;const c=()=>{if(++n>=2)G.complete('ev2');};
-  mcq($('#q5'),{q:'نوع الحد:',o:['عند حدود الصفائح المتباعدة','عند حدود الصفائح المتقاربة','عند الحدود الجانبية','وسط الصفيحة'],a:0},'ev2',c);
-  const T=[['حدود تقارب','→ ←'],['حدود تباعد','← →'],['حدود جانبية','↑ ↓']];const box=$('#q6');const opts=['→ ←','← →','↑ ↓'];let ok=0;
-  box.innerHTML=T.map(([n],i)=>`<div class="c6-q"><b>${i+1}. ${n}</b><div class="c6-chips">${opts.map(o=>`<button class="c6-chip" type="button" data-t="${i}" data-o="${o}" style="direction:ltr;font-size:1.3rem">${o}</button>`).join('')}</div></div>`).join('')+'<div class="qfb"></div>';
-  box.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const i=+b.dataset.t;if(b.dataset.o===T[i][1]){b.setAttribute('aria-pressed','true');box.querySelectorAll(`[data-t="${i}"]`).forEach(x=>x.disabled=true);G.good();G.add(3,'ev2');if(++ok===3){say(box.querySelector('.qfb'),'ok','أحسنت! تقارب: تتجه الصفيحتان نحو بعض، تباعد: تبتعدان، جانبية: تنزلقان بمحاذاة بعض.');c();}}else{G.bad();b.disabled=true;}});}});
-
-def('sum',{n:'الخلاصة',eyebrow:'الخلاصة · الكتاب صفحة 73',title:'الخلاصة',goal:'أهم أفكار الدرس.',plan:2,icon:ICO.doc,
- body:`<div class="two"><div class="card"><h3>حدود الصفائح المتحركة</h3>${lst(['ينقسم غلاف الأرض الصخري إلى قطع تسمى صفائح، يتحرك بعضها بالنسبة إلى بعض.'])}<h3 class="mt">أين تتشكل البراكين؟</h3>${lst(['تتحرك الصفائح مبتعدة عن بعضها عند الحدود المتباعدة مكوّنة ثورانًا بركانيًّا بين الشقوق.','تتصادم الصفائح عند حدود الصفائح المتقاربة.','يتشكل الكثير من البراكين عند حدود الصفائح المتقاربة.','قد تتشكل البراكين على امتداد حفر الانهدام وفوق البقع الساخنة، وحيث تغوص الصفائح بعضها أسفل بعض.'])}</div>
-  <div class="card"><h3>حركة الصفائح تسبب الزلازل</h3>${lst(['تحدث الزلازل عادة على حدود الصفائح.','يستفاد من الموجات الزلزالية في معرفة خصائص باطن الأرض.','قد تؤدي تيارات الحمل إلى تحريك الصفائح.'])}</div></div>`,enter(){G.complete('sum');}});
-def('self',{n:'اختبر نفسك',eyebrow:'الواجب · الكتاب صفحة 73 · التسليم يوم الخميس',title:'اختبر نفسك',goal:'إجابات نموذجية مقترحة.',plan:3,icon:ICO.check,body:'<div class="card" id="selfBox"></div>',
+def('sum',{n:'الخلاصة',eyebrow:'الخلاصة · الكتاب صفحة 65',title:'الخلاصة',goal:'أهم أفكار الدرس.',plan:2,icon:ICO.doc,
+ body:`<div class="two"><div class="card"><h3>كيف تتشكل البراكين؟</h3>${lst(['تتكوّن بعض البراكين نتيجة خروج الصهارة من باطن الأرض إلى السطح.','تتنوع المواد البركانية الناتجة عن ثوران البراكين بين مواد سائلة وصلبة وغازية.'])}</div><div class="card"><h3>أشكال البراكين</h3>${lst(['تؤدي اللابة الغنية بالسليكا إلى تكوّن ثورانات متفجرة، بينما تؤدي اللابة التي تحتوي على نسبة قليلة من السليكا ونسبة عالية من الحديد والماغنسيوم إلى ثوران سائل.','تؤثر كمية بخار الماء والغازات في طريقة ثوران البركان.','تتضمن أنواع البراكين: البراكين الدرعية، والبراكين المخروطية، والبراكين المركبة، وثوران الشقوق.'])}</div></div>`,enter(){G.complete('sum');}});
+def('self',{n:'اختبر نفسك',eyebrow:'الواجب · الكتاب صفحة 65 · التسليم يوم الخميس',title:'اختبر نفسك',goal:'إجابات نموذجية مقترحة.',plan:3,icon:ICO.check,body:'<div class="card" id="selfBox"></div>',
  init(){STN.self.s=solutions($('#selfBox'),[
-  {k:'1 · حدّد',q:'ما نوع حدود الصفائح التي تشكّل عندها بركان حرة رهط؟',a:[['الإجابة','حدود تباعد؛ فحرة رهط من نشاط بركاني مرتبط بتباعد الصفيحة العربية عن الإفريقية (البحر الأحمر).']]},
-  {k:'2 · توقع',q:'على أي نوع من حدود الصفائح يحدث نشاط بركاني مصاحب لحفر الانهدام؟',a:[['الإجابة','عند حدود الصفائح المتباعدة.']]},
-  {k:'3 · اشرح',q:'كيف تكوّنت براكين هاواي؟',a:[['الإجابة','فوق بقعة ساخنة وسط صفيحة المحيط الهادئ؛ تصعد الصهارة من أعماق الأرض، ومع تحرك الصفيحة فوق البقعة تتكون سلسلة من الجزر البركانية.']]},
-  {k:'4 · السبب والنتيجة',q:'لماذا تكون الزلازل ذات البؤر العميقة مصاحبة للحدود المتقاربة؟',a:[['الإجابة','لأن الصفيحة المحيطية تغوص إلى أعماق كبيرة تحت الصفيحة الأخرى، فتحدث الكسور والزلازل على امتداد الصفيحة الغاطسة في العمق.']]},
-  {k:'5 · التفكير الناقد',q:'عندما تغطس صفيحة أسفل صفيحة أخرى عند حدود التقارب تنزل الرسوبيات الغنية بالماء والبازلت إلى أعماق كبيرة في الستار. اشرح كيف تساعد المياه على تكوّن البراكين.',a:[['الإجابة','الماء يخفض درجة انصهار الصخور في الستار، فتنصهر جزئيًّا وتتكون صهارة أقل كثافة تصعد إلى السطح مكونة براكين.']]}],'self',()=>G.complete('self'));},reset(){STN.self.s.reset();},explain:'<p>إجابات نموذجية مقترحة.</p>'});
+  {k:'1 · حدّد',q:'أي أنواع ثورانات اللابة تغطي أكبر مساحة من سطح الأرض؟',a:[['الإجابة','ثوران الشقوق؛ لأن لابته سائلة قليلة اللزوجة تنساب لمسافات بعيدة مكونة هضابًا بازلتية واسعة.']]},
+  {k:'2 · صف',q:'المخاطر الناتجة عن البراكين.',a:[['الإجابة','تدمير المدن والقرى بالانهيارات والتدفقات الطينية الملتهبة، وإغلاق المطارات والموانئ بالغبار والمقذوفات، وتدفقات الفتات البركاني الحارة.']]},
+  {k:'3 · اشرح',q:'لماذا تكون جوانب البركان المخروطي حادة؟',a:[['الإجابة','لأنه يتكون من رماد وفتات صلب يُقذف إلى أعلى ثم يتساقط ويتراكم حول الفوهة مباشرة في مساحة صغيرة.']]},
+  {k:'4 · اذكر',q:'أنواع المواد التي تتكوّن منها البراكين المركبة.',a:[['الإجابة','طبقات متعاقبة من الرماد والفتات البركاني الناتج عن الانفجارات العنيفة، وطبقات من اللابة الناتجة عن الثورانات الهادئة.']]},
+  {k:'5 · التفكير الناقد',q:'لماذا تنفجر الصهارة الغنية بالسليكا؟',a:[['الإجابة','لأن السليكا تزيد لزوجتها فتقاوم التدفق وتحبس بخار الماء والغازات، فيتراكم الضغط حتى ينفجر البركان بعنف.']]}],'self',()=>G.complete('self'));},reset(){STN.self.s.reset();},explain:'<p>إجابات نموذجية مقترحة.</p>'});
 
-def('x1',{n:'إثرائي · المسابقات',eyebrow:'إثرائي · تنافس المجموعات',title:'أحجية الصفائح ومزاد المعرفة',goal:'غرفة الهروب ثم المزاد.',plan:5,icon:ICO.lock,
- body:'<div class="card"><div id="x1e"></div></div><div class="card"><div class="nb-head"><h2>🔨 مزاد المعرفة</h2></div><div id="x1a"></div></div>',
- init(){STN.x1.e=escape($('#x1e'),{title:'أحجية الصفائح',story:'تبعثرت قطع أحجية الأرض! أجيبوا لتعيدوا تركيبها.',secs:300,locks:[{q:'عدد الصفائح الرئيسة:',o:['13','7','18','3'],a:0,code:'1'},{q:'سُمك الغلاف الصخري تقريبًا:',o:['100 كم','10 كم','1000 كم','1 كم'],a:0,code:'3'},{q:'جزر هاواي تكونت فوق:',o:['بقعة ساخنة','حفرة انهدام','حد جانبي','غوص'],a:0,code:'7'},{q:'تطورت نظرية الصفائح عام:',o:['1960م','1860م','2000م','1700م'],a:0,code:'2'}],outro:'أعدتم تركيب الأحجية!'},'x1');
-  STN.x1.a=auction($('#x1a'),[['الصفائح المحيطية أكبر كثافة من القارية.',true],['تحدث معظم الزلازل داخل الصفائح.',false,'عند حدود الصفائح.'],['تيارات الحمل قد تحرك الصفائح.',true],['البحر الأحمر حدود تقارب.',false,'حدود تباعد.'],['تنخفض سرعة الموجات الزلزالية في الغلاف المائع.',true],['البقع الساخنة توجد دائمًا عند حدود الصفائح.',false,'قد تكون وسط الصفيحة.']],'x1');},reset(){STN.x1.e.reset();STN.x1.a.reset();}});
-def('x2',{n:'إثرائي · من أنا؟',eyebrow:'إثرائي',title:'من أنا؟ ولوحة الخيارات',goal:'ألغاز ولوحة خيارات.',plan:4,icon:ICO.lens,
- body:'<div class="card"><div id="x2r"></div></div><div class="card"><div id="x2cb"></div></div>',
- init(){riddles($('#x2r'),[{clues:['أنا طبقة في الستار.','أنا لدنة وأكثر سخونة.','تتحرك الصفائح فوقي.'],o:['الغلاف المائع','الغلاف الصخري','القشرة','اللب'],a:0},{clues:['أنا مركز بركاني.','قد أكون وسط الصفيحة.','كوّنت جزر هاواي.'],o:['البقعة الساخنة','حفرة الانهدام','الصدع','الحد الجانبي'],a:0},{clues:['أنا شقوق طويلة.','أتكون عند تباعد الصفائح.','تخرج مني الصهارة.'],o:['حفر الانهدام','غوص الصفائح','البقع الساخنة','الجبال'],a:0},{clues:['أنا تيارات.','أتكون من تسخين مادة الستار.','قد أحرك الصفائح.'],o:['تيارات الحمل','الموجات الزلزالية','التسونامي','الرياح'],a:0}],'x2');
-  STN.x2.cb=choiceBoard($('#x2cb'),[{ic:'🧩',t:'نمذجة',kind:'تجربة',p:'قص خريطة العالم إلى قطع على حدود الصفائح وحاول تركيبها.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'الصفائح تطفو فوق:',o:['الغلاف المائع','اللب الداخلي','الغلاف الجوي','المحيط'],a:0},{ic:'🧮',t:'احسب',kind:'حساب',p:'زمن موجة P لمسافة 240 كم في الستار العلوي (8 كم/ث)؟',v:30,unit:'ثانية',law:'الزمن = المسافة ÷ السرعة',sol:'240 ÷ 8 = 30 ثانية'},
-   {ic:'❓',t:'سؤال',kind:'اختيار',q:'الحدود مع أوراسيا:',o:['تقارب','تباعد','جانبية','لا حدود'],a:0},{ic:'🎨',t:'ارسم',kind:'رسم',p:'ارسم دورة تيار الحمل في الستار بالأسهم.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'البراكين المركبة تتكون عند:',o:['غوص الصفائح','البقع الساخنة فقط','حفر الانهدام فقط','وسط القارات'],a:0},
-   {ic:'🗺',t:'خريطة',kind:'بحث',p:'حدّد على خريطة العالم ثلاث مناطق زلزالية نشطة ونوع حدودها.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'اكتُشف الغلاف المائع لأن سرعة الموجات فيه:',o:['تنخفض','تزداد','تتوقف','لا تتغير'],a:0},{ic:'✍️',t:'اكتب',kind:'كتابة',p:'اكتب فقرة: لماذا تتركز الزلازل في غرب المملكة؟'}],'x2',()=>G.complete('x2'));},reset(){STN.x2.cb.reset();}});
+def('x1',{n:'إثرائي · المسابقات',eyebrow:'إثرائي · تنافس المجموعات',title:'فوهة الأسرار وبنغو البراكين',goal:'افتحوا الأقفال ثم البنغو.',plan:5,icon:ICO.lock,
+ body:'<div class="card"><div id="x1e"></div></div><div class="card"><div class="nb-head"><h2>🎯 بنغو البراكين</h2></div><div id="x1b"></div></div>',
+ init(){STN.x1.e=escape($('#x1e'),{title:'فوهة الأسرار',story:'اقفلت الصهارة طريق الخروج من فوهة البركان! أجيبوا لفتح الأقفال الأربعة.',secs:300,locks:[{q:'الصهارة على سطح الأرض تسمى:',o:['اللابة','الرماد','القنبلة','الفوهة'],a:0,code:'1'},{q:'السليكا العالية تسبب ثورانًا:',o:['عنيفًا','هادئًا','لا ثوران','بطيئًا جدًّا'],a:0,code:'6'},{q:'بركان جبل القدر:',o:['مركب','درعي','مخروطي','شقوق'],a:0,code:'5'},{q:'البراكين المخروطية على ارتفاعات أقل من:',o:['300 م','3000 م','30 م','1000 م'],a:0,code:'0'}],outro:'هربتم من الفوهة بسلام!'},'x1');
+  bingo($('#x1b'),[['البركان','جبل قمعي تكوّن بثورانات الصهارة'],['اللابة','صهارة على سطح الأرض'],['الصهارة','صخور مصهورة في باطن الأرض'],['الفوهة','فتحة دائرية في قمة البركان'],['القنابل البركانية','صخور كبيرة مقذوفة'],['الرماد البركاني','يشكل تدفقًا طينيًّا مع الأمطار'],['البركان الدرعي','واسع قليل الانحدار'],['البركان المخروطي','مخروط صغير من المواد البركانية'],['البركان المركب','شديد الانحدار بطبقات متعاقبة'],['ثوران الشقوق','لابة سائلة قليلة اللزوجة'],['السليكا','تزيد لزوجة اللابة'],['جبل مار','بركان درعي في حرة رهط'],['جبل القدر','بركان مركب شمال شرق المدينة'],['حرة البرك','براكين مخروطية جنوب المملكة'],['تدفقات الفتات','صخور حارة متوهجة وغازات'],['الحديد والماغنسيوم','لابة هادئة الثوران']],'x1');},reset(){STN.x1.e.reset();}});
+def('x2',{n:'إثرائي · جولة البرق',eyebrow:'إثرائي',title:'جولة البرق ولوحة الخيارات',goal:'صح أم خطأ بسرعة، ثم لوحة الخيارات.',plan:4,icon:'<path d="M44 6L18 46h18l-6 28 28-42H40z" fill="currentColor"/>',
+ body:'<div class="card"><div id="x2t"></div></div><div class="card"><div id="x2cb"></div></div>',
+ init(){tfRound($('#x2t'),[['اللابة الغنية بالسليكا لزجة.',true],['البراكين الدرعية شديدة الانحدار.',false,'قليلة الانحدار.'],['ثوران البراكين المخروطية يدوم طويلًا.',false,'لا يدوم طويلًا.'],['يمكن أن يغلق الرماد البركاني المطارات.',true],['جبل القدر بركان مركب.',true],['اللابة هي الصهارة في باطن الأرض.',false,'اللابة على السطح، والصهارة في الباطن.']],'x2',{secs:10});
+  STN.x2.cb=choiceBoard($('#x2cb'),[{ic:'🎨',t:'ارسم',kind:'رسم',p:'ارسم مقطعًا للأنواع الثلاثة من البراكين وقارن انحدارها.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'سبب الثوران العنيف:',o:['سليكا عالية','حديد عالٍ','سليكا قليلة','ماء قليل'],a:0},{ic:'🔬',t:'جرّب',kind:'تجربة',p:'قارن سرعة انسياب العسل والماء على لوح مائل، واربطها باللزوجة.'},
+   {ic:'❓',t:'سؤال',kind:'اختيار',q:'بركان حرة البرك:',o:['مخروطي','درعي','مركب','شقوق'],a:0},{ic:'🧮',t:'احسب',kind:'حساب',p:'بركان ارتفاعه 900 م وآخر 300 م. كم مرة ارتفاع الأول؟',v:3,unit:'مرة',law:'900 ÷ 300',sol:'3 مرات'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'الرماد البركاني مع الأمطار يشكل:',o:['تدفقًا طينيًّا','لابة','صهارة','قنابل'],a:0},
+   {ic:'🗺',t:'خريطة',kind:'بحث',p:'حدّد على خريطة المملكة مواقع: حرة رهط، جبل القدر، حرة البرك.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'أكبر البراكين امتدادًا:',o:['الدرعية','المخروطية','المركبة','لا شيء'],a:0},{ic:'✍️',t:'اكتب',kind:'كتابة',p:'اكتب فقرة عن كيف تؤثر البراكين في الناس.'}],'x2',()=>G.complete('x2'));},reset(){STN.x2.cb.reset();}});
 
 def('ch',{n:'تحدي العلماء',plan:3,icon:ICO.cup,eyebrow:'التقويم الختامي',title:'تحدي العلماء',goal:'أسئلة من تقويم العرض.',body:'<div class="card" id="chBox"></div>',
  init(){STN.ch.c=challenge($('#chBox'),[
-  {k:'حفر الانهدام',q:'عندما تبتعد الصفائح بعضها عن بعض يتكون فيما بينها شقوق طويلة تسمى:',o:['البقع الساخنة','حفر الانهدام','غوص الصفائح','الحرات'],a:1},
-  {k:'الحدود',q:'تحدث معظم الزلازل والبراكين:',o:['داخل الصفائح','عند خط الاستواء','في المحيطات','عند حدود الصفائح'],a:3},
-  {k:'الكثافة',q:'الصفائح الأكبر كثافة والأقل سمكًا:',o:['المحيطية','القارية','كلاهما','لا شيء'],a:0},
-  {k:'الحمل',q:'ما الذي يحرك الصفائح وفق إحدى الفرضيات؟',o:['تيارات الحمل في الستار','الرياح','المد والجزر','دوران القمر'],a:0},
-  {k:'P',t:'calc',p:'زمن موجات P لمسافة 300 كم في الستار العلوي (8 كم/ث):',v:37.5,unit:'ثانية',law:'الزمن = المسافة ÷ السرعة',sol:'300 ÷ 8 = 37.5 ث'},
-  {k:'البراكين',t:'multi',q:'اختر أماكن تشكل البراكين:',items:[['مناطق الانهدام',1],['مناطق غوص الصفائح',1],['فوق البقع الساخنة',1],['وسط الصحاري دائمًا',0]]},
-  {k:'التوقع',q:'النشاط البركاني المصاحب لحفر الانهدام يحدث عند:',o:['حدود الصفائح المتباعدة','الحدود المتقاربة','الحدود الجانبية','وسط الصفيحة'],a:0}],'ch');},reset(){STN.ch.c.reset();}});
+  {k:'المقذوفات',q:'القطع الصخرية أو اللابة المتصلبة المتساقطة من الهواء:',o:['المقذوفات البركانية','اللابة','الفتات البركاني','الصهارة'],a:0},
+  {k:'الدرعية',q:'براكين واسعة الامتداد وارتفاعها قليل، وجوانبها من اللابة:',o:['ثوران الشقوق','المخروطية','الدرعية','المركبة'],a:2},
+  {k:'السليكا',q:'تكون اللابة ذات لزوجة قليلة إذا احتوت على نسبة ……… من السليكا:',o:['قليلة','عالية','متوسطة','لا تحتوي'],a:0},
+  {k:'شدة الثوران',q:'تعتمد شدة ثوران البركان على:',o:['تركيب الصهارة','طقس المنطقة','لون الصخور','موقع البركان من البحر'],a:0},
+  {k:'المركب',q:'بركان شديد الانحدار من طبقات متعاقبة:',o:['المركب','الدرعي','المخروطي','الشقوق'],a:0},
+  {k:'الأخطار',t:'multi',q:'اختر أخطار البراكين:',items:[['تدمير المدن والقرى',1],['إغلاق المطارات والموانئ',1],['تدفقات الفتات البركاني',1],['زيادة الأمطار دائمًا',0]]},
+  {k:'الرياضيات',t:'calc',p:'1650 ÷ 381 ≈ ؟ (منزلة عشرية واحدة)',v:4.3,unit:'مرة',law:'القسمة',sol:'≈ 4.3'}],'ch');},reset(){STN.ch.c.reset();}});
 
-C6.plan({intro:{s:['poe','brain'],g:'١–٣',sk:'التنبؤ',ev:'سؤال التوقع'},goals:{s:['frayer'],g:'١–٣',sk:'التذكر',ev:'المطابقة'},s1:{s:['analogy','venn'],g:'٢',sk:'المقارنة',ev:'عنونة المقطع'},s2:{s:['role','coop'],g:'٣',sk:'النمذجة',ev:'مطابقة الحدود'},lab1:{s:['poe','inq'],g:'١ و٣',sk:'التجريب والاستنتاج',ev:'محاكي الحدود'},
- s3:{s:['jigsaw','cards'],g:'١',sk:'التصنيف',ev:'أماكن البراكين'},lab2:{s:['inq','poe'],g:'١',sk:'الاستنتاج',ev:'سلسلة الجزر'},s4:{s:['disc','tps'],g:'١',sk:'المقارنة',ev:'سؤال المقارنة'},ev1:{s:['spot','cards'],g:'١ و٣',sk:'التطبيق',ev:'تقويم 1–4'},
- s5:{s:['prob','heads'],g:'٢',sk:'الحساب',ev:'المسائل التدريبية'},s6:{s:['disc','cmap'],g:'١ و٣',sk:'قراءة الخرائط',ev:'حدود الصفيحة العربية'},s7:{s:['time','analogy'],g:'٢',sk:'الترتيب',ev:'دورة تيار الحمل'},lab3:{s:['poe','inq'],g:'٢',sk:'التجريب',ev:'خزان الحمل'},ev2:{s:['cards'],g:'٣',sk:'التطبيق',ev:'تقويم 5–6'},
- sum:{s:['tl'],g:'١–٣',sk:'التلخيص',ev:'إشارة المرور'},self:{s:['heads','sticks'],g:'١–٣',sk:'التفكير الناقد',ev:'اختبر نفسك'},x1:{s:['game','champ'],g:'١–٣',sk:'الاستدعاء',ev:'الهروب والمزاد'},x2:{s:['who','game'],g:'١–٣',sk:'الاستنتاج',ev:'من أنا؟'},ch:{s:['exit'],g:'١–٣',sk:'التقويم الختامي',ev:'تحدي العلماء'}},'g9c2l3');
-K.boot({chapter:'الفصل الثاني: تغيرات الأرض',chapterShort:'الفصل الثاني',title:'أحجية الأرض',lesson:'الدرس الثالث: الصفائح الأرضية وعلاقتها بالزلازل والبراكين',accent:'#4d7c0f',accentDark:'#a3e635',hook:'قشرة الأرض… قطع أحجية تتحرك!',
- riddle:'لماذا تتجمع الزلازل والبراكين في أماكن محددة؟',predict:{o:['لأن الغلاف الصخري مقسم إلى صفائح تتحرك، وتحدث الزلازل والبراكين عند حدودها','بسبب المناخ','لأن الأرض ثابتة لا تتحرك'],a:0},
- answer:'الغلاف الصخري مقسم إلى صفائح تتحرك فوق الغلاف المائع بفعل تيارات الحمل، وعند حدودها (تقارب، تباعد، جانبية) تتولد القوى المسببة للزلازل وتتكون البراكين، إضافة إلى البقع الساخنة.',
- finalTitle:'مبارك! أكملت أحجية الأرض',goals:GOALS,homework:'<b>الواجب:</b> «اختبر نفسك» ص 73 · التسليم يوم الخميس.',
- concepts:[{n:'الصفيحة',t:'قطعة من الغلاف الصخري (القشرة وأعلى الستار).',ic:'<path d="M6 20h20l6 8h12M6 32h16" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'الغلاف المائع',t:'طبقة لدنة تتحرك فوقها الصفائح.',ic:'<path d="M4 28c8-6 14 6 20 0s12 6 20 0" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'حدود الصفائح',t:'تقارب، تباعد، جانبية (تحويلية).',ic:'<path d="M6 24h12M30 24h12M14 18l6 6-6 6M34 18l-6 6 6 6" fill="none" stroke="var(--accent)" stroke-width="3"/>'},{n:'أماكن البراكين',t:'الانهدام، غوص الصفائح، البقع الساخنة.',ic:'<path d="M8 40L20 16h8l12 24z" fill="var(--accent)"/>'},{n:'تيارات الحمل',t:'تسخين مادة الستار وصعودها ثم بردها ونزولها.',ic:'<path d="M14 36c-8-14 0-26 10-26s18 12 10 26" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'الصفيحة العربية',t:'تباعد في البحر الأحمر، وجانبية في العقبة، وتقارب مع أوراسيا.',ic:'<path d="M14 10l20 4 8 14-6 14-14 2-10-16z" fill="var(--accent)"/>'}]});
-$$('.top h1').forEach(h=>h.dataset.sym='🧩');
+C6.plan({intro:{s:['poe','brain'],g:'١–٣',sk:'التنبؤ',ev:'سؤال التوقع'},goals:{s:['frayer'],g:'١–٣',sk:'التذكر',ev:'المطابقة'},s1:{s:['disc'],g:'٢',sk:'الملاحظة',ev:'الشرائح'},lab1:{s:['inq','game'],g:'٢',sk:'التعرف والتسمية',ev:'تشريح البركان'},s2:{s:['coop','cards'],g:'١',sk:'الربط',ev:'مطابقة الأخطار'},
+ s3:{s:['poe','venn'],g:'٣',sk:'المقارنة',ev:'تقويم 1 والتصنيف'},lab2:{s:['poe','inq'],g:'٣',sk:'ضبط المتغيرات',ev:'مختبر السليكا'},s4:{s:['jigsaw','cmap'],g:'٣',sk:'المقارنة',ev:'مطابقة الأمثلة'},lab3:{s:['inq','game'],g:'٣',sk:'النمذجة',ev:'باني البراكين'},ev1:{s:['spot','cards'],g:'٢ و٣',sk:'التطبيق',ev:'تقويم 2–6'},s5:{s:['prob'],g:'٣',sk:'الحساب',ev:'تطبيق الرياضيات'},
+ sum:{s:['tl'],g:'١–٣',sk:'التلخيص',ev:'إشارة المرور'},self:{s:['heads','sticks'],g:'١–٣',sk:'التفكير الناقد',ev:'اختبر نفسك'},x1:{s:['game','champ'],g:'١–٣',sk:'الاستدعاء',ev:'الأقفال والبنغو'},x2:{s:['cards','game'],g:'١–٣',sk:'الاستدعاء',ev:'جولة البرق'},ch:{s:['exit'],g:'١–٣',sk:'التقويم الختامي',ev:'تحدي العلماء'}},'g9c2l2');
+K.boot({chapter:'الفصل الثاني: تغيرات الأرض',chapterShort:'الفصل الثاني',title:'فوهة النار',lesson:'الدرس الثاني: البراكين',accent:'#c2410c',accentDark:'#fb923c',hook:'لماذا يثور بركان بهدوء… ويثور آخر بعنف؟',
+ riddle:'ما الذي يحدد طريقة ثوران البركان؟',predict:{o:['تركيب الصهارة: نسبة السليكا والغازات وبخار الماء','حجم البركان فقط','الطقس'],a:0},
+ answer:'اللابة الغنية بالسليكا لزجة تحبس الغازات فتنفجر بعنف، واللابة القليلة السليكا الغنية بالحديد والماغنسيوم تتدفق بهدوء؛ وهذا يحدد أشكال البراكين: الدرعية والمخروطية والمركبة وثوران الشقوق.',
+ finalTitle:'مبارك! عبرت فوهة النار بسلام',goals:GOALS,homework:'<b>الواجب:</b> «اختبر نفسك» ص 65 · التسليم يوم الخميس.',
+ concepts:[{n:'البركان',t:'جبل قمعي تكوّن بفعل ثورانات الصهارة.',ic:'<path d="M4 42L18 14h12l14 28z" fill="var(--accent)"/>'},{n:'اللابة',t:'الصهارة المتدفقة على سطح الأرض.',ic:'<path d="M4 40c8-6 14 0 20-6s12 0 20-6" fill="none" stroke="var(--accent)" stroke-width="5"/>'},{n:'السليكا',t:'عالية = لزوجة وثوران عنيف، قليلة = ثوران هادئ.',ic:'<text x="24" y="32" text-anchor="middle" font-size="16" font-weight="800" fill="var(--accent)">SiO₂</text>'},{n:'الدرعية',t:'واسعة قليلة الانحدار (جبل مار).',ic:'<path d="M2 40Q24 20 46 40z" fill="var(--accent)"/>'},{n:'المخروطية',t:'صغيرة حادة الجوانب (حرة البرك).',ic:'<path d="M12 40L24 14 36 40z" fill="var(--accent)"/>'},{n:'المركبة',t:'شديدة الانحدار بطبقات متعاقبة (جبل القدر).',ic:'<path d="M6 40L24 8 42 40z" fill="none" stroke="var(--accent)" stroke-width="4"/><path d="M14 28h20M10 34h28" stroke="var(--accent)" stroke-width="3"/>'}]});
+$$('.top h1').forEach(h=>h.dataset.sym='🌋');
 })();
 

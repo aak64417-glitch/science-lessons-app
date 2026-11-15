@@ -135,7 +135,7 @@ W.tl=function(el,w,lid){var D=load('tl-'+lid,{});el.innerHTML='<div class="sgw">
 /* ===== كشف الطلاب الموحّد لكل المنصة (الدروس والأنشطة والمسابقات وأوراق العمل) — durus-classes ===== */
 window.DROS = window.DROS || (function () {
   var AR = '٠١٢٣٤٥٦٧٨٩', KEY = 'durus-classes', API = 'https://script.google.com/macros/s/AKfycbxp-t4JgGO5WiK6hoacjTyBqFnG-9bSWClplOpVV4VDuTV7T4tY0swB1Ll36kr_djJ7nQ/exec';
-  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/3', '2/3', '3/3', '4/3']];
+  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/2'], ['1/3', '2/3', '3/3', '4/3']];
   function kz(k) { return String(k == null ? '' : k).replace(/\s/g, '').replace(/\d/g, function (d) { return AR[d]; }); }
   function nz(s) { return String(s).replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+بن\s+/g, ' ').replace(/\s+/g, ' ').trim(); }
   function ld() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) return { cur: s.cur || '', classes: s.classes || {}, stars: s.stars || {}, moves: s.moves || {} }; } catch (e) {} return { cur: '', classes: {}, stars: {}, moves: {} }; }
@@ -180,7 +180,7 @@ window.DROS = window.DROS || (function () {
   }
   // تحميل كشوف الفصول من منصة رحلة العلوم لكل الصفوف
   function importAll(cb) {
-    var all = LISTS[0].concat(LISTS[1]), G = {}, done = 0, okc = 0;
+    var all = [].concat.apply([], LISTS), G = {}, done = 0, okc = 0;
     all.forEach(function (k) {
       jsonp({ action: 'getStudents', className: k }, function (r) {
         if (r && r.ok) okc++;
@@ -388,172 +388,238 @@ const ICO={doc:'<rect x="14" y="10" width="52" height="60" rx="6" fill="none" st
 const lst=a=>`<ul class="step-text" style="margin:0;line-height:1.9">${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
 Object.assign(window.C6,{order,fig,grid,reveal,plan,ICO,lst});})();
 
-/* ===== تجارب افتراضية — البراكين ===== */
+/* ===== تجارب افتراضية — عمل العلم ===== */
 (function(){
 const {$,$$,G,STN,def,say,SFX,mcq}=K;const AR='font-family="IBM Plex Sans Arabic"';
 
-/* ---------- 1) تشريح البركان ---------- */
-const VOL=`<svg viewBox="0 0 320 300" style="max-width:340px;direction:ltr"><rect width="320" height="300" fill="#e0f2fe"/><path d="M0 230 L110 70 h100 L320 230z" fill="#7c4a1e"/><path d="M0 230h320v70H0z" fill="#a16207"/>
- <ellipse cx="160" cy="270" rx="70" ry="22" fill="#ea580c"/><path d="M152 248 L150 72 h20 l-2 176z" fill="#f97316"/><path d="M168 90 Q220 130 250 210" stroke="#f97316" stroke-width="10" fill="none"/>
- <path d="M140 70 q-20 -40 10 -50 q10 -20 30 -5 q30 -5 25 25 q20 15 -5 30z" fill="#94a3b8" opacity=".85"/><circle cx="90" cy="40" r="7" fill="#292524"/><circle cx="240" cy="55" r="6" fill="#292524"/>
- ${[['1',160,62],['2',236,170],['3',176,160],['4',160,276],['5',170,22],['6',240,48]].map(([t,x,y])=>`<circle cx="${x}" cy="${y}" r="11" fill="#fff" stroke="#111"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="13" font-weight="800">${t}</text>`).join('')}</svg>`;
-def('lab1',{after:'s1',n:'🧪 تشريح البركان',eyebrow:'نشاط تفاعلي · مقترح',title:'مختبر تشريح البركان: سمِّ الأجزاء',goal:'اختر اسم الجزء من البطاقات ثم المس رقمه في القائمة.',plan:5,core:1,
- icon:'<path d="M8 70L32 26h16l24 44z" fill="none" stroke="currentColor" stroke-width="5"/><path d="M40 26v44" stroke="currentColor" stroke-width="4"/>',body:'<div class="card"><div id="v1"></div></div>',
- init(){C6.label($('#v1'),{fig:VOL,slots:[['1','الفوهة'],['2','اللابة'],['3','قناة الصهارة (المدخنة)'],['4','غرفة الصهارة'],['5','سحابة الرماد والغازات'],['6','القنابل البركانية']],done:'أحسنت! عرفت أجزاء البركان الرئيسة.'},'lab1',()=>G.complete('lab1'));const ck=$('#v1 .c6-key');if(ck)ck.style.gridTemplateColumns='minmax(0,1fr) minmax(0,1fr)';},
- explain:'<p>رسم مبسط مقترح (ليس رسم الكتاب) لأجزاء البركان الواردة في الدرس.</p>'});
+/* ---------- 1) محقق الكوليرا ---------- */
+const PUMPS=[{id:'A',x:150,y:80},{id:'B',x:330,y:150},{id:'C',x:510,y:90},{id:'D',x:200,y:240},{id:'E',x:480,y:250}];
+function rnd(s){return ()=>{s=(s*9301+49297)%233280;return s/233280;};}
+const CASES=(()=>{const r=rnd(7),a=[];for(let i=0;i<46;i++){const ang=r()*6.28,d=12+r()*70;a.push({x:330+Math.cos(ang)*d*1.3,y:150+Math.sin(ang)*d});}for(let i=0;i<8;i++)a.push({x:40+r()*560,y:30+r()*250});return a;})();
+def('lab1',{after:'s2',n:'🧪 محقق الكوليرا',eyebrow:'تجربة افتراضية · بحث وصفي · مقترحة',title:'كن جون سنو: اكتشف مصدر الوباء',goal:'أنت الطبيب جون سنو. اجمع البيانات: المس «بيوت المرضى» لتظهر حالات الإصابة على الخريطة، ثم احسب المسافات إلى المضخات، وحدّد المضخة الملوثة.',plan:7,core:1,
+ icon:'<rect x="8" y="8" width="64" height="64" rx="4" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="40" cy="40" r="6" fill="currentColor"/><circle cx="30" cy="34" r="3" fill="currentColor"/><circle cx="48" cy="46" r="3" fill="currentColor"/>',
+ body:`<div class="two"><div class="stage"><svg id="j1svg" viewBox="0 0 640 300" aria-label="خريطة الحي"></svg>
+   <div class="toolbar" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button class="tool" type="button" id="j1a"><span>🏠</span><span>1. اجمع بيانات المرضى</span></button><button class="tool" type="button" id="j1b"><span>📏</span><span>2. احسب الحالات قرب كل مضخة</span></button><button class="tool" type="button" id="j1c"><span>🔒</span><span>3. أغلق مضخة</span></button></div></div>
+  <div class="side"><div class="card"><h3>دفتر المحقق</h3><div id="j1log" class="step-text muted">ابدأ بجمع البيانات.</div><div class="tablewrap mt"><table class="c6-table" id="j1t"></table></div></div></div></div>
+  <div class="card"><h3>استنتج</h3><div id="j1q"></div></div>`,
+ init(){let st=0,closed=null,pick=false;
+  const near=p=>CASES.filter(c=>Math.hypot(c.x-p.x,c.y-p.y)<70).length;
+  const draw=()=>{let s=`<rect width="640" height="300" fill="#f5efe1"/>`;
+   for(let i=0;i<9;i++)s+=`<path d="M${i*80} 0V300" stroke="#e2d6b8" stroke-width="10"/>`;for(let j=0;j<5;j++)s+=`<path d="M0 ${j*70+10}H640" stroke="#e2d6b8" stroke-width="10"/>`;
+   if(st>=1)CASES.forEach(c=>s+=`<rect x="${c.x-4}" y="${c.y-4}" width="8" height="8" fill="#111" opacity=".75"/>`);
+   PUMPS.forEach(p=>{const n=near(p);s+=`<g class="pmp" data-p="${p.id}" style="cursor:${pick?'pointer':'default'}">${st>=2?`<circle cx="${p.x}" cy="${p.y}" r="70" fill="${n>25?'rgba(220,38,38,.18)':'rgba(37,99,235,.08)'}" stroke="${n>25?'#dc2626':'#94a3b8'}" stroke-dasharray="6 5"/>`:''}<circle cx="${p.x}" cy="${p.y}" r="13" fill="${closed===p.id?'#64748b':'#2563eb'}" stroke="#fff" stroke-width="3"/><text x="${p.x}" y="${p.y+5}" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">${p.id}</text>${closed===p.id?`<text x="${p.x}" y="${p.y-20}" text-anchor="middle" ${AR} font-size="13" font-weight="800" fill="#dc2626">مغلقة</text>`:''}</g>`;});
+   s+=`<g transform="translate(14 278)"><rect width="10" height="10" fill="#111"/><text x="16" y="10" ${AR} font-size="12" fill="#334155">حالة إصابة</text><circle cx="110" cy="5" r="7" fill="#2563eb"/><text x="122" y="10" ${AR} font-size="12" fill="#334155">مضخة ماء يدوية</text></g>`;
+   $('#j1svg').innerHTML=s;$$('#j1svg .pmp').forEach(g=>g.onclick=()=>{if(!pick)return;closeP(g.dataset.p);});};
+  const log=[];const L=m=>{log.push(m);$('#j1log').innerHTML='<ol style="margin:0;padding-inline-start:18px">'+log.map(x=>`<li>${x}</li>`).join('')+'</ol>';};
+  $('#j1a').onclick=()=>{st=Math.max(st,1);draw();SFX.pop();L(`سجّلت ${CASES.length} حالة إصابة على الخريطة (أماكن سكن المرضى).`);};
+  $('#j1b').onclick=()=>{if(st<1){L('اجمع بيانات المرضى أولًا.');return;}st=2;draw();SFX.tick();$('#j1t').innerHTML='<thead><tr><th>المضخة</th><th>حالات قريبة منها</th></tr></thead><tbody>'+PUMPS.map(p=>`<tr><td>${p.id}</td><td>${near(p)}</td></tr>`).join('')+'</tbody>';L('حوّلت البيانات إلى أرقام (الموضوعية): عددت الحالات القريبة من كل مضخة.');};
+  $('#j1c').onclick=()=>{if(st<2){L('احسب الحالات قرب كل مضخة أولًا.');return;}pick=true;draw();L('المس المضخة التي تريد إغلاقها.');};
+  function closeP(id){closed=id;pick=false;draw();if(id==='B'){SFX.correct();G.add(10,'lab1');L('أغلقت المضخة B… فتناقصت الإصابات الجديدة! المضخة B كانت مصدر التلوث.');}else{SFX.wrong();L(`أغلقت المضخة ${id} لكن الإصابات استمرت. راجع جدول الأرقام.`);}}
+  draw();
+  mcq($('#j1q'),{q:'ما الخطوة التي جعلت استقصاءك موضوعيًّا؟',o:['تحويل البيانات إلى قياسات رقمية (عدد الحالات قرب كل مضخة)','اختيار المضخة التي تبدو قديمة','الاعتماد على آراء السكان','تخمين المضخة الملوثة'],a:0},'lab1',()=>G.complete('lab1'));},
+ explain:'<p>محاكاة مقترحة مبسطة لاستقصاء جون سنو (لندن 1854م): أماكن الحالات وأرقام المضخات افتراضية للتعلم.</p>'});
 
-/* ---------- 2) مختبر السليكا ---------- */
-def('lab2',{after:'s3',n:'🧪 مختبر السليكا',eyebrow:'تجربة افتراضية · مقترحة',title:'مختبر السليكا والغازات: هادئ أم عنيف؟',goal:'غيّر نسبة السليكا وكمية الغازات وبخار الماء، ثم اضغط «ثوران». لاحظ لزوجة اللابة وشدة الثوران.',plan:7,core:1,
- icon:'<path d="M20 70L36 30h8l16 40z" fill="currentColor"/><circle cx="30" cy="16" r="5" fill="currentColor"/><circle cx="50" cy="12" r="4" fill="currentColor"/>',
- body:`<div class="two"><div class="stage"><svg id="l2svg" viewBox="0 0 640 320" aria-label="بركان"></svg><div style="padding:10px"><label class="step-text">نسبة السليكا: <b id="l2sv">50</b>%<input type="range" id="l2s" min="45" max="75" value="50" style="width:100%"></label><label class="step-text">الغازات وبخار الماء: <b id="l2gv">قليلة</b><input type="range" id="l2g" min="0" max="2" value="0" style="width:100%"></label><button class="btn" type="button" id="l2go">🌋 ثوران</button></div></div>
-  <div class="side"><div class="card"><h3>اختبار اللزوجة</h3><svg id="l2v" viewBox="0 0 260 150" style="direction:ltr"></svg><p class="hint-line">قطرة من اللابة على سطح مائل.</p></div><div class="card"><div id="l2o" class="step-text"></div></div></div></div>
-  <div class="card"><div id="l2q"></div></div>`,
- init(){let tm=null,t=0;const tried=new Set();
-  const S=()=>+$('#l2s').value,Gs=()=>+$('#l2g').value;const visc=()=>(S()-45)/30;const pow=()=>Math.min(1,visc()*.7+Gs()*.2);
-  const draw=()=>{const v=visc(),p=pow(),run=t>0;let s=`<rect width="640" height="320" fill="#e0f2fe"/><path d="M80 300 L280 120 h80 L560 300z" fill="#57534e"/><rect y="300" width="640" height="20" fill="#a16207"/>`;
-   if(run){if(p>.55){const r=t*6;for(let i=0;i<22;i++){const a=-Math.PI/2+(i-11)*.12,d=r*(0.6+((i*37)%10)/14);s+=`<circle cx="${320+Math.cos(a)*d}" cy="${120+Math.sin(a)*d+t*t*.05}" r="${4+i%4}" fill="${i%3?'#292524':'#f97316'}"/>`;}s+=`<path d="M300 120 q-${30+t*3} -${60+t*5} 20 -${90+t*6} q${40+t*2} -${10+t} ${30} ${80+t*4}z" fill="#78716c" opacity=".8"/>`;}
-    else{const L=Math.min(200,t*4*(1.2-v));s+=`<path d="M300 120 h40 Q${360+L*.6} ${200} ${360+L} 300 L${280-L} 300 Q${280-L*.6} 200 300 120z" fill="#f97316" opacity=".9"/>`;}}
-   $('#l2svg').innerHTML=s;
-   const dx=(1-v)*190*Math.min(1,t/30);$('#l2v').innerHTML=`<path d="M10 40 L250 120" stroke="#475569" stroke-width="5"/><circle cx="${30+dx}" cy="${42+dx*.33}" r="${12+v*6}" fill="#f97316"/>`;
-   $('#l2sv').textContent=S();$('#l2gv').textContent=['قليلة','متوسطة','كثيرة'][Gs()];};
-  $('#l2go').onclick=()=>{t=0;clearInterval(tm);const p=pow();tried.add(p>.55?'v':'q');p>.55?SFX.thud&&SFX.thud():SFX.pop();
-   tm=setInterval(()=>{t++;draw();if(t>40)clearInterval(tm);},50);
-   $('#l2o').innerHTML=p>.55?`<b style="color:#b91c1c">ثوران عنيف (متفجر)!</b> اللابة لزجة (سليكا ${S()}%) تقاوم التدفق وتحبس الغازات فيتراكم الضغط حتى الانفجار، فتُقذف المقذوفات والرماد.`:`<b style="color:#c2410c">ثوران هادئ:</b> اللابة قليلة اللزوجة (سليكا ${S()}%) تتدفق بسهولة كالنهر، وتتسرب الغازات منها بهدوء.`;
-   if(tried.size===2)G.add(5,'lab2');};
-  ['l2s','l2g'].forEach(i=>$('#'+i).oninput=()=>{t=0;draw();});STN.lab2.stop=()=>clearInterval(tm);draw();
-  mcq($('#l2q'),{q:'ماذا تستنتج؟',o:['كلما زادت السليكا والغازات زادت لزوجة اللابة وشدة الثوران','السليكا تقلل اللزوجة','الغازات لا تؤثر في الثوران','كل البراكين تثور بالطريقة نفسها'],a:0},'lab2',()=>G.complete('lab2'));},
- leave(){STN.lab2.stop&&STN.lab2.stop();},explain:'<p>محاكاة مقترحة؛ نسب السليكا وحد الانفجار تقريبية للتوضيح.</p>'});
+/* ---------- 2) طبق البكتيريا ---------- */
+def('lab2',{after:'s7',n:'🧪 أطباق البكتيريا',eyebrow:'تجربة افتراضية · مقترحة',title:'التجربة المضبوطة: أثر مضادين حيويين في نمو البكتيريا',goal:'جهّز الأطباق الثلاثة بالظروف نفسها، ثم شغّل الحاضنة وراقب نمو البكتيريا يومًا بعد يوم. حدّد المتغيرات.',plan:7,core:1,
+ icon:'<circle cx="40" cy="40" r="28" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="30" cy="34" r="4" fill="currentColor"/><circle cx="46" cy="30" r="4" fill="currentColor"/><circle cx="44" cy="50" r="4" fill="currentColor"/>',
+ body:`<div class="two"><div class="stage"><svg id="p2svg" viewBox="0 0 640 260" aria-label="ثلاثة أطباق بكتيريا"></svg><div style="padding:10px"><label class="step-text">📅 اليوم: <b id="p2d">0</b><input type="range" id="p2r" min="0" max="5" value="0" style="width:100%"></label>
+   <div class="row-actions"><label class="step-text"><input type="checkbox" id="p2fair" checked> الظروف ثابتة لكل الأطباق (الحرارة 37°س، الزمن، كمية المضاد)</label></div></div></div>
+  <div class="side"><div class="card"><h3>نتائج المراقبة</h3><div id="p2out" class="step-text"></div></div></div></div>
+  <div class="card"><h3>حدّد</h3><div id="p2q"></div></div>`,
+ init(){const r0=rnd(3),SP=[...Array(60)].map(()=>({a:r0()*6.28,d:Math.sqrt(r0())*62}));
+  const draw=()=>{const d=+$('#p2r').value,fair=$('#p2fair').checked;$('#p2d').textContent=d;
+   const g=[d*12,Math.max(0,d*11-(fair?0:10)),fair?Math.min(2,d):d*5];
+   const L=[['أ','مضاد حيوي (أ)'],['ب','مضاد حيوي (ب)'],['ض','العينة الضابطة (بلا مضاد)']];
+   let s=`<rect width="640" height="260" fill="var(--wall)"/>`;
+   [110,320,530].forEach((x,i)=>{s+=`<ellipse cx="${x}" cy="120" rx="86" ry="80" fill="#fde68a" stroke="#94a3b8" stroke-width="5"/>`;const n=i===0?g[0]:i===1?g[2]:g[0]+3;
+    SP.slice(0,Math.min(60,i===1?g[2]:n)).forEach(p=>s+=`<circle cx="${x+Math.cos(p.a)*p.d}" cy="${120+Math.sin(p.a)*p.d*.9}" r="5" fill="#f8fafc" stroke="#d6d3d1"/>`);
+    if(i<2)s+=`<circle cx="${x}" cy="120" r="10" fill="#fff" stroke="#64748b" stroke-width="2"/>`;
+    s+=`<text x="${x}" y="230" text-anchor="middle" ${AR} font-size="15" font-weight="800" fill="var(--ink)">${['الطبق (أ)','الطبق (ب)','طبق العينة الضابطة'][i]}</text>`;});
+   $('#p2svg').innerHTML=s;
+   $('#p2out').innerHTML=d===0?'بداية التجربة: لم تنمُ البكتيريا بعد.':`<ul style="margin:0"><li>الطبق (أ): نمت البكتيريا (${Math.min(60,g[0])} مستعمرة).</li><li>الطبق (ب): ${fair?'لم تنمُ البكتيريا تقريبًا.':'نمو متفاوت!'}</li><li>العينة الضابطة: نمت البكتيريا (${Math.min(60,g[0]+3)} مستعمرة).</li></ul>${fair?'':'<p class="fb bad">عندما لم تُثبّت الظروف لم نعد نعرف سبب الاختلاف! يجب أن يتغير عامل واحد فقط.</p>'}`;
+   if(d>=4&&fair)G.add(0,'lab2');};
+  $('#p2r').oninput=()=>{SFX.tick();draw();};$('#p2fair').onchange=draw;draw();
+  K.sortGame($('#p2q'),{bins:['متغير مستقل','متغير تابع','ثابت','عينة ضابطة'],items:[['نوع المضاد الحيوي',0],['عدد مستعمرات البكتيريا',1],['درجة الحرارة 37°س',2],['مدة الحضانة',2],['الطبق بلا مضاد',3]]},'lab2',()=>G.complete('lab2'));},
+ explain:'<p>تجربة مقترحة توضح نتيجة العرض: نمت البكتيريا في الضابطة وفي (أ)، ولم تنمُ في (ب)؛ فالمضاد (ب) فعال. أعداد المستعمرات افتراضية.</p>'});
 
-/* ---------- 3) باني البراكين ---------- */
-const BT=[{n:'درعي',f:(x,k)=>Math.max(0,1-Math.abs(x)/1)*0.28*k,sl:'قليل الانحدار وواسع',ly:'طبقات لابة بازلتية منبسطة'},{n:'مخروطي',f:(x,k)=>Math.max(0,1-Math.abs(x)/.25)*0.38*k,sl:'شديد الانحدار وصغير',ly:'رماد وفتات بركاني'},{n:'مركب',f:(x,k)=>Math.max(0,1-Math.abs(x)/.6)*0.85*k,sl:'شديد الانحدار وكبير',ly:'طبقات متعاقبة: رماد ثم لابة'}];
-def('lab3',{after:'s4',n:'🧪 باني البراكين',eyebrow:'تجربة افتراضية · مقترحة',title:'باني البراكين: ثورانًا بعد ثوران',goal:'اختر نوع البركان، ثم اضغط «ثوران» عدة مرات، وراقب كيف تتراكم الطبقات ويتشكل الشكل والانحدار.',plan:6,core:1,
- icon:'<path d="M4 64Q40 40 76 64z" fill="currentColor"/><path d="M28 64L40 30 52 64z" fill="currentColor" opacity=".5"/>',
- body:`<div class="two"><div class="stage"><svg id="b3svg" viewBox="0 0 640 300" aria-label="مقطع بركان"></svg><div class="row-actions" style="padding:10px"><div class="c6-chips" id="b3t"></div><button class="btn" type="button" id="b3go">🌋 ثوران</button><button class="tbtn" type="button" id="b3r">إعادة</button></div></div>
-  <div class="side"><div class="card"><h3>البطاقة</h3><div id="b3o" class="step-text"></div></div></div></div>`,
- init(){let ty=0,k=0;const built=new Set();
-  const draw=()=>{const T=BT[ty];let s=`<rect width="640" height="300" fill="#e0f2fe"/><rect y="270" width="640" height="30" fill="#a16207"/>`;
-   for(let L=k;L>=1;L--){let d='M20 270';for(let X=0;X<=600;X+=6){const x=(X-300)/300;d+=` L${20+X} ${270-T.f(x,L/6)*250}`;}const ash=ty===1||(ty===2&&L%2===1);s+=`<path d="${d} L620 270z" fill="${ash?(L%2?'#78716c':'#a8a29e'):(L%2?'#7c2d12':'#9a3412')}"/>`;}
-   if(k)s+=`<path d="M320 ${270-T.f(0,k/6)*250} V270" stroke="#f97316" stroke-width="5"/>`;$('#b3svg').innerHTML=s;
-   $('#b3o').innerHTML=`<b>البركان ال${T.n}</b><br>المواد: ${T.ly}.<br>الشكل: ${T.sl}.<br>عدد الثورانات: ${k}`;};
-  $('#b3t').innerHTML=BT.map((b,i)=>`<button class="c6-chip" type="button" data-i="${i}" aria-pressed="${i===0}">${b.n}</button>`).join('');
-  $$('#b3t [data-i]').forEach(b=>b.onclick=()=>{ty=+b.dataset.i;k=0;$$('#b3t [data-i]').forEach(x=>x.setAttribute('aria-pressed',x===b));draw();});
-  $('#b3go').onclick=()=>{if(k<6){k++;SFX.pop();draw();if(k===6){built.add(ty);G.add(3,'lab3');if(built.size===3)G.complete('lab3');}}};$('#b3r').onclick=()=>{k=0;draw();};draw();},
- explain:'<p>نموذج مقترح مبسط: الدرعي واسع قليل الانحدار، والمخروطي صغير شديد الانحدار، والمركب كبير بطبقات متعاقبة.</p>'});
+/* ---------- 3) لماذا نكرر المحاولات؟ ---------- */
+def('lab3',{after:'lab2',n:'🧪 المحاولات المتعددة',eyebrow:'تجربة افتراضية · مقترحة',title:'لماذا نجري عدة محاولات؟ تجربة سقي النبات',goal:'اختبر الفرضية: «النبات الذي يُسقى كل يوم ينمو أسرع». أجرِ محاولة واحدة، ثم عدة محاولات، وقارن المتوسط.',plan:7,core:1,
+ icon:'<path d="M40 70V34" stroke="currentColor" stroke-width="5"/><path d="M40 44c-14 0-20-10-20-20 12 0 20 6 20 20zM40 38c14 0 20-10 20-20-12 0-20 6-20 20z" fill="currentColor"/>',
+ body:`<div class="two"><div class="stage"><svg id="g3svg" viewBox="0 0 640 260" aria-label="نباتات"></svg><div class="row-actions" style="padding:10px"><button class="btn" type="button" id="g3one">أجرِ محاولة</button><button class="tbtn" type="button" id="g3five">أجرِ 5 محاولات دفعة واحدة</button><button class="tbtn" type="button" id="g3r">إعادة</button></div></div>
+  <div class="side"><div class="card"><h3>جدول البيانات (أطوال النبات بعد أسبوعين، سم)</h3><div class="tablewrap"><table class="c6-table" id="g3t"></table></div><div id="g3fb"></div></div></div></div>
+  <div class="card"><h3>استنتج</h3><div id="g3q"></div></div>`,
+ init(){let T=[];const r=rnd(11);
+  const trial=()=>{const n=+(9+r()*5).toFixed(1),w=+(7+r()*6).toFixed(1);T.push([n,w]);};
+  const avg=i=>T.length?(T.reduce((a,t)=>a+t[i],0)/T.length).toFixed(1):'—';
+  const draw=()=>{const last=T[T.length-1]||[0,0];let s=`<rect width="640" height="260" fill="var(--wall)"/><rect y="220" width="640" height="40" fill="var(--bench)"/>`;
+   [[180,'يُسقى كل يوم',last[0]],[460,'يُسقى مرة في الأسبوع (ضابطة)',last[1]]].forEach(([x,lb,h])=>{const H=h*10;s+=`<path d="M${x-40} 220 l8 -40 h64 l8 40z" fill="#b45309"/><path d="M${x} 180 V${180-H}" stroke="#15803d" stroke-width="6"/>${H?`<path d="M${x} ${190-H*.6} c-26 0-34-14-34-26 18 0 34 8 34 26zM${x} ${200-H*.4} c26 0 34-14 34-26-18 0-34 8-34 26z" fill="#22c55e"/>`:''}<text x="${x}" y="246" text-anchor="middle" ${AR} font-size="14" font-weight="700" fill="#fff">${lb}</text><text x="${x}" y="${170-H}" text-anchor="middle" font-size="15" font-weight="800" fill="var(--ink)">${h?h+' سم':''}</text>`;});
+   $('#g3svg').innerHTML=s;
+   $('#g3t').innerHTML=`<thead><tr><th>المحاولة</th><th>كل يوم</th><th>مرة أسبوعيًّا</th></tr></thead><tbody>${T.map((t,i)=>`<tr><td>${i+1}</td><td>${t[0]}</td><td>${t[1]}</td></tr>`).join('')}<tr><th>المتوسط</th><th>${avg(0)}</th><th>${avg(1)}</th></tr></tbody>`;
+   if(T.length===1&&T[0][1]>=T[0][0])say($('#g3fb'),'bad','لاحظ: في هذه المحاولة الواحدة لم تُدعم الفرضية! هل نثق بمحاولة واحدة؟');
+   else if(T.length>=5){say($('#g3fb'),'ok',`بعد ${T.length} محاولات: متوسط «كل يوم» ${avg(0)} سم مقابل ${avg(1)} سم. النتائج المتعددة أدق وأوثق.`);G.complete('lab3');}else $('#g3fb').innerHTML='';};
+  $('#g3one').onclick=()=>{trial();SFX.pop();draw();};$('#g3five').onclick=()=>{for(let i=0;i<5;i++)trial();SFX.correct();draw();};$('#g3r').onclick=()=>{T=[];draw();};draw();
+  mcq($('#g3q'),{q:'لماذا نجري عدة محاولات للتجربة؟',o:['للتأكد من صحة النتائج ولتكون أكثر دقة','لأن المحاولة الأولى خاطئة دائمًا','لإضاعة الوقت','لتغيير الفرضية'],a:0},'lab3');},
+ explain:'<p>تجربة مقترحة: القيم عشوائية ضمن مدى؛ قد لا تدعم محاولة واحدة الفرضية، لكن المتوسط بعد عدة محاولات يكشف النمط الحقيقي.</p>'});
 })();
 
-/*@css c2.css*/
-/*@include lab5.js*/
+/*@css c1.css*/
+/*@include lab2.js*/
 /*@include kit.js*/
 /*@include skit.js*/
-/* ===== الفصل الثاني · الدرس الثاني: البراكين — «فوهة النار» ===== */
+/* ===== الفصل الأول · الدرس الثاني: عمل العلم — «مختبر المحققين» ===== */
 (function(){
-const {$,$$,G,STN,def,mcq,flips,match,sortGame,challenge,say,SFX,pic,slides,escape,bingo,tfRound,choiceBoard,solutions}=K;
-const {fig,grid,reveal,ICO,lst,order,fill,tfx,label}=C6;const P=(n,c)=>[n,c];
-const VIC='<path d="M8 70L32 26h16l24 44z" fill="none" stroke="currentColor" stroke-width="5"/><path d="M36 26c0-10 8-14 4-22M44 26c2-8 10-10 8-18" fill="none" stroke="currentColor" stroke-width="4"/>';
+const {$,$$,G,STN,def,mcq,flips,match,sortGame,challenge,say,SFX,pic,slides,escape,auction,riddles,choiceBoard,solutions}=K;
+const {fig,grid,reveal,ICO,lst,order,fill,tfx}=C6;const P=(n,c)=>[n,c];
 
-def('intro',{n:'الافتتاحية',plan:3,icon:VIC,
- body:`<div class="hero"><div class="hero-photo">${pic('s01_6c612d53','ثوران بركاني')}<span class="cap">الفصل الثاني: تغيرات الأرض.</span></div>
-  <div><span class="eyebrow">فوهة النار</span><h2 class="hero-h">لماذا يثور بركان بهدوء… ويثور آخر بعنف؟</h2>
-   <p class="riddle">في حرة رهط بالمملكة تدفقت اللابة كأنهار هادئة، وفي براكين أخرى انفجرت الصخور والرماد آلاف الأمتار في الهواء. ما سر هذا الاختلاف؟</p>
+def('intro',{n:'الافتتاحية',plan:3,icon:ICO.lens,
+ body:`<div class="hero"><div class="hero-photo">${pic('s05_42b5f3bb','سيارة ارتفعت حرارة محركها')}<span class="cap">بينما تقود سيارتك لاحظت ارتفاع درجة حرارة المحرك… كيف تواجه هذا الموقف؟</span></div>
+  <div><span class="eyebrow">مختبر المحققين</span><h2 class="hero-h">كل مشكلة… لها طريقة علمية لحلها!</h2>
+   <p class="riddle">لابد أن يبدأ عقلك بطرح الأسئلة: لماذا؟ كيف؟ متى؟ ثم تبدأ بعمل منظم يقودك لحل المشكلة. فما الخطوات التي يتبعها العلماء؟</p>
    <p class="q">ما توقعك قبل أن تبدأ؟</p><div class="opts" id="introOpts"></div><div id="introFb"></div></div></div>
   <div class="card teacher-only"><h3>مسار الحصة</h3><div id="introPlan"></div></div>`,init(){}});
 
-const GOALS=['تشرح كيف تؤثر البراكين في الناس.','تصف كيف تنتج البراكين مواد مختلفة.','تقارن بين كيفية تكون الأشكال الثلاثة من البراكين.'];
-const TERMS=[{t:'الصهارة',d:'صخور مصهورة في باطن الأرض. (مراجعة المفردات)'},{t:'البركان',d:'تلال أو جبال مخروطية (قمعية) الشكل تكونت بفعل ثورانات الصهارة.'},{t:'اللابة',d:'الصهارة عندما تتدفق على سطح الأرض من فوهة البركان.'},{t:'البركان الدرعي',d:'بركان واسع الامتداد، قليل الانحدار، يتكون من تراكم طبقات اللابة البازلتية.'},{t:'البركان المخروطي',d:'مخروط صغير من المواد البركانية يتكون عندما يقذف البركان الرماد واللابة إلى ارتفاعات كبيرة ثم تبرد وتعود إلى الأرض.'},{t:'البركان المركب',d:'بركان شديد الانحدار يتشكل نتيجة تراكم طبقات متعاقبة من الانفجارات العنيفة والثورانات الهادئة.'}];
-def('goals',{n:'الأهداف والمفردات',eyebrow:'الكتاب صفحة 61',title:'الأهداف والمفردات',goal:'تعرّف أهداف الدرس وأهميته ومفرداته.',plan:4,icon:ICO.doc,
- body:`<div class="two"><div class="card"><h3>أهداف الدرس</h3><ol class="goals">${GOALS.map(g=>`<li>${g}</li>`).join('')}</ol><div class="story mt"><b>أهمية الدرس:</b> قد تعرّض الثورانات البركانية الإنسان والمخلوقات الحية لمخاطر كبيرة.</div></div>
-  <div class="card"><h3>مراجعة المفردات</h3><p class="step-text"><b>الصهارة:</b> صخور مصهورة في باطن الأرض.</p><h3 class="mt">المفردات الجديدة</h3><ul class="tasks plain"><li>البركان</li><li>اللابة</li><li>البركان الدرعي</li><li>البركان المخروطي</li><li>البركان المركب</li></ul></div></div>
-  <div class="card"><div class="nb-head"><h2>بطاقات المفردات</h2></div><div id="g5f"></div></div><div class="card"><div class="nb-head"><h2>لعبة المطابقة</h2></div><div id="g5m"></div></div>`,
- init(){flips($('#g5f'),TERMS);this.reset();},reset(){match($('#g5m'),TERMS.slice(1).map(t=>[t.t,t.d]),'goals',()=>G.complete('goals'));}});
+const GOALS=['تختبر خطوات حل مشكلة ما بطريقة علمية.','توضح كيفية بناء الاستقصاء المصمم جيدًا.'];
+const TERMS=[{t:'التجربة',d:'مجموعة من الخطوات المنظمة يقود تنفيذها إلى اكتشاف أو اختبار أو إثبات شيء ما. (مراجعة المفردات)'},
+ {t:'البحث الوصفي',d:'بحث يجيب عن الأسئلة من خلال الملاحظات.'},{t:'البحث التجريبي',d:'بحث يجيب عن الأسئلة العلمية من خلال اختبار الفرضية (التجربة).'},
+ {t:'الطرائق العلمية',d:'مجموعة من الخطوات المتسلسلة التي تؤدي إلى حل المشكلات.'},{t:'النموذج',d:'محاكاة لشيء ما أو حدث ما، ويستخدم أداةً لفهم العالم الطبيعي.'},
+ {t:'الفرضية',d:'توقع أو عبارة قابلة للاختبار.'},{t:'المتغير المستقل',d:'العامل الذي يتم تغييره في التجربة.'},{t:'المتغير التابع',d:'العامل الذي يتم قياسه في التجربة.'},
+ {t:'الثابت',d:'المتغيرات التي تبقى ثابتة دون أن تتغير.'},{t:'العينة الضابطة',d:'عينة تعامل مثل بقية المجموعات التجريبية، إلا أنها لم تتعرض إلى أثر المتغير المستقل.'}];
+def('goals',{n:'الأهداف والمفردات',eyebrow:'الكتاب صفحة 26',title:'الأهداف والمفردات',goal:'تعرّف أهداف الدرس وأهميته ومفرداته.',plan:4,icon:ICO.doc,
+ body:`<div class="two"><div class="card"><h3>أهداف الدرس</h3><ol class="goals">${GOALS.map(g=>`<li>${g}</li>`).join('')}</ol><div class="story mt"><b>أهمية الدرس:</b> تساعدك الطرائق العلمية والتجارب المدروسة بعناية على حل المشكلات.</div></div>
+  <div class="card"><h3>مراجعة المفردات</h3><p class="step-text"><b>التجربة:</b> مجموعة من الخطوات المنظمة يقود تنفيذها إلى اكتشاف أو اختبار أو إثبات شيء ما.</p><h3 class="mt">المفردات الجديدة</h3><ul class="tasks plain" style="columns:2">${TERMS.slice(1).map(t=>`<li>${t.t}</li>`).join('')}</ul></div></div>
+  <div class="card"><div class="nb-head"><h2>بطاقات المفردات</h2><span>المس البطاقة</span></div><div id="g2f"></div></div><div class="card"><div class="nb-head"><h2>لعبة المطابقة</h2></div><div id="g2m"></div></div>`,
+ init(){flips($('#g2f'),TERMS);this.reset();},reset(){match($('#g2m'),TERMS.slice(1,7).map(t=>[t.t,t.d]),'goals',()=>G.complete('goals'));}});
 
-def('s1',{n:'1 · كيف تتشكل البراكين؟',eyebrow:'المحطة 1 · الكتاب صفحة 61',title:'كيف تتشكل البراكين؟',goal:'تأمل ما يحدث في الشكل: تتحرك الصخور المنصهرة وتصعد إلى سطح الأرض.',plan:7,core:1,icon:VIC,
- body:`<div class="card" id="s1sl"></div><div class="card"><h3>نظرة عامة: أجزاء البركان</h3><div class="two">${fig('s08_744be083','حاول أن تتعرف على بعض هذه الأجزاء',360)}<div><p class="step-text">حاول أن تتعرف على بعض أجزاء البركان في الشكل، ثم جرّب «مختبر تشريح البركان» التالي.</p></div></div></div>`,
+def('s1',{n:'1 · حل المشكلات',eyebrow:'المحطة 1 · الكتاب صفحة 26',title:'حل المشكلات والطريقة العلمية',goal:'يتم حل المشكلات بالطريقة العلمية: مشكلة ← تفكير ← حل.',plan:6,core:1,icon:'<circle cx="16" cy="40" r="10" fill="currentColor"/><circle cx="40" cy="40" r="10" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="64" cy="40" r="10" fill="currentColor" opacity=".5"/>',
+ body:`<div class="card" id="s1sl"></div><div class="two"><div class="card"><h3>طرق حل المشكلات</h3><div class="tablewrap"><table class="c6-table"><thead><tr><th>البحث الوصفي</th><th>البحث التجريبي</th></tr></thead><tbody><tr><td>بحث يجيب عن الأسئلة من خلال الملاحظات.</td><td>بحث يجيب عن الأسئلة العلمية من خلال اختبار الفرضية (التجربة).</td></tr></tbody></table></div>${grid([['s08_a6c151ac','البحث التجريبي'],['s08_8f96d7ba','البحث الوصفي']])}</div>
+  <div class="card"><h3>وصفي أم تجريبي؟</h3><div id="s1sort"></div></div></div>`,
  init(){slides($('#s1sl'),[
-  {k:'كيف تتشكل البراكين؟',t:'البركان Volcano',im:[P('s05_67786d02','تشكل البركان')],html:'<p>تتحرك الصخور المنصهرة بفعل الصخور ذات الكثافة العالية وتجبرها على الصعود إلى سطح الأرض، وتؤدي الصهارة الصاعدة إلى حدوث ثوران بركاني، لا يلبث أن يأخذ في التصلب، بينما تستمر الغازات في الخروج منه، ويتشكل في النهاية جبل قمعي الشكل يسمى <b>البركان</b>.</p>'},
-  {k:'البركان',t:'التعريف والفوهة واللابة',im:[P('s06_37f49141','لابة'),P('s06_fb1974ba','ثوران'),P('s06_1b6c037b','بركان')],html:'<p class="def"><b>البركان:</b> تلال أو جبال مخروطية (قمعية) الشكل تكونت بفعل ثورانات الصهارة.</p><p>تحتوي البراكين على فتحات دائرية عند قممها تسمى <b>فوهة البركان</b>.</p><p>عندما تتدفق الصهارة على سطح الأرض من فوهة البركان فإنها تسمى <b>اللابة</b>.</p>'},
-  {k:'المقذوفات الصلبة',t:'الفتات البركاني',im:[P('s07_3f05d929','سحب الرماد'),P('s07_38b0436f','قنابل بركانية')],html:'<p>تُلقي بعض الثورانات المتفجرة اللابة والصخور في الهواء آلاف الأمتار، وتسمى هذه القطع الصخرية أو اللابة المتصلبة المتساقطة من الهواء <b>المقذوفات</b> (الفتات البركاني).</p><p>يتراوح حجم المقذوفات الصلبة بين غبار ورماد بركاني، وصخور كبيرة تسمى <b>قنابل بركانية</b>.</p>'}],'s1',()=>G.complete('s1'));}});
+  {k:'حل المشكلات',t:'ارتفاع حرارة المحرك',im:[P('s05_42b5f3bb','سيارة')],html:'<p>بينما تقود سيارتك لاحظت ارتفاع درجة حرارة محرك السيارة. كيف تواجه هذا الموقف؟</p><p>لابد أن يبدأ عقلك بطرح الأسئلة: <b>لماذا؟ كيف؟ متى؟</b> ثم تبدأ بعمل منظم يقودك لحل المشكلة.</p>'},
+  {k:'كيف يمكن حل المشكلة؟',t:'الطريقة العلمية',im:[P('s07_ae737bd9','مشكلة ثم تفكير ثم حل')],html:'<p>يتم حل المشكلات بالطريقة العلمية.</p><p class="def"><b>الطريقة العلمية:</b> مجموعة من الخطوات المتسلسلة التي تؤدي إلى حل المشكلات.</p><p>مشكلة ← تفكير ← حل</p>'}],'s1');
+  sortGame($('#s1sort'),{bins:['بحث وصفي','بحث تجريبي'],items:[['تسجيل أعداد الطيور المهاجرة كل يوم',0],['تتبّع أماكن سكن مرضى الكوليرا',0],['اختبار أثر السماد في نمو النبات',1],['اختبار أثر مضادين حيويين في نمو البكتيريا',1],['وصف شكل النجوم في السماء ليلًا',0]],hint:'هل نغيّر عاملًا ونختبر فرضية؟'},'s1',()=>G.complete('s1'));},
+ explain:'<p>البحث الوصفي يجيب من خلال الملاحظات، والبحث التجريبي يختبر الفرضية بالتجربة. (أمثلة التصنيف مقترحة.)</p>'});
 
-def('s2',{n:'2 · أخطار البراكين',eyebrow:'المحطة 2 · الكتاب صفحة 62',title:'أخطار البراكين',goal:'كيف تؤثر البراكين في الناس؟',plan:5,core:1,icon:'<path d="M40 8L74 68H6z" fill="none" stroke="currentColor" stroke-width="5"/><path d="M40 28v20M40 56v4" stroke="currentColor" stroke-width="6"/>',
- body:`<div class="card"><div class="c6-grid">${[['s09_843990f0','تدمير المدن والقرى','بسبب الانهيارات والتدفقات الطينية الملتهبة.'],['s09_51d38df2','إغلاق المطارات والموانئ','قد يؤثر الغبار والمقذوفات البركانية على الحركة.'],['s09_dd38bb0e','تدفقات الفتات البركاني','وهي انهيارات سريعة لصخور حارة متوهجة مصحوبة بغازات حارة.']].map(([n,t,d])=>`<div class="card" style="padding:8px">${pic(n,t)}<h3 class="mt">${t}</h3><p class="step-text">${d}</p></div>`).join('')}</div><p class="step-text mt">ويُشكّل الرماد البركاني تدفقًا طينيًّا إذا امتزج بالأمطار.</p></div>
-  <div class="card"><h3>طابق الخطر بسببه</h3><div id="s2m"></div></div>`,
- init(){match($('#s2m'),[['تدمير المدن والقرى','الانهيارات والتدفقات الطينية الملتهبة'],['إغلاق المطارات والموانئ','الغبار والمقذوفات البركانية'],['تدفقات الفتات البركاني','انهيارات سريعة لصخور حارة متوهجة مع غازات حارة'],['التدفق الطيني','امتزاج الرماد البركاني بالأمطار']],'s2',()=>G.complete('s2'));}});
+def('s2',{n:'2 · البحث الوصفي',eyebrow:'المحطة 2 · الكتاب صفحة 27',title:'البحث الوصفي: خطواته الثلاث',goal:'يعتمد البحث الوصفي على: تحديد الهدف من البحث، ووصف تصميم البحث، والموضوعية. تعرّفها مع قصة الطبيب جون سنو.',plan:7,core:1,icon:ICO.lens,
+ body:`<div class="card" id="s2sl"></div><div class="card"><h3>رتّب خطوات البحث الوصفي</h3><div id="s2o"></div></div>`,
+ init(){slides($('#s2sl'),[
+  {k:'1 · تحديد الهدف من البحث',t:'ماذا تريد أن تكتشف؟',im:[P('s10_91134c70','الطبيب جون سنو'),P('s10_78f8feb1','خريطة لندن')],html:'<p>هدف البحث هو ما تريد أن تكتشفه، أو السؤال الذي ترغب في الإجابة عنه.</p><p>تتبّع الطبيب البريطاني <b>جون سنو</b> مصدر وباء الكوليرا باستخدام البحث الوصفي، وحدّد هدفه: <b>اكتشاف مصدر وباء الكوليرا في لندن</b>.</p><p class="hint-line">تصحيح: ورد في العرض «عام 1800م»، والصواب أن ذلك كان عام 1854م (في القرن التاسع عشر).</p>'},
+  {k:'2 · وصف تصميم البحث',t:'الأسئلة والبيانات',im:[P('s11_ab6bd1ac','خريطة جون سنو')],html:'<p>ضمّن الطبيب جون سنو في استقصائه الأسئلة التي توصله لأماكن سكن المرضى المصابين وأماكن حصولهم على الماء.</p><p>واستخدم هذه البيانات في توقع أن المياه التي مصدرها <b>المضخة اليدوية الموجودة في الشارع</b> كانت مصدر التلوث.</p><p>جرّب أن تكون جون سنو في المختبر الافتراضي التالي!</p>'},
+  {k:'3 · الموضوعية',t:'الابتعاد عن التحيز',im:[P('s12_4de8af9d','تحويل البيانات إلى أرقام'),P('s12_1d16f426','العينات العشوائية')],html:'<p>تكون الموضوعية بالابتعاد عن التحيز أو النتائج المتوقعة. ويتم ذلك من خلال:</p><ol><li>تحويل جميع البيانات إلى قياسات رقمية.</li><li>استخدام عينات عشوائية.</li></ol>'}],'s2');
+  order($('#s2o'),['تحديد الهدف من البحث','وصف تصميم البحث','الموضوعية'],'s2',()=>G.complete('s2'));},
+ quiz:[{q:'الابتعاد عن التحيز أو النتائج المتوقعة:',o:['الموضوعية','الفرضية','العينة الضابطة','النموذج'],a:0}]});
 
-def('s3',{n:'3 · أشكال البراكين',eyebrow:'المحطة 3 · الكتاب صفحة 62–63',title:'أشكال البراكين: ثوران عنيف أم هادئ؟',goal:'تصنف البراكين حسب اختلاف أنواع الثوران. فما الذي يحدد ذلك؟',plan:7,core:1,icon:VIC,
- body:`<div class="card" id="s3sl"></div><div class="two"><div class="card"><h3>تقويم 1 · ناقش طريقة ثوران البركانين من خلال الصورتين</h3>${fig('s11_0f9ce9aa','(أ) كمية سليكا عالية · (ب) كمية سليكا قليلة',360)}<div id="s3q"></div></div><div class="card"><h3>صنّف</h3><div id="s3s"></div></div></div>`,
+def('s3',{n:'3 · الطريقة العلمية',eyebrow:'المحطة 3 · الكتاب صفحة 27–28',title:'البحث التجريبي وخطوات الطريقة العلمية',goal:'ماذا تعمل إذا كانت نتائج تجربتك لا تدعم فرضيتك؟ ثم رتّب خطوات الطريقة العلمية.',plan:6,core:1,icon:'<path d="M8 64h16V48h16V32h16V16h16" fill="none" stroke="currentColor" stroke-width="6"/>',
+ body:`<div class="two"><div class="card"><h3>إحدى الطرائق العلمية لحل المشكلات: البحث التجريبي</h3>${fig('s13_a70637d2','دورة البحث التجريبي',300)}<div id="s3q"></div></div>
+  <div class="card"><h3>رتّب خطوات الطريقة العلمية</h3><div id="s3o"></div></div></div>`,
  init(){let n=0;const c=()=>{if(++n>=2)G.complete('s3');};
-  slides($('#s3sl'),[
-   {k:'أشكال البراكين',t:'فما الذي يحدد ذلك؟',im:[P('s10_73ee13c0','ثوران عنيف وهادئ')],html:'<p>تُصنف البراكين حسب اختلاف أنواع الثوران: <b>ثوران عنيف</b> و<b>ثوران هادئ</b>. فما الذي يحدد ذلك؟</p><p>تعتمد شدة الثوران على <b>تركيب الصهارة</b>: نسبة السليكا، وكمية بخار الماء والغازات فيها.</p>'},
-   {k:'ثوران عنيف',t:'سليكا عالية',im:[P('s11_b892c2e9','ثوران عنيف')],html:'<p>عندما تحتوي اللابة على <b>نسبة عالية من السليكا</b> تكون ذات لزوجة أكبر، ومن ثم تقاوم التدفق أكثر، مما يؤدي إلى ثوران البركان بعنف.</p><p class="hint-line">تصحيح: ورد في العرض «كثافة (لزوجة)»، والمقصود هنا اللزوجة (مقاومة السائل للتدفق) وليس الكثافة.</p>'},
-   {k:'ثوران هادئ',t:'سليكا قليلة',im:[P('s12_a327f815','لابة متدفقة')],html:'<p>تتدفق اللابة المحتوية على <b>نسبة قليلة من السليكا</b> ونسبة عالية من <b>الحديد والماغنسيوم</b> بسهولة؛ فتكون ذات لزوجة أقل، مما يؤدي إلى ثوران البركان بهدوء.</p>'}],'s3');
-  mcq($('#s3q'),{q:'أي البركانين ثورانه أعنف؟',o:['(أ) لأن كمية السليكا عالية فاللابة أكثر لزوجة','(ب) لأن كمية السليكا قليلة','كلاهما بالشدة نفسها','لا علاقة للسليكا بالثوران'],a:0},'s3',c);
-  sortGame($('#s3s'),{bins:['ثوران عنيف','ثوران هادئ'],items:[['سليكا عالية',0],['لابة لزجة تقاوم التدفق',0],['كمية كبيرة من بخار الماء والغازات المحتبسة',0],['سليكا قليلة',1],['غنية بالحديد والماغنسيوم',1],['لابة سائلة سهلة التدفق',1]]},'s3',c);}});
+  mcq($('#s3q'),{q:'إذا كانت نتائج تجربتك لا تدعم فرضيتك، ماذا تعمل؟',o:['أعيد تكوين الفرضية','أخفي النتائج','أغيّر البيانات لتوافق الفرضية','أتوقف عن البحث'],a:0},'s3',c);
+  order($('#s3o'),['تحديد المشكلة','جمع البيانات','وضع الفرضيات','اختبار صحة الفرضيات','تحليل البيانات','استخلاص النتائج'],'s3',c,'هذه خطوات الطريقة العلمية الست.');},
+ explain:'<p>خطوات الطريقة العلمية: تحديد المشكلة، جمع البيانات، وضع الفرضيات، اختبار صحة الفرضيات، تحليل البيانات، استخلاص النتائج. وإذا لم تدعم النتائج الفرضية تُعاد صياغتها.</p>'});
 
-const VT=[{n:'البراكين الدرعية',im:'s15_c4c95aee',sk:'s15_05518c19',d:'تتدفق اللابة البازلتية الغنية بالحديد والماغنسيوم، التي تحوي نسبة قليلة من السليكا، في صورة طبقات أفقية منبسطة. ويؤدي تراكم هذه الطبقات إلى تكوّن بركان واسع الامتداد، له جوانب قليلة الانحدار.',ex:'بركان جبل مار في حرة رهط في المملكة العربية السعودية.'},
- {n:'البراكين المخروطية',im:'s16_8666457c',sk:'s16_4c4c6431',d:'يقذف البركان الرماد البركاني واللابة لتصل إلى ارتفاعات كبيرة في الهواء، ثم تبرد وتعود إلى الأرض مكونة مخروطًا صغيرًا من المواد البركانية. توجد على ارتفاعات أقل من 300 م، وتتشكل عادة على هيئة مجموعات بجانب براكين كبيرة، ولا يدوم ثورانها فترة طويلة؛ لأن الثوران يحدث بسبب المحتوى الغازي العالي، إذ يتوقف بعد تحرر الغازات.',ex:'بركان حرة البرك من الحرات البركانية الكبيرة جنوب المملكة العربية السعودية.'},
- {n:'البراكين المركبة',im:'s17_8a4c5384',sk:'s17_4c4c6431',d:'براكين شديدة الانحدار، تتشكل نتيجة تراكم الطبقات المتعاقبة الناتجة عن الانفجارات البركانية العنيفة، ويتبع ذلك ثوران هادئ للبركان مشكلًا طبقة اللابة.',ex:'بركان جبل القدر شمال شرق المدينة المنورة.'},
- {n:'ثوران الشقوق',im:'s18_7a796a32',sk:'s14_21773049',d:'نوع من البراكين تتميز اللابة فيه بأنها ذات سيولة عالية ولزوجة قليلة، مما يجعل انسيابها سهلًا فوق سطح الأرض.',ex:'حرة رهط.'}];
-def('s4',{n:'4 · أنواع البراكين',eyebrow:'المحطة 4 · الكتاب صفحة 63–64',title:'أنواع البراكين',goal:'البراكين الدرعية والمخروطية والمركبة، وهناك نوع رابع يسمى ثوران الشقوق.',plan:8,core:1,icon:VIC,
- body:`<div class="card"><div class="c6-chips" id="s4c"></div><div id="s4v" class="mt" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px"></div></div><div class="card"><h3>طابق النوع بالمثال من المملكة</h3><div id="s4m"></div></div>`,
- init(){const seen=new Set();const show=i=>{const v=VT[i];$$('#s4c [data-i]').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.i===i));
-   $('#s4v').innerHTML=`<div>${grid([[v.sk,'مقطع'],[v.im,v.ex.split(' في ')[0]]])}</div><div><h3>${i+1}. ${v.n}</h3><p class="step-text">${v.d}</p><p class="step-text"><b>مثال:</b> ${v.ex}</p></div>`;seen.add(i);SFX.pop();if(seen.size===4)G.add(0,'s4');};
-  $('#s4c').innerHTML=VT.map((v,i)=>`<button type="button" class="c6-chip" data-i="${i}">${i+1}. ${v.n}</button>`).join('');$$('#s4c [data-i]').forEach(b=>b.onclick=()=>show(+b.dataset.i));show(0);
-  match($('#s4m'),[['البراكين الدرعية','جبل مار في حرة رهط'],['البراكين المخروطية','حرة البرك جنوب المملكة'],['البراكين المركبة','جبل القدر شمال شرق المدينة المنورة'],['ثوران الشقوق','حرة رهط (تدفق لابة واسع)']],'s4',()=>G.complete('s4'));}});
+def('s4',{n:'4 · الأجهزة والنماذج',eyebrow:'المحطة 4 · الكتاب صفحة 29–30',title:'الأجهزة والمواد والنماذج والقياسات العلمية',goal:'اختر أحدث المواد، واستخدم النماذج، وقِس بالنظام العالمي للوحدات SI.',plan:8,core:1,icon:ICO.flask,
+ body:`<div class="card" id="s4sl"></div><div class="two"><div class="card"><h3>صنّف النماذج</h3><div id="s4sort"></div></div><div class="card"><h3>الجدول 1: النظام العالمي (SI) لوحدات القياس</h3><div class="tablewrap"><table class="c6-table"><thead><tr><th>القياس</th><th>الوحدة</th><th>الرمز</th><th>يساوي</th></tr></thead><tbody>
+  <tr><td rowspan="4">الطول</td><td>1 ملليمتر</td><td>ملم</td><td>0.001 م (1/1000)</td></tr><tr><td>1 سنتمتر</td><td>سم</td><td>0.01 م (1/100)</td></tr><tr><td>1 متر</td><td>م</td><td>100 سم</td></tr><tr><td>1 كيلومتر</td><td>كم</td><td>1000 م</td></tr>
+  <tr><td rowspan="2">حجم السائل</td><td>1 ملليلتر</td><td>مل</td><td>0.001 لتر</td></tr><tr><td>1 لتر</td><td>لتر</td><td>1000 مل</td></tr>
+  <tr><td rowspan="4">الكتلة</td><td>1 ملجرام</td><td>ملجم</td><td>0.001 جم</td></tr><tr><td>1 جرام</td><td>جم</td><td>1000 ملجم</td></tr><tr><td>1 كيلوجرام</td><td>كجم</td><td>1000 جم</td></tr><tr><td>1 طن</td><td>طن</td><td>1000 كجم = 1 طن</td></tr></tbody></table></div><div id="s4c" class="mt"></div></div></div>`,
+ init(){let n=0;const c=()=>{if(++n>=2)G.complete('s4');};
+  slides($('#s4sl'),[
+   {k:'اختيار المواد والأجهزة',t:'أحدث المواد المتوافرة',im:[P('s15_a202a55c','أدوات المختبر'),P('s15_354d1056','طالب يعرض نتائجه')],html:'<p>عندما تنفذ الاستقصاء وتجمع البيانات عليك أن تختار أحدث المواد المتوافرة لديك.</p><p>بعد أن تكمل استقصاءك يمكنك أن تستخدم بعض الوسائل المتاحة لعرض النتائج، كما يمكن استخدام الحاسب الآلي أيضًا.</p>'},
+   {k:'استخدام النماذج',t:'درسنا في الصف الأول المتوسط',im:[P('s16_44887300','نموذج المجموعة الشمسية'),P('s16_d81a960d','نموذج حاسوبي لحركة الصفائح'),P('s16_77c250a5','أينشتاين')],html:'<p class="def"><b>النموذج:</b> محاكاة لشيء ما أو حدث ما، ويستخدم أداةً لفهم العالم الطبيعي؛ حيث تساعد النماذج على تصور أو تخيل الأشياء التي يصعب رؤيتها أو فهمها.</p><p><b>أنواع النماذج:</b> النماذج المادية (نموذج المجموعة الشمسية)، والنماذج الحاسوبية (استخدام الحاسوب لعمل نموذج لحركة الصفائح الأرضية)، والنماذج الفكرية (معادلة المادة والطاقة لأينشتاين).</p><p><b>تفيد النماذج في:</b> توفير المال والجهد، واختبار التوقعات والفرضيات، والتواصل.</p>'},
+   {k:'القياسات العلمية',t:'النظام العالمي للوحدات SI',im:[P('s17_b56c7e76','مخبار مدرج وميزان'),P('s17_7d934c3f','وحدات SI')],html:'<p>استخدم العلماء لجمع الملاحظات في جميع أنحاء العالم نظامًا للقياس يسمى <b>النظام العالمي للوحدات</b> International System of Units.</p><p>من الأدوات التي يستخدمها العلماء: المخبار المدرج لقياس حجم السائل، والميزان لقياس الكتلة، ومقياس الحرارة لقياس درجة الحرارة.</p>'}],'s4');
+  sortGame($('#s4sort'),{bins:['مادي','حاسوبي','فكري'],items:[['نموذج المجموعة الشمسية',0],['مجسم الخلية',0],['محاكاة حركة الصفائح الأرضية',1],['محاكاة الطقس على الحاسوب',1],['معادلة المادة والطاقة لأينشتاين',2]]},'s4',c);
+  K.calcQ($('#s4c'),{p:'كم سنتمترًا في 2.5 متر؟',v:250,unit:'سم',given:'1 م = 100 سم',law:'سم = م × 100',sol:'2.5 × 100 = 250 سم'},'s4',c);},
+ explain:'<p>نختار أحدث المواد، ونستخدم النماذج المادية والحاسوبية والفكرية، ونقيس بالنظام العالمي للوحدات SI. (مثالا مجسم الخلية ومحاكاة الطقس مقترحان.)</p>'});
 
-def('ev1',{n:'تقويم 2–6',eyebrow:'تقويم · الأسئلة 2–6',title:'تقويم: المقذوفات وأنواع البراكين',goal:'أسئلة التقويم كما في العرض.',plan:6,core:1,icon:ICO.check,
- body:'<div class="card" id="ev1b"></div><div class="card"><h3>6 · صحّح العبارات التالية</h3><div id="ev1c"></div></div>',
- init(){let n=0;const c=()=>{if(++n>=2)G.complete('ev1');};
-  STN.ev1.c=challenge($('#ev1b'),[
-   {k:'2',q:'القطع الصخرية أو اللابة المتصلبة المتساقطة من الهواء بعد قذفها بالثورانات المتفجرة:',o:['المقذوفات البركانية','اللابة','الفتات البركاني','الصهارة'],a:0,why:'وتسمى أيضًا الفتات البركاني.'},
-   {k:'3',q:'تُعد أكبر أنواع البراكين من حيث المساحة التي تغطيها:',o:['الدرعية','المخروطية','المركبة','ثوران الشقوق'],a:0,why:'مثل بركان جبل مار في حرة رهط؛ أمّا ثوران الشقوق فليس بركانًا مخروطيًّا بل تدفقات لابة واسعة.'},
-   {k:'4',q:'بركان يتكون بفعل الثوران الهادئ، حيث تتراكم طبقات من اللابة بعضها فوق بعض:',o:['الدرعية','المخروطية','ثوران الشقوق','المركبة'],a:0},
-   {k:'5',q:'براكين واسعة الامتداد وارتفاعها قليل، وجوانبها تتكون من اللابة:',o:['ثوران الشقوق','المخروطية','الدرعية','المركبة'],a:2}],'ev1');
-  setTimeout(c,0);
-  tfx($('#ev1c'),[['تكون اللابة ذات <u>لزوجة عالية</u> إذا احتوت على نسبة قليلة من السليكا.',false,'لزوجة قليلة',['لزوجة قليلة','كثافة عالية','حرارة منخفضة']],['تعتمد شدة ثوران البركان على <u>طقس المنطقة</u>.',false,'تركيب الصهارة',['تركيب الصهارة','عمر البركان','لون الصخور']],['عند تدفق الصهارة على سطح الأرض من فوهة أو فتحة تسمى <u>الرماد البركاني</u>.',false,'اللابة',['اللابة','الفوهة','القنبلة البركانية']]],'ev1',c);},reset(){STN.ev1.c.reset();},
- explain:'<p>في السؤال 3 لم تظهر إجابة العرض نصًّا، واعتمدنا «الدرعية» لأن الشريحة أرفقت صورة بركان جبل مار (درعي)، وهي أكبر البراكين امتدادًا.</p>'});
+def('s5',{n:'5 · البيانات والنتائج',eyebrow:'المحطة 5 · الكتاب صفحة 31–32',title:'جمع البيانات، واستخلاص النتائج، وتواصل العلماء',goal:'لماذا تُنظَّم البيانات؟ وماذا يفعل العلماء إذا لم تدعم النتائج توقعاتهم؟',plan:6,core:1,icon:'<rect x="12" y="44" width="12" height="24" fill="currentColor"/><rect x="34" y="28" width="12" height="40" fill="currentColor" opacity=".7"/><rect x="56" y="14" width="12" height="54" fill="currentColor" opacity=".4"/>',
+ body:`<div class="card" id="s5sl"></div>`,
+ init(){slides($('#s5sl'),[
+  {k:'جمع البيانات',t:'لماذا تُنظّم البيانات؟',im:[P('s19_1b575145','جدول بيانات'),P('s19_ee947fd6','رسم بياني')],html:'<p>يجب أن تُجمع البيانات في البحوث العلمية، وتُنظّم بصورة صحيحة. <b>لماذا؟</b> لأن التنظيم الجيد للبيانات يسهّل عمليتي التفسير والتحليل.</p><p>وهي تكون على شكل: <b>جداول البيانات</b>، و<b>الرسوم البيانية</b>.</p>'},
+  {k:'استخلاص النتائج',t:'البحث عن مضاد حيوي',im:[P('s20_2494bf57','المضادات الحيوية'),P('s20_c1b9085f','البكتيريا')],html:'<p>يقضي العلماء عدة سنوات في البحث عن مضاد حيوي يقتل بكتيريا معينة لاكتشاف أي المضادات الحيوية تؤثر فيها، وأيها لا تؤثر. فيتوصل العلماء إلى بعض المعلومات الجديدة في كل مرة يجدون فيها مضادًا حيويًّا لا تأثير له.</p><ul><li>التوصل للعلاج، وهو المطلوب.</li><li>عدم التوصل للعلاج، واستخدام المعلومات التي تم استقصاؤها في إنتاج مضادات حيوية أخرى.</li></ul><p class="def"><b>نستنتج:</b> إذا كانت النتائج لا تدعم توقعك فيتم الاحتفاظ بها للاستفادة منها في مجال آخر.</p>'},
+  {k:'تواصل العلماء',t:'اقرأ النص صفحة 30',im:[P('s21_ad434be3','لقاء علمي')],html:'<p>يُعد التواصل بنتائج التجارب جزءًا مهمًّا من الخبرات المختبرية.</p><p><b>لماذا يعد تواصل العلماء ونقل البيانات بينهم أمرًا مهمًّا لهم؟</b> لأن ذلك يُمكّن العلماء الآخرين من الاستفادة من المعلومات والبيانات التي تم التوصل لها، ويتيح لهم الحصول على أفكار جديدة تساهم في التوصل لنتائج أفضل.</p>'}],'s5',()=>G.complete('s5'));}});
 
-def('s5',{n:'5 · تطبيق الرياضيات',eyebrow:'تدريب · الكتاب صفحة 65',title:'تطبيق الرياضيات: حل معادلة بسيطة',goal:'يرتفع بركان حرة ثنان 1650 م عن سطح البحر، ويرتفع بركان حرة البرك 381 م. كم مرة يساوي ارتفاع بركان حرة ثنان ارتفاع بركان حرة البرك؟',plan:3,core:1,icon:'<path d="M14 40h20M24 30v20M46 34h20M46 46h20" stroke="currentColor" stroke-width="6"/>',
- body:`<div class="two"><div class="card"><svg viewBox="0 0 400 240" style="direction:ltr"><path d="M20 230 L140 30 L260 230z" fill="#7c4a1e"/><path d="M140 30 V230" stroke="#111" stroke-dasharray="5 5"/><text x="150" y="130" font-size="16" font-weight="800" fill="#1d4ed8">1650 م</text><path d="M260 230 L320 160 L380 230z" fill="#b45309"/><path d="M320 160 V230" stroke="#111" stroke-dasharray="5 5"/><text x="326" y="200" font-size="14" font-weight="800" fill="#1d4ed8">381 م</text><text x="140" y="20" text-anchor="middle" ${'font-family="IBM Plex Sans Arabic"'} font-size="13">حرة ثنان</text><text x="320" y="150" text-anchor="middle" ${'font-family="IBM Plex Sans Arabic"'} font-size="13">حرة البرك</text></svg></div><div class="card"><div id="s5c"></div></div></div>`,
- init(){K.calcQ($('#s5c'),{p:'كم مرة يساوي ارتفاع بركان حرة ثنان ارتفاع بركان حرة البرك؟ (قرّب إلى منزلة عشرية واحدة)',v:4.3,unit:'مرة',given:'ارتفاع حرة ثنان = 1650 م ، ارتفاع حرة البرك = 381 م',law:'عدد المرات = 1650 ÷ 381',sol:'1650 ÷ 381 ≈ 4.3 مرة'},'s5',()=>G.complete('s5'));}});
+def('ev1',{n:'تقويم 1–3',eyebrow:'تقويم · الأسئلة 1–3',title:'تقويم: الطرائق العلمية',goal:'أسئلة التقويم كما في العرض.',plan:6,core:1,icon:ICO.check,
+ body:`<div class="two"><div class="card"><h3>1-1</h3><div id="a1"></div></div><div class="card"><h3>1-2</h3><div id="a2"></div></div></div><div class="card"><h3>1-3</h3><div id="a3"></div></div>
+  <div class="card"><h3>2 · أكمل الفراغات التالية بما يناسبها</h3><div id="a4"></div></div><div class="card"><h3>3 · أجب بكلمة (صح) للعبارة الصحيحة، و(خطأ) للعبارة الخاطئة</h3><div id="a5"></div></div>`,
+ init(){let n=0;const c=()=>{if(++n>=5)G.complete('ev1');};
+  mcq($('#a1'),{q:'أول خطوة من خطوات الطرائق العلمية هي:',o:['استخلاص النتائج','تحديد المشكلة','وضع الفرضيات','اختبار الفرضيات'],a:1},'ev1',c);
+  mcq($('#a2'),{q:'أي مما يلي ليس من خطوات البحث الوصفي:',o:['تحديد الهدف من البحث','وصف تصميم البحث','التحيز','الموضوعية'],a:2},'ev1',c);
+  mcq($('#a3'),{q:'ماذا تفعل إذا كانت نتائج تجربتك لا تدعم فرضيتك؟',o:['تعيد التجربة','تستخلص النتائج','تحلل البيانات','تغير الفرضية'],a:3},'ev1',c);
+  fill($('#a4'),{bank:['جمع الملاحظات','البحث التجريبي','النموذج','النظام الدولي للوحدات SI'],items:[['البحث الوصفي يُجيب عن الأسئلة العلمية من خلال ___','جمع الملاحظات'],['يستخدم العلماء لجمع الملاحظات في جميع أنحاء العالم نظامًا للقياس يسمى ___','النظام الدولي للوحدات SI']]},'ev1',c);
+  tfx($('#a5'),[['النظريات العلمية <u>ثابتة لا تتغير</u>.',false,'قابلة للتغيير',['قابلة للتغيير','نهائية','سرية']],['من فوائد استخدام النماذج توفير المال والوقت والجهد.',true],['المعلومات عن الاكتشافات العلمية الحديثة متوافرة <u>للعلماء فقط</u>.',false,'للجميع',['للجميع','للأطباء فقط','للمعلمين فقط']],['اختبار الفرضيات هي الخطوة <u>الأخيرة</u> من خطوات الطريقة العلمية.',false,'الرابعة',['الرابعة','الأولى','الثانية']]],'ev1',c);},
+ explain:'<p>إجابات «صح أم خطأ» من العرض؛ والتصحيح بالكلمة المقترحة مبني على شرائح الدرس: الخطوة الأخيرة هي «استخلاص النتائج».</p>'});
 
-def('sum',{n:'الخلاصة',eyebrow:'الخلاصة · الكتاب صفحة 65',title:'الخلاصة',goal:'أهم أفكار الدرس.',plan:2,icon:ICO.doc,
- body:`<div class="two"><div class="card"><h3>كيف تتشكل البراكين؟</h3>${lst(['تتكوّن بعض البراكين نتيجة خروج الصهارة من باطن الأرض إلى السطح.','تتنوع المواد البركانية الناتجة عن ثوران البراكين بين مواد سائلة وصلبة وغازية.'])}</div><div class="card"><h3>أشكال البراكين</h3>${lst(['تؤدي اللابة الغنية بالسليكا إلى تكوّن ثورانات متفجرة، بينما تؤدي اللابة التي تحتوي على نسبة قليلة من السليكا ونسبة عالية من الحديد والماغنسيوم إلى ثوران سائل.','تؤثر كمية بخار الماء والغازات في طريقة ثوران البركان.','تتضمن أنواع البراكين: البراكين الدرعية، والبراكين المخروطية، والبراكين المركبة، وثوران الشقوق.'])}</div></div>`,enter(){G.complete('sum');}});
-def('self',{n:'اختبر نفسك',eyebrow:'الواجب · الكتاب صفحة 65 · التسليم يوم الخميس',title:'اختبر نفسك',goal:'إجابات نموذجية مقترحة.',plan:3,icon:ICO.check,body:'<div class="card" id="selfBox"></div>',
+def('s6',{n:'6 · البحث التجريبي',eyebrow:'المحطة 6 · الكتاب صفحة 34',title:'البحث التجريبي: خطوات التجربة المضبوطة',goal:'التجريب عمل أساس في العلوم: الإجابة عن سؤال علمي من خلال ملاحظة حالات قابلة للتحكم فيها وضبطها.',plan:7,core:1,icon:ICO.flask,
+ body:`<div class="card" id="s6sl"></div><div class="two"><div class="card"><h3>رتّب خطوات البحث التجريبي</h3><div id="s6o"></div></div><div class="card"><h3>كوّن فرضية</h3><p class="step-text">إذا لاحظت أن سقي نباتاتك كل يوم يجعلها تنمو بشكل أسرع…</p><div id="s6q"></div></div></div>`,
+ init(){let n=0;const c=()=>{if(++n>=2)G.complete('s6');};
+  slides($('#s6sl'),[
+   {k:'البحث التجريبي',t:'التجريب عمل أساس في العلوم',im:[P('s25_586433d3','عالم يجرب')],html:'<p>التجريب: الإجابة عن سؤال علمي من خلال ملاحظة حالات قابلة للتحكم فيها وضبطها.</p><p><b>خطواته:</b> وضع فرضية ← التخطيط للتجربة ← استخدام عينة ضابطة ← إجراء عدة محاولات للتجربة ← تحليل البيانات ← استخلاص النتائج.</p>'},
+   {k:'وضع الفرضية',t:'توقع قابل للاختبار',im:[P('s27_bc844e1b','الفرضية'),P('s27_bd9a7979','سقي النبات')],html:'<p class="def"><b>الفرضية:</b> توقع أو عبارة قابلة للاختبار.</p><p>عادة ما تستخدم خبراتك السابقة في وضع الفرضيات. بعدها يمكنك بدء التجارب لاختبار فرضيتك.</p>'},
+   {k:'التخطيط للتجربة',t:'التجربة المضبوطة',im:[P('s28_1724cb00','طبق بكتيريا')],html:'<p>وذلك عن طريق التجربة المضبوطة التي تحتاج لضبط ثوابتها ومتغيراتها.</p><p><b>مثال:</b> سنختبر أثر مضادين حيويين في نمو البكتيريا.</p>'}],'s6');
+  order($('#s6o'),['وضع فرضية','التخطيط للتجربة','استخدام عينة ضابطة','إجراء عدة محاولات للتجربة','تحليل البيانات','استخلاص النتائج'],'s6',c);
+  mcq($('#s6q'),{q:'أي العبارات التالية فرضية قابلة للاختبار؟',o:['إذا سُقي النبات كل يوم فإنه ينمو أسرع من النبات الذي يُسقى مرة في الأسبوع','النباتات جميلة','أحب سقي النباتات','النبات كائن حي'],a:0,why:'الفرضية توقع يمكن اختباره بتجربة.'},'s6',c);}});
+
+def('s7',{n:'7 · المتغيرات والعينة الضابطة',eyebrow:'المحطة 7 · الكتاب صفحة 34–35',title:'تجربة المضادين الحيويين: المتغيرات والعينة الضابطة',goal:'أضيف مضادان حيويان مختلفان إلى الطبقين (أ) و(ب)، ولم يُضف أي مضاد إلى طبق العينة الضابطة. ماذا نلاحظ؟',plan:8,core:1,icon:'<circle cx="22" cy="40" r="14" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="58" cy="40" r="14" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="18" cy="36" r="3" fill="currentColor"/><circle cx="26" cy="44" r="3" fill="currentColor"/>',
+ body:`<div class="two"><div class="card">${grid([['s29_f7b95ce1','أولًا: بداية التجربة'],['s29_f4383349','ثانيًا: النتائج']])}<p class="step-text"><b>نلاحظ أن:</b> البكتيريا نمت في طبق العينة الضابطة وفي الطبق الذي أضفنا له المضاد الحيوي (أ)، بينما لم تنمُ في الطبق الذي أضفنا له المضاد الحيوي (ب). جميع العوامل كانت ثابتة ما عدا نوع المضاد الحيوي الذي أضيف.</p></div>
+  <div class="card"><h3>تعاريف</h3><div class="tablewrap"><table class="c6-table"><thead><tr><th>المصطلح</th><th>التعريف</th><th>المثال في تجربتنا</th></tr></thead><tbody><tr><td>المتغير المستقل</td><td>العامل الذي يتم تغييره في التجربة</td><td>نوع المضاد</td></tr><tr><td>المتغير التابع</td><td>العامل الذي يتم قياسه في التجربة</td><td>نمو البكتيريا</td></tr><tr><td>الثوابت</td><td>المتغيرات التي تبقى ثابتة دون أن تتغير</td><td>درجة الحرارة · الزمن · كمية المضاد</td></tr></tbody></table></div>
+   <h3 class="mt">ماذا عن العينة الضابطة؟</h3><p class="step-text">هي عينة تعامل مثل بقية المجموعات التجريبية، إلا أنها لم تتعرض إلى أثر المتغير المستقل. ففي تجربتنا: العينة الضابطة هي عينة البكتيريا التي لم نُضف إليها أي مضاد حيوي، وتوضح كيف تنمو البكتيريا عندما لا يضاف إليها أي مضاد.</p>${reveal('ماذا تفيدنا العينة الضابطة؟','لكي نقارن نتائجها بنتائج تلك العينات التي تعرضت لأثر المتغير المستقل.')}</div></div>
+  <div class="two"><div class="card"><h3>صنّف عناصر تجربتنا</h3><div id="s7sort"></div></div><div class="card" id="s7sl"></div></div>`,
+ init(){sortGame($('#s7sort'),{bins:['متغير مستقل','متغير تابع','ثابت','عينة ضابطة'],items:[['نوع المضاد الحيوي',0],['نمو البكتيريا',1],['درجة الحرارة',2],['الزمن',2],['كمية المضاد',2],['طبق بلا مضاد حيوي',3]]},'s7',()=>G.complete('s7'));
+  slides($('#s7sl'),[{k:'إجراء عدة محاولات',t:'لماذا؟',im:[P('s32_36005894','جدول المحاولات')],html:'<p>للتأكد من صحة نتائجك، ولتكون النتائج أكثر دقة.</p>'},{k:'تحليل البيانات',t:'التعريف',im:[P('s33_d22bf43d','تحليل البيانات')],html:'<p class="def"><b>تحليل البيانات:</b> عملية فحص وتدقيق البيانات وانتقائها، وتحويلها وتخزينها ونمذجتها؛ بهدف استخلاص استنتاجات.</p>'}],'s7');},
+ explain:'<p>المتغير المستقل: نوع المضاد. التابع: نمو البكتيريا. الثوابت: الحرارة والزمن وكمية المضاد. العينة الضابطة: طبق بلا مضاد للمقارنة.</p>'});
+
+def('ev2',{n:'تقويم 4–5',eyebrow:'تقويم · الأسئلة 4–5',title:'تقويم: البحث التجريبي',goal:'ضع المصطلح المناسب، ثم صح أم خطأ.',plan:4,core:1,icon:ICO.check,
+ body:'<div class="card"><h3>4 · ضع المصطلح العلمي المناسب لما يأتي</h3><div id="b1"></div></div><div class="card"><h3>5 · صح أم خطأ</h3><div id="b2"></div></div>',
+ init(){let n=0;const c=()=>{if(++n>=2)G.complete('ev2');};
+  fill($('#b1'),{bank:['الثوابت','العينة الضابطة','المتغير المستقل','الفرضية','المتغير التابع','القانون العلمي'],items:[['العامل الذي يتم قياسه في التجربة هو ___','المتغير التابع'],['___ المتغيرات التي تبقى ثابتة دون أن تتغير.','الثوابت'],['___ هي عينة تعامل مثل بقية المجموعات التجريبية، إلا أنها لم تتعرض إلى أثر المتغير المستقل.','العينة الضابطة'],['العامل الذي يتم تغييره في التجربة ___','المتغير المستقل']]},'ev2',c);
+  tfx($('#b2'),[['الفرضية هي عبارة <u>تصف حقيقة</u>.',false,'قابلة للاختبار',['قابلة للاختبار','ثابتة','لا تتغير']],['كلما أكثرت من عدد المحاولات في التجربة كانت النتائج أكثر صحة.',true],['<u>تتأثر</u> العينة الضابطة بتغير المتغير المستقل.',false,'لا تتأثر',['لا تتأثر','تتغير','تتضاعف']],['عند تصميم البحث التجريبي يتم تحليل البيانات <u>بعد</u> استخلاص النتائج.',false,'قبل',['قبل','أثناء','بدل']]],'ev2',c);}});
+
+def('sum',{n:'الخلاصة',eyebrow:'الخلاصة · الكتاب صفحة 37',title:'الخلاصة',goal:'أهم أفكار الدرس.',plan:2,icon:ICO.doc,
+ body:`<div class="two"><div class="card"><h3>حل المشكلات</h3>${lst(['الطرائق العلمية خطوات تتبع لحل مشكلة ما.','يستخدم البحث الوصفي عندما يصعب إجراء التجارب.'])}<h3 class="mt">الأجهزة والموادّ والنماذج</h3>${lst(['النماذج أدوات مهمة في العلم.','يُستخدم النظام العالمي للوحدات (SI) لأخذ القياسات.','تجمع البيانات وتسجل وتنظم.'])}</div>
+  <div class="card"><h3>استخلاص النتائج</h3>${lst(['يبحث العلماء عن أنماط أو علاقات في البيانات التي يجمعونها، ثم يتواصلون بنتائجهم مع الآخرين.'])}<h3 class="mt">تصميم البحث التجريبي</h3>${lst(['تبدأ التجربة بفرضية.','المتغيرات عوامل تتغير خلال التجربة.','العينات الضابطة لا تتعرض لأثر المتغير المستقل لكي تقارن نتائجها بنتائج تلك العينات التي تعرضت لأثر المتغير المستقل.','بعد أن تُستخلص النتائج يتم التواصل بها مع علماء آخرين.'])}</div></div>`,enter(){G.complete('sum');}});
+def('self',{n:'اختبر نفسك',eyebrow:'الواجب · الكتاب صفحة 37 · التسليم يوم الخميس',title:'اختبر نفسك',goal:'أسئلة «اختبر نفسك» مع إجابات نموذجية مقترحة.',plan:3,icon:ICO.check,body:'<div class="card" id="selfBox"></div>',
  init(){STN.self.s=solutions($('#selfBox'),[
-  {k:'1 · حدّد',q:'أي أنواع ثورانات اللابة تغطي أكبر مساحة من سطح الأرض؟',a:[['الإجابة','ثوران الشقوق؛ لأن لابته سائلة قليلة اللزوجة تنساب لمسافات بعيدة مكونة هضابًا بازلتية واسعة.']]},
-  {k:'2 · صف',q:'المخاطر الناتجة عن البراكين.',a:[['الإجابة','تدمير المدن والقرى بالانهيارات والتدفقات الطينية الملتهبة، وإغلاق المطارات والموانئ بالغبار والمقذوفات، وتدفقات الفتات البركاني الحارة.']]},
-  {k:'3 · اشرح',q:'لماذا تكون جوانب البركان المخروطي حادة؟',a:[['الإجابة','لأنه يتكون من رماد وفتات صلب يُقذف إلى أعلى ثم يتساقط ويتراكم حول الفوهة مباشرة في مساحة صغيرة.']]},
-  {k:'4 · اذكر',q:'أنواع المواد التي تتكوّن منها البراكين المركبة.',a:[['الإجابة','طبقات متعاقبة من الرماد والفتات البركاني الناتج عن الانفجارات العنيفة، وطبقات من اللابة الناتجة عن الثورانات الهادئة.']]},
-  {k:'5 · التفكير الناقد',q:'لماذا تنفجر الصهارة الغنية بالسليكا؟',a:[['الإجابة','لأن السليكا تزيد لزوجتها فتقاوم التدفق وتحبس بخار الماء والغازات، فيتراكم الضغط حتى ينفجر البركان بعنف.']]}],'self',()=>G.complete('self'));},reset(){STN.self.s.reset();},explain:'<p>إجابات نموذجية مقترحة.</p>'});
+  {k:'1 · وضّح',q:'لماذا يستخدم العلماء النماذج؟ اذكر ثلاثة أمثلة عليها.',a:[['لماذا','لتصور الأشياء التي يصعب رؤيتها أو فهمها، ولتوفير المال والجهد، واختبار التوقعات والفرضيات، والتواصل.'],['أمثلة','نموذج المجموعة الشمسية (مادي)، ونموذج حاسوبي لحركة الصفائح (حاسوبي)، ومعادلة المادة والطاقة لأينشتاين (فكري).']]},
+  {k:'2 · عرّف',q:'المقصود بالفرضية.',a:[['الإجابة','توقع أو عبارة قابلة للاختبار.']]},
+  {k:'3 · اذكر',q:'الخطوات الثلاث (الأساسية) التي يستخدمها العلماء عند تصميم استقصاء لحل مشكلة ما.',a:[['الإجابة','تحديد الهدف من البحث، ووصف تصميم البحث، والموضوعية (في البحث الوصفي).']]},
+  {k:'4 · حدّد',q:'لماذا يُعدّ تحديد المشكلة التي يتعين حلها بدقة أمرًا مهمًّا؟',a:[['الإجابة','لأنها الخطوة الأولى التي توجّه بقية الخطوات؛ فتحديدها بدقة يحدد البيانات المطلوبة والفرضية المناسبة ويوفر الوقت والجهد.']]},
+  {k:'5 · قِس',q:'طول مكتبك مستخدمًا المسطرة المترية، وعبّر عن ذلك بوحدة الأمتار والسنتمترات والملمترات.',a:[['مثال','إذا كان الطول 1.2 م فهو 120 سم = 1200 ملم (1 م = 100 سم = 1000 ملم).']]},
+  {k:'6 · التفكير الناقد',q:'إذا لم تدعم البيانات التي جمعتها وسجلتها في أثناء التجربة فرضيتك، فهل يعني ذلك أن تجربتك فاشلة؟ وضّح إجابتك.',a:[['الإجابة','لا؛ فالنتائج تعطي معلومات جديدة، ويُحتفظ بها للاستفادة منها في مجال آخر، ويُعاد تكوين الفرضية واختبارها.']]}],'self',()=>G.complete('self'));},
+ reset(){STN.self.s.reset();},explain:'<p>الأسئلة من العرض، والإجابات نموذجية مقترحة.</p>'});
 
-def('x1',{n:'إثرائي · المسابقات',eyebrow:'إثرائي · تنافس المجموعات',title:'فوهة الأسرار وبنغو البراكين',goal:'افتحوا الأقفال ثم البنغو.',plan:5,icon:ICO.lock,
- body:'<div class="card"><div id="x1e"></div></div><div class="card"><div class="nb-head"><h2>🎯 بنغو البراكين</h2></div><div id="x1b"></div></div>',
- init(){STN.x1.e=escape($('#x1e'),{title:'فوهة الأسرار',story:'اقفلت الصهارة طريق الخروج من فوهة البركان! أجيبوا لفتح الأقفال الأربعة.',secs:300,locks:[{q:'الصهارة على سطح الأرض تسمى:',o:['اللابة','الرماد','القنبلة','الفوهة'],a:0,code:'1'},{q:'السليكا العالية تسبب ثورانًا:',o:['عنيفًا','هادئًا','لا ثوران','بطيئًا جدًّا'],a:0,code:'6'},{q:'بركان جبل القدر:',o:['مركب','درعي','مخروطي','شقوق'],a:0,code:'5'},{q:'البراكين المخروطية على ارتفاعات أقل من:',o:['300 م','3000 م','30 م','1000 م'],a:0,code:'0'}],outro:'هربتم من الفوهة بسلام!'},'x1');
-  bingo($('#x1b'),[['البركان','جبل قمعي تكوّن بثورانات الصهارة'],['اللابة','صهارة على سطح الأرض'],['الصهارة','صخور مصهورة في باطن الأرض'],['الفوهة','فتحة دائرية في قمة البركان'],['القنابل البركانية','صخور كبيرة مقذوفة'],['الرماد البركاني','يشكل تدفقًا طينيًّا مع الأمطار'],['البركان الدرعي','واسع قليل الانحدار'],['البركان المخروطي','مخروط صغير من المواد البركانية'],['البركان المركب','شديد الانحدار بطبقات متعاقبة'],['ثوران الشقوق','لابة سائلة قليلة اللزوجة'],['السليكا','تزيد لزوجة اللابة'],['جبل مار','بركان درعي في حرة رهط'],['جبل القدر','بركان مركب شمال شرق المدينة'],['حرة البرك','براكين مخروطية جنوب المملكة'],['تدفقات الفتات','صخور حارة متوهجة وغازات'],['الحديد والماغنسيوم','لابة هادئة الثوران']],'x1');},reset(){STN.x1.e.reset();}});
-def('x2',{n:'إثرائي · جولة البرق',eyebrow:'إثرائي',title:'جولة البرق ولوحة الخيارات',goal:'صح أم خطأ بسرعة، ثم لوحة الخيارات.',plan:4,icon:'<path d="M44 6L18 46h18l-6 28 28-42H40z" fill="currentColor"/>',
- body:'<div class="card"><div id="x2t"></div></div><div class="card"><div id="x2cb"></div></div>',
- init(){tfRound($('#x2t'),[['اللابة الغنية بالسليكا لزجة.',true],['البراكين الدرعية شديدة الانحدار.',false,'قليلة الانحدار.'],['ثوران البراكين المخروطية يدوم طويلًا.',false,'لا يدوم طويلًا.'],['يمكن أن يغلق الرماد البركاني المطارات.',true],['جبل القدر بركان مركب.',true],['اللابة هي الصهارة في باطن الأرض.',false,'اللابة على السطح، والصهارة في الباطن.']],'x2',{secs:10});
-  STN.x2.cb=choiceBoard($('#x2cb'),[{ic:'🎨',t:'ارسم',kind:'رسم',p:'ارسم مقطعًا للأنواع الثلاثة من البراكين وقارن انحدارها.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'سبب الثوران العنيف:',o:['سليكا عالية','حديد عالٍ','سليكا قليلة','ماء قليل'],a:0},{ic:'🔬',t:'جرّب',kind:'تجربة',p:'قارن سرعة انسياب العسل والماء على لوح مائل، واربطها باللزوجة.'},
-   {ic:'❓',t:'سؤال',kind:'اختيار',q:'بركان حرة البرك:',o:['مخروطي','درعي','مركب','شقوق'],a:0},{ic:'🧮',t:'احسب',kind:'حساب',p:'بركان ارتفاعه 900 م وآخر 300 م. كم مرة ارتفاع الأول؟',v:3,unit:'مرة',law:'900 ÷ 300',sol:'3 مرات'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'الرماد البركاني مع الأمطار يشكل:',o:['تدفقًا طينيًّا','لابة','صهارة','قنابل'],a:0},
-   {ic:'🗺',t:'خريطة',kind:'بحث',p:'حدّد على خريطة المملكة مواقع: حرة رهط، جبل القدر، حرة البرك.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'أكبر البراكين امتدادًا:',o:['الدرعية','المخروطية','المركبة','لا شيء'],a:0},{ic:'✍️',t:'اكتب',kind:'كتابة',p:'اكتب فقرة عن كيف تؤثر البراكين في الناس.'}],'x2',()=>G.complete('x2'));},reset(){STN.x2.cb.reset();}});
+def('x1',{n:'إثرائي · المسابقات',eyebrow:'إثرائي · تنافس المجموعات',title:'غرفة الهروب ومزاد المعرفة',goal:'افتحوا «ملف القضية» ثم زايدوا على صحة العبارات.',plan:5,icon:ICO.lock,
+ body:'<div class="card"><div id="x1esc"></div></div><div class="card"><div class="nb-head"><h2>🔨 مزاد المعرفة</h2></div><div id="x1auc"></div></div>',
+ init(){STN.x1.e=escape($('#x1esc'),{title:'ملف قضية الكوليرا',story:'أُغلق ملف قضية الكوليرا بأربعة أقفال. كل إجابة صحيحة تكشف رقمًا!',secs:300,
+  locks:[{q:'أول خطوة في الطريقة العلمية:',o:['تحديد المشكلة','تحليل البيانات','استخلاص النتائج','وضع الفرضيات'],a:0,code:'1'},{q:'العامل الذي يتم تغييره في التجربة:',o:['المتغير المستقل','المتغير التابع','الثابت','العينة الضابطة'],a:0,code:'8'},{q:'مصدر وباء الكوليرا في استقصاء جون سنو:',o:['المضخة اليدوية في الشارع','الهواء','الطعام','الحيوانات'],a:0,code:'5'},{q:'وحدة قياس الكتلة في SI:',o:['كيلوجرام','لتر','متر','ثانية'],a:0,code:'4'}],outro:'أغلقتم القضية بنجاح!'},'x1');
+  STN.x1.a=auction($('#x1auc'),[['البحث الوصفي يجيب عن الأسئلة من خلال الملاحظات.',true],['العينة الضابطة تتعرض لأثر المتغير المستقل.',false,'لا تتعرض له.'],['الفرضية توقع قابل للاختبار.',true],['النظريات العلمية ثابتة لا تتغير.',false,'قابلة للتغيير.'],['1 كم = 1000 م.',true],['تحليل البيانات يكون بعد استخلاص النتائج.',false,'قبل استخلاص النتائج.']],'x1');},
+ reset(){STN.x1.e.reset();STN.x1.a.reset();}});
+def('x2',{n:'إثرائي · من أنا؟',eyebrow:'إثرائي · ألغاز ولوحة خيارات',title:'من أنا؟ ولوحة الخيارات',goal:'خمّن المصطلح بأقل الأدلة، ثم اختر ثلاث مهام.',plan:4,icon:ICO.lens,
+ body:'<div class="card"><div id="x2r"></div></div><div class="card"><h3>لوحة الخيارات</h3><div id="x2cb"></div></div>',
+ init(){riddles($('#x2r'),[{clues:['أنا عامل في التجربة.','الباحث يغيّرني عمدًا.','في تجربة المضادات كنت «نوع المضاد».'],o:['المتغير المستقل','المتغير التابع','الثابت','العينة الضابطة'],a:0},{clues:['أنا عينة.','لا أتعرض للمتغير المستقل.','تُقارن نتائج الآخرين بي.'],o:['العينة الضابطة','العينة العشوائية','الفرضية','النموذج'],a:0},{clues:['أنا محاكاة لشيء أو حدث.','قد أكون ماديًّا أو حاسوبيًّا أو فكريًّا.','أوفر المال والجهد.'],o:['النموذج','القانون','الجدول','الفرضية'],a:0},{clues:['أنا طبيب بريطاني.','تتبعت مصدر وباء.','وجدت أن المضخة اليدوية مصدر التلوث.'],o:['جون سنو','نيوتن','أينشتاين','رذرفورد'],a:0}],'x2');
+  STN.x2.cb=choiceBoard($('#x2cb'),[{ic:'🔬',t:'صمّم تجربة',kind:'تجربة',p:'صمّم تجربة لاختبار أثر الضوء في نمو النبات، وحدد المتغيرات والعينة الضابطة.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'1 لتر =',o:['1000 مل','100 مل','10 مل','1 مل'],a:0},{ic:'✍️',t:'اكتب',kind:'كتابة',p:'اكتب فرضية لسؤال: هل يذوب السكر أسرع في الماء الساخن؟'},
+   {ic:'❓',t:'سؤال',kind:'اختيار',q:'نمو البكتيريا في تجربتنا:',o:['متغير تابع','متغير مستقل','ثابت','عينة ضابطة'],a:0},{ic:'📊',t:'مثّل',kind:'رسم',p:'مثّل بيانات أطوال 5 من زملائك برسم بياني بالأعمدة.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'لتكون النتائج أكثر دقة:',o:['نجري عدة محاولات','نجري محاولة واحدة','نغير كل العوامل','لا نسجل البيانات'],a:0},
+   {ic:'🗺',t:'خريطة',kind:'تنظيم',p:'ارسم مخططًا لخطوات الطريقة العلمية الست.'},{ic:'❓',t:'سؤال',kind:'اختيار',q:'من طرق الموضوعية:',o:['استخدام عينات عشوائية','اختيار ما يوافق توقعك','تجاهل الأرقام','التخمين'],a:0},{ic:'📏',t:'قِس',kind:'قياس',p:'قِس طول غرفتك بالمتر، وحوّله إلى سنتمترات.'}],'x2',()=>G.complete('x2'));},
+ reset(){STN.x2.cb.reset();}});
 
 def('ch',{n:'تحدي العلماء',plan:3,icon:ICO.cup,eyebrow:'التقويم الختامي',title:'تحدي العلماء',goal:'أسئلة من تقويم العرض.',body:'<div class="card" id="chBox"></div>',
  init(){STN.ch.c=challenge($('#chBox'),[
-  {k:'المقذوفات',q:'القطع الصخرية أو اللابة المتصلبة المتساقطة من الهواء:',o:['المقذوفات البركانية','اللابة','الفتات البركاني','الصهارة'],a:0},
-  {k:'الدرعية',q:'براكين واسعة الامتداد وارتفاعها قليل، وجوانبها من اللابة:',o:['ثوران الشقوق','المخروطية','الدرعية','المركبة'],a:2},
-  {k:'السليكا',q:'تكون اللابة ذات لزوجة قليلة إذا احتوت على نسبة ……… من السليكا:',o:['قليلة','عالية','متوسطة','لا تحتوي'],a:0},
-  {k:'شدة الثوران',q:'تعتمد شدة ثوران البركان على:',o:['تركيب الصهارة','طقس المنطقة','لون الصخور','موقع البركان من البحر'],a:0},
-  {k:'المركب',q:'بركان شديد الانحدار من طبقات متعاقبة:',o:['المركب','الدرعي','المخروطي','الشقوق'],a:0},
-  {k:'الأخطار',t:'multi',q:'اختر أخطار البراكين:',items:[['تدمير المدن والقرى',1],['إغلاق المطارات والموانئ',1],['تدفقات الفتات البركاني',1],['زيادة الأمطار دائمًا',0]]},
-  {k:'الرياضيات',t:'calc',p:'1650 ÷ 381 ≈ ؟ (منزلة عشرية واحدة)',v:4.3,unit:'مرة',law:'القسمة',sol:'≈ 4.3'}],'ch');},reset(){STN.ch.c.reset();}});
+  {k:'الطريقة العلمية',q:'أول خطوة من خطوات الطرائق العلمية هي:',o:['استخلاص النتائج','تحديد المشكلة','وضع الفرضيات','اختبار الفرضيات'],a:1},
+  {k:'البحث الوصفي',q:'أي مما يلي ليس من خطوات البحث الوصفي:',o:['تحديد الهدف من البحث','وصف تصميم البحث','التحيز','الموضوعية'],a:2},
+  {k:'الفرضية',q:'ماذا تفعل إذا كانت نتائج تجربتك لا تدعم فرضيتك؟',o:['تعيد التجربة','تستخلص النتائج','تحلل البيانات','تغير الفرضية'],a:3},
+  {k:'المتغيرات',q:'العامل الذي يتم قياسه في التجربة:',o:['المتغير التابع','المتغير المستقل','الثابت','العينة الضابطة'],a:0},
+  {k:'SI',q:'النظام المستخدم عالميًّا للقياس:',o:['النظام الدولي للوحدات SI','النظام الإنجليزي','نظام الأشبار','النظام القديم'],a:0},
+  {k:'النماذج',t:'multi',q:'اختر فوائد النماذج:',items:[['توفير المال والجهد',1],['اختبار التوقعات والفرضيات',1],['التواصل',1],['إخفاء النتائج',0]]},
+  {k:'العينة الضابطة',q:'فائدة العينة الضابطة:',o:['مقارنة نتائجها بنتائج العينات التي تعرضت للمتغير المستقل','زيادة عدد البكتيريا','تغيير الفرضية','قياس الحرارة'],a:0}],'ch');},
+ reset(){STN.ch.c.reset();}});
 
-C6.plan({intro:{s:['poe','brain'],g:'١–٣',sk:'التنبؤ',ev:'سؤال التوقع'},goals:{s:['frayer'],g:'١–٣',sk:'التذكر',ev:'المطابقة'},s1:{s:['disc'],g:'٢',sk:'الملاحظة',ev:'الشرائح'},lab1:{s:['inq','game'],g:'٢',sk:'التعرف والتسمية',ev:'تشريح البركان'},s2:{s:['coop','cards'],g:'١',sk:'الربط',ev:'مطابقة الأخطار'},
- s3:{s:['poe','venn'],g:'٣',sk:'المقارنة',ev:'تقويم 1 والتصنيف'},lab2:{s:['poe','inq'],g:'٣',sk:'ضبط المتغيرات',ev:'مختبر السليكا'},s4:{s:['jigsaw','cmap'],g:'٣',sk:'المقارنة',ev:'مطابقة الأمثلة'},lab3:{s:['inq','game'],g:'٣',sk:'النمذجة',ev:'باني البراكين'},ev1:{s:['spot','cards'],g:'٢ و٣',sk:'التطبيق',ev:'تقويم 2–6'},s5:{s:['prob'],g:'٣',sk:'الحساب',ev:'تطبيق الرياضيات'},
- sum:{s:['tl'],g:'١–٣',sk:'التلخيص',ev:'إشارة المرور'},self:{s:['heads','sticks'],g:'١–٣',sk:'التفكير الناقد',ev:'اختبر نفسك'},x1:{s:['game','champ'],g:'١–٣',sk:'الاستدعاء',ev:'الأقفال والبنغو'},x2:{s:['cards','game'],g:'١–٣',sk:'الاستدعاء',ev:'جولة البرق'},ch:{s:['exit'],g:'١–٣',sk:'التقويم الختامي',ev:'تحدي العلماء'}},'g9c2l2');
-K.boot({chapter:'الفصل الثاني: تغيرات الأرض',chapterShort:'الفصل الثاني',title:'فوهة النار',lesson:'الدرس الثاني: البراكين',accent:'#c2410c',accentDark:'#fb923c',hook:'لماذا يثور بركان بهدوء… ويثور آخر بعنف؟',
- riddle:'ما الذي يحدد طريقة ثوران البركان؟',predict:{o:['تركيب الصهارة: نسبة السليكا والغازات وبخار الماء','حجم البركان فقط','الطقس'],a:0},
- answer:'اللابة الغنية بالسليكا لزجة تحبس الغازات فتنفجر بعنف، واللابة القليلة السليكا الغنية بالحديد والماغنسيوم تتدفق بهدوء؛ وهذا يحدد أشكال البراكين: الدرعية والمخروطية والمركبة وثوران الشقوق.',
- finalTitle:'مبارك! عبرت فوهة النار بسلام',goals:GOALS,homework:'<b>الواجب:</b> «اختبر نفسك» ص 65 · التسليم يوم الخميس.',
- concepts:[{n:'البركان',t:'جبل قمعي تكوّن بفعل ثورانات الصهارة.',ic:'<path d="M4 42L18 14h12l14 28z" fill="var(--accent)"/>'},{n:'اللابة',t:'الصهارة المتدفقة على سطح الأرض.',ic:'<path d="M4 40c8-6 14 0 20-6s12 0 20-6" fill="none" stroke="var(--accent)" stroke-width="5"/>'},{n:'السليكا',t:'عالية = لزوجة وثوران عنيف، قليلة = ثوران هادئ.',ic:'<text x="24" y="32" text-anchor="middle" font-size="16" font-weight="800" fill="var(--accent)">SiO₂</text>'},{n:'الدرعية',t:'واسعة قليلة الانحدار (جبل مار).',ic:'<path d="M2 40Q24 20 46 40z" fill="var(--accent)"/>'},{n:'المخروطية',t:'صغيرة حادة الجوانب (حرة البرك).',ic:'<path d="M12 40L24 14 36 40z" fill="var(--accent)"/>'},{n:'المركبة',t:'شديدة الانحدار بطبقات متعاقبة (جبل القدر).',ic:'<path d="M6 40L24 8 42 40z" fill="none" stroke="var(--accent)" stroke-width="4"/><path d="M14 28h20M10 34h28" stroke="var(--accent)" stroke-width="3"/>'}]});
-$$('.top h1').forEach(h=>h.dataset.sym='🌋');
+C6.plan({intro:{s:['poe','brain'],g:'١ و٢',sk:'التنبؤ',ev:'سؤال التوقع'},goals:{s:['frayer'],g:'١ و٢',sk:'التذكر',ev:'المطابقة'},s1:{s:['prob','cards'],g:'١',sk:'التصنيف',ev:'وصفي أم تجريبي'},s2:{s:['story','tl'],g:'٢',sk:'الترتيب',ev:'خطوات البحث الوصفي'},
+ lab1:{s:['inq','role'],g:'٢',sk:'الاستدلال',ev:'محقق الكوليرا'},s3:{s:['time','heads'],g:'١',sk:'الترتيب',ev:'خطوات الطريقة العلمية'},s4:{s:['jigsaw','cards'],g:'٢',sk:'التصنيف والتحويل',ev:'تصنيف النماذج'},s5:{s:['tps'],g:'١',sk:'الاستنتاج',ev:'شرائح البيانات'},
+ ev1:{s:['spot','heads'],g:'١ و٢',sk:'التطبيق',ev:'تقويم 1–3'},s6:{s:['inq','coop'],g:'٢',sk:'الترتيب',ev:'كوّن فرضية'},s7:{s:['venn','sticks'],g:'٢',sk:'التمييز',ev:'تصنيف المتغيرات'},lab2:{s:['poe','inq'],g:'٢',sk:'ضبط المتغيرات',ev:'طبق البكتيريا'},lab3:{s:['inq','prob'],g:'٢',sk:'تحليل البيانات',ev:'المحاولات والمتوسط'},
+ ev2:{s:['spot','cards'],g:'٢',sk:'التطبيق',ev:'تقويم 4–5'},sum:{s:['tl'],g:'١ و٢',sk:'التلخيص',ev:'إشارة المرور'},self:{s:['heads','sticks'],g:'١ و٢',sk:'التفكير الناقد',ev:'اختبر نفسك'},x1:{s:['game','champ'],g:'١ و٢',sk:'الاستدعاء',ev:'الهروب والمزاد'},x2:{s:['who','game'],g:'١ و٢',sk:'الاستنتاج',ev:'من أنا؟'},ch:{s:['exit'],g:'١ و٢',sk:'التقويم الختامي',ev:'تحدي العلماء'}},'g9c1l2');
+K.boot({chapter:'الفصل الأول: طبيعة العلم',chapterShort:'الفصل الأول',title:'مختبر المحققين',lesson:'الدرس الثاني: عمل العلم',accent:'#1d4ed8',accentDark:'#60a5fa',hook:'كل مشكلة… لها طريقة علمية لحلها!',
+ riddle:'ما الخطوات التي يتبعها العلماء لحل المشكلات؟',predict:{o:['يحددون المشكلة ويجمعون البيانات ويضعون فرضية ويختبرونها ثم يحللون ويستنتجون','يجربون أي شيء حتى ينجح','يسألون الناس فقط'],a:0},
+ answer:'الطريقة العلمية خطوات متسلسلة: تحديد المشكلة، جمع البيانات، وضع الفرضيات، اختبار صحتها، تحليل البيانات، استخلاص النتائج. وقد يكون البحث وصفيًّا بالملاحظة أو تجريبيًّا باختبار الفرضية.',
+ finalTitle:'مبارك! أصبحت محققًا علميًّا',goals:GOALS,homework:'<b>الواجب:</b> «اختبر نفسك» ص 37 · التسليم يوم الخميس.',
+ concepts:[{n:'الطريقة العلمية',t:'خطوات متسلسلة تؤدي إلى حل المشكلات.',ic:'<path d="M6 40h10V28h10V16h10V6" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'البحث الوصفي',t:'يجيب من خلال الملاحظات.',ic:'<circle cx="20" cy="20" r="12" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'البحث التجريبي',t:'يختبر الفرضية بالتجربة.',ic:'<path d="M18 6v14L8 40h32L30 20V6" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'المتغيرات',t:'مستقل يُغيّر، وتابع يُقاس، وثوابت لا تتغير.',ic:'<rect x="8" y="10" width="10" height="28" fill="var(--accent)"/><rect x="28" y="20" width="10" height="18" fill="var(--amber)"/>'},{n:'العينة الضابطة',t:'لا تتعرض للمتغير المستقل، للمقارنة.',ic:'<circle cx="24" cy="24" r="14" fill="none" stroke="var(--accent)" stroke-width="4"/>'},{n:'SI',t:'النظام العالمي لوحدات القياس.',ic:'<text x="24" y="32" text-anchor="middle" font-size="18" font-weight="800" fill="var(--accent)">SI</text>'}]});
+$$('.top h1').forEach(h=>h.dataset.sym='🧪');
 })();
 

@@ -1,4 +1,4 @@
-/* محاكاة الفصل الحادي عشر: الحيوانات الفقارية */
+/* محاكاة الفصل التاسع: الخلايا لبنات الحياة */
 window.SIMS = (function () {
   var S = {};
   var AR = '٠١٢٣٤٥٦٧٨٩';
@@ -9,133 +9,135 @@ window.SIMS = (function () {
   function T(x, s, X, Y, sz, col, al) { x.font = '700 ' + sz + 'px Cairo, Tahoma, sans-serif'; x.fillStyle = col || '#fff'; x.textAlign = al || 'center'; x.direction = 'rtl'; x.fillText(s, X, Y); }
   function seg(ct, k) { return ct.querySelectorAll('[data-' + k + ']'); }
   function press(bs, b) { bs.forEach(function (o) { o.setAttribute('aria-pressed', o === b); }); }
-  function E(x, s, X, Y, sz) { x.font = sz + 'px serif'; x.textAlign = 'center'; x.fillText(s, X, Y); }
+  function pos(cv, e) { var r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * cv.width / r.width, (e.clientY - r.top) * cv.height / r.height]; }
 
-  // ١) درجة حرارة الجسم: متغيرة أم ثابتة؟
-  S.tempreg = function (c) {
-    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var ct = ctrl(c, '<label>حرارة البيئة <input type="range" id="tE" min="-5" max="45" value="20"> <b id="tV"></b></label><div class="read" id="tR"></div>');
-    var A = [['🐟', 'السمكة', 0], ['🐸', 'الضفدع', 0], ['🦎', 'السحلية', 0], ['🐦', 'الطائر', 1], ['🧍', 'الإنسان', 1]];
-    var cur = A.map(function () { return 20; });
-    return loop(function () {
-      var e = +ct.querySelector('#tE').value; ct.querySelector('#tV').textContent = n(e) + ' °س';
-      var g = x.createLinearGradient(0, 0, 1000, 0); g.addColorStop(0, e < 10 ? '#BFDBFE' : '#FEF3C7'); g.addColorStop(1, e > 32 ? '#FECACA' : '#E0F2FE'); x.fillStyle = g; x.fillRect(0, 0, 1000, 400);
-      A.forEach(function (a, i) {
-        var target = a[2] ? (a[1] === 'الطائر' ? 41 : 37) : e; cur[i] += (target - cur[i]) * .03;
-        var X = 900 - i * 200; E(x, a[0], X, 150, 74); T(x, a[1], X, 200, 22, '#0F172A');
-        x.fillStyle = '#fff'; x.fillRect(X - 14, 220, 28, 140); x.strokeStyle = '#334155'; x.lineWidth = 2; x.strokeRect(X - 14, 220, 28, 140);
-        var h = Math.max(0, Math.min(1, (cur[i] + 5) / 50)) * 136; x.fillStyle = a[2] ? '#DC2626' : '#2563EB'; x.fillRect(X - 11, 358 - h, 22, h);
-        T(x, a[1] === 'الطائر' ? 'ثابتة' : n(Math.round(cur[i])) + '°', X, 388, 20, a[2] ? '#B91C1C' : '#1D4ED8');
-      });
-      ct.querySelector('#tR').innerHTML = 'الأسماك والبرمائيات والزواحف <b>متغيرة درجة الحرارة</b> (أزرق): تتبع حرارة البيئة. الطيور والثدييات <b>ثابتة درجة الحرارة</b> (أحمر): الإنسان نحو 37 °س مهما تغيرت البيئة.' + (e < 5 ? ' ❄ في البرد الشديد تدخل البرمائيات <b>البيات الشتوي</b>.' : e > 38 ? ' ☀ في الحر الجاف تدخل <b>البيات الصيفي</b>.' : '');
-    });
+  // ١) مستكشف الخلية: اضغط على أي جزء لتعرف اسمه ووظيفته (حيوانية/نباتية)
+  var PARTS = {
+    mem: ['الغشاء البلازمي', 'ينظم مرور المواد من الخلية وإليها.', 'يشبه بوابة المخبز'],
+    wall: ['الجدار الخلوي', 'يوفر الدعم والحماية للخلية (في النباتية فقط).', 'يشبه سور المخبز'],
+    cyto: ['السيتوبلازم', 'سائل شبه هلامي، ثلثاه ماء، تحدث فيه معظم العمليات.', 'يشبه منطقة العمل'],
+    nuc: ['النواة', 'تنظم معظم أنشطة الخلية، وفيها الكروموسومات وDNA.', 'تشبه مدير المخبز'],
+    mito: ['الميتوكندريا', 'تحرر الطاقة من الغذاء (التنفس الخلوي).', 'تشبه الأفران'],
+    vac: ['الفجوة', 'تخزن الماء والغذاء والأملاح والفضلات.', 'تشبه الخزائن'],
+    chl: ['البلاستيدات الخضراء', 'تمتص الضوء وتصنع الغذاء (البناء الضوئي) — في النباتية فقط.', 'مصنع الغذاء الشمسي']
   };
-
-  // ٢) مثانة العوم: املأ أو أفرغ المثانة لتغوص السمكة أو تطفو
-  S.swimbladder = function (c) {
-    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var ct = ctrl(c, '<button class="btn sm" id="bF">⬆ املأ المثانة بالغاز</button><button class="btn sm" id="bE">⬇ أفرغ المثانة</button><div class="read" id="bR"></div>');
-    var gas = .5, y = 200, held = 0;
-    ct.querySelector('#bF').onclick = function () { gas = Math.min(1, gas + .25); };
-    ct.querySelector('#bE').onclick = function () { gas = Math.max(0, gas - .25); };
+  S.cell = function (c) {
+    var cv = mk(c, 1000, 480), x = cv.getContext('2d');
+    var ct = ctrl(c, '<div class="seg" role="group" aria-label="نوع الخلية"><button data-k="a" aria-pressed="true">🐾 خلية حيوانية</button><button data-k="p">🌿 خلية نباتية</button></div><div class="read" id="cR">اضغط على أي جزء من الخلية…</div>');
+    var kind = 'a', sel = null, bs = seg(ct, 'k');
+    bs.forEach(function (b) { b.onclick = function () { kind = b.dataset.k; sel = null; press(bs, b); ct.querySelector('#cR').innerHTML = 'اضغط على أي جزء من الخلية…'; }; });
+    var MITO = [[300, 150, .4], [640, 330, -.3], [330, 350, .9], [610, 140, 2.2]], CHL = [[290, 250, .2], [700, 250, 1.4], [480, 380, 0], [420, 120, .7]];
+    function hit(p) {
+      var X = p[0], Y = p[1], plant = kind === 'p';
+      if (Math.hypot(X - 500, Y - 240) < 62) return 'nuc';
+      for (var i = 0; i < 4; i++) if (Math.hypot(X - MITO[i][0], Y - MITO[i][1]) < 32) return 'mito';
+      if (plant) for (var j = 0; j < 4; j++) if (Math.hypot(X - CHL[j][0], Y - CHL[j][1]) < 28) return 'chl';
+      if (plant ? (X > 560 && X < 760 && Y > 110 && Y < 220) : Math.hypot(X - 420, Y - 300) < 30) return 'vac';
+      if (plant) { if (X > 175 && X < 825 && Y > 35 && Y < 445 && !(X > 195 && X < 805 && Y > 55 && Y < 425)) return 'wall'; if (X > 195 && X < 805 && Y > 55 && Y < 425 && !(X > 210 && X < 790 && Y > 70 && Y < 410)) return 'mem'; if (X > 210 && X < 790 && Y > 70 && Y < 410) return 'cyto'; }
+      else { var d = Math.hypot((X - 500) / 320, (Y - 240) / 190); if (d > .93 && d < 1.06) return 'mem'; if (d <= .93) return 'cyto'; }
+      return null;
+    }
+    cv.addEventListener('click', function (e) { var h = hit(pos(cv, e)); if (h) { sel = h; var p = PARTS[h]; ct.querySelector('#cR').innerHTML = '<b>' + p[0] + '</b>: ' + p[1] + ' <span style="opacity:.8">(' + p[2] + ')</span>'; } });
     return loop(function (t) {
-      var g = x.createLinearGradient(0, 0, 0, 400); g.addColorStop(0, '#7DD3FC'); g.addColorStop(1, '#0C4A6E'); x.fillStyle = g; x.fillRect(0, 0, 1000, 400);
-      var vy = (.5 - gas) * 2; y = Math.max(60, Math.min(340, y + vy));
-      var X = 500 + Math.sin(t / 900) * 160;
-      x.save(); x.translate(X, y);
-      x.fillStyle = '#F59E0B'; x.beginPath(); x.ellipse(0, 0, 110, 46, 0, 0, 6.3); x.fill();
-      x.beginPath(); x.moveTo(-100, 0); x.lineTo(-160, -40); x.lineTo(-160, 40); x.closePath(); x.fill();
-      x.fillStyle = 'rgba(255,255,255,.85)'; x.beginPath(); x.ellipse(-10, -6, 20 + gas * 45, 6 + gas * 14, 0, 0, 6.3); x.fill(); x.strokeStyle = '#94A3B8'; x.stroke();
-      x.fillStyle = '#111'; x.beginPath(); x.arc(70, -12, 7, 0, 6.3); x.fill();
-      x.restore();
-      T(x, 'مثانة العوم', X - 10, y - 60, 18, '#fff');
-      T(x, 'العمق: ' + n(Math.round((y - 60) / 2.8)) + ' م', 110, 50, 24, '#0C4A6E');
-      ct.querySelector('#bR').innerHTML = gas > .5 ? 'المثانة <b>ممتلئة بالغاز</b> فترتفع السمكة إلى أعلى ⬆' : gas < .5 ? 'المثانة <b>فارغة</b> فتغوص السمكة إلى الأعماق ⬇' : 'كمية الغاز متوازنة؛ فتبقى السمكة في عمقها. (تنتقل الغازات بين المثانة والدم.)';
-    });
-  };
-
-  // ٣) التحول في الضفدع
-  S.frog = function (c) {
-    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var ST = [['البيض في الماء', 'تضع الأنثى البيض في الماء (إخصاب خارجي).', 'خياشيم: —'], ['أبو ذنيبة', 'يفقس البيض عن صغار بلا أرجل.', 'يتنفس بالخياشيم'], ['ظهور الأرجل', 'تظهر الأرجل الخلفية ثم الأمامية، ويبدأ الذيل في الاختفاء.', 'تتكون الرئات'], ['الضفدع البالغ', 'يعيش على اليابسة ويعود إلى الماء ليتكاثر.', 'يتنفس برئتيه وجلده']];
-    var ct = ctrl(c, '<label>المرحلة <input type="range" id="fS" min="0" max="3" value="0"></label><label>حرارة الماء <input type="range" id="fT" min="10" max="25" value="20"></label><div class="read" id="fR"></div>');
-    return loop(function (t) {
-      var k = +ct.querySelector('#fS').value, tw = +ct.querySelector('#fT').value;
-      x.fillStyle = '#ECFCCB'; x.fillRect(0, 0, 1000, 400); x.fillStyle = '#7DD3FC'; x.fillRect(0, 230, 1000, 170);
-      for (var i = 0; i < 4; i++) {
-        var X = 880 - i * 250, on = i <= k; x.globalAlpha = on ? 1 : .25;
-        if (i === 0) { x.fillStyle = '#1E293B'; for (var e = 0; e < 14; e++) { x.beginPath(); x.arc(X - 40 + (e % 5) * 20, 290 + Math.floor(e / 5) * 18, 6, 0, 6.3); x.fill(); } }
-        if (i === 1) { x.fillStyle = '#44403C'; x.beginPath(); x.ellipse(X, 300, 26, 18, 0, 0, 6.3); x.fill(); x.beginPath(); x.moveTo(X - 20, 300); x.quadraticCurveTo(X - 60, 300 + Math.sin(t / 150) * 14, X - 90, 300); x.lineTo(X - 20, 306); x.fill(); }
-        if (i === 2) { x.fillStyle = '#4D7C0F'; x.beginPath(); x.ellipse(X, 290, 34, 22, 0, 0, 6.3); x.fill(); x.fillRect(X - 70, 288, 40, 8); x.strokeStyle = '#4D7C0F'; x.lineWidth = 6; x.beginPath(); x.moveTo(X - 20, 305); x.lineTo(X - 30, 330); x.moveTo(X + 10, 305); x.lineTo(X + 18, 330); x.stroke(); }
-        if (i === 3) { E(x, '🐸', X, 210, 80); }
-        T(x, ST[i][0], X, 380, 20, '#0F172A'); if (i < 3) T(x, '←', X - 125, 300, 34, '#166534');
-        x.globalAlpha = 1;
+      x.fillStyle = '#0B1E33'; x.fillRect(0, 0, 1000, 480);
+      var plant = kind === 'p', glow = function (k) { return sel === k ? '#FACC15' : null; };
+      if (plant) {
+        x.fillStyle = '#65A30D'; x.fillRect(175, 35, 650, 410); x.strokeStyle = glow('wall') || '#3F6212'; x.lineWidth = sel === 'wall' ? 8 : 4; x.strokeRect(175, 35, 650, 410);
+        x.fillStyle = '#FEF3C7'; x.fillRect(195, 55, 610, 370); x.strokeStyle = glow('mem') || '#CA8A04'; x.lineWidth = sel === 'mem' ? 7 : 3; x.strokeRect(195, 55, 610, 370);
+        x.fillStyle = sel === 'cyto' ? '#FDE68A' : '#FFFBEB'; x.fillRect(210, 70, 580, 340);
+        x.fillStyle = 'rgba(96,165,250,.55)'; x.strokeStyle = glow('vac') || '#2563EB'; x.lineWidth = sel === 'vac' ? 6 : 2; x.beginPath(); x.ellipse(660, 165, 100, 55, 0, 0, 6.3); x.fill(); x.stroke();
+        CHL.forEach(function (p) { x.fillStyle = '#16A34A'; x.strokeStyle = glow('chl') || '#14532D'; x.lineWidth = sel === 'chl' ? 5 : 2; x.beginPath(); x.ellipse(p[0], p[1], 26, 14, p[2], 0, 6.3); x.fill(); x.stroke(); });
+      } else {
+        x.fillStyle = sel === 'cyto' ? '#FDE68A' : '#FED7AA'; x.strokeStyle = glow('mem') || '#C2410C'; x.lineWidth = sel === 'mem' ? 8 : 4; x.beginPath(); x.ellipse(500, 240, 320 + Math.sin(t / 700) * 4, 190, 0, 0, 6.3); x.fill(); x.stroke();
+        x.fillStyle = 'rgba(96,165,250,.6)'; x.strokeStyle = glow('vac') || '#2563EB'; x.lineWidth = sel === 'vac' ? 5 : 2; x.beginPath(); x.arc(420, 300, 22, 0, 6.3); x.fill(); x.stroke();
       }
-            ct.querySelector('#fR').innerHTML = '<b>' + ST[k][0] + ':</b> ' + ST[k][1] + ' · ' + ST[k][2] + '. <br>كلما انخفضت حرارة الماء أو قلّ الغذاء <b>طالت</b> مدة التحول' + (tw < 15 ? ' (الماء بارد الآن ⏳).' : '.');
+      MITO.forEach(function (p) { x.save(); x.translate(p[0], p[1]); x.rotate(p[2]); x.fillStyle = '#DC2626'; x.strokeStyle = glow('mito') || '#7F1D1D'; x.lineWidth = sel === 'mito' ? 5 : 2; x.beginPath(); x.ellipse(0, 0, 32, 16, 0, 0, 6.3); x.fill(); x.stroke(); x.strokeStyle = '#FCA5A5'; x.lineWidth = 2; x.beginPath(); for (var k = -24; k < 24; k += 8) { x.moveTo(k, -8); x.lineTo(k + 4, 8); } x.stroke(); x.restore(); });
+      x.fillStyle = '#A78BFA'; x.strokeStyle = glow('nuc') || '#5B21B6'; x.lineWidth = sel === 'nuc' ? 7 : 3; x.beginPath(); x.arc(500, 240, 60, 0, 6.3); x.fill(); x.stroke(); x.fillStyle = '#6D28D9'; x.beginPath(); x.arc(510, 232, 20, 0, 6.3); x.fill();
+      T(x, plant ? 'خلية نباتية' : 'خلية حيوانية', 90, 40, 24, '#fff');
+      if (sel) { T(x, '🔍 ' + PARTS[sel][0], 900, 465, 26, '#FACC15'); }
     });
   };
 
-  // ٤) الطيران وقوة الرفع
-  S.flight = function (c) {
-    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var ct = ctrl(c, '<label>مساحة الجناح <input type="range" id="wA" min="1" max="10" value="5"></label><label>سرعة الهواء <input type="range" id="wV" min="0" max="10" value="5"></label><label>وزن الجسم <input type="range" id="wM" min="1" max="10" value="5"></label><div class="read" id="wR"></div>');
-    var y = 200, P = []; for (var i = 0; i < 40; i++) P.push([Math.random() * 1000, Math.random() * 400]);
-    return loop(function (t) {
-      var A = +ct.querySelector('#wA').value, V = +ct.querySelector('#wV').value, M = +ct.querySelector('#wM').value;
-      var lift = A * V / 5, net = lift - M; y = Math.max(60, Math.min(360, y - net * .4));
-      x.fillStyle = '#E0F2FE'; x.fillRect(0, 0, 1000, 400);
-      x.strokeStyle = 'rgba(14,116,144,.35)'; x.lineWidth = 2; P.forEach(function (p) { p[0] -= V * 1.2 + .3; if (p[0] < 0) p[0] = 1000; x.beginPath(); x.moveTo(p[0], p[1]); x.lineTo(p[0] + 30, p[1]); x.stroke(); });
-      x.save(); x.translate(500, y);
-      x.fillStyle = '#78350F'; x.beginPath(); x.ellipse(0, 0, 70, 20, 0, 0, 6.3); x.fill();
-      var flap = V < 3 ? Math.sin(t / 90) * 30 : 0;
-      x.fillStyle = '#92400E'; x.beginPath(); x.moveTo(-20, 0); x.quadraticCurveTo(0, -40 - A * 9 + flap, 40, 0); x.closePath(); x.fill();
-      x.restore();
-      x.strokeStyle = '#16A34A'; x.lineWidth = 6; x.beginPath(); x.moveTo(500, y - 30); x.lineTo(500, y - 30 - lift * 12); x.stroke(); T(x, 'الرفع ↑', 560, y - 40 - lift * 6, 18, '#15803D');
-      x.strokeStyle = '#DC2626'; x.beginPath(); x.moveTo(500, y + 25); x.lineTo(500, y + 25 + M * 12); x.stroke(); T(x, 'الوزن ↓', 560, y + 40 + M * 6, 18, '#B91C1C');
-      ct.querySelector('#wR').innerHTML = (net > .3 ? '⬆ الرفع أكبر من الوزن: يرتفع الطائر.' : net < -.3 ? '⬇ الوزن أكبر من الرفع: يهبط الطائر.' : '↔ الرفع يساوي الوزن: يحلّق الطائر في مستواه.') + ' الأجنحة الكبيرة والهواء السريع يزيدان الرفع (كالعقاب)، والعظام المجوفة والأكياس الهوائية تقلل الوزن.';
-    });
-  };
-
-  // ٥) الأسنان ونمط التغذي
-  S.teeth = function (c) {
-    var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var A = [['القندس', 'h', 'قواطع كبيرة تقطع الأعشاب، وأضراس مسطحة تطحنها.'], ['أسد الجبال', 'c', 'أنياب حادة طويلة لتمزيق الفريسة.'], ['الإنسان', 'o', 'قواطع، وأنياب صغيرة، وأضراس أمامية حادة، وأضراس خلفية للطحن.']];
-    var NM = { h: 'آكل أعشاب', c: 'آكل لحوم', o: 'مزدوج التغذي' };
-    var ct = ctrl(c, '<div class="seg" role="group" aria-label="الحيوان">' + A.map(function (a, i) { return '<button data-a="' + i + '"' + (i ? '' : ' aria-pressed="true"') + '>' + a[0] + '</button>'; }).join('') + '</div><div class="seg" role="group" aria-label="نمط التغذي"><button data-g="h">آكل أعشاب</button><button data-g="c">آكل لحوم</button><button data-g="o">مزدوج التغذي</button></div><div class="read" id="tR">لاحظ الأسنان، ثم حدد نمط التغذي.</div>');
-    var k = 0, bs = seg(ct, 'a'), gs = seg(ct, 'g');
-    bs.forEach(function (b) { b.onclick = function () { k = +b.dataset.a; press(bs, b); press(gs, null); ct.querySelector('#tR').innerHTML = 'لاحظ الأسنان، ثم حدد نمط التغذي.'; }; });
-    gs.forEach(function (b) { b.onclick = function () { press(gs, b); var ok = b.dataset.g === A[k][1]; ct.querySelector('#tR').innerHTML = (ok ? '✅ صحيح: ' : '❌ بل هو ') + '<b>' + NM[A[k][1]] + '</b> — ' + A[k][2]; }; });
-    function tooth(X, Y, w, h, kind, up) { x.fillStyle = '#FEFCE8'; x.strokeStyle = '#A16207'; x.lineWidth = 2; x.beginPath(); var d = up ? 1 : -1;
-      if (kind === 'k') { x.moveTo(X, Y); x.lineTo(X + w / 2, Y + d * h); x.lineTo(X + w, Y); } else if (kind === 'm') { x.rect(X, up ? Y : Y - h, w, h); } else { x.moveTo(X, Y); x.lineTo(X + w * .1, Y + d * h); x.lineTo(X + w * .9, Y + d * h); x.lineTo(X + w, Y); }
-      x.closePath(); x.fill(); x.stroke(); }
+  // ٢) المجهر المركب: قوة التكبير = العينية × الشيئية
+  S.microscope = function (c) {
+    var cv = mk(c, 1000, 420), x = cv.getContext('2d');
+    var ct = ctrl(c, '<label>العدسة العينية <select id="mE"><option value="10">١٠×</option><option value="5">٥×</option><option value="15">١٥×</option></select></label><div class="seg" role="group" aria-label="العدسة الشيئية"><button data-o="4" aria-pressed="true">٤×</button><button data-o="10">١٠×</button><button data-o="40">٤٠×</button><button data-o="100">١٠٠×</button></div><div class="read" id="mR"></div>');
+    var ob = 4, ep = 10, bs = seg(ct, 'o');
+    bs.forEach(function (b) { b.onclick = function () { ob = +b.dataset.o; press(bs, b); }; });
+    ct.querySelector('#mE').onchange = function (e) { ep = +e.target.value; };
+    var cells = []; for (var i = 0; i < 400; i++) cells.push([(i % 25) * 46 + (Math.floor(i / 25) % 2) * 23, Math.floor(i / 25) * 34]);
+    var z = 1;
     return loop(function () {
-      x.fillStyle = '#FFF7ED'; x.fillRect(0, 0, 1000, 400);
-      x.fillStyle = '#FDBA74'; x.fillRect(150, 100, 700, 60); x.fillRect(150, 250, 700, 60);
-      var t = A[k][1], set;
-      if (t === 'h') set = [['i', 50, 80], ['i', 50, 80], ['g', 120, 0], ['m', 60, 30], ['m', 60, 30], ['m', 60, 30], ['m', 60, 30]];
-      else if (t === 'c') set = [['i', 30, 25], ['i', 30, 25], ['k', 40, 85], ['k', 45, 45], ['k', 45, 45], ['k', 60, 40], ['m', 50, 22]];
-      else set = [['i', 40, 40], ['i', 40, 40], ['k', 38, 42], ['k', 40, 32], ['k', 40, 32], ['m', 55, 26], ['m', 55, 26]];
-      var X = 820;
-      set.forEach(function (s2) { X -= s2[1] + 8; if (s2[0] === 'g') return; tooth(X, 160, s2[1], s2[2], s2[0] === 'i' ? 'i' : s2[0], true); tooth(X, 250, s2[1], s2[2] * .9, s2[0] === 'i' ? 'i' : s2[0], false); });
-      T(x, '← الأمام', 880, 210, 18, '#9A3412'); T(x, 'أسنان ' + A[k][0], 500, 60, 28, '#7C2D12');
-      T(x, 'قواطع · أنياب · أضراس أمامية · أضراس خلفية', 500, 370, 18, '#9A3412');
+      var M = ep * ob, target = M / 40; z += (target - z) * .08;
+      x.fillStyle = '#111'; x.fillRect(0, 0, 1000, 420);
+      // جسم المجهر
+      x.fillStyle = '#334155'; x.fillRect(80, 60, 40, 220); x.fillRect(60, 300, 200, 40); x.fillRect(120, 230, 120, 14);
+      x.fillStyle = '#94A3B8'; x.fillRect(86, 30, 28, 40); T(x, 'العينية ' + n(ep) + '×', 100, 22, 18, '#E2E8F0');
+      x.fillStyle = '#CBD5E1'; x.fillRect(90, 280, 20, 20); T(x, 'الشيئية ' + n(ob) + '×', 175, 285, 18, '#E2E8F0');
+      // مجال الرؤية
+      x.save(); x.beginPath(); x.arc(640, 210, 190, 0, 6.3); x.clip(); x.fillStyle = '#FEFCE8'; x.fillRect(450, 20, 380, 380);
+      x.translate(640, 210); x.scale(z, z); x.translate(-640, -210);
+      x.strokeStyle = '#A16207'; x.lineWidth = 2 / z;
+      cells.forEach(function (p) { var X = 300 + p[0] * .45, Y = 40 + p[1] * .45; x.fillStyle = 'rgba(254,240,138,.7)'; x.fillRect(X, Y, 20, 14); x.strokeRect(X, Y, 20, 14); x.fillStyle = '#92400E'; x.beginPath(); x.arc(X + 12, Y + 7, 2.2, 0, 6.3); x.fill(); });
+      x.restore(); x.strokeStyle = '#000'; x.lineWidth = 14; x.beginPath(); x.arc(640, 210, 196, 0, 6.3); x.stroke();
+      T(x, 'خلايا بشرة البصل', 640, 410, 20, '#FDE68A');
+      ct.querySelector('#mR').innerHTML = 'قوة التكبير = ' + n(ep) + ' × ' + n(ob) + ' = <b>' + n(M) + '×</b> — ' + (M >= 400 ? 'تظهر النواة والجدار بوضوح.' : M >= 100 ? 'تظهر الخلايا متراصة كالطوب.' : 'تكبير ضعيف: الخلايا صغيرة جدًا.');
     });
   };
 
-  // ٦) أنواع الثدييات: أين ينمو الجنين؟
-  S.mammals = function (c) {
+  // ٣) سلّم التنظيم: خلية ← نسيج ← عضو ← جهاز ← مخلوق
+  S.levels = function (c) {
     var cv = mk(c, 1000, 400), x = cv.getContext('2d');
-    var A = [['🦆', 'منقار البط', 'p'], ['🦘', 'الكنغر', 'k'], ['🐫', 'الجمل', 'm'], ['🐨', 'الكوالا', 'k'], ['🧍', 'الإنسان', 'm'], ['🦔', 'آكل النمل الشوكي', 'p']];
-    var G = { p: ['ثدييات أولية', 'تضع بيضًا بقشور، وتلعق الصغار الحليب من جلد الأم.', '🥚'], k: ['ثدييات كيسية', 'تولد الصغار غير مكتملة وتكمل نموها في الكيس.', '👜'], m: ['ثدييات مشيمية', 'ينمو الجنين في الرحم متغذيًا عبر المشيمة والحبل السري.', '🫄'] };
-    var ct = ctrl(c, '<div class="seg" role="group" aria-label="المجموعة"><button data-g="p">🥚 أولية</button><button data-g="k">👜 كيسية</button><button data-g="m">🫄 مشيمية</button></div><div class="read" id="mR"></div>');
-    var k = 0, score = 0, msg = 'إلى أي مجموعة ينتمي هذا الحيوان؟', gs = seg(ct, 'g');
-    gs.forEach(function (b) { b.onclick = function () { if (k >= A.length) { k = 0; score = 0; } var ok = b.dataset.g === A[k][2]; if (ok) score++; msg = (ok ? '✅ ' : '❌ ') + A[k][1] + ': <b>' + G[A[k][2]][0] + '</b> — ' + G[A[k][2]][1]; k++; }; });
+    var L = [['خلية', 'خلية عضلية قلبية', 'أصغر وحدة حية'], ['نسيج', 'نسيج عضلي', 'خلايا متشابهة لوظيفة محددة'], ['عضو', 'القلب', 'نسيجان أو أكثر يعملان معًا'], ['جهاز', 'جهاز الدوران', 'أعضاء تتآزر لوظيفة واحدة'], ['مخلوق حي', 'الإنسان', 'أجهزة تتعاون فتبقيه حيًا']];
+    var ct = ctrl(c, '<div class="seg" role="group" aria-label="المستوى">' + L.map(function (l, i) { return '<button data-l="' + i + '"' + (i ? '' : ' aria-pressed="true"') + '>' + n(i + 1) + '. ' + l[0] + '</button>'; }).join('') + '</div><div class="read" id="lR"></div>');
+    var k = 0, bs = seg(ct, 'l'); bs.forEach(function (b) { b.onclick = function () { k = +b.dataset.l; press(bs, b); }; });
     return loop(function (t) {
-      x.fillStyle = '#FDF2F8'; x.fillRect(0, 0, 1000, 400);
-      ['p', 'k', 'm'].forEach(function (g, i) { var X = 830 - i * 330; x.fillStyle = '#fff'; x.strokeStyle = '#BE123C'; x.lineWidth = 3; x.fillRect(X - 140, 230, 280, 150); x.strokeRect(X - 140, 230, 280, 150); E(x, G[g][2], X, 300, 46); T(x, G[g][0], X, 355, 22, '#881337'); });
-      if (k < A.length) { E(x, A[k][0], 500, 150 + Math.sin(t / 300) * 5, 100); T(x, A[k][1], 500, 205, 24, '#0F172A'); }
-      else T(x, '🎉 النتيجة: ' + n(score) + ' / ' + n(A.length) + ' (اضغط مجموعة للبدء من جديد)', 500, 140, 26, '#BE123C');
-      ct.querySelector('#mR').innerHTML = msg;
+      x.fillStyle = '#0B1E33'; x.fillRect(0, 0, 1000, 400);
+      for (var i = 0; i < 5; i++) {
+        var X = 900 - i * 200, on = i <= k;
+        x.fillStyle = on ? (i === k ? '#F59E0B' : '#475569') : '#1E293B'; x.beginPath(); x.arc(X, 170, 70, 0, 6.3); x.fill();
+        if (i < 4) { x.strokeStyle = i < k ? '#F59E0B' : '#334155'; x.lineWidth = 5; x.beginPath(); x.moveTo(X - 74, 170); x.lineTo(X - 126, 170); x.stroke(); x.fillStyle = x.strokeStyle; x.beginPath(); x.moveTo(X - 126, 160); x.lineTo(X - 140, 170); x.lineTo(X - 126, 180); x.fill(); }
+        x.save(); x.translate(X, 170); var s = on ? 1 : .6; x.globalAlpha = on ? 1 : .4;
+        if (i === 0) { x.fillStyle = '#FCA5A5'; x.fillRect(-36 * s, -14 * s, 72 * s, 28 * s); x.fillStyle = '#7F1D1D'; x.beginPath(); x.arc(0, 0, 7 * s, 0, 6.3); x.fill(); }
+        if (i === 1) { for (var r = 0; r < 4; r++) { x.fillStyle = '#FCA5A5'; x.fillRect(-40, -34 + r * 18, 80, 14); } }
+        if (i === 2) { x.font = '64px serif'; x.textAlign = 'center'; x.fillText('🫀', 0, 22 + Math.sin(t / 200) * 3); }
+        if (i === 3) { x.font = '60px serif'; x.textAlign = 'center'; x.fillText('🩸', 0, 20); }
+        if (i === 4) { x.font = '64px serif'; x.textAlign = 'center'; x.fillText('🧍', 0, 22); }
+        x.restore(); x.globalAlpha = 1;
+        T(x, L[i][0], X, 280, 24, on ? '#FDE68A' : '#64748B'); T(x, L[i][1], X, 312, 17, on ? '#E2E8F0' : '#475569');
+      }
+      ct.querySelector('#lR').innerHTML = '<b>' + L[k][0] + '</b> (مثال: ' + L[k][1] + '): ' + L[k][2] + '.';
+    });
+  };
+
+  // ٤) الطاقة في الخلية: البناء الضوئي والتنفس الخلوي
+  S.energy = function (c) {
+    var cv = mk(c, 1000, 420), x = cv.getContext('2d');
+    var ct = ctrl(c, '<div class="seg" role="group"><button data-e="0" aria-pressed="true">🌿 البناء الضوئي</button><button data-e="1">🔥 التنفس الخلوي</button></div><label>☀ شدة الضوء <input type="range" min="0" max="100" value="70" id="eL"></label><div class="read" id="eR"></div>');
+    var m = 0, L = 70, food = 40, bs = seg(ct, 'e');
+    bs.forEach(function (b) { b.onclick = function () { m = +b.dataset.e; press(bs, b); ct.querySelector('#eL').parentNode.style.visibility = m ? 'hidden' : 'visible'; }; });
+    ct.querySelector('#eL').oninput = function (e) { L = +e.target.value; };
+    var P = []; for (var i = 0; i < 18; i++) P.push(Math.random());
+    return loop(function (t) {
+      x.fillStyle = '#0B1E33'; x.fillRect(0, 0, 1000, 420);
+      var rate = m ? 1 : L / 100;
+      if (!m) {
+        x.fillStyle = 'rgba(253,224,71,' + (L / 100) + ')'; x.beginPath(); x.arc(110, 80, 50, 0, 6.3); x.fill();
+        x.fillStyle = '#16A34A'; x.strokeStyle = '#14532D'; x.lineWidth = 4; x.beginPath(); x.ellipse(500, 220, 200, 110, 0, 0, 6.3); x.fill(); x.stroke();
+        for (var g = 0; g < 6; g++) { x.fillStyle = '#4ADE80'; x.fillRect(370 + g * 45, 190, 30, 60); }
+        T(x, 'بلاستيدة خضراء', 500, 360, 22, '#BBF7D0');
+        P.forEach(function (p, i) { var ph = ((t / 2500 * rate + p) % 1); if (i % 3 === 0) { x.fillStyle = '#FDE047'; x.beginPath(); x.arc(160 + ph * 250, 90 + ph * 110, 6, 0, 6.3); x.fill(); } else if (i % 3 === 1) { T(x, 'CO₂', 60 + ph * 260, 300 - ph * 60, 16, '#CBD5E1'); } else { T(x, 'H₂O', 80 + ph * 240, 380 - ph * 120, 16, '#93C5FD'); } });
+        P.forEach(function (p, i) { if (i % 2) return; var ph = ((t / 2500 * rate + p) % 1); T(x, i % 4 ? 'O₂' : '🍬', 700 + ph * 250, 200 - ph * 80 + (i % 4) * 40, 18, i % 4 ? '#A5F3FC' : '#FDE68A'); });
+        food = Math.min(100, food + rate * .05);
+        ct.querySelector('#eR').innerHTML = 'ضوء + ثاني أكسيد الكربون + ماء ← <b>غذاء + أكسجين</b> · سرعة البناء الضوئي: <b>' + n(Math.round(rate * 100)) + '٪</b>' + (L < 5 ? ' — بلا ضوء لا يُصنع غذاء!' : '');
+      } else {
+        x.fillStyle = '#EA580C'; x.strokeStyle = '#7C2D12'; x.lineWidth = 4; x.beginPath(); x.ellipse(500, 220, 200, 100, 0, 0, 6.3); x.fill(); x.stroke();
+        x.strokeStyle = '#FED7AA'; x.lineWidth = 4; x.beginPath(); for (var k = 340; k < 660; k += 40) { x.moveTo(k, 150); x.lineTo(k + 20, 290); } x.stroke();
+        T(x, 'ميتوكندريا', 500, 350, 22, '#FED7AA');
+        P.forEach(function (p, i) { var ph = ((t / 2000 + p) % 1); if (i % 2) T(x, '🍬', 60 + ph * 260, 160 + (i % 3) * 30, 20); else T(x, 'O₂', 60 + ph * 260, 280 + (i % 4) * 10, 18, '#A5F3FC'); });
+        P.forEach(function (p, i) { var ph = ((t / 2000 + p) % 1); T(x, i % 3 === 0 ? '⚡' : i % 3 === 1 ? 'CO₂' : 'H₂O', 700 + ph * 260, 140 + (i % 6) * 30, i % 3 ? 16 : 26, i % 3 === 0 ? '#FDE047' : '#CBD5E1'); });
+        ct.querySelector('#eR').innerHTML = 'غذاء (جلوكوز) + أكسجين ← <b>طاقة للخلية</b> + ثاني أكسيد الكربون + ماء';
+      }
     });
   };
   return S;
@@ -644,7 +646,7 @@ window.SIMS = (function () {
 /* ===== كشف الطلاب الموحّد لكل المنصة (الدروس والأنشطة والمسابقات وأوراق العمل) — durus-classes ===== */
 window.DROS = window.DROS || (function () {
   var AR = '٠١٢٣٤٥٦٧٨٩', KEY = 'durus-classes', API = 'https://script.google.com/macros/s/AKfycbxp-t4JgGO5WiK6hoacjTyBqFnG-9bSWClplOpVV4VDuTV7T4tY0swB1Ll36kr_djJ7nQ/exec';
-  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/3', '2/3', '3/3', '4/3']];
+  var LISTS = [['1/1', '2/1', '3/1', '4/1'], ['1/2'], ['1/3', '2/3', '3/3', '4/3']];
   function kz(k) { return String(k == null ? '' : k).replace(/\s/g, '').replace(/\d/g, function (d) { return AR[d]; }); }
   function nz(s) { return String(s).replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/\s+بن\s+/g, ' ').replace(/\s+/g, ' ').trim(); }
   function ld() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.classes) return { cur: s.cur || '', classes: s.classes || {}, stars: s.stars || {}, moves: s.moves || {} }; } catch (e) {} return { cur: '', classes: {}, stars: {}, moves: {} }; }
@@ -689,7 +691,7 @@ window.DROS = window.DROS || (function () {
   }
   // تحميل كشوف الفصول من منصة رحلة العلوم لكل الصفوف
   function importAll(cb) {
-    var all = LISTS[0].concat(LISTS[1]), G = {}, done = 0, okc = 0;
+    var all = [].concat.apply([], LISTS), G = {}, done = 0, okc = 0;
     all.forEach(function (k) {
       jsonp({ action: 'getStudents', className: k }, function (r) {
         if (r && r.ok) okc++;
