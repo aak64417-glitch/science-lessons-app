@@ -397,6 +397,7 @@ button{font:inherit;font-family:'Readex Pro','IBM Plex Sans Arabic',Tahoma,sans-
 .scs{display:grid;grid-template-columns:repeat(5,1fr);gap:.8em;margin:.6em 0}.sc{position:relative;border-radius:16px;overflow:hidden;background:#0f172a;border:3px solid transparent;aspect-ratio:16/9;color:#fff}.sc canvas{position:absolute;inset:0;width:100%;height:100%}
 .sc span{position:absolute;bottom:0;inset-inline:0;background:linear-gradient(transparent,rgba(0,0,0,.8));padding:.8em .4em .35em;font-family:'Readex Pro',sans-serif;font-size:.95em}.sc[aria-pressed=true]{border-color:#fde047;box-shadow:0 0 0 4px rgba(253,224,71,.35)}
 .seg{display:inline-flex;gap:.4em;margin:.3em .6em;flex-wrap:wrap;justify-content:center}.seg button{background:rgba(255,255,255,.12);color:#fff;border-radius:99px;padding:.4em 1.1em;border:2px solid rgba(255,255,255,.25)}.seg button[aria-pressed=true]{background:#fde047;color:#1f2937;border-color:#fde047}
+.pgh{font-family:'Readex Pro',sans-serif;color:#fde047;margin:.7em 0 .35em;font-size:1.1em}.pgs{display:grid;grid-template-columns:repeat(3,1fr);gap:.8em}.pg{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;align-items:center;column-gap:.6em;text-align:right;color:#fff;border-radius:16px;padding:.6em .9em;border:3px solid rgba(255,255,255,.25);box-shadow:0 6px 16px rgba(0,0,0,.35)}.pg .pi{grid-row:span 2;font-size:2.2em}.pg b{font-family:'Readex Pro',sans-serif;font-size:1.15em}.pg small{color:rgba(255,255,255,.85);font-size:.8em}.pg:hover{transform:translateY(-2px);border-color:#fde047}
 .go{background:linear-gradient(#22c55e,#15803d);color:#fff;font-size:1.4em;padding:.45em 2.4em;border-radius:16px;margin-top:.8em;box-shadow:0 6px 0 #14532d}
 .res{font-family:'Readex Pro',sans-serif;font-size:2.6em;margin:.2em 0}.stars{font-size:2.6em;letter-spacing:.15em}.rv{max-height:40vh;overflow:auto;text-align:right;background:rgba(255,255,255,.08);border-radius:14px;padding:.6em 1em;margin:.6em 0}.rv div{padding:.4em 0;border-bottom:1px solid rgba(255,255,255,.12)}.rv b{color:#86efac}
 .back{position:absolute;top:10px;right:10px;z-index:30;background:rgba(15,23,42,.8);color:#fff;border-radius:12px;padding:.35em .9em;text-decoration:none;font-family:'Readex Pro',sans-serif;border:2px solid rgba(255,255,255,.3);font-size:clamp(12px,1.6vmin,18px)}
@@ -418,7 +419,7 @@ button{font:inherit;font-family:'Readex Pro','IBM Plex Sans Arabic',Tahoma,sans-
   $('#menu').onclick = () => setup(); $('#home').onclick = () => { location.href = '../index.html'; };
 
   function view(cw, ch) { const s = Math.min(cw / W, ch / H); const ox = (cw - W * s) / 2, oy = (ch - H * s) / 2; return { s, ox, oy, x0: -ox / s, y0: -oy / s, x1: W + ox / s, y1: H + oy / s }; }
-  function frame(now) { const dt = Math.min(.05, (now - last) / 1000); last = now; t += dt;
+  function frame(now) { const dt = Math.min(.05, (now - last) / 1000); last = now; t += dt; if (window.PARTY_ON) { requestAnimationFrame(frame); return; }
     const r = cv.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1); if (r.width > 4 && r.height > 4) { if (cv.width !== Math.round(r.width * d) || cv.height !== Math.round(r.height * d)) { cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); }
       if (S._k !== sceneK) { S = { _k: sceneK }; SC[sceneK].init(S, 7); } const v = view(cv.width, cv.height); ctx.setTransform(v.s, 0, 0, v.s, v.ox, v.oy); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; SC[sceneK].draw(ctx, v, S, t, dt, P, game || { names: ['أنت', 'الحاسوب'] }); drawParts(ctx, P, dt); }
     thumbs(dt); requestAnimationFrame(frame); }
@@ -430,6 +431,7 @@ button{font:inherit;font-family:'Readex Pro','IBM Plex Sans Arabic',Tahoma,sans-
     const n = G.qs.length;
     ov.innerHTML = `<a class="back" href="../index.html">⌂ المنصة</a><div class="wrap"><h1>🎮 ${esc(G.lesson.title)}</h1><div class="sub">${esc(G.lesson.chapter || '')} — ${AD(n)} سؤالًا من أسئلة الدرس</div>
       <div class="scs">${ORDER.map(k => `<button class="sc" data-k="${k}" aria-pressed="${k === sceneK}"><canvas></canvas><span>${SC[k].icon} ${SC[k].name}</span></button>`).join('')}</div>
+      <div class="pgh">⭐ ألعاب الفرق بأسماء الطلاب والمسابقات الكبرى</div><div class="pgs">${PG.map(g => `<button class="pg" data-p="${g[0]}" style="background:${g[3]}"><span class="pi">${g[1]}</span><b>${g[2]}</b><small>${g[4]}</small></button>`).join('')}</div>
       <div><span class="seg" id="md"><button data-m="cpu" aria-pressed="${mode === 'cpu'}">👤 أنت ضد الحاسوب</button><button data-m="team" aria-pressed="${mode === 'team'}">👥 فريقان في الصف</button></span>
       <span class="seg" id="ct">${[5, 7, 10].filter(x => x < n).concat([n]).map(x => `<button data-c="${x}" aria-pressed="${x === Math.min(count, n)}">${x === n ? 'كل الأسئلة (' + AD(n) + ')' : AD(x) + ' أسئلة'}</button>`).join('')}</span></div>
       <button class="go" id="go">▶ ابدأ اللعب</button></div>`;
@@ -437,7 +439,10 @@ button{font:inherit;font-family:'Readex Pro','IBM Plex Sans Arabic',Tahoma,sans-
     ov.querySelectorAll('.sc').forEach(b => b.onclick = () => { sceneK = b.dataset.k; ov.querySelectorAll('.sc').forEach(x => x.setAttribute('aria-pressed', x === b)); });
     ov.querySelectorAll('#md button').forEach(b => b.onclick = () => { mode = b.dataset.m; ov.querySelectorAll('#md button').forEach(x => x.setAttribute('aria-pressed', x === b)); });
     ov.querySelectorAll('#ct button').forEach(b => b.onclick = () => { count = +b.dataset.c; ov.querySelectorAll('#ct button').forEach(x => x.setAttribute('aria-pressed', x === b)); });
-    $('#go').onclick = start; }
+    $('#go').onclick = start;
+    ov.querySelectorAll('.pg').forEach(b => b.onclick = () => { clearInterval(timer); b.style.opacity = '.6'; loadParty(() => { b.style.opacity = ''; window.PARTY.open(b.dataset.p, G, () => setup()); }); }); }
+  const PG = [['pen', '⚽', 'ركلات الترجيح بالأسماء', 'linear-gradient(135deg,#15803d,#065f46)', 'فريقان من كشف الطلاب، كل طالب يجيب ثم يسدد'], ['hex', '🔤', 'خلية الحروف', 'linear-gradient(135deg,#2563eb,#16a34a)', 'صِل ضفتي اللوحة بخلايا فريقك'], ['mm', '💰', 'من سيربح المليون', 'linear-gradient(135deg,#1e3a8a,#7c3aed)', '١٥ سؤالًا ووسائل مساعدة وسلّم الجوائز']];
+  function loadParty(cb) { if (window.PARTY) return cb(); const s = document.createElement('script'); s.src = 'party.js'; s.onload = cb; s.onerror = () => alert('تعذر تحميل اللعبة — تحقق من الاتصال'); document.head.appendChild(s); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
   function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
