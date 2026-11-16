@@ -1,5 +1,5 @@
 /* يحفظ التطبيق ودروسه على الجهاز ليعمل دون إنترنت، ويحدّثها عند توفر الاتصال */
-const CACHE='science-app-v101';
+const CACHE='science-app-v102';
 const ASSETS='science-assets-v1'; /* صور وخطوط ومكتبات مشتركة بأسماء ثابتة المحتوى: تُحفظ مرة واحدة ولا تُحذف عند التحديث */
 const SHELL=['./','index.html','catalog-v4.json','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png',
  'fonts/lalezar.woff2','fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2','fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2','fonts/ibm-plex-sans-arabic-latin-400-normal.woff2','fonts/ibm-plex-sans-arabic-latin-600-normal.woff2',
