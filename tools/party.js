@@ -14,7 +14,7 @@
   const LET = ['أ', 'ب', 'ج', 'د'];
   let G = null, BACK = null, ROOT = null, RAF = 0, TIMERS = [];
   const later = (fn, ms) => { const id = setTimeout(fn, ms); TIMERS.push(id); return id; };
-  function clearAll() { TIMERS.forEach(clearTimeout); TIMERS = []; cancelAnimationFrame(RAF); AU.stopLoop(); }
+  function clearAll() { TIMERS.forEach(clearTimeout); TIMERS = []; cancelAnimationFrame(RAF); AU.stopLoop(); if (typeof CS !== 'undefined') CS.stopAll(); }
 
   /* ---------------- الصوت: مؤثرات مركّبة بالكامل (لا ملفات) ---------------- */
   const AU = {
@@ -29,9 +29,22 @@
       g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(v, t0 + a); if (o.hold) g.gain.setValueAtTime(v, t0 + a + o.hold); g.gain.exponentialRampToValueAtTime(.0005, t0 + d); if (o.trem) { const l = c.createOscillator(), lg = c.createGain(); l.frequency.value = o.trem; lg.gain.value = v * .6; l.connect(lg); lg.connect(g.gain); l.start(t0); l.stop(t0 + d); }
       s.connect(f); f.connect(g); g.connect(this.out); s.start(t0); s.stop(t0 + d); },
     chord(fs, d, o) { fs.forEach((f, i) => this.tone(f, d, Object.assign({}, o, { at: (o && o.at || 0) + (o && o.arp ? i * o.arp : 0) }))); },
-    startLoop(fn, ms) { this.stopLoop(); let k = 0; fn(k++); this.loop = setInterval(() => fn(k++), ms); },
-    stopLoop() { clearInterval(this.loop); this.loop = null; }
+    startLoop(fn, ms) { clearInterval(this.loop); let k = 0; fn(k++); this.loop = setInterval(() => fn(k++), ms); },
+    stopLoop() { clearInterval(this.loop); this.loop = null; CS.stopAll(); }
   };
+  /* ---------------- أصوات يضعها المعلم بنفسه (تُحفظ على الجهاز في IndexedDB) ---------------- */
+  const CS = {
+    db: null, urls: {}, cur: {},
+    open() { return new Promise(res => { if (this.db) return res(this.db); try { const r = indexedDB.open('party-sounds', 1); r.onupgradeneeded = () => r.result.createObjectStore('s'); r.onsuccess = () => { this.db = r.result; res(this.db); }; r.onerror = () => res(null); } catch (e) { res(null); } }); },
+    async loadAll() { const db = await this.open(); if (!db) return; await new Promise(res => { try { const rq = db.transaction('s').objectStore('s').openCursor(); rq.onsuccess = () => { const c = rq.result; if (c) { if (this.urls[c.key]) URL.revokeObjectURL(this.urls[c.key]); this.urls[c.key] = URL.createObjectURL(c.value); c.continue(); } else res(); }; rq.onerror = () => res(); } catch (e) { res(); } }); },
+    async put(k, blob) { const db = await this.open(); if (!db) return false; return new Promise(res => { const tx = db.transaction('s', 'readwrite'); tx.objectStore('s').put(blob, k); tx.oncomplete = () => { if (this.urls[k]) URL.revokeObjectURL(this.urls[k]); this.urls[k] = URL.createObjectURL(blob); res(true); }; tx.onerror = () => res(false); }); },
+    async del(k) { const db = await this.open(); this.stop(k); if (this.urls[k]) URL.revokeObjectURL(this.urls[k]); delete this.urls[k]; if (!db) return; return new Promise(res => { const tx = db.transaction('s', 'readwrite'); tx.objectStore('s').delete(k); tx.oncomplete = () => res(); tx.onerror = () => res(); }); },
+    has(k) { return !!this.urls[k]; }, count() { return Object.keys(this.urls).length; },
+    play(k, o) { if (!this.urls[k]) return false; if (AU.muted) return true; this.stop(k); const a = new Audio(this.urls[k]); a.loop = !!(o && o.loop); a.play().catch(() => { }); this.cur[k] = a; a.onended = () => { if (this.cur[k] === a) delete this.cur[k]; }; return true; },
+    stop(k) { const a = this.cur[k]; if (a) { try { a.pause(); } catch (e) { } delete this.cur[k]; } },
+    stopAll() { Object.keys(this.cur).forEach(k => this.stop(k)); }
+  };
+  const SLOTS = [['intro', 'بداية اللعبة'], ['q', 'ظهور السؤال'], ['loop1', 'موسيقى الأسئلة ١–٥'], ['loop2', 'موسيقى الأسئلة ٦–١٠'], ['loop3', 'موسيقى الأسئلة ١١–١٥'], ['lock', 'الإجابة النهائية (الترقّب)'], ['right', 'إجابة صحيحة'], ['wrong', 'إجابة خاطئة'], ['fifty', 'حذف إجابتين'], ['aud', 'رأي الجمهور'], ['phone', 'الاتصال بصديق'], ['walk', 'الانسحاب'], ['million', 'ربح المليون']];
   try { AU.muted = localStorage.getItem('arena-snd') === '0'; } catch (e) { }
   const SFX = {
     click() { AU.tone(880, .06, { type: 'square', vol: .04 }); },
@@ -272,20 +285,62 @@
       c.strokeStyle = 'rgba(31,41,55,.45)'; c.lineWidth = r * .05; for (let k = 0; k < 5; k++) { const a = -Math.PI / 2 + k * 2 * Math.PI / 5; c.beginPath(); c.moveTo(Math.cos(a) * r * .36, Math.sin(a) * r * .36); c.lineTo(Math.cos(a) * r * .7, Math.sin(a) * r * .7); c.stroke(); }
       c.restore(); c.save(); c.fillStyle = rg(c, x - r * .35, y - r * .45, 0, r * .6, [[0, 'rgba(255,255,255,.75)'], [1, 'rgba(255,255,255,0)']]); c.beginPath(); c.arc(x, y, r, 0, 7); c.fill(); c.restore();
     }
-    function keeper(c, x, y, rot, reach, t, hold) { /* y = موضع القدمين */
-      c.save(); c.translate(x, y - 78); c.rotate(rot); const sk = '#e0a679', shirt = '#22a04b', sh2 = '#14783a';
-      c.fillStyle = 'rgba(0,0,0,.18)'; c.beginPath(); c.ellipse(0, 80, 46, 9, 0, 0, 7); c.fill();
-      c.strokeStyle = sk; c.lineCap = 'round'; c.lineWidth = 15; c.beginPath(); c.moveTo(-14, 22); c.lineTo(-24, 74); c.moveTo(14, 22); c.lineTo(24, 74); c.stroke();
-      c.strokeStyle = '#1f2937'; c.lineWidth = 17; c.beginPath(); c.moveTo(-24, 58); c.lineTo(-25, 76); c.moveTo(24, 58); c.lineTo(25, 76); c.stroke();
-      c.fillStyle = '#111827'; rr(c, -31, 72, 24, 10, 4); c.fill(); rr(c, 7, 72, 24, 10, 4); c.fill();
-      c.fillStyle = '#1f2937'; rr(c, -24, 8, 48, 26, 8); c.fill();
-      c.fillStyle = lg(c, -30, -50, 30, 20, [[0, shirt], [1, sh2]]); rr(c, -28, -48, 56, 62, 14); c.fill(); c.fillStyle = 'rgba(255,255,255,.85)'; c.font = "700 22px 'Readex Pro',sans-serif"; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('1', 0, -18);
-      const ay = -40 - reach * 30, ax = 46 + reach * 22, wav = hold ? 0 : Math.sin(t * 4) * 5;
-      c.strokeStyle = shirt; c.lineWidth = 14; c.beginPath(); c.moveTo(-24, -40); c.quadraticCurveTo(-46, -36 - reach * 10, -ax, ay + wav); c.moveTo(24, -40); c.quadraticCurveTo(46, -36 - reach * 10, ax, ay - wav); c.stroke();
-      [[-ax, ay + wav], [ax, ay - wav]].forEach(([gx, gy]) => { c.fillStyle = rg(c, gx - 4, gy - 4, 1, 15, [[0, '#f8fafc'], [1, '#a3e635']]); c.beginPath(); c.arc(gx, gy, 13, 0, 7); c.fill(); c.strokeStyle = '#4d7c0f'; c.lineWidth = 2; c.stroke(); });
-      c.fillStyle = sk; c.fillRect(-7, -60, 14, 14); c.beginPath(); c.arc(0, -74, 21, 0, 7); c.fill();
-      c.fillStyle = '#3b2314'; c.beginPath(); c.arc(0, -80, 21, Math.PI * 1.05, Math.PI * 1.95); c.fill(); c.fillRect(-20, -86, 40, 8);
-      c.fillStyle = '#1f2937'; c.beginPath(); c.arc(-7, -73, 2.6, 0, 7); c.arc(7, -73, 2.6, 0, 7); c.fill(); c.strokeStyle = '#7c2d12'; c.lineWidth = 2; c.beginPath(); c.arc(0, -66, 6, .2, Math.PI - .2); c.stroke();
+    function keeper(c, x, y, rot, reach, t, hold) { /* حارس كرتوني: رأس كبير وزي أخضر وقفازات بيضاء — y = موضع القدمين */
+      c.save(); c.translate(x, y - 88); c.rotate(rot); c.lineJoin = 'round'; c.lineCap = 'round';
+      const sk = '#f2b98a', skD = '#d9965f', jer = '#1fa64a', jerD = '#137a35', jerL = '#3fcf6c', OL = 'rgba(30,20,10,.55)';
+      const ol = (w) => { c.strokeStyle = OL; c.lineWidth = w || 2.2; c.stroke(); };
+      c.fillStyle = 'rgba(0,0,0,.2)'; c.beginPath(); c.ellipse(0, 90, 50, 9, 0, 0, 7); c.fill();
+      /* الساقان: ركبتان منثنيتان */
+      [-1, 1].forEach(s => {
+        c.fillStyle = sk; c.beginPath(); c.moveTo(s * 10, 26); c.lineTo(s * 28, 26); c.lineTo(s * 30, 46); c.lineTo(s * 14, 46); c.closePath(); c.fill(); ol(1.6);
+        c.fillStyle = jer; c.beginPath(); c.moveTo(s * 14, 44); c.lineTo(s * 31, 44); c.lineTo(s * 29, 80); c.lineTo(s * 17, 80); c.closePath(); c.fill(); ol(1.8);
+        c.fillStyle = '#fff'; c.fillRect(Math.min(s * 15, s * 30), 50, 15, 5);
+        c.fillStyle = '#1f2937'; c.beginPath(); c.ellipse(s * 25, 83, 15, 8, 0, 0, 7); c.fill(); c.fillStyle = 'rgba(255,255,255,.25)'; c.beginPath(); c.ellipse(s * 22, 80, 6, 2.5, 0, 0, 7); c.fill();
+      });
+      /* السروال */
+      c.fillStyle = '#1e293b'; c.beginPath(); c.moveTo(-27, 6); c.lineTo(27, 6); c.lineTo(31, 32); c.lineTo(3, 32); c.lineTo(0, 24); c.lineTo(-3, 32); c.lineTo(-31, 32); c.closePath(); c.fill(); ol();
+      /* الذراعان */
+      const gy = -18 - reach * 46 + (hold ? 0 : Math.sin(t * 4) * 4), gx = 62 + reach * 16;
+      [-1, 1].forEach(s => {
+        const ex = s * 46, ey = -14 - reach * 18, hx = s * gx, hy = gy * (s > 0 ? 1 : 1) + (hold ? 0 : s * Math.sin(t * 4) * 2);
+        c.strokeStyle = OL; c.lineWidth = 17; c.beginPath(); c.moveTo(s * 24, -30); c.lineTo(ex, ey); c.lineTo(hx * .92, hy); c.stroke();
+        c.strokeStyle = jer; c.lineWidth = 14; c.beginPath(); c.moveTo(s * 24, -30); c.lineTo(ex, ey); c.stroke();
+        c.strokeStyle = jerD; c.lineWidth = 14; c.beginPath(); c.moveTo(ex, ey); c.lineTo(hx * .92, hy); c.stroke();
+        /* القفاز */
+        c.save(); c.translate(hx, hy); c.rotate(s * (.3 - reach * .5)); c.fillStyle = '#16a34a'; c.beginPath(); c.ellipse(-s * 4, 11, 11, 7, 0, 0, 7); c.fill(); ol(1.6);
+        c.fillStyle = '#ffffff'; c.beginPath(); c.ellipse(0, -2, 15, 16, 0, 0, 7); c.fill(); ol(2);
+        c.strokeStyle = 'rgba(100,116,139,.55)'; c.lineWidth = 1.6; [-6, 0, 6].forEach(fx => { c.beginPath(); c.moveTo(fx, -16); c.lineTo(fx, -4); c.stroke(); });
+        c.fillStyle = '#ffffff'; c.beginPath(); c.ellipse(s * 13, 2, 6, 8, s * .6, 0, 7); c.fill(); ol(1.6);
+        c.fillStyle = '#86efac'; c.fillRect(-10, 4, 20, 4); c.restore();
+      });
+      /* القميص */
+      c.fillStyle = jer; c.beginPath(); c.moveTo(-26, -40); c.quadraticCurveTo(0, -48, 26, -40); c.lineTo(30, 10); c.quadraticCurveTo(0, 16, -30, 10); c.closePath(); c.fill(); ol();
+      c.fillStyle = jerL; c.beginPath(); c.moveTo(-20, -36); c.quadraticCurveTo(-8, -40, -4, -38); c.lineTo(-10, 6); c.lineTo(-24, 6); c.closePath(); c.globalAlpha = .45; c.fill(); c.globalAlpha = 1;
+      c.fillStyle = jerD; c.beginPath(); c.moveTo(-12, -43); c.lineTo(0, -28); c.lineTo(12, -43); c.closePath(); c.fill();
+      c.fillStyle = '#facc15'; c.beginPath(); c.arc(12, -20, 5, 0, 7); c.fill(); c.strokeStyle = '#a16207'; c.lineWidth = 1.2; c.stroke();
+      c.fillStyle = 'rgba(0,0,0,.12)'; c.fillRect(-30, 2, 60, 6);
+      /* الرقبة والرأس الكبير */
+      c.fillStyle = skD; c.fillRect(-8, -54, 16, 14);
+      const hy = -84, R = 34;
+      [-1, 1].forEach(s => { c.fillStyle = sk; c.beginPath(); c.ellipse(s * (R - 1), hy + 4, 7, 9, 0, 0, 7); c.fill(); ol(1.6); c.fillStyle = skD; c.beginPath(); c.ellipse(s * (R - 1), hy + 4, 3, 5, 0, 0, 7); c.fill(); });
+      c.fillStyle = sk; c.beginPath(); c.ellipse(0, hy, R, R * 1.02, 0, 0, 7); c.fill(); ol(2.4);
+      /* الشعر البني مع الغرة */
+      c.fillStyle = '#6b3b1f'; c.beginPath(); c.moveTo(-R - 1, hy + 2); c.bezierCurveTo(-R - 4, hy - R - 8, R + 4, hy - R - 10, R + 1, hy + 2); c.bezierCurveTo(R - 4, hy - 14, R - 14, hy - 18, 6, hy - 16); c.bezierCurveTo(10, hy - 10, 2, hy - 8, -6, hy - 14); c.bezierCurveTo(-12, hy - 10, -22, hy - 12, -R + 3, hy - 4); c.closePath(); c.fill(); ol(1.8);
+      c.fillStyle = 'rgba(255,255,255,.18)'; c.beginPath(); c.ellipse(-8, hy - 26, 12, 4, -.3, 0, 7); c.fill();
+      /* الحاجبان والعينان (مع رمش) */
+      c.strokeStyle = '#5b3018'; c.lineWidth = 3.2; [-1, 1].forEach(s => { c.beginPath(); c.moveTo(s * 6, hy - 9); c.quadraticCurveTo(s * 13, hy - 13, s * 20, hy - 9); c.stroke(); });
+      const blink = (t % 3.4) < .12;
+      [-1, 1].forEach(s => { const ex = s * 13, ey = hy + 2;
+        if (blink) { c.strokeStyle = '#3b2314'; c.lineWidth = 2.6; c.beginPath(); c.moveTo(ex - 7, ey); c.quadraticCurveTo(ex, ey + 4, ex + 7, ey); c.stroke(); return; }
+        c.fillStyle = '#fff'; c.beginPath(); c.ellipse(ex, ey, 8, 10, 0, 0, 7); c.fill(); ol(1.6);
+        c.fillStyle = '#5a3417'; c.beginPath(); c.arc(ex + s * .5, ey + 1.5, 5.6, 0, 7); c.fill(); c.fillStyle = '#1a0f08'; c.beginPath(); c.arc(ex + s * .5, ey + 1.5, 3, 0, 7); c.fill();
+        c.fillStyle = '#fff'; c.beginPath(); c.arc(ex - 1.5 + s * .5, ey - 1.5, 2, 0, 7); c.fill(); });
+      c.fillStyle = 'rgba(244,114,182,.35)'; [-1, 1].forEach(s => { c.beginPath(); c.ellipse(s * 21, hy + 13, 6, 3.5, 0, 0, 7); c.fill(); });
+      c.strokeStyle = skD; c.lineWidth = 2; c.beginPath(); c.moveTo(-1, hy + 7); c.quadraticCurveTo(3, hy + 12, -2, hy + 13); c.stroke();
+      /* ابتسامة مفتوحة */
+      c.fillStyle = '#7f1d1d'; c.beginPath(); c.moveTo(-11, hy + 17); c.quadraticCurveTo(0, hy + 31, 11, hy + 17); c.quadraticCurveTo(0, hy + 21, -11, hy + 17); c.fill(); c.strokeStyle = '#5a1414'; c.lineWidth = 1.5; c.stroke();
+      c.fillStyle = '#fff'; c.beginPath(); c.moveTo(-8, hy + 18.2); c.quadraticCurveTo(0, hy + 21.5, 8, hy + 18.2); c.lineTo(7, hy + 21); c.quadraticCurveTo(0, hy + 23, -7, hy + 21); c.fill();
+      c.fillStyle = '#f87171'; c.beginPath(); c.ellipse(0, hy + 25, 5, 2.5, 0, 0, 7); c.fill();
       c.restore();
     }
     function backdrop(c, v, t, T) {
@@ -557,22 +612,23 @@ button.lz:disabled{cursor:default}
   }
   /* موسيقى ومؤثرات الاستوديو */
   const MS = {
-    intro() { AU.noise(2.2, { ft: 'highpass', f: 3000, f2: 9000, vol: .16, a: 1.9 }); AU.tone(55, 2.4, { at: 2, vol: .55, to: 40 }); AU.noise(1.2, { ft: 'lowpass', f: 300, vol: .4, at: 2 });
+    intro() { if (CS.play('intro')) return; AU.noise(2.2, { ft: 'highpass', f: 3000, f2: 9000, vol: .16, a: 1.9 }); AU.tone(55, 2.4, { at: 2, vol: .55, to: 40 }); AU.noise(1.2, { ft: 'lowpass', f: 300, vol: .4, at: 2 });
       [[2, [130.8, 155.6, 196]], [2.45, [146.8, 174.6, 220]], [2.9, [164.8, 196, 246.9, 329.6]]].forEach(([at, ch], i) => AU.chord(ch, i === 2 ? 2.2 : .4, { type: 'sawtooth', lp: 1800, vol: .07, at, hold: i === 2 ? .8 : .1 })); AU.tone(1318, 2, { at: 2.9, vol: .06, type: 'triangle' }); },
-    q() { AU.noise(.5, { f: 400, f2: 3000, vol: .15, a: .2 }); AU.tone(82, .8, { vol: .35, to: 60 }); },
+    q() { if (CS.play('q')) return; AU.noise(.5, { f: 400, f2: 3000, vol: .15, a: .2 }); AU.tone(82, .8, { vol: .35, to: 60 }); },
     tick() { AU.tone(988, .14, { type: 'triangle', vol: .09 }); AU.tone(1976, .1, { vol: .03 }); },
-    loop(L) { const bpm = 72 + L * 4, beat = 60000 / bpm, notes = [[55, 65.4, 82.4], [49, 58.3, 73.4], [43.7, 55, 65.4], [49, 61.7, 73.4]]; let bar = 0;
+    loop(L) { const lk = L < 5 ? 'loop1' : L < 10 ? 'loop2' : 'loop3'; ['loop1', 'loop2', 'loop3'].forEach(k => CS.stop(k)); clearInterval(AU.loop); if (CS.play(lk, { loop: true })) return; const bpm = 72 + L * 4, beat = 60000 / bpm, notes = [[55, 65.4, 82.4], [49, 58.3, 73.4], [43.7, 55, 65.4], [49, 61.7, 73.4]]; let bar = 0;
       AU.startLoop(k => { const b = k % 4; if (b === 0) { const ch = notes[bar++ % 4]; AU.chord(ch.map(f => f * 4), beat * 4 / 1000, { type: 'sawtooth', lp: 650 + L * 40, vol: .022, a: .3 }); }
         AU.tone(notes[(bar + 3) % 4][0] * (b === 2 ? 1.5 : 1), .25, { vol: .28, to: 40 }); AU.noise(.05, { ft: 'highpass', f: 7000, vol: .05 }); AU.noise(.05, { ft: 'highpass', f: 7000, vol: .03, at: beat / 2000 });
         if (L > 9 && b % 2) AU.tone(880 * (1 + (k % 3) * .25), .08, { type: 'triangle', vol: .03 }); }, beat); },
-    lock() { AU.stopLoop(); AU.tone(49, 2.2, { vol: .55, to: 36 }); AU.noise(1.5, { ft: 'lowpass', f: 250, vol: .45 }); AU.chord([196, 233, 293.7], 2.4, { type: 'sawtooth', lp: 1100, vol: .05, vib: 6, vd: 4, a: .05, hold: 1.2 });
+    lock() { AU.stopLoop(); if (CS.play('lock')) return; AU.tone(49, 2.2, { vol: .55, to: 36 }); AU.noise(1.5, { ft: 'lowpass', f: 250, vol: .45 }); AU.chord([196, 233, 293.7], 2.4, { type: 'sawtooth', lp: 1100, vol: .05, vib: 6, vd: 4, a: .05, hold: 1.2 });
       let k = 0; AU.startLoop(() => { AU.tone(60, .14, { vol: .35, to: 40, at: 0 }); AU.tone(56, .14, { vol: .25, to: 38, at: .18 }); AU.noise(1.2, { f: 220 + k * 40, q: 3, vol: .05 }); k++; }, 620); },
-    right(L) { AU.stopLoop(); AU.chord([523, 659, 784], .7, { type: 'triangle', vol: .13, arp: .06 }); AU.chord([1047, 1319], 1.4, { vol: .06, at: .2, type: 'triangle' }); AU.tone(2093, 1.6, { vol: .05, at: .25 }); AU.noise(1, { ft: 'highpass', f: 6000, vol: .08, a: .1 }); if (L >= 4) AU.chord([262, 330, 392, 523], 1.6, { type: 'sawtooth', lp: 2000, vol: .05, at: .35, hold: .5 }); },
-    wrong() { AU.stopLoop(); [[311, 0], [294, .3], [277, .6], [262, .9]].forEach(([f, at], i) => AU.tone(f, i === 3 ? 1.4 : .32, { type: 'sawtooth', lp: 900, vol: .1, at, vib: i === 3 ? 5 : 0, vd: 8 })); AU.tone(55, 1.8, { vol: .5, at: .9, to: 35 }); },
-    fifty() { AU.noise(.35, { f: 2500, f2: 300, vol: .2 }); AU.noise(.35, { f: 2500, f2: 300, vol: .2, at: .35 }); AU.tone(600, .3, { to: 150, type: 'square', vol: .05 }); AU.tone(600, .3, { to: 150, type: 'square', vol: .05, at: .35 }); },
-    drum() { AU.noise(2.2, { ft: 'lowpass', f: 600, vol: .3, trem: 22, a: .3, hold: 1.4 }); AU.tone(110, .5, { at: 2.1, vol: .4 }); },
-    ring() { for (let r = 0; r < 2; r++) for (let p = 0; p < 2; p++) { AU.tone(440, .38, { at: r * 1.4 + p * .5, vol: .07, hold: .3 }); AU.tone(480, .38, { at: r * 1.4 + p * .5, vol: .07, hold: .3 }); } },
-    million() { SFX.win(); setTimeout(() => SFX.cheer(true), 300); [0, .5, 1].forEach(at => AU.chord([392, 494, 587, 784], .6, { type: 'sawtooth', lp: 2400, vol: .06, at: 1.2 + at })); }
+    right(L) { AU.stopLoop(); if (CS.play('right')) return; AU.chord([523, 659, 784], .7, { type: 'triangle', vol: .13, arp: .06 }); AU.chord([1047, 1319], 1.4, { vol: .06, at: .2, type: 'triangle' }); AU.tone(2093, 1.6, { vol: .05, at: .25 }); AU.noise(1, { ft: 'highpass', f: 6000, vol: .08, a: .1 }); if (L >= 4) AU.chord([262, 330, 392, 523], 1.6, { type: 'sawtooth', lp: 2000, vol: .05, at: .35, hold: .5 }); },
+    wrong() { AU.stopLoop(); if (CS.play('wrong')) return; [[311, 0], [294, .3], [277, .6], [262, .9]].forEach(([f, at], i) => AU.tone(f, i === 3 ? 1.4 : .32, { type: 'sawtooth', lp: 900, vol: .1, at, vib: i === 3 ? 5 : 0, vd: 8 })); AU.tone(55, 1.8, { vol: .5, at: .9, to: 35 }); },
+    fifty() { if (CS.play('fifty')) return; AU.noise(.35, { f: 2500, f2: 300, vol: .2 }); AU.noise(.35, { f: 2500, f2: 300, vol: .2, at: .35 }); AU.tone(600, .3, { to: 150, type: 'square', vol: .05 }); AU.tone(600, .3, { to: 150, type: 'square', vol: .05, at: .35 }); },
+    drum() { if (CS.play('aud')) return; AU.noise(2.2, { ft: 'lowpass', f: 600, vol: .3, trem: 22, a: .3, hold: 1.4 }); AU.tone(110, .5, { at: 2.1, vol: .4 }); },
+    ring() { if (CS.play('phone')) return; for (let r = 0; r < 2; r++) for (let p = 0; p < 2; p++) { AU.tone(440, .38, { at: r * 1.4 + p * .5, vol: .07, hold: .3 }); AU.tone(480, .38, { at: r * 1.4 + p * .5, vol: .07, hold: .3 }); } },
+    walk() { AU.stopLoop(); if (!CS.play('walk')) SFX.whoosh(); },
+    million() { AU.stopLoop(); if (CS.play('million')) return; SFX.win(); setTimeout(() => SFX.cheer(true), 300); [0, .5, 1].forEach(at => AU.chord([392, 494, 587, 784], .6, { type: 'sawtooth', lp: 2400, vol: .06, at: 1.2 + at })); }
   };
   function millionaire() {
     mount(); if (!$('#mm-css')) document.head.insertAdjacentHTML('beforeend', '<style id="mm-css">' + MM_CSS + '</style>');
@@ -587,6 +643,7 @@ button.lz:disabled{cursor:default}
           <div style="text-align:center;margin-top:.6em"><input class="nm" placeholder="اسم المتسابق" value="${esc(name)}"></div></div>
         <div class="pt-card"><div class="row"><span>المؤقت</span><span class="chips" data-o="timer"><button class="chip" data-v="1" aria-pressed="${opts.timer === 1}">٣٠ ث ثم ٤٥ ث</button><button class="chip" data-v="0" aria-pressed="${opts.timer === 0}">بلا وقت</button></span></div>
           <div class="row"><span>تأكيد الإجابة</span><span class="chips" data-o="confirm"><button class="chip" data-v="1" aria-pressed="${opts.confirm === 1}">«هل هي إجابتك النهائية؟»</button><button class="chip" data-v="0" aria-pressed="${opts.confirm === 0}">مباشرة</button></span></div></div>
+        <div class="pt-card"><div class="row"><span>🎵 الأصوات</span><span style="min-width:0;color:#e2e8f0">${CS.count() ? `${AD(CS.count())} من ${AD(SLOTS.length)} أصوات من ملفاتك، والباقي أصوات المنصة` : 'أصوات المنصة المركّبة'}</span><button class="mini" id="snds">🎵 ضع ملفاتك الصوتية</button></div></div>
         <button class="gobtn" id="go" style="background:linear-gradient(#fde68a,#f59e0b);color:#111;box-shadow:0 6px 0 #92400e">💰 لنبدأ اللعب</button></div>`;
       ROOT.appendChild(d);
       const inp = $('input.nm', d); inp.oninput = () => { name = inp.value.trim(); $$('.names button', d).forEach(b => b.classList.toggle('on', b.textContent === name)); };
@@ -596,8 +653,22 @@ button.lz:disabled{cursor:default}
         (function step() { bs.forEach(x => x.classList.remove('on')); const b = bs[k % bs.length]; b.classList.add('on'); b.scrollIntoView({ block: 'nearest' }); SFX.tick(); if (k >= steps) { name = list[target]; inp.value = name; spin = 0; SFX.ok(); return; } k++; setTimeout(step, 40 + Math.pow(k / steps, 3) * 380); })(); };
       $$('[data-o]', d).forEach(g => $$('button', g).forEach(b => b.onclick = () => { opts[g.dataset.o] = +b.dataset.v; SFX.click(); $$('button', g).forEach(x => x.setAttribute('aria-pressed', x === b)); }));
       $('#go', d).onclick = () => { AU.init(); mmGame(name || 'المتسابق', opts, list); };
+      $('#snds', d).onclick = () => soundPanel(draw);
     }
     toolbar(); draw();
+  }
+  function soundPanel(onClose) {
+    const m = document.createElement('div'); m.className = 'mm-ov'; m.style.zIndex = 45;
+    const draw = () => { m.innerHTML = `<div class="pt-card pop" style="width:min(820px,100%);background:#0b1a4d;border-color:#c9a227;color:#fff;max-height:92vh;overflow:auto">
+      <h3 style="display:flex;justify-content:space-between;align-items:center">🎵 أصوات «من سيربح المليون» <button class="mini" id="sx">✔ تم</button></h3>
+      <p style="margin:0 0 .5em;color:#cbd5e1;font-size:.85em;line-height:1.6">اختر ملفًا صوتيًا (mp3 أو m4a أو wav) لكل لحظة من اللعبة. تُحفظ الملفات على هذا الجهاز فقط، وأي لحظة بلا ملف تعمل بصوت المنصة. ملفات الموسيقى تتكرر تلقائيًا حتى تُختار الإجابة.</p>
+      ${SLOTS.map(([k, lab]) => `<div class="row" style="justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.1);padding:.25em 0"><span style="min-width:11em">${lab}</span><span style="color:${CS.has(k) ? '#86efac' : '#94a3b8'};font-size:.85em;flex:1">${CS.has(k) ? '✔ ملفك' : 'صوت المنصة'}</span>
+        <label class="mini" style="cursor:pointer">📂 اختيار ملف<input type="file" accept="audio/*" data-k="${k}" style="display:none"></label><button class="mini" data-p="${k}">▶</button>${CS.has(k) ? `<button class="mini" data-d="${k}">✖</button>` : ''}</div>`).join('')}</div>`;
+      $$('input[type=file]', m).forEach(inp => inp.onchange = async () => { const f = inp.files && inp.files[0]; if (!f) return; await CS.put(inp.dataset.k, f); draw(); });
+      $$('[data-p]', m).forEach(b => b.onclick = () => { AU.init(); CS.stopAll(); const k = b.dataset.p; if (CS.play(k)) return; ({ intro: MS.intro, q: MS.q, loop1: () => { MS.loop(0); later(() => AU.stopLoop(), 4000); }, loop2: () => { MS.loop(7); later(() => AU.stopLoop(), 4000); }, loop3: () => { MS.loop(12); later(() => AU.stopLoop(), 4000); }, lock: () => { MS.lock(); later(() => AU.stopLoop(), 3000); }, right: () => MS.right(5), wrong: MS.wrong, fifty: MS.fifty, aud: MS.drum, phone: MS.ring, walk: () => SFX.whoosh(), million: () => { SFX.win(); } })[k](); });
+      $$('[data-d]', m).forEach(b => b.onclick = async () => { await CS.del(b.dataset.d); draw(); });
+      $('#sx', m).onclick = () => { CS.stopAll(); AU.stopLoop(); m.remove(); onClose && onClose(); }; };
+    ROOT.appendChild(m); draw();
   }
   function mmGame(name, opts, classmates) {
     mount(); if (!$('#mm-css')) document.head.insertAdjacentHTML('beforeend', '<style id="mm-css">' + MM_CSS + '</style>');
@@ -655,7 +726,7 @@ button.lz:disabled{cursor:default}
     }
     function timeUp() { if (st.phase !== 'q' && st.phase !== 'sel') return; st.phase = 'end'; AU.stopLoop(); AE.forEach(b => b.disabled = true); lifelines(false); MS.wrong(); AE[st.q.a].classList.add('ok'); CTL.innerHTML = `<span class="ex"><b class="x">⏰ انتهى الوقت! الإجابة الصحيحة: ${esc(st.q.o[st.q.a])}</b></span><button class="mm-btn" id="mmx">النتيجة</button>`; $('#mmx').onclick = () => finish('walk'); }
     $('#mmw').onclick = () => { if (st.phase !== 'q' && st.phase !== 'sel') return; const prev = st.phase; st.phase = 'ask'; CTL.innerHTML = `<span style="font-family:'Readex Pro'">تنسحب بمبلغ ${MON(won())} ريال؟</span><button class="mm-btn" id="mmy">نعم، أنسحب</button><button class="mm-btn n" id="mmn">أكمل اللعب</button>`;
-      $('#mmn').onclick = () => { st.phase = prev; CTL.innerHTML = ''; }; $('#mmy').onclick = () => { st.phase = 'end'; clock(true); AU.stopLoop(); AE.forEach(b => b.disabled = true); lifelines(false); AE[st.q.a].classList.add('ok'); SFX.whoosh(); CTL.innerHTML = `<span class="ex">الإجابة الصحيحة كانت: <b>${esc(st.q.o[st.q.a])}</b></span><button class="mm-btn" id="mmx">النتيجة</button>`; $('#mmx').onclick = () => finish('walk'); }; };
+      $('#mmn').onclick = () => { st.phase = prev; CTL.innerHTML = ''; }; $('#mmy').onclick = () => { st.phase = 'end'; clock(true); AU.stopLoop(); AE.forEach(b => b.disabled = true); lifelines(false); AE[st.q.a].classList.add('ok'); MS.walk(); CTL.innerHTML = `<span class="ex">الإجابة الصحيحة كانت: <b>${esc(st.q.o[st.q.a])}</b></span><button class="mm-btn" id="mmx">النتيجة</button>`; $('#mmx').onclick = () => finish('walk'); }; };
     /* وسائل المساعدة */
     $$('.mm-ll button', ROOT).forEach(b => b.onclick = () => { if (st.phase !== 'q' || st.used[b.dataset.l]) return; st.used[b.dataset.l] = 1; lifelines(true); ({ f: fifty, a: audience, p: phone, s: swap })[b.dataset.l](); });
     function fifty() { MS.fifty(); const wrong = shuffle([0, 1, 2, 3].filter(i => i !== st.q.a && i !== st.sel)).slice(0, 2); wrong.forEach((i, n) => setTimeout(() => { st.gone.add(i); AE[i].classList.add('gone'); AE[i].classList.remove('sel'); }, n * 350)); }
@@ -670,7 +741,7 @@ button.lz:disabled{cursor:default}
       const cd = setInterval(() => { const e = $('.mm-ph .cd', C); if (!e || st.phase === 'lock' || st.phase === 'end') return clearInterval(cd); left--; e.textContent = AD(Math.max(0, left)); if (left <= 0) { clearInterval(cd); e.textContent = 'انتهت المكالمة'; } }, 1000); TIMERS.push(cd); }
     function swap() { SFX.whoosh(); AU.stopLoop(); st.q = Q.next(); show(true); }
     function finish(kind) {
-      clock(true); AU.stopLoop(); Q.done(); const amt = kind === 'million' ? LAD[N - 1] : kind === 'walk' ? won() : safeWon(); st.phase = 'end'; ladder();
+      clock(true); clearInterval(AU.loop); ['loop1', 'loop2', 'loop3', 'lock'].forEach(k => CS.stop(k)); Q.done(); const amt = kind === 'million' ? LAD[N - 1] : kind === 'walk' ? won() : safeWon(); st.phase = 'end'; ladder();
       if (kind === 'million') { MS.million(); confetti(300, 5000); } else if (amt > 0) { SFX.win(); confetti(140); }
       const o = document.createElement('div'); o.className = 'mm-ov'; o.innerHTML = `<div class="mm-chk pop"><div style="font-size:2.6em">${kind === 'million' ? '🏆💰' : amt ? '🎉' : '💪'}</div><h2>${kind === 'million' ? 'مبروك! ' + esc(name) + ' ربح المليون!' : amt ? 'أحسنت يا ' + esc(name) + '!' : 'حظًّا أوفر يا ' + esc(name)}</h2>
         <div>${kind === 'wrong' ? 'إجابة خاطئة — تحصل على المبلغ المضمون' : kind === 'walk' ? 'انسحبت بالمبلغ الذي ربحته' : 'أجبت عن كل الأسئلة!'}</div><div class="amt" id="mma">٠</div><div>ريال</div>
@@ -686,7 +757,7 @@ button.lz:disabled{cursor:default}
   window.PARTY = {
     async open(kind, game, back) {
       G = game; BACK = back; mount(); ROOT.innerHTML = '<div class="pt-scr" style="color:#fff;font-family:Readex Pro;font-size:1.4em">⏳ تجهيز الأسئلة…</div>';
-      await loadPool(); if (!POOL.length) { ROOT.innerHTML = '<div class="pt-scr" style="color:#fff">لا توجد أسئلة لهذا الدرس.</div>'; toolbar(); return; }
+      await Promise.all([loadPool(), CS.loadAll()]); if (!POOL.length) { ROOT.innerHTML = '<div class="pt-scr" style="color:#fff">لا توجد أسئلة لهذا الدرس.</div>'; toolbar(); return; }
       ({ pen: penalty, hex: hexGame, mm: millionaire })[kind]();
     }
   };
