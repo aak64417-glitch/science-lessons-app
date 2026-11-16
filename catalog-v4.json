@@ -1,5 +1,5 @@
 {
- "version": 73,
+ "version": 74,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -128,18 +128,6 @@
    "grade": "7",
    "no": 0,
    "chapter": "الفصل الثالث: المادة وتغيراتها",
-   "desc": "مختبر ثلاثي الأبعاد: ست تجارب وأدلتها",
-   "color": "#0F766E",
-   "file": "../science-unified-hub/lab/#chg",
-   "cover": "img/cover-lab-chg.webp"
-  },
-  {
-   "id": "lab-chg",
-   "title": "التغيرات الفيزيائية والكيميائية",
-   "type": "lab",
-   "grade": "8",
-   "no": 0,
-   "chapter": "تجارب المختبر الافتراضي",
    "desc": "مختبر ثلاثي الأبعاد: ست تجارب وأدلتها",
    "color": "#0F766E",
    "file": "../science-unified-hub/lab/#chg",
@@ -5741,6 +5729,30 @@
    "term": "1"
   },
   {
+   "id": "lab-plnt8",
+   "title": "تجربة: تأثير عدد مرات الري في نمو النبات",
+   "type": "lab",
+   "grade": "8",
+   "no": 1,
+   "chapter": "الفصل الأول: طبيعة العلم",
+   "desc": "مختبر ثلاثي الأبعاد: تجربة مضبوطة ومتغيراتها بالبيانات الحقيقية من الكتاب",
+   "color": "#0F766E",
+   "file": "../science-unified-hub/lab/#plnt8",
+   "cover": "img/cover-lab-plnt8.webp"
+  },
+  {
+   "id": "lab-dig8",
+   "title": "تجربة: استكشاف موقع أثري والتنقيب عنه",
+   "type": "lab",
+   "grade": "8",
+   "no": 2,
+   "chapter": "الفصل الأول: طبيعة العلم",
+   "desc": "مختبر ثلاثي الأبعاد: الرادار والخريطة والتنقيب البطيء والتوثيق",
+   "color": "#0F766E",
+   "file": "../science-unified-hub/lab/#dig8",
+   "cover": "img/cover-lab-dig8.webp"
+  },
+  {
    "id": "g8-c2-l1",
    "title": "المحاليل والذائبية",
    "type": "lesson",
@@ -5934,6 +5946,30 @@
    "file": "tools/arena-g8-c2-rv.html",
    "cover": "img/cover-game.webp",
    "term": "1"
+  },
+  {
+   "id": "lab-sol8",
+   "title": "تجربة: الذائبية والمحلول فوق المشبع",
+   "type": "lab",
+   "grade": "8",
+   "no": 1,
+   "chapter": "الفصل الثاني: المخاليط والمحاليل",
+   "desc": "مختبر ثلاثي الأبعاد: مشبع وغير مشبع وفوق مشبع والتبلور",
+   "color": "#0F766E",
+   "file": "../science-unified-hub/lab/#sol8",
+   "cover": "img/cover-lab-sol8.webp"
+  },
+  {
+   "id": "lab-cab8",
+   "title": "تجربة: الكاشف الطبيعي والتعادل",
+   "type": "lab",
+   "grade": "8",
+   "no": 2,
+   "chapter": "الفصل الثاني: المخاليط والمحاليل",
+   "desc": "مختبر ثلاثي الأبعاد: عصير الملفوف البنفسجي وترتيب المحاليل والتعادل",
+   "color": "#0F766E",
+   "file": "../science-unified-hub/lab/#cab8",
+   "cover": "img/cover-lab-cab8.webp"
   }
  ]
 }
