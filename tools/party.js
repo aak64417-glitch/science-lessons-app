@@ -41,10 +41,22 @@
     async del(k) { const db = await this.open(); this.stop(k); if (this.urls[k]) URL.revokeObjectURL(this.urls[k]); delete this.urls[k]; if (!db) return; return new Promise(res => { const tx = db.transaction('s', 'readwrite'); tx.objectStore('s').delete(k); tx.oncomplete = () => res(); tx.onerror = () => res(); }); },
     has(k) { return !!this.urls[k]; }, count() { return Object.keys(this.urls).length; },
     play(k, o) { if (!this.urls[k]) return false; if (AU.muted) return true; this.stop(k); const a = new Audio(this.urls[k]); a.loop = !!(o && o.loop); a.play().catch(() => { }); this.cur[k] = a; a.onended = () => { if (this.cur[k] === a) delete this.cur[k]; }; return true; },
-    stop(k) { const a = this.cur[k]; if (a) { try { a.pause(); } catch (e) { } delete this.cur[k]; } },
+    stop(k, fade) { const a = this.cur[k]; if (!a) return; delete this.cur[k]; if (!fade) { try { a.pause(); } catch (e) { } return; } const v0 = a.volume; let i = 0; const id = setInterval(() => { i++; a.volume = Math.max(0, v0 * (1 - i / 10)); if (i >= 10) { clearInterval(id); try { a.pause(); } catch (e) { } } }, fade / 10); },
     stopAll() { Object.keys(this.cur).forEach(k => this.stop(k)); }
   };
-  const SLOTS = [['intro', 'بداية اللعبة'], ['q', 'ظهور السؤال'], ['loop1', 'موسيقى الأسئلة ١–٥'], ['loop2', 'موسيقى الأسئلة ٦–١٠'], ['loop3', 'موسيقى الأسئلة ١١–١٥'], ['lock', 'الإجابة النهائية (الترقّب)'], ['right', 'إجابة صحيحة'], ['wrong', 'إجابة خاطئة'], ['fifty', 'حذف إجابتين'], ['aud', 'رأي الجمهور'], ['phone', 'الاتصال بصديق'], ['walk', 'الانسحاب'], ['million', 'ربح المليون']];
+  async function readZip(file) {
+    const buf = new Uint8Array(await file.arrayBuffer()), dv = new DataView(buf.buffer); let e = buf.length - 22; while (e >= 0 && dv.getUint32(e, true) !== 0x06054b50) e--; if (e < 0) throw new Error('zip');
+    const n = dv.getUint16(e + 10, true); let p = dv.getUint32(e + 16, true); const out = [];
+    for (let i = 0; i < n; i++) { const method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true), nl = dv.getUint16(p + 28, true), xl = dv.getUint16(p + 30, true), cl = dv.getUint16(p + 32, true), lo = dv.getUint32(p + 42, true); const name = new TextDecoder('utf-8').decode(buf.subarray(p + 46, p + 46 + nl)); p += 46 + nl + xl + cl; const st = lo + 30 + dv.getUint16(lo + 26, true) + dv.getUint16(lo + 28, true); out.push({ name, method, data: buf.slice(st, st + csize) }); }
+    return out;
+  }
+  async function unzipEntry(z) { if (z.method === 0) return new Blob([z.data]); const ds = new DecompressionStream('deflate-raw'); return new Response(new Blob([z.data]).stream().pipeThrough(ds)).blob(); }
+  /* يطابق ملفات الحزمة مع لحظات اللعبة حسب رقم الملف أو كلمات اسمه */
+  function slotFor(name) { const b = name.split('/').pop(), num = parseInt(b, 10), byNum = { 1: 'intro', 2: 'loop1', 3: 'q', 4: 'lock', 5: 'wrong', 6: 'right', 7: 'trans', 8: 'hover', 9: 'click' };
+    const kw = [[/مقدم/, 'intro'], [/خلفي|اثناء|أثناء/, 'loop1'], [/بدء|بداية_السؤال/, 'q'], [/ترقب|تفكير/, 'lock'], [/خاطئ/, 'wrong'], [/صحيح/, 'right'], [/فاصل|انتقال/, 'trans'], [/تمرير|مؤشر/, 'hover'], [/نقر/, 'click'], [/مليون/, 'million'], [/جمهور/, 'aud'], [/صديق|اتصال/, 'phone'], [/50|٥٠|حذف/, 'fifty'], [/انسحاب/, 'walk']];
+    for (const [re, k] of kw) if (re.test(b)) return k; return byNum[num] || null; }
+  async function importZip(file) { const ents = (await readZip(file)).filter(z => /\.(mp3|m4a|wav|ogg|aac)$/i.test(z.name)); let n = 0; for (const z of ents) { const k = slotFor(z.name); if (!k) continue; const blob = await unzipEntry(z); const ext = z.name.split('.').pop().toLowerCase(); await CS.put(k, new Blob([blob], { type: { mp3: 'audio/mpeg', m4a: 'audio/mp4', wav: 'audio/wav', ogg: 'audio/ogg', aac: 'audio/aac' }[ext] || 'audio/mpeg' })); n++; } return n; }
+  const SLOTS = [['intro', 'بداية اللعبة'], ['q', 'ظهور السؤال'], ['loop1', 'موسيقى الأسئلة ١–٥'], ['loop2', 'موسيقى الأسئلة ٦–١٠'], ['loop3', 'موسيقى الأسئلة ١١–١٥'], ['lock', 'الإجابة النهائية (الترقّب)'], ['right', 'إجابة صحيحة'], ['wrong', 'إجابة خاطئة'], ['fifty', 'حذف إجابتين'], ['aud', 'رأي الجمهور'], ['phone', 'الاتصال بصديق'], ['walk', 'الانسحاب'], ['million', 'ربح المليون'], ['trans', 'الفاصل والنتيجة النهائية'], ['hover', 'مرور المؤشر على الإجابة'], ['click', 'النقر على الإجابة']];
   try { AU.muted = localStorage.getItem('arena-snd') === '0'; } catch (e) { }
   const SFX = {
     click() { AU.tone(880, .06, { type: 'square', vol: .04 }); },
@@ -108,7 +120,7 @@
 .pt-ta{width:100%;min-height:5.5em;border-radius:12px;border:2px solid rgba(255,255,255,.3);background:rgba(0,0,0,.25);color:#fff;font:inherit;padding:.5em;margin-top:.5em;direction:rtl}
 .teams2{display:grid;grid-template-columns:1fr 1fr;gap:.8em}.tcol{border-radius:16px;padding:.6em .8em;background:color-mix(in srgb,var(--tc) 22%,rgba(0,0,0,.25));border:2px solid var(--tc)}
 .tcol input{width:100%;font:inherit;font-family:'Readex Pro',sans-serif;background:transparent;border:0;border-bottom:2px dashed rgba(255,255,255,.35);color:#fff;font-size:1.1em;margin-bottom:.4em;text-align:right}
-.tcol ol{margin:0;padding:0 1.3em 0 0;columns:2;column-gap:1.2em;font-size:.9em;color:#e2e8f0;max-height:12em;overflow:auto}.tcol li{padding:.08em 0;break-inside:avoid}
+.tcol ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;column-gap:1em;font-size:.9em;color:#e2e8f0;max-height:12em;overflow:auto;counter-reset:n}.tcol li{padding:.1em 0;counter-increment:n;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tcol li::before{content:counter(n,arabic-indic) '. ';color:#fde68a}
 .row{display:flex;gap:.6em;align-items:center;flex-wrap:wrap;margin:.35em 0}.row>span{color:#cbd5e1;min-width:7.5em}
 .gobtn{background:linear-gradient(#22c55e,#15803d);color:#fff;font-size:1.45em;padding:.45em 2.4em;border-radius:18px;box-shadow:0 6px 0 #14532d;margin-top:.6em}
 .gobtn:active{transform:translateY(3px);box-shadow:0 3px 0 #14532d}
@@ -137,9 +149,9 @@
       const sc = ROOT.querySelector('.pt-scr'); if (sc) sc.remove();
       const d = document.createElement('div'); d.className = 'pt-scr'; d.style.background = o.bg;
       d.innerHTML = `<div class="pt-set"><h1>${o.icon} ${esc(o.title)}</h1><p class="sub">${esc(o.sub)} — ${esc(G.lesson.title)}</p>
-        <div class="pt-card"><h3>👥 الطلاب</h3><div class="chips">${keys.map(k => `<button class="chip" data-c="${esc(k)}" aria-pressed="${!manual && k === cls}">الشعبة ${esc(k)} (${AD(clean(R.classes[k]).length)})</button>`).join('')}<button class="chip" data-c="__m" aria-pressed="${manual}">✍ أسماء أكتبها</button></div>
+        <div class="pt-card"><h3>👥 الطلاب</h3><div class="chips">${keys.map(k => `<button class="chip" data-c="${esc(k)}" aria-pressed="${!manual && k === cls}">الفصل ${esc(k)} (${AD(clean(R.classes[k]).length)})</button>`).join('')}<button class="chip" data-c="__m" aria-pressed="${manual}">✍ أسماء أكتبها</button></div>
           ${manual ? `<textarea class="pt-ta" placeholder="اكتب أسماء الطلاب، كل اسم في سطر (أو اتركها فارغة للعب بأرقام اللاعبين)">${esc(typed)}</textarea>` : ''}
-          ${!keys.length ? '<p style="color:#fca5a5;margin:.4em 0 0;font-size:.85em">لا توجد شعب محفوظة في المنصة بعد — أضفها من كشف الطلاب الموحّد، أو اكتب الأسماء هنا.</p>' : ''}</div>
+          ${!keys.length ? '<p style="color:#fca5a5;margin:.4em 0 0;font-size:.85em">لا توجد فصول محفوظة في المنصة بعد — أضفها من كشف الطلاب الموحّد، أو اكتب الأسماء هنا.</p>' : ''}</div>
         <div class="pt-card"><h3 style="display:flex;justify-content:space-between;align-items:center">⚖ الفريقان <button class="mini" id="rs">🔀 توزيع عشوائي جديد</button></h3>
           <div class="teams2">${[0, 1].map(i => `<div class="tcol" style="--tc:${o.colors[i]}"><input data-t="${i}" value="${esc(names[i])}"><ol>${T[i].map(n => `<li>${esc(n)}</li>`).join('')}</ol></div>`).join('')}</div></div>
         <div class="pt-card">${o.options.map(op => `<div class="row"><span>${op.label}</span><span class="chips" data-o="${op.k}">${op.v.map(([val, lab]) => `<button class="chip" data-v="${val}" aria-pressed="${String(opts[op.k]) === String(val)}">${lab}</button>`).join('')}</span></div>`).join('')}</div>
@@ -531,9 +543,9 @@ button.lz:disabled{cursor:default}
   const MS = {
     intro() { if (CS.play('intro')) return; AU.noise(2.2, { ft: 'highpass', f: 3000, f2: 9000, vol: .16, a: 1.9 }); AU.tone(55, 2.4, { at: 2, vol: .55, to: 40 }); AU.noise(1.2, { ft: 'lowpass', f: 300, vol: .4, at: 2 });
       [[2, [130.8, 155.6, 196]], [2.45, [146.8, 174.6, 220]], [2.9, [164.8, 196, 246.9, 329.6]]].forEach(([at, ch], i) => AU.chord(ch, i === 2 ? 2.2 : .4, { type: 'sawtooth', lp: 1800, vol: .07, at, hold: i === 2 ? .8 : .1 })); AU.tone(1318, 2, { at: 2.9, vol: .06, type: 'triangle' }); },
-    q() { if (CS.play('q')) return; AU.noise(.5, { f: 400, f2: 3000, vol: .15, a: .2 }); AU.tone(82, .8, { vol: .35, to: 60 }); },
+    q() { CS.stop('intro', 700); CS.stop('right', 500); CS.stop('trans', 500); if (CS.play('q')) return; AU.noise(.5, { f: 400, f2: 3000, vol: .15, a: .2 }); AU.tone(82, .8, { vol: .35, to: 60 }); },
     tick() { AU.tone(988, .14, { type: 'triangle', vol: .09 }); AU.tone(1976, .1, { vol: .03 }); },
-    loop(L) { const lk = L < 5 ? 'loop1' : L < 10 ? 'loop2' : 'loop3'; ['loop1', 'loop2', 'loop3'].forEach(k => CS.stop(k)); clearInterval(AU.loop); if (CS.play(lk, { loop: true })) return; const bpm = 72 + L * 4, beat = 60000 / bpm, notes = [[55, 65.4, 82.4], [49, 58.3, 73.4], [43.7, 55, 65.4], [49, 61.7, 73.4]]; let bar = 0;
+    loop(L) { const lk = L < 5 ? 'loop1' : L < 10 ? 'loop2' : 'loop3'; ['loop1', 'loop2', 'loop3'].forEach(k => CS.stop(k)); clearInterval(AU.loop); const lkk = [lk, 'loop1', 'loop2', 'loop3'].find(k => CS.has(k)); if (lkk && CS.play(lkk, { loop: true })) return; const bpm = 72 + L * 4, beat = 60000 / bpm, notes = [[55, 65.4, 82.4], [49, 58.3, 73.4], [43.7, 55, 65.4], [49, 61.7, 73.4]]; let bar = 0;
       AU.startLoop(k => { const b = k % 4; if (b === 0) { const ch = notes[bar++ % 4]; AU.chord(ch.map(f => f * 4), beat * 4 / 1000, { type: 'sawtooth', lp: 650 + L * 40, vol: .022, a: .3 }); }
         AU.tone(notes[(bar + 3) % 4][0] * (b === 2 ? 1.5 : 1), .25, { vol: .28, to: 40 }); AU.noise(.05, { ft: 'highpass', f: 7000, vol: .05 }); AU.noise(.05, { ft: 'highpass', f: 7000, vol: .03, at: beat / 2000 });
         if (L > 9 && b % 2) AU.tone(880 * (1 + (k % 3) * .25), .08, { type: 'triangle', vol: .03 }); }, beat); },
@@ -544,7 +556,7 @@ button.lz:disabled{cursor:default}
     fifty() { if (CS.play('fifty')) return; AU.noise(.35, { f: 2500, f2: 300, vol: .2 }); AU.noise(.35, { f: 2500, f2: 300, vol: .2, at: .35 }); AU.tone(600, .3, { to: 150, type: 'square', vol: .05 }); AU.tone(600, .3, { to: 150, type: 'square', vol: .05, at: .35 }); },
     drum() { if (CS.play('aud')) return; AU.noise(2.2, { ft: 'lowpass', f: 600, vol: .3, trem: 22, a: .3, hold: 1.4 }); AU.tone(110, .5, { at: 2.1, vol: .4 }); },
     ring() { if (CS.play('phone')) return; for (let r = 0; r < 2; r++) for (let p = 0; p < 2; p++) { AU.tone(440, .38, { at: r * 1.4 + p * .5, vol: .07, hold: .3 }); AU.tone(480, .38, { at: r * 1.4 + p * .5, vol: .07, hold: .3 }); } },
-    walk() { AU.stopLoop(); if (!CS.play('walk')) SFX.whoosh(); },
+    walk() { AU.stopLoop(); if (!CS.play('walk') && !CS.play('trans')) SFX.whoosh(); },
     million() { AU.stopLoop(); if (CS.play('million')) return; SFX.win(); setTimeout(() => SFX.cheer(true), 300); [0, .5, 1].forEach(at => AU.chord([392, 494, 587, 784], .6, { type: 'sawtooth', lp: 2400, vol: .06, at: 1.2 + at })); }
   };
   function millionaire() {
@@ -556,7 +568,7 @@ button.lz:disabled{cursor:default}
       const d = document.createElement('div'); d.className = 'pt-scr mm-set'; d.style.background = 'radial-gradient(circle at 50% 30%,#1e3a8a,#040b2b 70%)';
       d.innerHTML = `<div class="pt-set"><div style="height:min(26vh,12em);display:flex;justify-content:center">${emblem(true)}</div>
         <p class="sub" style="margin-top:.3em">${esc(G.lesson.title)} — ${AD(Math.min(15, mmPool))} سؤالًا من بنك الفصل بترتيب جديد في كل لعبة</p>
-        <div class="pt-card"><h3>🎤 المتسابق</h3>${keys.length ? `<div class="chips">${keys.map(k => `<button class="chip" data-c="${esc(k)}" aria-pressed="${k === cls}">الشعبة ${esc(k)}</button>`).join('')} <button class="chip" id="spin" style="background:#f59e0b;color:#111">🎲 اختيار عشوائي</button></div><div class="names">${list.map((n, i) => `<button data-i="${i}" class="${n === name ? 'on' : ''}">${esc(n)}</button>`).join('')}</div>` : ''}
+        <div class="pt-card"><h3>🎤 المتسابق</h3>${keys.length ? `<div class="chips">${keys.map(k => `<button class="chip" data-c="${esc(k)}" aria-pressed="${k === cls}">الفصل ${esc(k)}</button>`).join('')} <button class="chip" id="spin" style="background:#f59e0b;color:#111">🎲 اختيار عشوائي</button></div><div class="names">${list.map((n, i) => `<button data-i="${i}" class="${n === name ? 'on' : ''}">${esc(n)}</button>`).join('')}</div>` : ''}
           <div style="text-align:center;margin-top:.6em"><input class="nm" placeholder="اسم المتسابق" value="${esc(name)}"></div></div>
         <div class="pt-card"><div class="row"><span>المؤقت</span><span class="chips" data-o="timer"><button class="chip" data-v="1" aria-pressed="${opts.timer === 1}">٣٠ ث ثم ٤٥ ث</button><button class="chip" data-v="0" aria-pressed="${opts.timer === 0}">بلا وقت</button></span></div>
           <div class="row"><span>تأكيد الإجابة</span><span class="chips" data-o="confirm"><button class="chip" data-v="1" aria-pressed="${opts.confirm === 1}">«هل هي إجابتك النهائية؟»</button><button class="chip" data-v="0" aria-pressed="${opts.confirm === 0}">مباشرة</button></span></div></div>
@@ -577,12 +589,13 @@ button.lz:disabled{cursor:default}
   function soundPanel(onClose) {
     const m = document.createElement('div'); m.className = 'mm-ov'; m.style.zIndex = 45;
     const draw = () => { m.innerHTML = `<div class="pt-card pop" style="width:min(820px,100%);background:#0b1a4d;border-color:#c9a227;color:#fff;max-height:92vh;overflow:auto">
-      <h3 style="display:flex;justify-content:space-between;align-items:center">🎵 أصوات «من سيربح المليون» <button class="mini" id="sx">✔ تم</button></h3>
+      <h3 style="display:flex;justify-content:space-between;align-items:center;gap:.5em;flex-wrap:wrap">🎵 أصوات «من سيربح المليون» <span><label class="mini" style="cursor:pointer;background:#f59e0b;color:#111">📦 استيراد حزمة أصوات (zip)<input type="file" accept=".zip,application/zip" id="zipin" style="display:none"></label> <button class="mini" id="sx">✔ تم</button></span></h3><div id="zipmsg" style="color:#fde68a;font-size:.9em;min-height:1.2em"></div>
       <p style="margin:0 0 .5em;color:#cbd5e1;font-size:.85em;line-height:1.6">اختر ملفًا صوتيًا (mp3 أو m4a أو wav) لكل لحظة من اللعبة. تُحفظ الملفات على هذا الجهاز فقط، وأي لحظة بلا ملف تعمل بصوت المنصة. ملفات الموسيقى تتكرر تلقائيًا حتى تُختار الإجابة.</p>
       ${SLOTS.map(([k, lab]) => `<div class="row" style="justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.1);padding:.25em 0"><span style="min-width:11em">${lab}</span><span style="color:${CS.has(k) ? '#86efac' : '#94a3b8'};font-size:.85em;flex:1">${CS.has(k) ? '✔ ملفك' : 'صوت المنصة'}</span>
         <label class="mini" style="cursor:pointer">📂 اختيار ملف<input type="file" accept="audio/*" data-k="${k}" style="display:none"></label><button class="mini" data-p="${k}">▶</button>${CS.has(k) ? `<button class="mini" data-d="${k}">✖</button>` : ''}</div>`).join('')}</div>`;
-      $$('input[type=file]', m).forEach(inp => inp.onchange = async () => { const f = inp.files && inp.files[0]; if (!f) return; await CS.put(inp.dataset.k, f); draw(); });
-      $$('[data-p]', m).forEach(b => b.onclick = () => { AU.init(); CS.stopAll(); const k = b.dataset.p; if (CS.play(k)) return; ({ intro: MS.intro, q: MS.q, loop1: () => { MS.loop(0); later(() => AU.stopLoop(), 4000); }, loop2: () => { MS.loop(7); later(() => AU.stopLoop(), 4000); }, loop3: () => { MS.loop(12); later(() => AU.stopLoop(), 4000); }, lock: () => { MS.lock(); later(() => AU.stopLoop(), 3000); }, right: () => MS.right(5), wrong: MS.wrong, fifty: MS.fifty, aud: MS.drum, phone: MS.ring, walk: () => SFX.whoosh(), million: () => { SFX.win(); } })[k](); });
+      $('#zipin', m).onchange = async e => { const f = e.target.files && e.target.files[0]; if (!f) return; const msg = $('#zipmsg', m); msg.textContent = '⏳ جارٍ استيراد الأصوات…'; try { const n = await importZip(f); draw(); $('#zipmsg', m).textContent = n ? `✔ تم وضع ${AD(n)} أصوات في أماكنها` : 'لم أجد في الملف أصواتًا مسماة بأرقام أو أسماء معروفة'; } catch (er) { msg.textContent = 'تعذّر فتح الملف المضغوط على هذا المتصفح — اختر الملفات واحدًا واحدًا'; } };
+      $$('input[type=file][data-k]', m).forEach(inp => inp.onchange = async () => { const f = inp.files && inp.files[0]; if (!f) return; await CS.put(inp.dataset.k, f); draw(); });
+      $$('[data-p]', m).forEach(b => b.onclick = () => { AU.init(); CS.stopAll(); const k = b.dataset.p; if (CS.play(k)) return; ({ intro: MS.intro, q: MS.q, loop1: () => { MS.loop(0); later(() => AU.stopLoop(), 4000); }, loop2: () => { MS.loop(7); later(() => AU.stopLoop(), 4000); }, loop3: () => { MS.loop(12); later(() => AU.stopLoop(), 4000); }, lock: () => { MS.lock(); later(() => AU.stopLoop(), 3000); }, right: () => MS.right(5), wrong: MS.wrong, fifty: MS.fifty, aud: MS.drum, phone: MS.ring, walk: () => SFX.whoosh(), million: () => { SFX.win(); }, trans: () => SFX.whoosh(), hover: () => SFX.tick(), click: () => SFX.click() })[k](); });
       $$('[data-d]', m).forEach(b => b.onclick = async () => { await CS.del(b.dataset.d); draw(); });
       $('#sx', m).onclick = () => { CS.stopAll(); AU.stopLoop(); m.remove(); onClose && onClose(); }; };
     ROOT.appendChild(m); draw();
@@ -620,7 +633,7 @@ button.lz:disabled{cursor:default}
     function lifelines(on) { $$('.mm-ll button', ROOT).forEach(b => { b.classList.toggle('used', !!st.used[b.dataset.l]); b.disabled = !on || !!st.used[b.dataset.l]; }); $('#mmw').disabled = !on; }
     function clock(stop) { clearInterval(st.tmr); const ce = $('.mm-clock', ROOT); const TT = opts.timer ? (st.L < 5 ? 30 : st.L < 10 ? 45 : 0) : 0; if (stop || !TT) { ce.classList.remove('on'); return; } ce.classList.add('on'); const t0 = performance.now(), cr = $('#mmcr', ROOT), sp = $('span', ce); let ls = -1;
       st.tmr = setInterval(() => { const el = (performance.now() - t0) / 1000, left = Math.max(0, TT - el), sec = Math.ceil(left); sp.textContent = AD(sec); cr.style.strokeDashoffset = (106.8 * (1 - left / TT)).toFixed(1); cr.style.stroke = left < 6 ? '#ef4444' : left < 12 ? '#f59e0b' : '#fde047'; if (sec <= 5 && sec !== ls && sec > 0) { ls = sec; AU.tone(1200, .08, { type: 'square', vol: .05 }); } if (left <= 0) { clearInterval(st.tmr); timeUp(); } }, 100); TIMERS.push(st.tmr); }
-    async function intro() { st.phase = 'intro'; lifelines(false); ladder(); head(); const e = $('.mm-emb', C); e.style.transform = 'scale(.2) rotate(-90deg)'; e.style.opacity = '0'; MS.intro(); await wait(60); e.style.transform = 'scale(1)'; e.style.opacity = '1'; CTL.innerHTML = `<span class="fadeup" style="font-family:'Readex Pro';font-size:1.3em;color:#fde047">أهلًا بك يا ${esc(name)}… لنبدأ!</span>`; await wait(3000); show(); }
+    async function intro() { st.phase = 'intro'; lifelines(false); ladder(); head(); const e = $('.mm-emb', C); e.style.transform = 'scale(.2) rotate(-90deg)'; e.style.opacity = '0'; MS.intro(); await wait(60); e.style.transform = 'scale(1)'; e.style.opacity = '1'; CTL.innerHTML = `<span class="fadeup" style="font-family:'Readex Pro';font-size:1.3em;color:#fde047">أهلًا بك يا ${esc(name)}… لنبدأ!</span>`; await wait(1800); if (!CS.has('intro')) { await wait(1200); return show(); } const b = document.createElement('button'); b.className = 'mm-btn fadeup'; b.textContent = '▶ السؤال الأول'; b.onclick = () => show(); CTL.appendChild(b); }
     async function show(replace) {
       st.phase = 'show'; st.gone = new Set(); st.sel = -1; st.mood = 0; if (!replace) st.q = Q.next(); const q = st.q; head(); ladder(); lifelines(false); clock(true);
       C.innerHTML = emblem(false); CTL.innerHTML = ''; QE.classList.add('hide'); AE.forEach(b => { b.className = 'lz mm-a hide'; b.disabled = true; });
@@ -628,7 +641,8 @@ button.lz:disabled{cursor:default}
       for (let i = 0; i < 4; i++) { $('span', AE[i]).textContent = q.o[i]; AE[i].classList.remove('hide'); MS.tick(); await wait(420); }
       st.phase = 'q'; AE.forEach(b => b.disabled = false); lifelines(true); MS.loop(st.L); clock();
     }
-    AE.forEach(b => b.onclick = () => { const i = +b.dataset.i; if (st.phase !== 'q' && st.phase !== 'sel') return; if (st.gone.has(i)) return; SFX.click(); AE.forEach(x => x.classList.remove('sel')); b.classList.add('sel'); st.sel = i;
+    AE.forEach(b => b.onpointerenter = e => { if (e.pointerType === 'mouse' && (st.phase === 'q' || st.phase === 'sel') && !st.gone.has(+b.dataset.i)) CS.play('hover'); });
+    AE.forEach(b => b.onclick = () => { const i = +b.dataset.i; if (st.phase !== 'q' && st.phase !== 'sel') return; if (st.gone.has(i)) return; if (!CS.play('click')) SFX.click(); AE.forEach(x => x.classList.remove('sel')); b.classList.add('sel'); st.sel = i;
       if (!opts.confirm) return lock(); st.phase = 'sel'; CTL.innerHTML = `<span style="font-family:'Readex Pro'">هل هذه إجابتك النهائية؟</span><button class="mm-btn" id="mmy">✔ إجابة نهائية</button><button class="mm-btn n" id="mmn">↩ تراجع</button>`;
       $('#mmy').onclick = lock; $('#mmn').onclick = () => { AE.forEach(x => x.classList.remove('sel')); st.sel = -1; st.phase = 'q'; CTL.innerHTML = ''; }; });
     async function lock() {
@@ -659,7 +673,7 @@ button.lz:disabled{cursor:default}
     function swap() { SFX.whoosh(); AU.stopLoop(); st.q = Q.next(); show(true); }
     function finish(kind) {
       clock(true); clearInterval(AU.loop); ['loop1', 'loop2', 'loop3', 'lock'].forEach(k => CS.stop(k)); Q.done(); const amt = kind === 'million' ? LAD[N - 1] : kind === 'walk' ? won() : safeWon(); st.phase = 'end'; ladder();
-      if (kind === 'million') { MS.million(); confetti(300, 5000); } else if (amt > 0) { SFX.win(); confetti(140); }
+      if (kind === 'million') { MS.million(); confetti(300, 5000); } else { if (!CS.cur.wrong && !CS.cur.walk) CS.play('trans'); if (amt > 0) { if (!CS.has('trans')) SFX.win(); confetti(140); } }
       const o = document.createElement('div'); o.className = 'mm-ov'; o.innerHTML = `<div class="mm-chk pop"><div style="font-size:2.6em">${kind === 'million' ? '🏆💰' : amt ? '🎉' : '💪'}</div><h2>${kind === 'million' ? 'مبروك! ' + esc(name) + ' ربح المليون!' : amt ? 'أحسنت يا ' + esc(name) + '!' : 'حظًّا أوفر يا ' + esc(name)}</h2>
         <div>${kind === 'wrong' ? 'إجابة خاطئة — تحصل على المبلغ المضمون' : kind === 'walk' ? 'انسحبت بالمبلغ الذي ربحته' : 'أجبت عن كل الأسئلة!'}</div><div class="amt" id="mma">٠</div><div>ريال</div>
         <div class="line">أجبت صحيحًا عن ${AD(kind === 'million' ? N : st.L)} من ${AD(N)} أسئلة · ${esc(G.lesson.title)}</div>
