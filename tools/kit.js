@@ -151,6 +151,8 @@ window.DROS = window.DROS || (function () {
       });
     });
   }
+  // إذا خلا الجهاز من الكشوف (مثلًا بعد إعادة تثبيت التطبيق) تُحمَّل تلقائيًا من منصة رحلة العلوم
+  setTimeout(function () { try { if (!Object.keys(ld().classes).length && !sessionStorage.getItem('durus-auto-import')) { sessionStorage.setItem('durus-auto-import', '1'); importAll(function () { try { window.dispatchEvent(new Event('durus-roster')); } catch (e) {} }); } } catch (e) {} }, 700);
   return { kz: kz, nz: nz, load: load, save: sv, move: move, findKey: findKey, applyMoves: applyMoves, importAll: importAll, flag: flag, LISTS: LISTS };
 })();
 

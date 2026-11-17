@@ -103,6 +103,29 @@
 
   /* ---------------- كشف الطلاب الموحّد (durus-classes) ---------------- */
   function roster() { try { const s = JSON.parse(localStorage.getItem('durus-classes') || 'null'); if (s && s.classes) return { cur: s.cur || '', classes: s.classes }; } catch (e) { } return { cur: '', classes: {} }; }
+  /* تحميل كشوف الفصول من منصة رحلة العلوم عند خلوّ الجهاز منها (مثلًا بعد إعادة تثبيت التطبيق) */
+  const ROSTER_API = 'https://script.google.com/macros/s/AKfycbxp-t4JgGO5WiK6hoacjTyBqFnG-9bSWClplOpVV4VDuTV7T4tY0swB1Ll36kr_djJ7nQ/exec', ROSTER_LISTS = ['1/1', '2/1', '3/1', '4/1', '1/2', '1/3', '2/3', '3/3', '4/3'];
+  function jsonp(params) { return new Promise(res => { const name = 'ptyCb_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8), sc = document.createElement('script'); let fin = false; const end = r => { if (fin) return; fin = true; clearTimeout(t); sc.remove(); try { delete window[name]; } catch (e) { } res(r); }; const t = setTimeout(() => end(null), 25000); window[name] = d => end(d); sc.onerror = () => end(null); sc.src = ROSTER_API + '?' + Object.keys(params).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k])).join('&') + '&callback=' + name + '&_=' + Date.now(); document.head.appendChild(sc); }); }
+  let rosterTry = null;
+  function fetchRoster(force) {
+    if (rosterTry && !force) return rosterTry;
+    rosterTry = (async () => {
+      if (window.DROS && DROS.importAll) return new Promise(r => DROS.importAll(got => r(got.length)));
+      const kz = k => String(k).replace(/\s/g, '').replace(/\d/g, d => '٠١٢٣٤٥٦٧٨٩'[d]), G = {};
+      await Promise.all(ROSTER_LISTS.map(async k => { const r = await jsonp({ action: 'getStudents', className: k }); if (!r || !r.ok || !Array.isArray(r.students)) return; const cf = x => x.className != null ? x.className : x['class']; const arr = r.students.filter(Boolean), mine = arr.filter(x => cf(x) != null && String(cf(x)) === String(k)); const ss = (mine.length ? mine : arr).map(x => String(x.name || '').trim()).filter(Boolean); if (ss.length) G[k] = ss; }));
+      const got = Object.keys(G); if (!got.length) return 0;
+      let D; try { D = JSON.parse(localStorage.getItem('durus-classes') || 'null'); } catch (e) { } D = D && D.classes ? D : { cur: '', classes: {}, stars: {}, moves: {} };
+      got.forEach(k => { D.classes[kz(k)] = G[k]; }); if (!D.cur || !D.classes[D.cur]) D.cur = kz(got[0]);
+      try { localStorage.setItem('durus-classes', JSON.stringify(D)); localStorage.setItem('durus-roster-at', String(Date.now())); } catch (e) { } return got.length;
+    })();
+    return rosterTry;
+  }
+  function rosterUI(box, keysLen, redraw) { /* زر التحديث وحالة التحميل داخل بطاقة الطلاب */
+    const row = document.createElement('div'); row.style.cssText = 'margin-top:.5em;display:flex;gap:.6em;align-items:center;flex-wrap:wrap;font-size:.85em;color:#cbd5e1';
+    row.innerHTML = `<button class="mini" type="button">🔄 تحديث كشوف الفصول من منصة رحلة العلوم</button><span></span>`; box.appendChild(row);
+    const msg = $('span', row), go = force => { msg.textContent = '⏳ جارٍ تحميل كشوف الفصول…'; fetchRoster(force).then(n => { if (n) redraw(); else msg.textContent = 'تعذّر تحميل الكشوف — تحقق من الاتصال بالإنترنت، أو اكتب الأسماء.'; }); };
+    $('button', row).onclick = () => go(true); if (!keysLen) go(false);
+  }
   const clean = a => (a || []).map(x => String(typeof x === 'string' ? x : (x && (x.n || x.name)) || '').trim()).filter(Boolean);
 
   /* ---------------- واجهة مشتركة ---------------- */
@@ -142,7 +165,7 @@
 
   /* شاشة إعداد الفريقين (مشتركة بين ركلات الترجيح وخلية الحروف) */
   function teamSetup(o, onStart) {
-    mount(); const R = roster(), keys = Object.keys(R.classes); let cls = R.cur && R.classes[R.cur] ? R.cur : (keys[0] || ''), manual = !keys.length, typed = '', T = null, names = o.names.slice(), opts = Object.assign({}, o.defaults);
+    mount(); let R = roster(), keys = Object.keys(R.classes); let cls = R.cur && R.classes[R.cur] ? R.cur : (keys[0] || ''), manual = !keys.length, typed = '', T = null, names = o.names.slice(), opts = Object.assign({}, o.defaults);
     function src() { if (manual) return typed.split(/[\n،,]+/).map(s => s.trim()).filter(Boolean); return clean(R.classes[cls]); }
     function split() { const s = shuffle(src()); if (!s.length) { const k = o.anon || 6; T = [Array.from({ length: k }, (_, i) => 'لاعب ' + AD(i + 1)), Array.from({ length: k }, (_, i) => 'لاعب ' + AD(i + 1))]; return; } T = [[], []]; s.forEach((n, i) => T[i % 2].push(n)); }
     split();
@@ -152,12 +175,13 @@
       d.innerHTML = `<div class="pt-set"><h1>${o.icon} ${esc(o.title)}</h1><p class="sub">${esc(o.sub)} — ${esc(G.lesson.title)}</p>
         <div class="pt-card"><h3>👥 الطلاب</h3><div class="chips">${keys.map(k => `<button class="chip" data-c="${esc(k)}" aria-pressed="${!manual && k === cls}">الفصل ${esc(k)} (${AD(clean(R.classes[k]).length)})</button>`).join('')}<button class="chip" data-c="__m" aria-pressed="${manual}">✍ أسماء أكتبها</button></div>
           ${manual ? `<textarea class="pt-ta" placeholder="اكتب أسماء الطلاب، كل اسم في سطر (أو اتركها فارغة للعب بأرقام اللاعبين)">${esc(typed)}</textarea>` : ''}
-          ${!keys.length ? '<p style="color:#fca5a5;margin:.4em 0 0;font-size:.85em">لا توجد فصول محفوظة في المنصة بعد — أضفها من كشف الطلاب الموحّد، أو اكتب الأسماء هنا.</p>' : ''}</div>
+          ${!keys.length ? '<p style="color:#fca5a5;margin:.4em 0 0;font-size:.85em">لا توجد كشوف فصول محفوظة على هذا الجهاز — سأحمّلها من منصة رحلة العلوم، أو اكتب الأسماء هنا.</p>' : ''}</div>
         <div class="pt-card"><h3 style="display:flex;justify-content:space-between;align-items:center">⚖ الفريقان <button class="mini" id="rs">🔀 توزيع عشوائي جديد</button></h3>
           <div class="teams2">${[0, 1].map(i => `<div class="tcol" style="--tc:${o.colors[i]}"><input data-t="${i}" value="${esc(names[i])}"><ol>${T[i].map(n => `<li>${esc(n)}</li>`).join('')}</ol></div>`).join('')}</div></div>
         <div class="pt-card">${o.options.map(op => `<div class="row"><span>${op.label}</span><span class="chips" data-o="${op.k}">${op.v.map(([val, lab]) => `<button class="chip" data-v="${val}" aria-pressed="${String(opts[op.k]) === String(val)}">${lab}</button>`).join('')}</span></div>`).join('')}</div>
         <button class="gobtn" id="go">${o.go}</button></div>`;
       ROOT.appendChild(d);
+      rosterUI($('.pt-card', d), keys.length, () => { R = roster(); keys = Object.keys(R.classes); cls = R.cur && R.classes[R.cur] ? R.cur : (keys[0] || ''); manual = !keys.length; split(); draw(); });
       $$('.chip[data-c]', d).forEach(b => b.onclick = () => { SFX.click(); if (b.dataset.c === '__m') manual = true; else { manual = false; cls = b.dataset.c; } split(); draw(); });
       const ta = $('.pt-ta', d); if (ta) ta.oninput = () => { typed = ta.value; split(); $$('.tcol ol', d).forEach((ol, i) => ol.innerHTML = T[i].map(n => `<li>${esc(n)}</li>`).join('')); };
       $$('.tcol input', d).forEach(inp => inp.oninput = () => { names[+inp.dataset.t] = inp.value || o.names[+inp.dataset.t]; });
@@ -562,7 +586,7 @@ button.lz:disabled{cursor:default}
   };
   function millionaire() {
     mount(); if (!$('#mm-css')) document.head.insertAdjacentHTML('beforeend', '<style id="mm-css">' + MM_CSS + '</style>');
-    const R = roster(), keys = Object.keys(R.classes); let cls = R.cur && R.classes[R.cur] ? R.cur : (keys[0] || ''), name = '', opts = { timer: 1, confirm: 1 }, spin = 0;
+    let R = roster(), keys = Object.keys(R.classes); let cls = R.cur && R.classes[R.cur] ? R.cur : (keys[0] || ''), name = '', opts = { timer: 1, confirm: 1 }, spin = 0;
     const mmPool = POOL.filter(q => q.o.length === 4).length;
     function draw() {
       const old = $('.pt-scr', ROOT); if (old) old.remove(); const list = keys.length ? clean(R.classes[cls]) : [];
@@ -576,6 +600,7 @@ button.lz:disabled{cursor:default}
         <div class="pt-card"><div class="row"><span>🎵 الأصوات</span><span style="min-width:0;color:#e2e8f0">${CS.count() ? `${AD(CS.count())} من ${AD(SLOTS.length)} أصوات من ملفاتك، والباقي أصوات المنصة` : 'أصوات المنصة المركّبة'}</span><button class="mini" id="snds">🎵 ضع ملفاتك الصوتية</button></div></div>
         <button class="gobtn" id="go" style="background:linear-gradient(#fde68a,#f59e0b);color:#111;box-shadow:0 6px 0 #92400e">💰 لنبدأ اللعب</button></div>`;
       ROOT.appendChild(d);
+      rosterUI($('.pt-card', d), keys.length, () => { R = roster(); keys = Object.keys(R.classes); cls = R.cur && R.classes[R.cur] ? R.cur : (keys[0] || ''); draw(); });
       const inp = $('input.nm', d); inp.oninput = () => { name = inp.value.trim(); $$('.names button', d).forEach(b => b.classList.toggle('on', b.textContent === name)); };
       $$('.chip[data-c]', d).forEach(b => b.onclick = () => { cls = b.dataset.c; SFX.click(); draw(); });
       $$('.names button', d).forEach(b => b.onclick = () => { name = list[+b.dataset.i]; inp.value = name; SFX.click(); $$('.names button', d).forEach(x => x.classList.toggle('on', x === b)); });
