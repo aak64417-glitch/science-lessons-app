@@ -122,9 +122,20 @@
   }
   function rosterUI(box, keysLen, redraw) { /* زر التحديث وحالة التحميل داخل بطاقة الطلاب */
     const row = document.createElement('div'); row.style.cssText = 'margin-top:.5em;display:flex;gap:.6em;align-items:center;flex-wrap:wrap;font-size:.85em;color:#cbd5e1';
-    row.innerHTML = `<button class="mini" type="button">🔄 تحديث كشوف الفصول من منصة رحلة العلوم</button><span></span>`; box.appendChild(row);
+    row.innerHTML = `<button class="mini" type="button" data-r="sync">🔄 تحديث كشوف الفصول من منصة رحلة العلوم</button><button class="mini" type="button" data-r="out">📤 نسخ الكشوف</button><button class="mini" type="button" data-r="in">📥 لصق الكشوف</button><span></span>`; box.appendChild(row);
+    /* نقل الكشوف بين نسختين من التطبيق: نسخ نص الكشوف من نسخة ولصقه في الأخرى */
+    const xfer = mode => { const m = document.createElement('div'); m.style.cssText = 'position:fixed;inset:0;z-index:95;background:rgba(2,6,23,.75);display:flex;align-items:center;justify-content:center;padding:2vmin';
+      let raw = ''; try { raw = (window.__durusFullRaw ? window.__durusFullRaw() : localStorage.getItem('durus-classes')) || ''; } catch (e) { } let full = raw; try { const D = JSON.parse(raw); full = JSON.stringify({ classes: D.classes || {}, cur: D.cur || '', moves: D.moves || {}, stars: D.stars || {} }); } catch (e) { }
+      m.innerHTML = `<div class="pt-card pop" style="width:min(760px,100%);background:#0b1a4d;color:#fff"><h3>${mode === 'out' ? '📤 نسخ كشوف الفصول' : '📥 لصق كشوف الفصول'}</h3><p style="margin:0 0 .4em;color:#cbd5e1;font-size:.85em">${mode === 'out' ? 'انسخ هذا النص كاملًا، ثم افتح النسخة الأخرى من التطبيق واضغط «📥 لصق الكشوف» والصقه هناك.' : 'الصق النص الذي نسخته من النسخة الأخرى ثم اضغط «حفظ».'}</p><textarea class="pt-ta" style="min-height:9em;direction:ltr;font-size:.7em" ${mode === 'out' ? 'readonly' : ''}>${mode === 'out' ? esc(full) : ''}</textarea><div class="row" style="justify-content:center"><button class="mini" data-k="ok">${mode === 'out' ? '📋 نسخ' : '💾 حفظ'}</button><button class="mini" data-k="x">إغلاق</button></div><div class="xm" style="color:#fde68a;text-align:center;min-height:1.2em"></div></div>`;
+      ROOT.appendChild(m); const ta = $('textarea', m), xm = $('.xm', m);
+      $('[data-k=x]', m).onclick = () => m.remove();
+      $('[data-k=ok]', m).onclick = async () => {
+        if (mode === 'out') { ta.select(); let ok = false; try { await navigator.clipboard.writeText(ta.value); ok = true; } catch (e) { try { ok = document.execCommand('copy'); } catch (er) { } } xm.textContent = ok ? '✔ نُسخ النص' : 'حدّد النص وانسخه يدويًا'; return; }
+        try { const N = JSON.parse(ta.value.trim()); if (!N.classes || !Object.keys(N.classes).length) throw 0; let D = {}; try { D = JSON.parse(localStorage.getItem('durus-classes') || '{}') || {}; } catch (e) { } D.classes = Object.assign(D.classes || {}, N.classes); D.moves = Object.assign(D.moves || {}, N.moves || {}); D.stars = Object.assign(D.stars || {}, N.stars || {}); if (!D.cur || !D.classes[D.cur]) D.cur = N.cur || Object.keys(D.classes)[0]; localStorage.setItem('durus-classes', JSON.stringify(D)); m.remove(); redraw(); } catch (e) { xm.textContent = 'النص غير صحيح — انسخه كاملًا من النسخة الأخرى'; } };
+    };
+    $('[data-r=out]', row).onclick = () => xfer('out'); $('[data-r=in]', row).onclick = () => xfer('in');
     const msg = $('span', row), go = force => { msg.textContent = '⏳ جارٍ تحميل كشوف الفصول…'; fetchRoster(force).then(n => { if (n) redraw(); else msg.textContent = 'تعذّر تحميل الكشوف — تحقق من الاتصال بالإنترنت، أو اكتب الأسماء.'; }); };
-    $('button', row).onclick = () => go(true); if (!keysLen) go(false);
+    $('[data-r=sync]', row).onclick = () => go(true); if (!keysLen) go(false);
   }
   const clean = a => (a || []).map(x => String(typeof x === 'string' ? x : (x && (x.n || x.name)) || '').trim()).filter(Boolean);
 

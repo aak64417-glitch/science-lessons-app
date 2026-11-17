@@ -10,6 +10,7 @@
   function mine(k) { var g = gOf(k); return !g || g === GR; }
   var get = Storage.prototype.getItem, set = Storage.prototype.setItem;
   function full() { try { return JSON.parse(get.call(LS, KEY) || 'null'); } catch (e) { return null; } }
+  window.__durusFullRaw = function () { return get.call(LS, KEY); };
   Storage.prototype.getItem = function (k) {
     var v = get.call(this, k);
     if (this !== LS || k !== KEY || !v) return v;

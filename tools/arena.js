@@ -206,12 +206,12 @@
       S.rot += dt * 6;
       const names = game.names; [[1, 440, '#2f62c8'], [0, 560, '#d62f2f']].forEach(([i, y, col]) => { const x = X(S.d[i]); racecar(c, x - 110, y, 220, col, S.rot * (1 + Math.abs(S.p[i] - S.d[i]) * 3)); txt(c, names[i], x, y - 100, { size: 24, color: '#fff', stroke: 6 }); });
     } };
-  function racecar(c, x, y, w, col, rot) { const h = w * .28; shadow(c, x + w / 2, y + 2, w * .55, 9, .4);
+  function racecar(c, x, y, w, col, rot) { const h = w * .28; c.save(); c.translate(2 * x + w, 0); c.scale(-1, 1); /* مقدمة السيارة نحو خط النهاية (اليسار) */ shadow(c, x + w / 2, y + 2, w * .55, 9, .4);
     c.beginPath(); c.moveTo(x + w, y - h * .3); c.lineTo(x + w * .97, y - h * .62); c.quadraticCurveTo(x + w * .78, y - h * .7, x + w * .66, y - h * .72); c.quadraticCurveTo(x + w * .55, y - h * 1.2, x + w * .38, y - h * 1.18); c.lineTo(x + w * .25, y - h * 1.1); c.quadraticCurveTo(x + w * .16, y - h * .82, x + w * .05, y - h * .78); c.lineTo(x, y - h * .5); c.lineTo(x, y - h * .2); c.quadraticCurveTo(x, y - h * .08, x + w * .05, y - h * .08); c.lineTo(x + w * .95, y - h * .08); c.quadraticCurveTo(x + w, y - h * .1, x + w, y - h * .3); c.closePath();
     c.fillStyle = lg(c, 0, y - h * 1.2, 0, y, [[0, mix(col, '#ffffff', .4)], [.5, col], [1, mix(col, '#000000', .45)]]); c.fill();
     c.fillStyle = 'rgba(20,30,45,.85)'; c.beginPath(); c.moveTo(x + w * .62, y - h * .74); c.quadraticCurveTo(x + w * .53, y - h * 1.08, x + w * .4, y - h * 1.07); c.lineTo(x + w * .3, y - h * 1.02); c.quadraticCurveTo(x + w * .24, y - h * .86, x + w * .2, y - h * .76); c.closePath(); c.fill(); c.fillStyle = 'rgba(255,255,255,.3)'; c.fillRect(x + w * .08, y - h * .6, w * .84, 3);
-    c.fillStyle = '#ff3b3b'; c.fillRect(x + w * .965, y - h * .58, w * .03, h * .14); c.fillStyle = '#fff3b0'; c.fillRect(x, y - h * .56, w * .03, h * .12);
-    wheel(c, x + w * .22, y - h * .1, h * .3, -rot); wheel(c, x + w * .8, y - h * .1, h * .3, -rot); }
+    c.fillStyle = '#fff3b0'; c.fillRect(x + w * .965, y - h * .58, w * .03, h * .14); c.fillStyle = '#ff3b3b'; c.fillRect(x, y - h * .56, w * .03, h * .12);
+    wheel(c, x + w * .22, y - h * .1, h * .3, rot); wheel(c, x + w * .8, y - h * .1, h * .3, rot); c.restore(); }
 
   /* ---------------- added scenes ---------------- */
   const TC = ['#e23b3b', '#2f6fe0'];
