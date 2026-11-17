@@ -15,6 +15,8 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.webkit.JavascriptInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.webkit.ValueCallback;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,6 +30,9 @@ public class MainActivity extends Activity {
     private TextToSpeech tts;
     private volatile int ttsState = 0; /* 0 جارٍ التهيئة، 1 جاهز بالعربية، -1 لا يوجد صوت عربي، -2 لا يوجد محرّك نطق */
     private final ConcurrentHashMap<String, String> ttsSt = new ConcurrentHashMap<>();
+    /* اختيار الملفات من الجهاز (استيراد الأصوات وغيرها) */
+    private ValueCallback<Uri[]> fileCb;
+    private static final int FILE_REQ = 7;
 
     public class TtsBridge {
         @JavascriptInterface public int state() { return ttsState; }
@@ -109,6 +114,19 @@ public class MainActivity extends Activity {
                 if (custom != null) { root.removeView(custom); custom = null; }
                 web.setVisibility(View.VISIBLE);
             }
+            @Override
+            public boolean onShowFileChooser(WebView v, ValueCallback<Uri[]> cb, FileChooserParams p) {
+                if (fileCb != null) fileCb.onReceiveValue(null);
+                fileCb = cb;
+                try {
+                    Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                    i.addCategory(Intent.CATEGORY_OPENABLE);
+                    i.setType("*/*");
+                    if (p.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE) i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    startActivityForResult(Intent.createChooser(i, "اختر ملفًا"), FILE_REQ);
+                } catch (Exception e) { fileCb = null; return false; }
+                return true;
+            }
         });
         if (state != null) web.restoreState(state); else web.loadUrl(HOME);
         immersive();
@@ -123,6 +141,22 @@ public class MainActivity extends Activity {
 
     @Override
     public void onWindowFocusChanged(boolean focus) { super.onWindowFocusChanged(focus); if (focus) immersive(); }
+
+    @Override
+    protected void onActivityResult(int req, int res, Intent data) {
+        if (req == FILE_REQ) {
+            if (fileCb != null) {
+                Uri[] r = null;
+                if (res == RESULT_OK && data != null) {
+                    if (data.getClipData() != null) { int n = data.getClipData().getItemCount(); r = new Uri[n]; for (int k = 0; k < n; k++) r[k] = data.getClipData().getItemAt(k).getUri(); }
+                    else if (data.getData() != null) r = new Uri[]{ data.getData() };
+                }
+                fileCb.onReceiveValue(r); fileCb = null;
+            }
+            return;
+        }
+        super.onActivityResult(req, res, data);
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle out) { super.onSaveInstanceState(out); web.saveState(out); }
