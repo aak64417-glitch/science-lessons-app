@@ -75,17 +75,18 @@
   };
 
   /* ---------------- بنك الأسئلة: الدرس + بقية دروس الفصل، والأسئلة الجديدة أولًا ---------------- */
-  let POOL = null;
+  let POOL = null, POOL_NO = 0;
   async function loadPool() {
     if (POOL) return POOL;
     const seen = new Set(), out = [];
-    const add = (qs, src) => (qs || []).forEach(q => { if (!q || !q.q || !Array.isArray(q.o) || q.o.length < 2) return; const k = q.q.trim(); if (seen.has(k)) return; seen.add(k); out.push(Object.assign({ src }, q)); });
-    add(G.qs, 'lesson');
+    const add = (qs, src, lt, no) => (qs || []).forEach(q => { if (!q || !q.q || !Array.isArray(q.o) || q.o.length < 2) return; const k = q.q.trim(); if (seen.has(k)) return; seen.add(k); out.push(Object.assign({ src, lt, no }, q)); });
+    add(G.qs, 'lesson', G.lesson.title, 0);
     try {
       const cat = await (await fetch('../catalog-v4.json', { cache: 'force-cache' })).json();
       const me = location.pathname.split('/').pop();
+      const myNo = ((cat.items || []).find(i => i.file && i.file.split('/').pop() === location.pathname.split('/').pop()) || {}).no || 0; POOL_NO = myNo; out.forEach(q => q.no = myNo);
       const sib = (cat.items || []).filter(i => i.type === 'game' && i.grade === G.lesson.grade && i.chapter === G.lesson.chapter && i.file && i.file.split('/').pop() !== me);
-      await Promise.all(sib.map(async i => { try { const t = await (await fetch('../' + i.file)).text(); const m = t.match(/window\.GAME=(\{[\s\S]*?\});<\/script>/); if (m) add(JSON.parse(m[1]).qs, 'chapter'); } catch (e) { } }));
+      await Promise.all(sib.map(async i => { try { const t = await (await fetch('../' + i.file)).text(); const m = t.match(/window\.GAME=(\{[\s\S]*?\});<\/script>/); if (m) { const gm = JSON.parse(m[1]); add(gm.qs, 'chapter', gm.lesson && gm.lesson.title, i.no || 0); } } catch (e) { } }));
     } catch (e) { }
     POOL = out; return POOL;
   }
@@ -171,7 +172,7 @@
     b.onclick = e => { const k = e.target.closest('button') && e.target.closest('button').dataset.k; if (k === 'back') close(); else if (k === 'snd') { AU.muted = !AU.muted; e.target.textContent = AU.muted ? '🔇' : '🔊'; try { localStorage.setItem('arena-snd', AU.muted ? '0' : '1'); } catch (er) { } } else if (k === 'fs') { const d = document, el = d.documentElement; if (d.fullscreenElement || d.webkitFullscreenElement) (d.exitFullscreen || d.webkitExitFullscreen).call(d); else (el.requestFullscreen || el.webkitRequestFullscreen || function () { }).call(el); } };
     ROOT.appendChild(b); return b;
   }
-  function close() { clearAll(); window.PARTY_ON = false; if (ROOT) ROOT.remove(); ROOT = null; if (BACK) BACK(); }
+  function close() { clearAll(); if (typeof RET === 'function') { const r = RET; r(); return; } window.PARTY_ON = false; if (ROOT) ROOT.remove(); ROOT = null; if (BACK) BACK(); }
   function mount() { clearAll(); if (!$('#pty-css')) document.head.insertAdjacentHTML('beforeend', '<style id="pty-css">' + CSS + '</style>'); if (ROOT) ROOT.remove(); ROOT = document.createElement('div'); ROOT.id = 'pty'; window.PARTY_ON = true; document.body.appendChild(ROOT); return ROOT; }
 
   /* شاشة إعداد الفريقين (مشتركة بين ركلات الترجيح وخلية الحروف) */
@@ -722,12 +723,280 @@ button.lz:disabled{cursor:default}
     intro();
   }
 
+
+  /* =====================================================================
+     ساحة العلماء: إطار مشترك لألعاب الفرق ذات الملصقات (ثوران البركان، قوة المغناطيس، رحلة إلى الكواكب، جرس العالِم)
+     ===================================================================== */
+  const TG_CSS = `
+.ps{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#000}
+.ps-bg{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(20px) brightness(.5)}
+.ps-st{position:relative;flex:none;box-shadow:0 0 60px rgba(0,0,0,.6)}.ps-st>img{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+.ps-st>canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}.ps-ov{position:absolute;inset:0;z-index:2}.ps-ov>*{position:absolute;box-sizing:border-box}
+.ps-top{position:absolute;inset:0;z-index:5;pointer-events:none}.ps-top>*{pointer-events:auto}
+.tq-wrap{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,.45);backdrop-filter:blur(2px)}
+.tq{width:66%;background:linear-gradient(#0b1f4d,#081433);border:.3em solid var(--tc);border-radius:1.6em;padding:1.2em 1.6em;color:#fff;box-shadow:0 0 0 .25em rgba(255,255,255,.15),0 1.5em 4em rgba(0,0,0,.6),0 0 2.5em color-mix(in srgb,var(--tc) 60%,transparent);text-align:center}
+.tq.inl{width:100%;height:100%;border-radius:0;border:0;padding:.9em 1.4em;display:flex;flex-direction:column;justify-content:center;background:transparent;box-shadow:none}
+.tq-h{display:flex;justify-content:space-between;align-items:center;gap:.6em;font-family:'Readex Pro',sans-serif;font-size:1.25em;margin-bottom:.35em}
+.tq-team{background:var(--tc);border-radius:99px;padding:.15em .9em}.tq-pl{color:#fde68a}
+.tq-q{font-size:2.3em;line-height:1.45;font-weight:700;margin:.2em 0 .45em}.tq.inl .tq-q{font-size:1.75em}
+.tq-tm{height:.45em;border-radius:1em;background:rgba(255,255,255,.15);overflow:hidden;margin:0 auto .6em;width:80%}.tq-tm i{display:block;height:100%;background:#22c55e;transform-origin:right;width:100%}
+.tq-o{display:grid;grid-template-columns:1fr 1fr;gap:.6em}
+#pty .tq-o button{display:flex;align-items:center;gap:.6em;text-align:right;background:linear-gradient(#f8fafc,#dbe4ee);color:#0f172a;border-radius:99px!important;padding:.45em .7em;font-size:1.7em;font-family:'IBM Plex Sans Arabic',sans-serif!important;font-weight:700;line-height:1.3;box-shadow:0 .25em 0 rgba(0,0,0,.25);min-height:2.4em}
+#pty .tq-o button b{flex:none;width:1.75em;height:1.75em;border-radius:50%;display:grid;place-items:center;background:linear-gradient(#2563eb,#1e3a8a);color:#fff;font-family:'Readex Pro',sans-serif;border:.12em solid #fff}
+#pty .tq-o button.ok{background:linear-gradient(#86efac,#16a34a);color:#04210f;box-shadow:0 0 1.2em rgba(34,197,94,.9)}#pty .tq-o button.no{background:linear-gradient(#fca5a5,#dc2626);color:#fff}#pty .tq-o button.dim{opacity:.4}
+.tq-res{margin-top:.6em;font-size:1.25em;line-height:1.6;min-height:1.6em}.tq-res b{color:#86efac}.tq-res b.x{color:#fca5a5}
+#pty .tg-btn{font-family:'Readex Pro',sans-serif!important;border-radius:99px!important;padding:.4em 1.6em;font-size:1.3em;color:#111;background:linear-gradient(#fde68a,#f59e0b);border:.15em solid #fff7d6!important;box-shadow:0 .3em 0 #92400e,0 0 1em rgba(245,158,11,.5);margin:.3em}
+#pty .tg-btn.b{background:linear-gradient(#60a5fa,#1d4ed8);color:#fff;box-shadow:0 .3em 0 #1e3a8a}#pty .tg-btn.g{background:linear-gradient(#86efac,#16a34a);box-shadow:0 .3em 0 #14532d}
+.tg-ban{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,.35)}
+.tg-ban>div{background:linear-gradient(#0b1f4d,#081433);border:.3em solid var(--tc);border-radius:1.6em;padding:1em 2.2em;text-align:center;color:#fff;box-shadow:0 0 2.5em color-mix(in srgb,var(--tc) 70%,transparent)}
+.tg-ban h3{margin:0;font-family:'Readex Pro',sans-serif;font-size:1.5em;color:var(--tc2,#fde68a)}.tg-ban .nm{font-family:'Readex Pro',sans-serif;font-size:2.6em;margin:.15em 0 .3em;display:flex;align-items:center;gap:.4em;justify-content:center}
+.tg-ban .nm i{width:1.6em;height:1.6em;border-radius:50%;background:var(--tc);display:grid;place-items:center;font-style:normal;font-size:.7em;box-shadow:0 0 0 .15em #fff}
+.tg-end{position:absolute;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(2,6,23,.6),rgba(2,6,23,.92))}
+.tg-end>div{width:70%;background:linear-gradient(#1e3a8a,#0b1a4d);border:.3em solid #fde68a;border-radius:2em;padding:1.2em 1.6em;text-align:center;color:#fff;box-shadow:0 0 4em rgba(250,204,21,.4)}
+.tg-end h2{font-family:'Readex Pro',sans-serif;font-size:2.8em;margin:.1em 0}.tg-end .fs{display:flex;gap:1em;justify-content:center;margin:.6em 0}.tg-end .fs>div{flex:1;border-radius:1.2em;padding:.5em;background:color-mix(in srgb,var(--tc) 30%,#0f172a);border:.2em solid var(--tc);font-family:'Readex Pro',sans-serif;font-size:1.4em}.tg-end .fs>div.w{box-shadow:0 0 0 .2em #fde047}
+.tg-end .fs b{display:block;font-size:2.2em;line-height:1.1}.tg-end .star{background:rgba(250,204,21,.15);border:.15em dashed #fde047;border-radius:1em;padding:.5em;margin:.5em 0;font-size:1.35em}
+.vb{display:flex;align-items:center;gap:.6em;padding:0 1.1em;border-radius:1.2em;background:linear-gradient(color-mix(in srgb,var(--tc) 55%,#020617),color-mix(in srgb,var(--tc) 25%,#020617));border:.25em solid var(--tc);box-shadow:0 0 1.4em color-mix(in srgb,var(--tc) 70%,transparent),inset 0 0 1em rgba(255,255,255,.15);color:#fff;font-family:'Readex Pro',sans-serif}
+.vb .nm{flex:1;font-size:2.2em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.vb .tsc{font-size:3.3em;min-width:1.8em;text-align:center;background:rgba(2,6,23,.65);border-radius:.3em;padding:0 .2em;color:#fde68a;direction:ltr}.vb .ic{font-size:2.4em}
+.vb.on{animation:vbon 1.2s infinite alternate}@keyframes vbon{to{box-shadow:0 0 2.4em var(--tc),0 0 0 .25em #fde047}}
+.tsc.bump{animation:scb .7s}@keyframes scb{40%{transform:scale(1.35);color:#fff}}
+.pill{display:flex;align-items:center;justify-content:center;text-align:center;font-family:'Readex Pro',sans-serif;font-weight:700;line-height:1.25;overflow:hidden}
+.note{background:linear-gradient(#fdf6e3,#efe2c0);color:#3b2a12;border-radius:.4em;box-shadow:0 .3em .8em rgba(0,0,0,.3);transform:rotate(-6deg);padding:.4em .6em;font-size:1.7em;flex-direction:column}
+.note small{font-size:.75em;color:#7c5a2a}
+.dig{display:flex;gap:4%;justify-content:center;align-items:stretch;direction:ltr}.dig span{flex:1;display:grid;place-items:center;background:#fff;border:.2em solid var(--tc);border-radius:.5em;font-family:'Readex Pro',sans-serif;font-size:3.6em;color:#0f172a;box-shadow:inset 0 -.15em 0 rgba(0,0,0,.12)}
+.stat{background:#fff;border:.2em dashed var(--tc);border-radius:1em;flex-direction:column;gap:.15em;color:#0f172a;padding:.4em}
+.stat .who{font-size:2.2em;color:var(--tc);display:flex;align-items:center;gap:.35em;justify-content:center}.stat .who i{width:1.5em;height:1.5em;border-radius:50%;background:var(--tc);color:#fff;font-style:normal;display:grid;place-items:center;font-size:.75em}
+.stat small{font-size:1.35em;color:#475569}.stat.on{background:#fffbeb;border-style:solid;box-shadow:0 0 1.4em color-mix(in srgb,var(--tc) 70%,transparent)}
+.hb{position:absolute;inset:0;overflow:auto;background:radial-gradient(circle at 50% 0%,#312e81,#0b1220 60%);color:#fff;padding:3.4em 2vw 2vw;text-align:center}
+.hb h1{font-family:'Readex Pro',sans-serif;font-size:2.6em;margin:.1em 0;background:linear-gradient(90deg,#fde047,#f472b6,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hb .sub{color:#c7d2fe;margin:0 0 .8em}.hb-g{display:grid;grid-template-columns:repeat(4,1fr);gap:1em;max-width:1400px;margin:0 auto}
+#pty .hb-c{position:relative;border-radius:1.2em;overflow:hidden;aspect-ratio:4/3.1;background:#0f172a;border:3px solid rgba(255,255,255,.18)!important;box-shadow:0 10px 26px rgba(0,0,0,.45);transition:transform .25s,box-shadow .25s;color:#fff;padding:0}
+.hb-c img,.hb-c .em{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.hb-c .em{display:grid;place-items:center;font-size:4.5em}
+.hb-c span{position:absolute;bottom:0;inset-inline:0;padding:1.6em .6em .5em;background:linear-gradient(transparent,rgba(0,0,0,.88));text-align:right}.hb-c span b{display:block;font-family:'Readex Pro',sans-serif;font-size:1.25em}.hb-c span small{color:#cbd5e1;font-size:.82em}
+.hb-c:hover,.hb-c.hl{transform:translateY(-4px) scale(1.03);border-color:#fde047!important;box-shadow:0 0 0 4px #fde047,0 16px 30px rgba(0,0,0,.5)}
+.hb-c .new{position:absolute;top:.5em;right:.5em;background:#f43f5e;color:#fff;border-radius:99px;padding:.1em .7em;font-family:'Readex Pro',sans-serif;font-size:.8em;z-index:2}
+#pty .hb-r{background:linear-gradient(90deg,#f59e0b,#ec4899);color:#fff;font-size:1.25em;border-radius:99px;padding:.45em 2em;margin:.2em 0 1em;box-shadow:0 6px 18px rgba(236,72,153,.4)}
+`;
+  let RET = null, HUB_BACK = null;
+  function tgCss() { if (!$('#tg-css')) document.head.insertAdjacentHTML('beforeend', '<style id="tg-css">' + TG_CSS + '</style>'); }
+  const TC2 = ['#e23b3b', '#2563eb'];
+  function tgStage(img, W, H) {
+    mount(); tgCss();
+    ROOT.innerHTML = `<div class="ps"><div class="ps-bg" style="background-image:url(../img/${img})"></div><div class="ps-st"><img src="../img/${img}" alt=""><div class="ps-ov"></div><canvas></canvas><div class="ps-top"></div></div></div>`;
+    toolbar();
+    const st = $('.ps-st', ROOT), cv = $('canvas', st), ov = $('.ps-ov', st), top = $('.ps-top', st), S = { k: 1 };
+    function fit() { if (!st.isConnected) return removeEventListener('resize', fit); let w = innerWidth, h = w * H / W; if (h > innerHeight) { h = innerHeight; w = h * W / H; } st.style.width = w + 'px'; st.style.height = h + 'px'; st.style.fontSize = (w / 100) + 'px'; const d = Math.min(2, devicePixelRatio || 1); cv.width = Math.round(w * d); cv.height = Math.round(h * d); S.k = cv.width / W; }
+    fit(); addEventListener('resize', fit);
+    const box = (x, y, w, h) => `left:${(x / W * 100).toFixed(3)}%;top:${(y / H * 100).toFixed(3)}%;width:${(w / W * 100).toFixed(3)}%;height:${(h / H * 100).toFixed(3)}%`;
+    const add = (html, where) => { (where || ov).insertAdjacentHTML('beforeend', html); return (where || ov).lastElementChild; };
+    const ctx = cv.getContext('2d');
+    return { st, cv, ctx, ov, top, box, add, S, W, H,
+      loop(fn) { let lt = performance.now(); const f = now => { if (!cv.isConnected) return; const dt = Math.min(.05, (now - lt) / 1000); lt = now; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); ctx.setTransform(S.k, 0, 0, S.k, 0, 0); fn(ctx, dt, now / 1000); RAF = requestAnimationFrame(f); }; RAF = requestAnimationFrame(f); },
+      shake(a) { st.animate([{ transform: 'translate(0,0)' }, { transform: `translate(${-8 * a}px,${5 * a}px)` }, { transform: `translate(${7 * a}px,${-6 * a}px)` }, { transform: `translate(${-5 * a}px,${-3 * a}px)` }, { transform: `translate(${4 * a}px,${4 * a}px)` }, { transform: 'translate(0,0)' }], { duration: 550 }); }
+    };
+  }
+  /* سؤال: نافذة فوق المشهد أو داخل لوحة محددة. يعيد {ok,k} بعد ضغط «متابعة» */
+  function tgAsk(g, o) {
+    return new Promise(res => {
+      const q = o.q, inl = !!o.into, host = o.into || g.top, wrap = document.createElement('div'); let done = false, tmr = 0;
+      wrap.className = inl ? '' : 'tq-wrap'; if (inl) { wrap.style.cssText = 'position:absolute;inset:0'; host.innerHTML = ''; }
+      wrap.innerHTML = `<div class="tq${inl ? ' inl' : ''} pop" style="--tc:${o.col}"><div class="tq-h"><span class="tq-team">${o.steal ? '⚡ فرصة ' : ''}${esc(o.team)}</span><span class="tq-pl">👤 ${esc(o.player)}</span></div><div class="tq-q">${esc(q.q)}</div>${o.time ? '<div class="tq-tm"><i></i></div>' : ''}<div class="tq-o">${q.o.map((x, j) => `<button data-j="${j}"><b>${LET[j]}</b><span>${esc(x)}</span></button>`).join('')}</div><div class="tq-res"></div></div>`;
+      host.appendChild(wrap); SFX.whoosh();
+      const fin = k => {
+        if (done) return; done = true; clearInterval(tmr); if (o.onTime) o.onTime(null); const ok = k === q.a;
+        $$('.tq-o button', wrap).forEach((b, j) => { b.onclick = null; b.classList.add(j === q.a ? 'ok' : j === k ? 'no' : 'dim'); }); ok ? SFX.ok() : SFX.no();
+        const r = $('.tq-res', wrap); r.innerHTML = `${ok ? '<b>✔ إجابة صحيحة!</b>' : `<b class="x">✘ ${k === -1 ? 'انتهى الوقت' : 'إجابة خاطئة'}${o.hideAns ? '' : ' — الصحيح: ' + esc(q.o[q.a])}</b>`}${q.ex && (ok || !o.hideAns) ? '<br>' + esc(q.ex) : ''}<br><button class="tg-btn">${o.next || 'متابعة ←'}</button>`;
+        $('button', r).onclick = () => { if (!inl) wrap.remove(); res({ ok, k }); };
+      };
+      $$('.tq-o button', wrap).forEach(b => b.onclick = () => fin(+b.dataset.j));
+      if (o.time) { const t0 = performance.now(), bar = $('.tq-tm i', wrap); let ls = -1; tmr = setInterval(() => { const el = (performance.now() - t0) / 1000, f = 1 - el / o.time, sec = Math.ceil(o.time - el); bar.style.transform = `scaleX(${Math.max(0, f)})`; bar.style.background = f < .3 ? '#ef4444' : f < .6 ? '#f59e0b' : '#22c55e'; if (o.onTime) o.onTime(Math.max(0, sec)); if (sec <= 5 && sec > 0 && sec !== ls) { ls = sec; SFX.tick(); } if (f <= 0) fin(-1); }, 100); TIMERS.push(tmr); }
+    });
+  }
+  function tgBanner(g, o) { return new Promise(res => { const b = document.createElement('div'); b.className = 'tg-ban'; b.innerHTML = `<div class="pop" style="--tc:${o.col}"><h3>${esc(o.title)}</h3><div class="nm"><i>${esc((o.player || '؟').trim()[0])}</i>${esc(o.player)}</div><button class="tg-btn">▶ عرض السؤال</button></div>`; (o.into || g.top).appendChild(b); if (o.into) { b.style.position = 'absolute'; } $('button', b).onclick = () => { b.remove(); res(); }; }); }
+  function tgEnd(g, o) {
+    SFX.win(); SFX.cheer(true); confetti(220);
+    const s = o.sc, w = s[0] === s[1] ? -1 : s[0] > s[1] ? 0 : 1, cnt = o.cnt || {}, mx = Math.max(0, ...Object.values(cnt)), stars = mx ? Object.keys(cnt).filter(k => cnt[k] === mx) : [];
+    const e = document.createElement('div'); e.className = 'tg-end'; e.innerHTML = `<div class="pop"><div style="font-size:4em">🏆</div><h2>${w < 0 ? 'تعادل!' : 'فاز ' + esc(o.T[w].name) + '!'}</h2>
+      <div class="fs">${[0, 1].map(i => `<div class="${i === w ? 'w' : ''}" style="--tc:${o.T[i].col}">${i === w ? '👑 ' : ''}${esc(o.T[i].name)}<b>${o.fmt ? o.fmt(s[i]) : s[i]}</b></div>`).join('')}</div>
+      ${stars.length ? `<div class="star">🔬 عالِم الحصة: <b>${stars.map(esc).join('، ')}</b> — ${AD(mx)} إجابات صحيحة</div>` : ''}
+      <button class="tg-btn g" data-k="a">↺ لعبة جديدة بأسئلة جديدة</button><button class="tg-btn b" data-k="b">🔀 فرق جديدة</button><button class="tg-btn" data-k="c">🧪 ساحة العلماء</button></div>`;
+    g.top.appendChild(e); $('[data-k=a]', e).onclick = o.again; $('[data-k=b]', e).onclick = o.setup; $('[data-k=c]', e).onclick = hub;
+  }
+  const tgPlayer = (T, st, i) => T[i].players.length ? T[i].players[st.pi[i] % T[i].players.length] : T[i].name;
+  function tgSetup(o, start) { teamSetup(Object.assign({ colors: TC2, defaults: { k: 5, time: 30 }, options: [{ k: 'k', label: 'أسئلة كل فريق', v: [[3, '٣'], [5, '٥'], [8, '٨'], [10, '١٠']] }, { k: 'time', label: 'زمن السؤال', v: [[20, '٢٠ ث'], [30, '٣٠ ث'], [45, '٤٥ ث'], [0, 'بلا وقت']] }] }, o), cfg => { cfg.teams.forEach(t => t.players = shuffle(t.players)); start(cfg); }); }
+  /* إطار الأدوار المتناوبة: فريق ثم فريق، وطالب بعد طالب */
+  async function tgTurns(g, cfg, h) {
+    const T = cfg.teams, Q = Queue(h.filter), st = { turn: 0, pi: [0, 0], sc: [0, 0], cnt: {}, n: 0, res: [] };
+    h.ui(st);
+    while (!h.done(st)) {
+      const i = st.turn, p = tgPlayer(T, st, i); h.ui(st);
+      await tgBanner(g, { col: T[i].col, title: 'الدور على ' + T[i].name, player: p, into: h.into && h.into() });
+      const r = await tgAsk(g, { q: Q.next(), col: T[i].col, team: T[i].name, player: p, time: cfg.opts.time, into: h.into && h.into(), onTime: h.onTime });
+      if (r.ok) st.cnt[p] = (st.cnt[p] || 0) + 1; st.res.push({ t: i, ok: r.ok });
+      await h.after(r.ok, i, st); st.pi[i]++; st.turn = 1 - i; st.n++; h.ui(st);
+    }
+    Q.done(); h.ui(st, true); h.end(st);
+  }
+  function teamBoxes(g, T, pos, opts) { /* لوحات أسماء ونقاط الفريقين */
+    return [0, 1].map(i => { const [x, y, w, h] = pos[i]; return g.add(`<div class="vb" style="${g.box(x, y, w, h)};--tc:${T[i].col}">${i === 0 ? `<span class="ic">${opts.icon || '👥'}</span><b class="nm">${esc(T[i].name)}</b><span class="tsc">0</span>` : `<span class="tsc">0</span><b class="nm">${esc(T[i].name)}</b><span class="ic">${opts.icon || '👥'}</span>`}</div>`); });
+  }
+  function setScore(el, v) { const s = $('.tsc', el); if (s.textContent !== String(v)) { s.textContent = v; s.classList.remove('bump'); void s.offsetWidth; s.classList.add('bump'); } }
+
+  /* ---------- ثوران البركان ---------- */
+  function volcano() { tgSetup({ icon: '🌋', title: 'ثوران البركان', sub: 'كل إجابة صحيحة تُثير البركان وتمنح فريقك ١٠ نقاط', bg: 'radial-gradient(circle at 50% 20%,#9a3412,#1c0a05 75%)', names: ['فريق البراكين', 'فريق الصقور'], go: '🌋 ابدأ المسابقة' }, cfg => vcGame(cfg)); }
+  function vcGame(cfg) {
+    const g = tgStage('tg-volcano.webp', 1672, 941), T = cfg.teams, N = cfg.opts.k * 2;
+    const tb = teamBoxes(g, T, [[1168, 16, 486, 134], [20, 20, 490, 130]], { icon: '👥' });
+    g.add(`<div class="pill" style="${g.box(622, 131, 432, 60)};background:linear-gradient(#5b2a0a,#2a1204);border:.2em solid #f59e0b;border-radius:1em;color:#fde68a;font-size:1.65em">مسابقة العلوم – ${esc(G.lesson.title)}</div>`);
+    const tm = g.add(`<div class="pill" style="${g.box(1376, 176, 258, 98)};background:linear-gradient(#0b2a6b,#061638);border:.25em solid #38bdf8;border-radius:1em;color:#fff;font-size:3.4em;direction:ltr;box-shadow:0 0 1.2em rgba(56,189,248,.6)">⏱ --</div>`);
+    const qp = g.add(`<div style="${g.box(396, 408, 904, 394)};background:linear-gradient(#071a44,#040e2a);border:.3em solid #38bdf8;border-radius:1.4em;box-shadow:0 0 1.4em rgba(56,189,248,.55);overflow:hidden"></div>`);
+    const turn = g.add(`<div class="pill" style="${g.box(1342, 302, 326, 236)};flex-direction:column;background:linear-gradient(#0b1f4d,#06102b);border:.25em solid #a78bfa;border-radius:1em;color:#fff;gap:.2em"></div>`);
+    const prog = g.add(`<div class="pill" style="${g.box(470, 790, 724, 124)};background:linear-gradient(#0b1f4d,#06102b);border:.25em solid #38bdf8;border-radius:1.2em;gap:.5em;padding:0 1em"></div>`);
+    const P = []; let erupt = 0;
+    g.loop((c, dt) => {
+      if (erupt > 0) { const n = Math.ceil(erupt * 14); for (let k = 0; k < n; k++) P.push({ x: 830 + (Math.random() - .5) * 40, y: 250, vx: (Math.random() - .5) * 520 * erupt, vy: -300 - Math.random() * 700 * erupt, r: 5 + Math.random() * 12, life: 1.6 + Math.random(), lava: Math.random() < .8 }); erupt = Math.max(0, erupt - dt * .9); }
+      for (let i = P.length - 1; i >= 0; i--) { const p = P[i]; p.life -= dt; if (p.life <= 0 || p.y > 950) { P.splice(i, 1); continue; } p.vy += (p.lava ? 900 : -40) * dt; p.x += p.vx * dt; p.y += p.vy * dt;
+        if (p.lava) { const gr = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 2.2); gr.addColorStop(0, 'rgba(255,240,170,1)'); gr.addColorStop(.35, 'rgba(255,140,30,.95)'); gr.addColorStop(1, 'rgba(220,40,0,0)'); c.fillStyle = gr; c.beginPath(); c.arc(p.x, p.y, p.r * 2.2, 0, 7); c.fill(); }
+        else { c.fillStyle = `rgba(60,55,55,${Math.min(.5, p.life * .3)})`; c.beginPath(); c.arc(p.x, p.y, p.r * 3, 0, 7); c.fill(); } }
+      if (erupt > 0) { const gl = c.createRadialGradient(830, 260, 10, 830, 260, 420); gl.addColorStop(0, `rgba(255,160,40,${erupt * .55})`); gl.addColorStop(1, 'rgba(255,80,0,0)'); c.fillStyle = gl; c.fillRect(380, 0, 900, 700); }
+    });
+    const rumble = big => { AU.noise(big ? 3 : 1.8, { ft: 'lowpass', f: 180, vol: big ? .6 : .45, a: .05, hold: big ? 1 : .4 }); AU.tone(45, big ? 2.5 : 1.4, { vol: .5, to: 28 }); AU.noise(1.2, { f: 1200, f2: 300, vol: .15, at: .1 }); };
+    tgTurns(g, cfg, {
+      into: () => qp,
+      onTime: s => { tm.textContent = s == null ? '⏱ --' : '⏱ 00:' + String(s).padStart(2, '0'); },
+      ui(st, fin) { [0, 1].forEach(i => { setScore(tb[i], st.sc[i]); tb[i].classList.toggle('on', !fin && st.turn === i); }); const i = st.turn, p = tgPlayer(T, st, i);
+        turn.innerHTML = fin ? '<div style="font-size:4em">🏆</div>' : `<div style="font-size:1.5em;color:#c4b5fd">الدور الآن</div><div style="flex:none;width:3.2em;height:3.2em;border-radius:50%;background:${T[i].col};display:grid;place-items:center;font-size:1.6em;font-family:'Readex Pro',sans-serif;box-shadow:0 0 0 .2em #fff">${esc(p.trim()[0] || '؟')}</div><div style="font-size:1.75em;font-family:'Readex Pro',sans-serif;line-height:1.15;padding:0 .3em">${esc(p)}</div><div style="font-size:1.4em;color:${T[i].col};background:#fff;border-radius:99px;padding:0 .8em">${esc(T[i].name)}</div>`;
+        prog.innerHTML = Array.from({ length: N }, (_, k) => { const r = st.res[k]; return `<span style="flex:1;max-width:3.6em;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:1.8em;border:.15em solid ${r ? T[r.t].col : '#94a3b8'};background:${r ? (r.ok ? '#22c55e' : '#7f1d1d') : k === st.n && !fin ? '#fbbf24' : '#334155'};color:#fff;${k === st.n && !fin ? 'box-shadow:0 0 1em #fbbf24' : ''}">${r ? (r.ok ? '✔' : '✘') : ''}</span>`; }).join('') + '<span style="font-size:2.6em">🏁</span>'; },
+      done: st => st.n >= N,
+      async after(ok, i, st) { qp.innerHTML = '<div class="pill" style="position:absolute;inset:0;font-size:6em">🌋</div>'; if (ok) { st.sc[i] += 10; erupt = 1; rumble(false); g.shake(1); SFX.cheer(false); await wait(1800); } else { AU.noise(.8, { ft: 'lowpass', f: 300, vol: .2 }); await wait(500); } },
+      end(st) { erupt = 2; rumble(true); g.shake(2); setTimeout(() => tgEnd(g, { T, sc: st.sc, cnt: st.cnt, again: () => vcGame(cfg), setup: volcano }), 1600); }
+    });
+  }
+
+  /* ---------- قوة المغناطيس ---------- */
+  function posterCommon(g, T, L) { /* عناصر الملصقين: موضوع الدرس، العنوان الفرعي، أسماء الفريقين، النقاط، حالة الدور */
+    g.add(`<div class="pill note" style="${g.box(...L.note)}"><small>موضوع الدرس:</small>${esc(G.lesson.title)}</div>`);
+    g.add(`<div class="pill" style="${g.box(...L.sub)};background:#fff;border-radius:99px;border:.15em solid #c7d2fe;color:#1e293b;font-size:1.55em;padding:0 1em">🎯 لعبة تنافسية لاختبار معرفتك في درس: ${esc(G.lesson.title)}</div>`);
+    const nm = [0, 1].map(i => g.add(`<div class="pill" style="${g.box(...L.name[i])};background:linear-gradient(${i ? '#3b82f6,#1d4ed8' : '#ef4444,#b91c1c'});border-radius:99px;color:#fff;font-size:2.6em;text-shadow:0 .08em 0 rgba(0,0,0,.35);border:.12em solid #fff">${esc(T[i].name)}</div>`));
+    const pts = [0, 1].map(i => g.add(`<div class="dig" style="${g.box(...L.pts[i])};--tc:${T[i].col}"><span>0</span><span>0</span><span>0</span><span>0</span></div>`));
+    const stat = [0, 1].map(i => g.add(`<div class="pill stat" style="${g.box(...L.stat[i])};--tc:${T[i].col}"></div>`));
+    return {
+      ui(st, fin, extra) { [0, 1].forEach(i => { const v = String(st.pts ? st.pts[i] : st.sc[i] * 10).padStart(4, '0').slice(-4); $$('span', pts[i]).forEach((s, k) => s.textContent = v[k]); const on = !fin && st.turn === i, p = tgPlayer(T, { pi: st.pi }, i);
+        stat[i].classList.toggle('on', on); stat[i].innerHTML = `<small>${on ? '🎤 دور الطالب' : 'الطالب التالي'}</small><div class="who"><i>${esc(p.trim()[0] || '؟')}</i>${esc(p)}</div><small>${extra ? extra(i) : ''}</small>`; }); }
+    };
+  }
+  function magnet() { tgSetup({ icon: '🧲', title: 'قوة المغناطيس', sub: 'كل إجابة صحيحة يجذب بها المغناطيس قطعة إلى مجموعة فريقك', bg: 'radial-gradient(circle at 50% 20%,#1d4ed8,#0b1220 75%)', names: ['الفريق الأول', 'الفريق الثاني'], go: '🧲 ابدأ اللعب' }, cfg => mgGame(cfg)); }
+  function mgGame(cfg) {
+    const g = tgStage('tg-magnet.webp', 1448, 1086), T = cfg.teams, N = cfg.opts.k * 2;
+    const ui = posterCommon(g, T, { note: [36, 10, 268, 132], sub: [456, 204, 556, 60], name: [[1112, 238, 276, 76], [176, 236, 276, 76]], pts: [[1014, 378, 340, 74], [94, 381, 340, 72]], stat: [[980, 520, 432, 152], [40, 520, 432, 152]] });
+    const badge = [0, 1].map(i => g.add(`<div class="pill" style="${g.box(i ? 410 : 1320, 676, 92, 92)};border-radius:50%;background:${T[i].col};color:#fff;font-size:2.4em;border:.15em solid #fff;box-shadow:0 .2em .6em rgba(0,0,0,.4);z-index:2">0</div>`));
+    const ITEMS = ['📎', '🔩', '🧷', '⚙️', '🔧', '🪛'], fly = [], pile = [[], []]; let glow = 0;
+    const tray = i => i ? { x: 270, y: 765 } : { x: 1170, y: 765 };
+    g.loop((c, dt, t) => {
+      glow = Math.max(0, glow - dt * .8);
+      if (glow > 0) { c.save(); c.globalCompositeOperation = 'lighter'; for (let k = 0; k < 5; k++) { c.strokeStyle = `rgba(125,211,252,${glow * (.5 - k * .08)})`; c.lineWidth = 6 - k; c.beginPath(); c.ellipse(725, 470, 210 + k * 38 + Math.sin(t * 8) * 6, 160 + k * 30, 0, 0, 7); c.stroke(); } c.fillStyle = `rgba(255,255,255,${glow * .8})`; [[610, 560], [845, 560]].forEach(([x, y]) => { c.beginPath(); c.arc(x, y, 22 + Math.sin(t * 20) * 4, 0, 7); c.fill(); }); c.restore(); }
+      pile.forEach((pl, i) => pl.forEach(p => { c.font = `${p.s}px serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.save(); c.translate(p.x, p.y); c.rotate(p.r); c.fillText(p.e, 0, 0); c.restore(); }));
+      for (let k = fly.length - 1; k >= 0; k--) { const f = fly[k]; f.t += dt; let x, y, s = 64; const a = clamp(f.t / .55, 0, 1), b = clamp((f.t - .75) / .7, 0, 1);
+        if (f.t < .75) { x = lerp(725, 728, a) + Math.sin(f.t * 30) * 6 * (1 - a); y = lerp(720, 600, easeOut(a)); s = lerp(50, 80, a); }
+        else { const tr = tray(f.i), e = easeIO(b); x = lerp(728, tr.x + f.dx, e); y = lerp(600, tr.y + f.dy, e) - Math.sin(e * Math.PI) * 180; s = lerp(80, 56, e); }
+        c.font = `${s}px serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.save(); c.shadowColor = '#7dd3fc'; c.shadowBlur = 25; c.translate(x, y); c.rotate(f.t * 4); c.fillText(f.e, 0, 0); c.restore();
+        if (b >= 1) { pile[f.i].push({ x: tray(f.i).x + f.dx, y: tray(f.i).y + f.dy, e: f.e, s: 56, r: (Math.random() - .5) * 1.2 }); fly.splice(k, 1); AU.tone(1500, .25, { type: 'triangle', vol: .12 }); AU.tone(2100, .2, { type: 'triangle', vol: .06, at: .05 }); } }
+    });
+    tgTurns(g, cfg, {
+      ui(st, fin) { ui.ui(st, fin, i => `🧲 ${AD(st.sc[i])} قطعة جُذبت`); [0, 1].forEach(i => badge[i].textContent = st.sc[i]); },
+      done: st => st.n >= N,
+      async after(ok, i, st) { if (ok) { st.sc[i]++; glow = 1.2; AU.tone(300, .8, { to: 1400, type: 'sine', vol: .18, vib: 12, vd: 30 }); fly.push({ i, t: 0, e: ITEMS[Math.floor(Math.random() * ITEMS.length)], dx: (Math.random() - .5) * 260, dy: (Math.random() - .5) * 60 - 20 }); await wait(1700); } else { SFX.groan(); await wait(500); } },
+      end(st) { tgEnd(g, { T, sc: st.sc, cnt: st.cnt, fmt: v => AD(v) + ' قطعة', again: () => mgGame(cfg), setup: magnet }); }
+    });
+  }
+
+  /* ---------- رحلة إلى الكواكب ---------- */
+  const PLANETS = [['عطارد', 818, 348], ['الزهرة', 906, 405], ['الأرض', 908, 510], ['المريخ', 836, 568], ['المشتري', 684, 597], ['زحل', 558, 520], ['أورانوس', 520, 420], ['نبتون', 628, 342]];
+  function planets() { tgSetup({ icon: '🚀', title: 'رحلة إلى الكواكب', sub: 'كل إجابة صحيحة تنقل صاروخ فريقك إلى الكوكب التالي', bg: 'radial-gradient(circle at 50% 20%,#4c1d95,#020617 75%)', names: ['الفريق الأول', 'الفريق الثاني'], go: '🚀 انطلق',
+    defaults: { k: 8, time: 30 }, options: [{ k: 'k', label: 'الوجهة', v: [[4, 'إلى المريخ (٤ كواكب)'], [8, 'إلى نبتون (٨ كواكب)']] }, { k: 'time', label: 'زمن السؤال', v: [[20, '٢٠ ث'], [30, '٣٠ ث'], [45, '٤٥ ث'], [0, 'بلا وقت']] }] }, cfg => plGame(cfg)); }
+  function plGame(cfg) {
+    const g = tgStage('tg-planets.webp', 1448, 1086), T = cfg.teams, TGT = cfg.opts.k;
+    const ui = posterCommon(g, T, { note: [36, 10, 268, 138], sub: [316, 196, 816, 54], name: [[1122, 238, 268, 76], [168, 238, 272, 76]], pts: [[1044, 378, 324, 70], [88, 378, 326, 70]], stat: [[1012, 512, 408, 146], [34, 512, 410, 146]] });
+    const START = [740, 660], SUN = [718, 455], R = [{ at: 0, f: null }, { at: 0, f: null }], trail = [];
+    const pos = (i, k) => { const p = k ? PLANETS[k - 1] : [0, ...START]; const off = (i ? -1 : 1) * 22; return [p[1] + off, p[2] - 30 + (i ? 10 : -10)]; };
+    function rocket(c, x, y, ang, col, t) { c.save(); c.translate(x, y); c.rotate(ang); const fl = 10 + Math.sin(t * 40) * 4;
+      c.fillStyle = 'rgba(255,170,40,.9)'; c.beginPath(); c.moveTo(-18, -6); c.lineTo(-18 - fl - 10, 0); c.lineTo(-18, 6); c.fill(); c.fillStyle = '#fff7c2'; c.beginPath(); c.moveTo(-18, -3); c.lineTo(-18 - fl, 0); c.lineTo(-18, 3); c.fill();
+      c.fillStyle = col; c.beginPath(); c.moveTo(-14, -10); c.lineTo(-24, -18); c.lineTo(-6, -10); c.fill(); c.beginPath(); c.moveTo(-14, 10); c.lineTo(-24, 18); c.lineTo(-6, 10); c.fill();
+      const gb = c.createLinearGradient(0, -11, 0, 11); gb.addColorStop(0, '#ffffff'); gb.addColorStop(1, '#cbd5e1'); c.fillStyle = gb; c.beginPath(); c.moveTo(-18, -10); c.lineTo(10, -10); c.quadraticCurveTo(30, 0, 10, 10); c.lineTo(-18, 10); c.closePath(); c.fill(); c.strokeStyle = 'rgba(0,0,0,.35)'; c.lineWidth = 1.5; c.stroke();
+      c.fillStyle = col; c.beginPath(); c.moveTo(10, -10); c.quadraticCurveTo(30, 0, 10, 10); c.closePath(); c.fill(); c.fillStyle = '#38bdf8'; c.beginPath(); c.arc(0, 0, 5, 0, 7); c.fill(); c.strokeStyle = '#fff'; c.lineWidth = 2; c.stroke(); c.restore(); }
+    g.loop((c, dt, t) => {
+      for (let k = trail.length - 1; k >= 0; k--) { const p = trail[k]; p.l -= dt; if (p.l <= 0) { trail.splice(k, 1); continue; } c.fillStyle = `rgba(255,200,120,${p.l})`; c.beginPath(); c.arc(p.x, p.y, 6 * p.l, 0, 7); c.fill(); }
+      R.forEach((r, i) => { for (let k = 1; k <= r.at; k++) { const p = PLANETS[k - 1]; c.strokeStyle = T[i].col; c.lineWidth = 5; c.globalAlpha = .85; c.beginPath(); c.arc(p[1], p[2], 44 + i * 9, 0, 7); c.stroke(); c.globalAlpha = 1; } });
+      if (TGT < 8) { const p = PLANETS[TGT - 1]; c.font = '40px serif'; c.textAlign = 'center'; c.fillText('🏁', p[1] + 40, p[2] - 50); }
+      R.forEach((r, i) => { let x, y, ang = -Math.PI / 2 + Math.sin(t * 2 + i) * .1;
+        if (r.f) { r.f.t += dt; const e = easeIO(clamp(r.f.t / 1.2, 0, 1)), a = pos(i, r.f.from), b = pos(i, r.f.to), m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], cx = m[0] + (m[0] - SUN[0]) * .5, cy = m[1] + (m[1] - SUN[1]) * .5;
+          x = (1 - e) * (1 - e) * a[0] + 2 * (1 - e) * e * cx + e * e * b[0]; y = (1 - e) * (1 - e) * a[1] + 2 * (1 - e) * e * cy + e * e * b[1];
+          const dx = 2 * (1 - e) * (cx - a[0]) + 2 * e * (b[0] - cx), dy = 2 * (1 - e) * (cy - a[1]) + 2 * e * (b[1] - cy); ang = Math.atan2(dy, dx); trail.push({ x: x - Math.cos(ang) * 26, y: y - Math.sin(ang) * 26, l: .8 });
+          if (r.f.t >= 1.2) { r.at = r.f.to; r.f = null; AU.chord([784, 988, 1175], .5, { type: 'triangle', vol: .1, arp: .06 }); } }
+        else { const p = pos(i, r.at); x = p[0]; y = p[1] + Math.sin(t * 2.4 + i * 2) * 5; }
+        rocket(c, x, y, ang, T[i].col, t); });
+    });
+    tgTurns(g, cfg, {
+      ui(st, fin) { st.pts = R.map(r => r.at * 100); ui.ui(st, fin, i => `🚀 ${R[i].at ? 'وصل إلى ' + PLANETS[R[i].at - 1][0] : 'على منصة الإطلاق'}`); },
+      done: st => R.some(r => r.at >= TGT),
+      async after(ok, i, st) { if (ok) { st.sc[i]++; R[i].f = { from: R[i].at, to: R[i].at + 1, t: 0 }; AU.noise(1.2, { f: 300, f2: 2500, vol: .25, a: .2 }); AU.tone(80, 1.2, { to: 200, vol: .3 }); await wait(1500); } else { SFX.no(); await wait(400); } },
+      end(st) { tgEnd(g, { T, sc: R.map(r => r.at), cnt: st.cnt, fmt: v => AD(v) + ' كواكب', again: () => plGame(cfg), setup: planets }); }
+    });
+  }
+
+  /* ---------- جرس العالِم (لوحة التحدي) ---------- */
+  function bell() { tgSetup({ icon: '🔔', title: 'جرس العالِم', sub: 'لوحة تحدٍّ بأعمدة دروس الفصل: اختر الدرس والقيمة، وعند الخطأ يرنّ الجرس للفريق الآخر', bg: 'radial-gradient(circle at 50% 20%,#1e40af,#020617 75%)', names: ['فريق المستكشفين', 'فريق العلماء'], go: '🔔 ابدأ التحدي',
+    defaults: { time: 30 }, options: [{ k: 'time', label: 'زمن السؤال', v: [[20, '٢٠ ث'], [30, '٣٠ ث'], [45, '٤٥ ث'], [0, 'بلا وقت']] }] }, cfg => blGame(cfg)); }
+  function blGame(cfg) {
+    const g = tgStage('tg-bell.webp', 1672, 941), T = cfg.teams, COLS = ['#7c3aed', '#16a34a', '#ea8a0c', '#2563eb', '#dc2626'], ICONS = ['⚛️', '🌿', '⚗️', '🪐', '⚙️'];
+    /* أعمدة اللوحة = دروس الفصل */
+    const seen = seenSet(), by = {}; POOL.forEach(q => { const k = q.lt || G.lesson.title; (by[k] = by[k] || { t: k, no: q.no || 0, qs: [] }).qs.push(q); });
+    let cols = Object.values(by).filter(c => c.qs.length >= 5).sort((a, b) => a.no - b.no).slice(0, 5);
+    while (cols.length && cols.length < 3) { const big = cols.slice().sort((a, b) => b.qs.length - a.qs.length)[0]; if (big.qs.length < 10) break; const h = Math.ceil(big.qs.length / 2), a = { t: big.t + ' (١)', no: big.no, qs: big.qs.slice(0, h) }, b2 = { t: big.t + ' (٢)', no: big.no + .5, qs: big.qs.slice(h) }; cols.splice(cols.indexOf(big), 1, a, b2); }
+    cols.forEach(c => { const un = shuffle(c.qs.filter(q => !seen.has(q.q.trim()))), old = shuffle(c.qs.filter(q => seen.has(q.q.trim()))); c.pick = un.concat(old).slice(0, 5); });
+    markSeen([].concat(...cols.map(c => c.pick)));
+    const st = { turn: 0, pi: [0, 0], sc: [0, 0], cnt: {}, used: 0, busy: false }, total = cols.length * 5;
+    const nm = [0, 1].map(i => g.add(`<div class="pill" style="${g.box(...[[1286, 90, 262, 78], [146, 98, 232, 66]][i])};background:linear-gradient(${i ? '#1e3a8a,#0b1f4d' : '#991b1b,#450a0a'});border-radius:.8em;color:#fff;font-size:1.8em;white-space:nowrap;border:.15em solid ${T[i].col};box-shadow:0 0 1em ${T[i].col}">${esc(T[i].name)}</div>`));
+    const sc = [0, 1].map(i => g.add(`<div class="pill" style="${g.box(...[[1333, 161, 216, 94], [126, 163, 214, 92]][i])};background:#0a0a0a;border-radius:.4em;border:.25em solid #1f2937;color:#fbbf24;font-size:3.6em;line-height:1;font-family:'Readex Pro',sans-serif;direction:ltr;text-shadow:0 0 .3em #f59e0b"><span class="tsc">0</span></div>`));
+    const turn = g.add(`<div class="pill" style="${g.box(470, 832, 732, 62)};border-radius:99px;color:#fff;font-size:1.7em;white-space:nowrap;border:.15em solid #fff"></div>`);
+    const board = g.add(`<div style="${g.box(342, 292, 988, 528)};background:linear-gradient(#0b1440,#050a24);border:.3em solid #3b82f6;border-radius:1.4em;box-shadow:0 0 2em rgba(59,130,246,.6);display:grid;grid-template-columns:repeat(${cols.length},1fr);grid-template-rows:100%;gap:.8em;padding:1em"></div>`);
+    board.innerHTML = cols.map((c, ci) => `<div style="display:grid;grid-template-rows:1.55fr repeat(5,1fr);gap:.55em;height:100%;min-height:0"><div class="pill" style="flex-direction:column;border-radius:.8em;background:linear-gradient(${COLS[ci]},color-mix(in srgb,${COLS[ci]} 55%,#000));color:#fff;font-size:1.45em;line-height:1.25;padding:.2em .3em;min-height:0;border:.12em solid rgba(255,255,255,.4)"><span style="font-size:1.3em">${ICONS[ci]}</span>${esc(c.t.replace(/^(ألعاب:\s*)/, ''))}</div>${c.pick.map((q, ri) => `<button class="pill bt" data-c="${ci}" data-r="${ri}" style="border-radius:.7em;background:linear-gradient(color-mix(in srgb,${COLS[ci]} 85%,#fff),${COLS[ci]});color:#fff;font-size:2.5em;line-height:1;padding:0;min-height:0;font-family:'Readex Pro',sans-serif;border:.08em solid rgba(255,255,255,.5)!important;box-shadow:0 .12em 0 rgba(0,0,0,.4);text-shadow:0 .05em 0 rgba(0,0,0,.4)">${(ri + 1) * 100}</button>`).join('')}</div>`).join('');
+    const ui = fin => { [0, 1].forEach(i => { setScore(sc[i], st.sc[i]); nm[i].style.outline = !fin && st.turn === i ? '.2em solid #fde047' : ''; }); const i = st.turn; turn.style.background = fin ? '#0f172a' : T[i].col; turn.textContent = fin ? '🏆 انتهت اللوحة' : `🔔 ${T[i].name}: ${tgPlayer(T, st, i)} — اختر سؤالًا`; };
+    const ding = () => { AU.tone(1318, 1.4, { type: 'triangle', vol: .18 }); AU.tone(1976, 1.1, { vol: .08 }); AU.tone(2637, .8, { vol: .04 }); };
+    $$('.bt', board).forEach(b => b.onclick = async () => {
+      if (st.busy || b.disabled) return; st.busy = true; const ci = +b.dataset.c, ri = +b.dataset.r, val = (ri + 1) * 100, raw = cols[ci].pick[ri]; b.disabled = true; b.style.opacity = '.35'; ding();
+      const i = st.turn, p = tgPlayer(T, st, i); let q = mixQ(raw);
+      let r = await tgAsk(g, { q, col: T[i].col, team: T[i].name + ' · ' + val, player: p, time: cfg.opts.time, hideAns: true, next: 'متابعة' });
+      let owner = -1; if (r.ok) { owner = i; st.cnt[p] = (st.cnt[p] || 0) + 1; }
+      else { ding(); const j = 1 - i, pj = tgPlayer(T, st, j); r = await tgAsk(g, { q: mixQ(raw), col: T[j].col, team: T[j].name + ' · ' + val, player: pj, time: cfg.opts.time, steal: true }); if (r.ok) { owner = j; st.cnt[pj] = (st.cnt[pj] || 0) + 1; } st.pi[j]++; }
+      if (owner >= 0) { st.sc[owner] += val; b.style.opacity = '1'; b.style.background = T[owner].col; b.style.fontSize = '1.6em'; b.textContent = '✔ ' + T[owner].name; SFX.cheer(false); }
+      else b.textContent = '—';
+      st.pi[i]++; st.turn = 1 - i; st.used++; st.busy = false; ui();
+      if (st.used >= total) { ui(true); tgEnd(g, { T, sc: st.sc, cnt: st.cnt, again: () => blGame(cfg), setup: bell }); }
+    });
+    ui();
+  }
+
+  /* ---------- ساحة العلماء ---------- */
+  const HUB = [['volcano', 'ثوران البركان', 'tg-volcano-t.webp', 'كل إجابة صحيحة تُثير البركان', 1], ['magnet', 'قوة المغناطيس', 'tg-magnet-t.webp', 'اجذب أكبر عدد من القطع', 1], ['planets', 'رحلة إلى الكواكب', 'tg-planets-t.webp', 'سباق الصواريخ بين الكواكب', 1], ['bell', 'جرس العالِم', 'tg-bell-t.webp', 'لوحة تحدٍّ بدروس الفصل', 1],
+    ['pen', 'ركلات الترجيح بالأسماء', 'tg-pen-t.webp', 'كل طالب يجيب ثم يسدد', 0], ['hex', 'خلية الحروف', '🔤|linear-gradient(135deg,#2563eb,#16a34a)', 'صِل ضفتي اللوحة بخلايا فريقك', 0], ['mm', 'من سيربح المليون', '💰|linear-gradient(135deg,#1e3a8a,#7c3aed)', '١٥ سؤالًا وسلّم الجوائز', 0]];
+  const GAMES = () => ({ pen: penalty, hex: hexGame, mm: millionaire, volcano, magnet, planets, bell });
+  function hub() {
+    mount(); tgCss(); RET = null;
+    ROOT.innerHTML = `<div class="hb"><h1>🧪 ساحة العلماء</h1><p class="sub">ألعاب الفرق بأسماء الطلاب — ${esc(G.lesson.title)}</p><button class="hb-r">🎲 اختر لعبة عشوائيًا</button>
+      <div class="hb-g">${HUB.map(([k, t, im, d, nw]) => { const [e, bg] = im.split('|'); return `<button class="hb-c" data-k="${k}">${nw ? '<i class="new">جديد</i>' : ''}${bg ? `<div class="em" style="background:${bg}">${e}</div>` : `<img src="../img/${im}" alt="">`}<span><b>${esc(t)}</b><small>${esc(d)}</small></span></button>`; }).join('')}</div></div>`;
+    toolbar();
+    const go = k => { AU.init(); SFX.whoosh(); RET = hub; GAMES()[k](); };
+    $$('.hb-c', ROOT).forEach(b => b.onclick = () => go(b.dataset.k));
+    let spin = 0; $('.hb-r', ROOT).onclick = () => { if (spin) return; spin = 1; AU.init(); const cs = $$('.hb-c', ROOT), tg = Math.floor(Math.random() * cs.length), steps = cs.length * 2 + tg; let k = 0;
+      (function st() { cs.forEach(x => x.classList.remove('hl')); cs[k % cs.length].classList.add('hl'); SFX.tick(); if (k >= steps) { SFX.ok(); setTimeout(() => go(cs[tg].dataset.k), 700); return; } k++; setTimeout(st, 60 + Math.pow(k / steps, 3) * 380); })(); };
+  }
+
   /* ---------------- نقطة الدخول ---------------- */
   window.PARTY = {
     async open(kind, game, back) {
       G = game; BACK = back; mount(); ROOT.innerHTML = '<div class="pt-scr" style="color:#fff;font-family:Readex Pro;font-size:1.4em">⏳ تجهيز الأسئلة…</div>';
       await Promise.all([loadPool(), CS.loadAll()]); if (!POOL.length) { ROOT.innerHTML = '<div class="pt-scr" style="color:#fff">لا توجد أسئلة لهذا الدرس.</div>'; toolbar(); return; }
-      ({ pen: penalty, hex: hexGame, mm: millionaire })[kind]();
+      if (kind === 'hub') return hub(); RET = null; ({ pen: penalty, hex: hexGame, mm: millionaire, volcano, magnet, planets, bell })[kind]();
     }
   };
 })();
