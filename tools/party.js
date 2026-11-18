@@ -173,7 +173,21 @@
     ROOT.appendChild(b); return b;
   }
   function close() { clearAll(); if (typeof RET === 'function') { const r = RET; r(); return; } window.PARTY_ON = false; if (ROOT) ROOT.remove(); ROOT = null; if (BACK) BACK(); }
-  function mount() { clearAll(); if (!$('#pty-css')) document.head.insertAdjacentHTML('beforeend', '<style id="pty-css">' + CSS + '</style>'); if (ROOT) ROOT.remove(); ROOT = document.createElement('div'); ROOT.id = 'pty'; window.PARTY_ON = true; document.body.appendChild(ROOT); return ROOT; }
+  /* تصغير النص تلقائيًا حتى يظهر كاملًا داخل إطاره (أسماء الفرق والطلاب واللوحات) */
+  const FIT_SEL = '.fitn,.pill,.vb .nm,.stat .who,.tq-team,.tq-pl,.tg-ban .nm,.tg-end .fs>div,.hb-c b,.pk-hd span,.pk-st,.pk-cur .nm span,.hx-turn,.hx-hd span,.mm-pill,.tcol input';
+  function fitEl(el) {
+    if (!el.isConnected || !el.clientWidth) return;
+    if (el.dataset.fs0 === undefined) el.dataset.fs0 = el.style.fontSize || '';
+    el.style.fontSize = el.dataset.fs0;
+    const base = parseFloat(getComputedStyle(el).fontSize); let f = base, n = 0;
+    const rg = document.createRange(); rg.selectNodeContents(el);
+    const over = () => { if (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 2) return true; const e = el.getBoundingClientRect(), r = rg.getBoundingClientRect(); return r.width > 0 && (r.left < e.left - 1 || r.right > e.right + 1 || r.top < e.top - 2 || r.bottom > e.bottom + 2); };
+    while (over() && f > base * .4 && n++ < 30) { f *= .93; el.style.fontSize = f + 'px'; }
+  }
+  let fitQ = 0;
+  function fitAll() { if (fitQ) return; fitQ = requestAnimationFrame(() => { fitQ = 0; if (!ROOT) return; const all = [...ROOT.querySelectorAll(FIT_SEL)]; all.filter(e => !e.querySelector(FIT_SEL)).forEach(fitEl); all.filter(e => e.querySelector(FIT_SEL)).forEach(fitEl); }); }
+  addEventListener('resize', () => setTimeout(fitAll, 60));
+  function mount() { clearAll(); if (!$('#pty-css')) document.head.insertAdjacentHTML('beforeend', '<style id="pty-css">' + CSS + '</style>'); if (ROOT) ROOT.remove(); ROOT = document.createElement('div'); ROOT.id = 'pty'; window.PARTY_ON = true; try { new MutationObserver(fitAll).observe(ROOT, { childList: true, subtree: true, characterData: true }); } catch (e) { } document.body.appendChild(ROOT); return ROOT; }
 
   /* شاشة إعداد الفريقين (مشتركة بين ركلات الترجيح وخلية الحروف) */
   function teamSetup(o, onStart) {
@@ -214,7 +228,7 @@
 .pk-side.r{right:1%}.pk-side.l{left:1%}
 .pk-side.on{box-shadow:0 0 0 4px #fbbf24,0 0 30px rgba(251,191,36,.7);transform:translateY(-2px)}
 .pk-hd{border-radius:15px 15px 0 0;display:flex;align-items:center;justify-content:space-between;gap:.5em;background:linear-gradient(color-mix(in srgb,var(--tc) 80%,#fff),var(--tc));color:#fff;padding:.35em .7em;font-family:'Readex Pro',sans-serif}
-.pk-hd span{font-size:1.25em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pk-hd b{font-size:1.9em;line-height:1;padding-inline-start:.4em;border-inline-start:2px solid rgba(255,255,255,.5)}
+.pk-hd span{font-size:1.25em;white-space:nowrap;overflow:hidden;min-width:0}.pk-hd b{font-size:1.9em;line-height:1;padding-inline-start:.4em;border-inline-start:2px solid rgba(255,255,255,.5)}
 .pk-badge{position:absolute;top:-.1em;right:50%;transform:translate(50%,-50%);background:#fde68a;color:#7c4a03;border-radius:99px;padding:.15em .9em;font-family:'Readex Pro',sans-serif;font-size:.85em;display:none;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 .pk-side.on .pk-badge{display:block}
 .pk-cur{text-align:center;padding:.4em .5em .3em}.pk-cur small{display:block;color:#a16207;font-size:.78em}
@@ -756,7 +770,7 @@ button.lz:disabled{cursor:default}
 .tg-end h2{font-family:'Readex Pro',sans-serif;font-size:2.8em;margin:.1em 0}.tg-end .fs{display:flex;gap:1em;justify-content:center;margin:.6em 0}.tg-end .fs>div{flex:1;border-radius:1.2em;padding:.5em;background:color-mix(in srgb,var(--tc) 30%,#0f172a);border:.2em solid var(--tc);font-family:'Readex Pro',sans-serif;font-size:1.4em}.tg-end .fs>div.w{box-shadow:0 0 0 .2em #fde047}
 .tg-end .fs b{display:block;font-size:2.2em;line-height:1.1}.tg-end .star{background:rgba(250,204,21,.15);border:.15em dashed #fde047;border-radius:1em;padding:.5em;margin:.5em 0;font-size:1.35em}
 .vb{display:flex;align-items:center;gap:.6em;padding:0 1.1em;border-radius:1.2em;background:linear-gradient(color-mix(in srgb,var(--tc) 55%,#020617),color-mix(in srgb,var(--tc) 25%,#020617));border:.25em solid var(--tc);box-shadow:0 0 1.4em color-mix(in srgb,var(--tc) 70%,transparent),inset 0 0 1em rgba(255,255,255,.15);color:#fff;font-family:'Readex Pro',sans-serif}
-.vb .nm{flex:1;font-size:2.2em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.vb .tsc{font-size:3.3em;min-width:1.8em;text-align:center;background:rgba(2,6,23,.65);border-radius:.3em;padding:0 .2em;color:#fde68a;direction:ltr}.vb .ic{font-size:2.4em}
+.vb .nm{flex:1;min-width:0;font-size:2.2em;white-space:nowrap;overflow:hidden}.vb .tsc{font-size:3.3em;min-width:1.8em;text-align:center;background:rgba(2,6,23,.65);border-radius:.3em;padding:0 .2em;color:#fde68a;direction:ltr}.vb .ic{font-size:2.4em}
 .vb.on{animation:vbon 1.2s infinite alternate}@keyframes vbon{to{box-shadow:0 0 2.4em var(--tc),0 0 0 .25em #fde047}}
 .tsc.bump{animation:scb .7s}@keyframes scb{40%{transform:scale(1.35);color:#fff}}
 .pill{display:flex;align-items:center;justify-content:center;text-align:center;font-family:'Readex Pro',sans-serif;font-weight:700;line-height:1.25;overflow:hidden}
@@ -764,7 +778,7 @@ button.lz:disabled{cursor:default}
 .note small{font-size:.75em;color:#7c5a2a}
 .dig{display:flex;gap:4%;justify-content:center;align-items:stretch;direction:ltr}.dig span{flex:1;display:grid;place-items:center;background:#fff;border:.2em solid var(--tc);border-radius:.5em;font-family:'Readex Pro',sans-serif;font-size:3.6em;color:#0f172a;box-shadow:inset 0 -.15em 0 rgba(0,0,0,.12)}
 .stat{background:#fff;border:.2em dashed var(--tc);border-radius:1em;flex-direction:column;gap:.15em;color:#0f172a;padding:.4em}
-.stat .who{font-size:2.2em;color:var(--tc);display:flex;align-items:center;gap:.35em;justify-content:center}.stat .who i{width:1.5em;height:1.5em;border-radius:50%;background:var(--tc);color:#fff;font-style:normal;display:grid;place-items:center;font-size:.75em}
+.stat .who{font-size:2.2em;color:var(--tc);white-space:nowrap;max-width:100%;overflow:hidden;display:flex;align-items:center;gap:.35em;justify-content:center}.stat .who i{width:1.5em;height:1.5em;border-radius:50%;background:var(--tc);color:#fff;font-style:normal;display:grid;place-items:center;font-size:.75em}
 .stat small{font-size:1.35em;color:#475569}.stat.on{background:#fffbeb;border-style:solid;box-shadow:0 0 1.4em color-mix(in srgb,var(--tc) 70%,transparent)}
 .hb{position:absolute;inset:0;overflow:auto;background:radial-gradient(circle at 50% 0%,#312e81,#0b1220 60%);color:#fff;padding:3.4em 2vw 2vw;text-align:center}
 .hb h1{font-family:'Readex Pro',sans-serif;font-size:2.6em;margin:.1em 0;background:linear-gradient(90deg,#fde047,#f472b6,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -864,7 +878,7 @@ button.lz:disabled{cursor:default}
       into: () => qp,
       onTime: s => { tm.textContent = s == null ? '⏱ --' : '⏱ 00:' + String(s).padStart(2, '0'); },
       ui(st, fin) { [0, 1].forEach(i => { setScore(tb[i], st.sc[i]); tb[i].classList.toggle('on', !fin && st.turn === i); }); const i = st.turn, p = tgPlayer(T, st, i);
-        turn.innerHTML = fin ? '<div style="font-size:4em">🏆</div>' : `<div style="font-size:1.5em;color:#c4b5fd">الدور الآن</div><div style="flex:none;width:3.2em;height:3.2em;border-radius:50%;background:${T[i].col};display:grid;place-items:center;font-size:1.6em;font-family:'Readex Pro',sans-serif;box-shadow:0 0 0 .2em #fff">${esc(p.trim()[0] || '؟')}</div><div style="font-size:1.75em;font-family:'Readex Pro',sans-serif;line-height:1.15;padding:0 .3em">${esc(p)}</div><div style="font-size:1.4em;color:${T[i].col};background:#fff;border-radius:99px;padding:0 .8em">${esc(T[i].name)}</div>`;
+        turn.innerHTML = fin ? '<div style="font-size:4em">🏆</div>' : `<div style="font-size:1.5em;color:#c4b5fd">الدور الآن</div><div style="flex:none;width:3.2em;height:3.2em;border-radius:50%;background:${T[i].col};display:grid;place-items:center;font-size:1.6em;font-family:'Readex Pro',sans-serif;box-shadow:0 0 0 .2em #fff">${esc(p.trim()[0] || '؟')}</div><div class="fitn" style="font-size:1.75em;font-family:'Readex Pro',sans-serif;line-height:1.2;padding:0 .3em;white-space:nowrap;overflow:hidden;max-width:100%">${esc(p)}</div><div style="font-size:1.4em;color:${T[i].col};background:#fff;border-radius:99px;padding:0 .8em">${esc(T[i].name)}</div>`;
         prog.innerHTML = Array.from({ length: N }, (_, k) => { const r = st.res[k]; return `<span style="flex:1;max-width:3.6em;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:1.8em;border:.15em solid ${r ? T[r.t].col : '#94a3b8'};background:${r ? (r.ok ? '#22c55e' : '#7f1d1d') : k === st.n && !fin ? '#fbbf24' : '#334155'};color:#fff;${k === st.n && !fin ? 'box-shadow:0 0 1em #fbbf24' : ''}">${r ? (r.ok ? '✔' : '✘') : ''}</span>`; }).join('') + '<span style="font-size:2.6em">🏁</span>'; },
       done: st => st.n >= N,
       async after(ok, i, st) { qp.innerHTML = '<div class="pill" style="position:absolute;inset:0;font-size:6em">🌋</div>'; if (ok) { st.sc[i] += 10; erupt = 1; rumble(false); g.shake(1); SFX.cheer(false); await wait(1800); } else { AU.noise(.8, { ft: 'lowpass', f: 300, vol: .2 }); await wait(500); } },
@@ -968,7 +982,7 @@ button.lz:disabled{cursor:default}
       let r = await tgAsk(g, { q, col: T[i].col, team: T[i].name + ' · ' + val, player: p, time: cfg.opts.time, hideAns: true, next: 'متابعة' });
       let owner = -1; if (r.ok) { owner = i; st.cnt[p] = (st.cnt[p] || 0) + 1; }
       else { ding(); const j = 1 - i, pj = tgPlayer(T, st, j); r = await tgAsk(g, { q: mixQ(raw), col: T[j].col, team: T[j].name + ' · ' + val, player: pj, time: cfg.opts.time, steal: true }); if (r.ok) { owner = j; st.cnt[pj] = (st.cnt[pj] || 0) + 1; } st.pi[j]++; }
-      if (owner >= 0) { st.sc[owner] += val; b.style.opacity = '1'; b.style.background = T[owner].col; b.style.fontSize = '1.6em'; b.textContent = '✔ ' + T[owner].name; SFX.cheer(false); }
+      if (owner >= 0) { st.sc[owner] += val; b.style.opacity = '1'; b.style.background = T[owner].col; b.style.fontSize = '1.6em'; b.dataset.fs0 = '1.6em'; b.style.whiteSpace = 'nowrap'; b.textContent = '✔ ' + T[owner].name; SFX.cheer(false); }
       else b.textContent = '—';
       st.pi[i]++; st.turn = 1 - i; st.used++; st.busy = false; ui();
       if (st.used >= total) { ui(true); tgEnd(g, { T, sc: st.sc, cnt: st.cnt, again: () => blGame(cfg), setup: bell }); }
