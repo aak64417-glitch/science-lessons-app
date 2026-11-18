@@ -64,11 +64,11 @@
     whistle() { AU.tone(2650, .45, { vib: 32, vd: 160, vol: .14, hold: .3 }); },
     kick() { AU.tone(150, .18, { to: 40, vol: .7 }); AU.noise(.06, { f: 1800, vol: .3 }); },
     cheer(big) { AU.noise(big ? 3.2 : 2, { f: 1100, q: .6, vol: big ? .32 : .22, a: .25, hold: big ? 1.2 : .6 }); AU.noise(big ? 3 : 1.8, { f: 2600, q: .8, vol: .1, a: .3, at: .1 }); for (let k = 0; k < (big ? 7 : 3); k++) AU.tone(500 + Math.random() * 500, .5, { type: 'sawtooth', lp: 1400, vol: .03, at: .2 + Math.random() * 1.2, to: 700 + Math.random() * 400 }); },
-    groan() { AU.noise(1.4, { ft: 'lowpass', f: 500, vol: .25, a: .2 }); AU.tone(320, 1.2, { to: 140, type: 'sawtooth', lp: 600, vol: .06, a: .15 }); },
+    groan() { AU.noise(1.3, { f: 1400, q: .7, vol: .14, a: .2 }); AU.noise(1.1, { f: 2600, q: .9, vol: .06, a: .25 }); AU.tone(659, .3, { type: 'triangle', vol: .09, at: .05 }); AU.tone(523, .55, { type: 'triangle', vol: .09, at: .3 }); },
     post() { [1180, 1770, 2360].forEach((f, i) => AU.tone(f, 1.1 - i * .25, { type: 'triangle', vol: .12 / (i + 1) })); AU.tone(90, .2, { vol: .3 }); },
     horn() { AU.chord([233, 294, 349], .9, { type: 'sawtooth', lp: 1600, vol: .07, hold: .5 }); },
     ok() { AU.chord([523, 659, 784, 1047], .35, { type: 'triangle', vol: .14, arp: .07 }); },
-    no() { AU.tone(240, .5, { to: 120, type: 'sawtooth', lp: 900, vol: .12 }); },
+    no() { AU.tone(587, .22, { type: 'triangle', vol: .15 }); AU.tone(440, .45, { type: 'triangle', vol: .15, at: .18 }); AU.tone(880, .4, { vol: .03, at: .18 }); },
     flip() { AU.noise(.25, { f: 900, f2: 3000, vol: .12 }); AU.tone(660, .25, { to: 990, type: 'triangle', vol: .1 }); },
     win() { [[523, 0], [659, .14], [784, .28], [1047, .42], [784, .6], [1047, .74]].forEach(([f, at]) => AU.tone(f, .45, { type: 'triangle', vol: .16, at })); AU.chord([262, 330, 392], 1.6, { type: 'sawtooth', lp: 1800, vol: .05, at: .74, hold: .6 }); },
     whoosh() { AU.noise(.6, { f: 300, f2: 4000, q: 1.2, vol: .22, a: .15 }); }
