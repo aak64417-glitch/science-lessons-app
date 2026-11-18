@@ -817,7 +817,7 @@ button.lz:disabled{cursor:default}
       host.appendChild(wrap); SFX.whoosh();
       const fin = k => {
         if (done) return; done = true; clearInterval(tmr); if (o.onTime) o.onTime(null); const ok = k === q.a;
-        $$('.tq-o button', wrap).forEach((b, j) => { b.onclick = null; b.classList.add(j === q.a ? 'ok' : j === k ? 'no' : 'dim'); }); ok ? SFX.ok() : SFX.no();
+        $$('.tq-o button', wrap).forEach((b, j) => { b.onclick = null; b.classList.add(j === q.a ? 'ok' : j === k ? 'no' : 'dim'); }); ok ? SFX.ok() : SFX.no(); if (o.onAnswer) o.onAnswer(ok);
         const r = $('.tq-res', wrap); r.innerHTML = `${ok ? '<b>✔ إجابة صحيحة!</b>' : `<b class="x">✘ ${k === -1 ? 'انتهى الوقت' : 'إجابة خاطئة'}${o.hideAns ? '' : ' — الصحيح: ' + esc(q.o[q.a])}</b>`}${q.ex && (ok || !o.hideAns) ? '<br>' + esc(q.ex) : ''}<br><button class="tg-btn">${o.next || 'متابعة ←'}</button>`;
         $('button', r).onclick = () => { if (!inl) wrap.remove(); res({ ok, k }); };
       };
@@ -844,7 +844,7 @@ button.lz:disabled{cursor:default}
     while (!h.done(st)) {
       const i = st.turn, p = tgPlayer(T, st, i); h.ui(st);
       await tgBanner(g, { col: T[i].col, title: 'الدور على ' + T[i].name, player: p, into: h.into && h.into() });
-      const r = await tgAsk(g, { q: Q.next(), col: T[i].col, team: T[i].name, player: p, time: cfg.opts.time, into: h.into && h.into(), onTime: h.onTime });
+      const r = await tgAsk(g, { q: Q.next(), col: T[i].col, team: T[i].name, player: p, time: cfg.opts.time, into: h.into && h.into(), onTime: h.onTime, onAnswer: h.onAnswer ? ok => h.onAnswer(ok, i, st) : null });
       if (r.ok) st.cnt[p] = (st.cnt[p] || 0) + 1; st.res.push({ t: i, ok: r.ok });
       await h.after(r.ok, i, st); st.pi[i]++; st.turn = 1 - i; st.n++; h.ui(st);
     }
@@ -877,12 +877,13 @@ button.lz:disabled{cursor:default}
     const rumble = big => { AU.noise(big ? 3 : 1.8, { ft: 'lowpass', f: 180, vol: big ? .6 : .45, a: .05, hold: big ? 1 : .4 }); AU.tone(45, big ? 2.5 : 1.4, { vol: .5, to: 28 }); AU.noise(1.2, { f: 1200, f2: 300, vol: .15, at: .1 }); };
     tgTurns(g, cfg, {
       into: () => qp,
+      onAnswer(ok, i) { if (ok) { ecol = T[i].col; erupt = 1; rumble(false); g.shake(1); SFX.cheer(false); } },
       onTime: s => { tm.textContent = s == null ? '⏱ --' : '⏱ 00:' + String(s).padStart(2, '0'); },
       ui(st, fin) { [0, 1].forEach(i => { setScore(tb[i], st.sc[i]); tb[i].classList.toggle('on', !fin && st.turn === i); }); const i = st.turn, p = tgPlayer(T, st, i);
         turn.innerHTML = fin ? '<div style="font-size:4em">🏆</div>' : `<div style="font-size:1.5em;color:#c4b5fd">الدور الآن</div><div style="flex:none;width:3.2em;height:3.2em;border-radius:50%;background:${T[i].col};display:grid;place-items:center;font-size:1.6em;font-family:'Readex Pro',sans-serif;box-shadow:0 0 0 .2em #fff">${esc(p.trim()[0] || '؟')}</div><div class="fitn" style="font-size:1.75em;font-family:'Readex Pro',sans-serif;line-height:1.2;padding:0 .3em;white-space:nowrap;overflow:hidden;max-width:100%">${esc(p)}</div><div style="font-size:1.4em;color:${T[i].col};background:#fff;border-radius:99px;padding:0 .8em">${esc(T[i].name)}</div>`;
         prog.innerHTML = Array.from({ length: N }, (_, k) => { const r = st.res[k]; return `<span style="flex:1;max-width:3.6em;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:1.8em;border:.15em solid ${r ? T[r.t].col : '#94a3b8'};background:${r ? (r.ok ? '#22c55e' : '#7f1d1d') : k === st.n && !fin ? '#fbbf24' : '#334155'};color:#fff;${k === st.n && !fin ? 'box-shadow:0 0 1em #fbbf24' : ''}">${r ? (r.ok ? '✔' : '✘') : ''}</span>`; }).join('') + '<span style="font-size:2.6em">🏁</span>'; },
       done: st => st.n >= N,
-      async after(ok, i, st) { qp.innerHTML = '<div class="pill" style="position:absolute;inset:0;font-size:6em">🌋</div>'; if (ok) { st.sc[i] += 10; ecol = T[i].col; erupt = .8; rumble(false); g.shake(1); SFX.cheer(false); await wait(1800); } else { AU.noise(.8, { ft: 'lowpass', f: 300, vol: .2 }); await wait(500); } },
+      async after(ok, i, st) { qp.innerHTML = '<div class="pill" style="position:absolute;inset:0;font-size:6em">🌋</div>'; if (ok) { st.sc[i] += 10; erupt = Math.max(erupt, .5); await wait(900); } else { AU.noise(.8, { ft: 'lowpass', f: 300, vol: .2 }); await wait(500); } },
       end(st) { const w = st.sc[0] === st.sc[1] ? -1 : st.sc[0] > st.sc[1] ? 0 : 1; ecol = w < 0 ? null : T[w].col; wonBy = w < 0 ? { name: 'الفريقين — تعادل', col: '#fde047' } : T[w]; erupt = 2.6; rumble(true); g.shake(2); setTimeout(() => { rumble(true); g.shake(1.5); erupt = 2; SFX.cheer(true); }, 1300); setTimeout(() => tgEnd(g, { T, sc: st.sc, cnt: st.cnt, again: () => vcGame(cfg), setup: volcano }), 3800); }
     });
   }
