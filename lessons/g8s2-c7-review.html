@@ -368,7 +368,7 @@ body{background-color:#F6F8FE;background-image:linear-gradient(rgba(67,56,202,.0
 /* مخطط الجسم: الهيكل والعضلات والأعصاب */
 .jwrap{text-align:center}
 .jwrap .tag{font-size:22px}
-.jmap{position:relative;width:min(300px,34dvh);margin:6px auto 0;aspect-ratio:220/420}
+.jmap{position:relative;width:min(300px,33dvh);margin:6px auto 0;aspect-ratio:240/460}
 .jbody{width:100%;height:100%;display:block;filter:drop-shadow(0 10px 18px rgba(30,27,75,.22))}
 .jnerve path{stroke-dasharray:8 6;animation:jflow 1.8s linear infinite}
 @keyframes jflow{to{stroke-dashoffset:-28}}
@@ -384,6 +384,7 @@ body{background-color:#F6F8FE;background-image:linear-gradient(rgba(67,56,202,.0
 .jpin.r{left:calc(100% + var(--off,70px));flex-direction:row-reverse;padding:6px 6px 6px 16px}
 .jpin.l{right:calc(100% + var(--off,70px))}
 .jhint{color:var(--c2);font-size:20px;margin:8px 0 0}
+.labstep .labsay{display:inline}
 /* تكبير مشهد التجربة حتى تظهر تفاصيلها بوضوح */
 .labsim{grid-template-columns:minmax(0,2.7fr) minmax(220px,1fr)!important;gap:10px}
 .labc .labsim canvas,.labsim canvas{max-height:calc(100dvh - 345px)!important;width:100%!important;height:auto!important;border-radius:16px}
@@ -401,20 +402,69 @@ body{background-color:#F6F8FE;background-image:linear-gradient(rgba(67,56,202,.0
 .t5 th,.t5 td{border:2px solid #C7D2FE;padding:4px 14px;text-align:center}
 .t5 th{background:var(--c1);color:#fff}
 .t5 tr:nth-child(even) td{background:var(--tint)}
-</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"card": "../assets/60811a6ccc6590d2.webp", "dolls": "../assets/83fed9c0eaf53414.webp", "fig17": "../assets/8ba1a9479ca59fed.webp", "fig20": "../assets/d7df941335c1382b.webp", "fig7": "../assets/2b1a6b43cb77bd23.webp", "labskin": "../assets/9a5162432269b2b2.webp"};</script><script>/* مخطط «هندسة الجسم» — دروس الفصل السابع */
+</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"card": "../assets/07fe784a248babff.webp", "dolls": "../assets/2c606dda9b187088.webp", "fig17": "../assets/d9f5ab90461824e2.webp", "fig20": "../assets/53411e15bcc5e066.webp", "fig7": "../assets/bed47b4cf8ae49cc.webp", "labskin": "../assets/c3e30c6eafad80e2.webp", "mca": "../assets/7c8ebc003b66baaf.webp", "msk": "../assets/9d921c99a311dd73.webp", "msm": "../assets/a6e08abde123f759.webp"};</script><script>/* مخطط «هندسة الجسم» — دروس الفصل السابع */
 window.jgo = function (i) { var b = document.querySelectorAll('#nav button')[i]; if (b) b.click(); };
 window.JMAP = function (title, pins) {
-  // خريطة «هندسة الجسم»: هيكل عظمي وعضلات وأعصاب داخل صورة ظلية للجسم
-  var svg = '<svg viewBox="0 0 220 420" class="jbody" aria-hidden="true">' +
-    '<defs><linearGradient id="jg7" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF2FF"/><stop offset="1" stop-color="#E0E7FF"/></linearGradient></defs>' +
-    '<circle cx="110" cy="42" r="30" fill="url(#jg7)" stroke="#A5B4FC" stroke-width="2"/>' +
-    '<path d="M70 82 Q110 70 150 82 L168 200 Q160 214 150 206 L146 150 L144 240 L150 400 Q138 412 126 400 L114 262 L106 262 L94 400 Q82 412 70 400 L76 240 L74 150 L70 206 Q60 214 52 200 Z" fill="url(#jg7)" stroke="#A5B4FC" stroke-width="2"/>' +
-    '<g class="jmus" fill="#FB7185" fill-opacity=".55"><ellipse cx="66" cy="128" rx="7" ry="22" transform="rotate(12 66 128)"/><ellipse cx="154" cy="128" rx="7" ry="22" transform="rotate(-12 154 128)"/><ellipse cx="90" cy="300" rx="9" ry="34"/><ellipse cx="130" cy="300" rx="9" ry="34"/></g>' +
-    '<g stroke="#F5EEDC" stroke-width="6" stroke-linecap="round" fill="none"><path d="M110 74 L110 248"/><path d="M84 92 L136 92"/><path d="M90 108 Q110 118 130 108 M88 124 Q110 134 132 124 M90 140 Q110 150 130 140"/><path d="M84 92 L64 200 M136 92 L156 200"/><path d="M92 252 L128 252"/><path d="M98 256 L92 400 M122 256 L128 400"/></g>' +
-    '<g stroke="#C9B98F" stroke-width="1.5" fill="none"><path d="M110 74 L110 248"/></g>' +
-    '<g fill="#F5EEDC" stroke="#C9B98F" stroke-width="1.5"><circle cx="84" cy="92" r="6"/><circle cx="136" cy="92" r="6"/><circle cx="74" cy="148" r="5"/><circle cx="146" cy="148" r="5"/><circle cx="95" cy="330" r="6"/><circle cx="125" cy="330" r="6"/></g>' +
-    '<g class="jnerve" stroke="#F59E0B" stroke-width="2" fill="none"><path d="M110 40 L110 250"/><path d="M110 120 L70 190 M110 120 L150 190 M110 250 L94 396 M110 250 L126 396"/></g>' +
-    '<circle cx="110" cy="38" r="14" fill="#FCD34D" fill-opacity=".8" class="jbrain"/>' +
+  // مخطط «هندسة الجسم»: جسم بشري شفاف يظهر الهيكل العظمي والعضلات والجهاز العصبي
+  function smooth(P, closed) { // منحنى كاتمول-روم ناعم عبر النقاط
+    var d = 'M' + P[0][0] + ' ' + P[0][1], n = P.length;
+    for (var i = 0; i < (closed ? n : n - 1); i++) {
+      var p0 = P[(i - 1 + n) % n], p1 = P[i], p2 = P[(i + 1) % n], p3 = P[(i + 2) % n];
+      if (!closed) { if (i === 0) p0 = p1; if (i + 2 >= n) p3 = p2; }
+      d += ' C' + (p1[0] + (p2[0] - p0[0]) / 6).toFixed(1) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6).toFixed(1) + ' ' + (p2[0] - (p3[0] - p1[0]) / 6).toFixed(1) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6).toFixed(1) + ' ' + p2[0] + ' ' + p2[1];
+    }
+    return d + (closed ? 'Z' : '');
+  }
+  var R = [[131, 72], [146, 84], [166, 90], [178, 104], [184, 130], [188, 168], [193, 210], [197, 246], [205, 266], [199, 284], [188, 276], [183, 252], [176, 214], [169, 176], [161, 126], [157, 166], [153, 202], [160, 236], [162, 296], [157, 346], [159, 384], [151, 424], [165, 442], [147, 450], [137, 432], [136, 384], [134, 348], [128, 298], [120, 262]];
+  var L = R.slice(0, -1).reverse().map(function (p) { return [240 - p[0], p[1]]; });
+  var outline = smooth(R.concat(L), true);
+  var bone = '#F7F1E1', boneS = '#C9B78F';
+  function seg(x1, y1, x2, y2, w) { return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + boneS + '" stroke-width="' + (w + 2) + '" stroke-linecap="round"/><line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + bone + '" stroke-width="' + w + '" stroke-linecap="round"/>'; }
+  function jnt(x, y, r) { return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + bone + '" stroke="' + boneS + '" stroke-width="1.2"/>'; }
+  var ribs = ''; for (var i = 0; i < 6; i++) { var y = 104 + i * 11, w = 28 - Math.abs(i - 2.2) * 3; ribs += '<path d="M120 ' + y + ' Q' + (120 + w) + ' ' + (y - 4) + ' ' + (120 + w + 4) + ' ' + (y + 9) + ' M120 ' + y + ' Q' + (120 - w) + ' ' + (y - 4) + ' ' + (120 - w - 4) + ' ' + (y + 9) + '" stroke="' + boneS + '" stroke-width="4.2" fill="none" stroke-linecap="round"/><path d="M120 ' + y + ' Q' + (120 + w) + ' ' + (y - 4) + ' ' + (120 + w + 4) + ' ' + (y + 9) + ' M120 ' + y + ' Q' + (120 - w) + ' ' + (y - 4) + ' ' + (120 - w - 4) + ' ' + (y + 9) + '" stroke="' + bone + '" stroke-width="2.6" fill="none" stroke-linecap="round"/>'; }
+  var spine = ''; for (var v = 0; v < 17; v++) spine += '<rect x="116.5" y="' + (78 + v * 10.5) + '" width="7" height="8" rx="2.5" fill="' + bone + '" stroke="' + boneS + '" stroke-width="1"/>';
+  var svg = '<svg viewBox="0 0 240 460" class="jbody" aria-hidden="true">' +
+    '<defs>' +
+    '<radialGradient id="jskin" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#FDE7D6" stop-opacity=".95"/><stop offset=".7" stop-color="#F6CDB0" stop-opacity=".85"/><stop offset="1" stop-color="#E9AE8A" stop-opacity=".9"/></radialGradient>' +
+    '<linearGradient id="jmusG" x1="0" x2="1"><stop offset="0" stop-color="#E11D48"/><stop offset=".5" stop-color="#FB7185"/><stop offset="1" stop-color="#BE123C"/></linearGradient>' +
+    '<radialGradient id="jbrainG" cx="45%" cy="40%" r="60%"><stop offset="0" stop-color="#FBCFE8"/><stop offset="1" stop-color="#EC4899"/></radialGradient>' +
+    '<filter id="jglowF" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>' +
+    '<clipPath id="jclip"><path d="' + outline + '"/><circle cx="120" cy="42" r="29"/></clipPath>' +
+    '</defs>' +
+    '<ellipse cx="120" cy="452" rx="62" ry="7" fill="#1E1B4B" opacity=".12"/>' +
+    // الجلد الشفاف
+    '<g opacity=".92"><circle cx="120" cy="42" r="29" fill="url(#jskin)"/><path d="' + outline + '" fill="url(#jskin)"/></g>' +
+    '<g clip-path="url(#jclip)">' +
+    // العضلات
+    '<g class="jmus" fill="url(#jmusG)" opacity=".55">' +
+      '<path d="M98 92 Q86 96 80 110 Q92 116 104 104Z"/><path d="M142 92 Q154 96 160 110 Q148 116 136 104Z"/>' +
+      '<ellipse cx="176" cy="140" rx="7.5" ry="24" transform="rotate(-6 176 140)"/><ellipse cx="64" cy="140" rx="7.5" ry="24" transform="rotate(6 64 140)"/>' +
+      '<ellipse cx="185" cy="205" rx="6" ry="24" transform="rotate(-5 185 205)"/><ellipse cx="55" cy="205" rx="6" ry="24" transform="rotate(5 55 205)"/>' +
+      '<path d="M104 106 Q120 100 136 106 L136 126 Q120 132 104 126Z" opacity=".55"/>' +
+      '<ellipse cx="141" cy="300" rx="12" ry="40"/><ellipse cx="99" cy="300" rx="12" ry="40"/>' +
+      '<ellipse cx="146" cy="384" rx="8" ry="26"/><ellipse cx="94" cy="384" rx="8" ry="26"/>' +
+    '</g>' +
+    // الهيكل العظمي
+    '<g class="jskel">' +
+      '<path d="M120 18 C99 18 93 34 94 46 C95 58 101 66 108 70 L110 76 L130 76 L132 70 C139 66 145 58 146 46 C147 34 141 18 120 18Z" fill="' + bone + '" stroke="' + boneS + '" stroke-width="1.4"/>' +
+      '<ellipse cx="111" cy="46" rx="5" ry="4.5" fill="#6B5B3E" opacity=".55"/><ellipse cx="129" cy="46" rx="5" ry="4.5" fill="#6B5B3E" opacity=".55"/><path d="M117 56 L120 51 L123 56Z" fill="#6B5B3E" opacity=".5"/>' +
+      spine + ribs +
+      seg(96, 90, 120, 86, 4) + seg(144, 90, 120, 86, 4) +
+      seg(166, 96, 182, 164, 6) + seg(74, 96, 58, 164, 6) + seg(183, 168, 196, 246, 4.5) + seg(57, 168, 44, 246, 4.5) +
+      '<path d="M96 236 Q120 222 144 236 L150 252 Q138 270 120 264 Q102 270 90 252Z" fill="' + bone + '" stroke="' + boneS + '" stroke-width="1.4"/>' +
+      seg(138, 262, 144, 344, 7) + seg(102, 262, 96, 344, 7) + seg(145, 352, 148, 428, 5.5) + seg(95, 352, 92, 428, 5.5) +
+      jnt(166, 94, 5.5) + jnt(74, 94, 5.5) + jnt(183, 166, 4.5) + jnt(57, 166, 4.5) + jnt(144, 348, 6) + jnt(96, 348, 6) + jnt(197, 249, 3.5) + jnt(43, 249, 3.5) +
+    '</g>' +
+    // الجهاز العصبي
+    '<g class="jnerve" stroke="#F59E0B" stroke-width="1.8" fill="none" stroke-linecap="round" filter="url(#jglowF)">' +
+      '<path d="M120 60 L120 252"/><path d="M120 104 Q150 112 176 150 Q186 190 196 248"/><path d="M120 104 Q90 112 64 150 Q54 190 44 248"/>' +
+      '<path d="M120 252 Q136 300 144 346 Q148 390 148 430"/><path d="M120 252 Q104 300 96 346 Q92 390 92 430"/>' +
+      '<path d="M120 150 Q138 156 150 170 M120 150 Q102 156 90 170 M120 196 Q140 200 152 214 M120 196 Q100 200 88 214"/>' +
+    '</g>' +
+    '<path class="jbrain" d="M120 22 C104 22 98 32 99 40 C100 48 108 50 120 50 C132 50 140 48 141 40 C142 32 136 22 120 22Z" fill="url(#jbrainG)" opacity=".85"/>' +
+    '<path d="M108 30 Q114 34 110 40 M120 26 Q124 34 120 42 M131 30 Q127 36 132 42" stroke="#BE185D" stroke-width="1.1" fill="none" opacity=".7"/>' +
+    '</g>' +
+    '<path d="' + outline + '" fill="none" stroke="#C08A62" stroke-width="1.6" opacity=".7"/><circle cx="120" cy="42" r="29" fill="none" stroke="#C08A62" stroke-width="1.6" opacity=".7"/>' +
     '</svg>';
   var p = pins.map(function (q) {
     var on = q.href ? 'location.href=\'' + q.href + '\'' : 'jgo(' + q.go + ')';
@@ -478,4 +528,4 @@ window.LESSON = {
     ] },
   ],
 };
-</script><script src="../assets/f9ab391557706560.js"></script><script src="../assets/b26017f14b34878d.js"></script></body></html>
+</script><script src="../assets/8f50025954b56a23.js"></script><script src="../assets/b26017f14b34878d.js"></script></body></html>
