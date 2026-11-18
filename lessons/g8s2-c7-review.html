@@ -369,7 +369,8 @@ body{background-color:#F6F8FE;background-image:linear-gradient(rgba(67,56,202,.0
 .jwrap{text-align:center}
 .jwrap .tag{font-size:22px}
 .jmap{position:relative;width:min(300px,33dvh);margin:6px auto 0;aspect-ratio:240/460}
-.jbody{width:100%;height:100%;display:block;filter:drop-shadow(0 10px 18px rgba(30,27,75,.22))}
+.jbody{width:100%;height:100%;display:block;object-fit:contain;filter:drop-shadow(0 10px 18px rgba(30,27,75,.22))}
+img.jbody{animation:jbreath 4s ease-in-out infinite}@keyframes jbreath{0%,100%{transform:scale(1)}50%{transform:scale(1.015)}}
 .jnerve path{stroke-dasharray:8 6;animation:jflow 1.8s linear infinite}
 @keyframes jflow{to{stroke-dashoffset:-28}}
 .jbrain{animation:jpulse 2.4s ease-in-out infinite;transform-origin:110px 38px}
@@ -402,7 +403,7 @@ body{background-color:#F6F8FE;background-image:linear-gradient(rgba(67,56,202,.0
 .t5 th,.t5 td{border:2px solid #C7D2FE;padding:4px 14px;text-align:center}
 .t5 th{background:var(--c1);color:#fff}
 .t5 tr:nth-child(even) td{background:var(--tint)}
-</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"card": "../assets/07fe784a248babff.webp", "dolls": "../assets/2c606dda9b187088.webp", "fig17": "../assets/d9f5ab90461824e2.webp", "fig20": "../assets/53411e15bcc5e066.webp", "fig7": "../assets/bed47b4cf8ae49cc.webp", "labskin": "../assets/c3e30c6eafad80e2.webp", "mca": "../assets/7c8ebc003b66baaf.webp", "msk": "../assets/9d921c99a311dd73.webp", "msm": "../assets/a6e08abde123f759.webp"};</script><script>/* مخطط «هندسة الجسم» — دروس الفصل السابع */
+</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"card": "../assets/07fe784a248babff.webp", "dolls": "../assets/2c606dda9b187088.webp", "fig17": "../assets/d9f5ab90461824e2.webp", "fig20": "../assets/53411e15bcc5e066.webp", "fig7": "../assets/bed47b4cf8ae49cc.webp", "labskin": "../assets/c3e30c6eafad80e2.webp", "mca": "../assets/7c8ebc003b66baaf.webp", "msk": "../assets/9d921c99a311dd73.webp", "msm": "../assets/a6e08abde123f759.webp", "aiBody": "../assets/bf0e16fdb10bbf3e.webp", "aiHand": "../assets/0fbec7c6998a0a00.webp", "aiStand": "../assets/6dbfb1a067c8514a.webp", "aiFingers": "../assets/97bfb9fc327c2285.webp"};</script><script>/* مخطط «هندسة الجسم» — دروس الفصل السابع */
 window.jgo = function (i) { var b = document.querySelectorAll('#nav button')[i]; if (b) b.click(); };
 window.JMAP = function (title, pins) {
   // مخطط «هندسة الجسم»: جسم بشري شفاف يظهر الهيكل العظمي والعضلات والجهاز العصبي
@@ -466,6 +467,7 @@ window.JMAP = function (title, pins) {
     '</g>' +
     '<path d="' + outline + '" fill="none" stroke="#C08A62" stroke-width="1.6" opacity=".7"/><circle cx="120" cy="42" r="29" fill="none" stroke="#C08A62" stroke-width="1.6" opacity=".7"/>' +
     '</svg>';
+  if (window.IMG && IMG.aiBody) svg = '<img loading="lazy" decoding="async" class="jbody" alt="" src="' + IMG.aiBody + '">';
   var p = pins.map(function (q) {
     var on = q.href ? 'location.href=\'' + q.href + '\'' : 'jgo(' + q.go + ')';
     return '<button class="jpin ' + (q.side || 'r') + '" style="top:' + q.y + '%;--c:' + q.c + ';--off:' + q.len + 'px" onclick="' + on + '"><b>' + q.n + '</b><span>' + q.t + '</span><i style="top:50%;' + (q.side === 'l' ? 'right' : 'left') + ':-' + (q.len + 26) + 'px;width:' + (q.len + 26) + 'px"></i></button>';
@@ -528,4 +530,4 @@ window.LESSON = {
     ] },
   ],
 };
-</script><script src="../assets/8f50025954b56a23.js"></script><script src="../assets/b26017f14b34878d.js"></script></body></html>
+</script><script src="../assets/d58b285aa452a355.js"></script><script src="../assets/b26017f14b34878d.js"></script></body></html>
