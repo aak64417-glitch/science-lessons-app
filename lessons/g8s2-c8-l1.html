@@ -382,6 +382,9 @@ body{background-color:#FBF7FF;background-image:radial-gradient(circle at 12% 18%
 .jpin.l{right:calc(100% + var(--off,70px))}
 .jhint{color:var(--c2);font-size:20px;margin:8px 0 0}
 .labstep .labsay{display:inline}
+/* شريط الذكريات: الصور كاملة غير مقصوصة، والإطارات في المنتصف */
+.frame img{object-fit:contain!important;height:120px!important;background:#fff}
+:has(> .frame){justify-content:center!important;gap:18px}
 /* تكبير مشهد التجربة حتى تظهر تفاصيلها بوضوح */
 .labsim{grid-template-columns:minmax(0,2.7fr) minmax(220px,1fr)!important;gap:10px}
 .labc .labsim canvas,.labsim canvas{max-height:calc(100dvh - 345px)!important;width:100%!important;height:auto!important;border-radius:16px}
