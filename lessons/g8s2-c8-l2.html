@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><script src="../tools/gradeview.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#164E63"><title>مراحل حياة الإنسان</title><style>@font-face{font-family:"Cairo";font-weight:600;font-display:swap;src:url(../assets/025baf0d675e2423.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:"Cairo";font-weight:600;font-display:swap;src:url(../assets/f659c03eabef9939.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Cairo";font-weight:700;font-display:swap;src:url(../assets/2d843a01ca09a451.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:"Cairo";font-weight:700;font-display:swap;src:url(../assets/c93f95f05c222111.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+body{font-weight:600}h1,h2,.btn,.opt,.q{font-weight:700}
+/* محرك دروس الفصل الدراسي الثاني — خط عربي كبير وعريض، مناسب للمس والبروجكتر */
+:root{
+  --c1:#0E7490; --c2:#0B4F6C; --tint:#E0F2F7; --acc:#FACC15;
+  --ink:#0F172A; --ink2:#334155; --line:#CBD5E1; --card:#FFFFFF; --soft:#F1F5F9;
+  --good:#15803D; --goodbg:#DCFCE7; --bad:#B91C1C; --badbg:#FEE2E2; --warn:#B45309; --warnbg:#FEF3C7;
+  --f:"Cairo",Tahoma,"Segoe UI",sans-serif;
+  --h1:46px; --h2:38px; --tx:30px; --q:33px; --btn:28px; --lab:26px;
+  color-scheme:light;
+}
+@media (max-width:1100px){:root{--h1:40px;--h2:34px;--tx:28px;--q:30px;--btn:26px;--lab:24px}}
+@media (max-width:700px){:root{--h1:30px;--h2:26px;--tx:22px;--q:23px;--btn:21px;--lab:20px}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:var(--f);font-weight:600;color:var(--ink);direction:rtl;background:linear-gradient(180deg,var(--sky1,#BDE3F5) 0,var(--sky2,#EAF6FC) 340px,#F4FAFD 100%);font-size:var(--tx);line-height:1.6;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+[hidden]{display:none!important}
+img{max-width:100%;display:block}
+.app{display:flex;flex-direction:column;height:100dvh}
+/* الشريط العلوي */
+.top{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--c2);color:#fff;flex:none;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.top .tb{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:14px;padding:6px 16px;font-size:22px;font-weight:800;min-height:52px;white-space:nowrap}
+.top .tb:active{transform:scale(.97)}
+.top .ttl{flex:1;min-width:0;text-align:center;font-size:26px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:none}
+.top .ttl small{display:block;font-size:17px;color:var(--acc);font-weight:700;line-height:1.2}
+/* شريط المراحل */
+.nav{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;background:rgba(255,255,255,.75);backdrop-filter:blur(6px);flex:none;scrollbar-width:thin;border-bottom:2px solid var(--line)}
+.nav button{flex:none;border:2px solid var(--line);background:#fff;border-radius:16px;padding:6px 14px;font-size:20px;font-weight:800;display:flex;align-items:center;gap:6px;min-height:52px;color:var(--ink2)}
+.nav button .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--soft);font-size:17px}
+.nav button[aria-current=true]{background:var(--c1);border-color:var(--c1);color:#fff}
+.nav button[aria-current=true] .n{background:var(--acc);color:var(--ink)}
+.nav button.done .n{background:var(--goodbg);color:var(--good)}
+/* المسرح */
+.stage{flex:1;overflow-y:auto;padding:22px clamp(14px,3vw,40px) 30px;scroll-behavior:smooth}
+.wrap{max-width:1500px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.sh{display:flex;align-items:center;gap:14px}
+.sh .ic{width:68px;height:68px;border-radius:20px;background:var(--c1);color:#fff;display:grid;place-items:center;font-size:36px;flex:none;box-shadow:0 8px 18px rgba(0,0,0,.15)}
+.sh h1{margin:0;font-size:var(--h1);line-height:1.25;color:var(--c2)}
+.sh .pg{margin-inline-start:auto;background:#fff;border:2px solid var(--line);border-radius:14px;padding:4px 14px;font-size:20px;color:var(--ink2);white-space:nowrap}
+h2{margin:0 0 10px;font-size:var(--h2);color:var(--c2);line-height:1.3}
+.card{background:var(--card);border-radius:24px;padding:22px 26px;box-shadow:0 10px 26px rgba(15,42,80,.10);border:2px solid #E2E8F0}
+.card.tint{background:var(--tint);border-color:transparent}
+.lead{font-size:calc(var(--tx) + 2px);color:var(--c2)}
+p{margin:0 0 10px}
+ul.bl{margin:0;padding:0 0 0 0;list-style:none;display:flex;flex-direction:column;gap:10px}
+ul.bl li{position:relative;padding-inline-start:38px}
+ul.bl li::before{content:"";position:absolute;inset-inline-start:6px;top:.62em;width:16px;height:16px;border-radius:5px;background:var(--c1);transform:rotate(45deg)}
+.two{display:grid;grid-template-columns:1.25fr 1fr;gap:22px;align-items:start}
+.two.rev{grid-template-columns:1fr 1.25fr}
+@media (max-width:900px){.two,.two.rev{grid-template-columns:1fr}}
+.fig{background:#fff;border-radius:20px;padding:10px;border:2px solid #E2E8F0}
+.fig img{border-radius:12px;margin:0 auto;max-height:62vh;object-fit:contain}
+.fig figcaption{font-size:20px;color:var(--ink2);padding:8px 6px 0;text-align:center}
+.tag{display:inline-block;background:var(--c1);color:#fff;border-radius:999px;padding:2px 16px;font-size:20px;margin-bottom:8px}
+.tag.y{background:var(--acc);color:var(--ink)}
+.tag.g{background:var(--good)}
+.hl{color:var(--c1)}
+.quote{background:#ECFDF5;border:2px solid #10B981;color:#065F46;border-radius:20px;padding:14px 20px;text-align:center}
+/* أزرار */
+.btn{border:0;border-radius:18px;padding:10px 26px;font-size:var(--btn);font-weight:800;background:var(--c1);color:#fff;min-height:60px;box-shadow:0 5px 0 rgba(0,0,0,.18);display:inline-flex;align-items:center;justify-content:center;gap:10px}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.btn.y{background:var(--acc);color:var(--ink)}
+.btn.g{background:var(--good)}
+.btn.gh{background:#fff;color:var(--ink);border:2px solid var(--line);box-shadow:0 4px 0 #CBD5E1}
+.btn.sm{font-size:22px;min-height:50px;padding:6px 18px}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.foot{display:flex;justify-content:space-between;gap:14px;padding:10px 14px;background:rgba(255,255,255,.85);border-top:2px solid var(--line);flex:none}
+/* أسئلة */
+.q{font-size:var(--q);line-height:1.5;margin-bottom:14px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:800px){.opts{grid-template-columns:1fr}}
+.opt{border:3px solid var(--line);background:#fff;border-radius:20px;padding:12px 18px;text-align:start;font-size:var(--tx);font-weight:800;min-height:72px;display:flex;align-items:center;gap:14px}
+.opt .l{flex:none;width:48px;height:48px;border-radius:50%;background:var(--tint);color:var(--c2);display:grid;place-items:center;font-size:26px}
+.opt:hover{border-color:var(--c1)}
+.opt.ok{border-color:var(--good);background:var(--goodbg)}
+.opt.ok .l{background:var(--good);color:#fff}
+.opt.no{border-color:var(--bad);background:var(--badbg);opacity:.85}
+.opt[disabled]{cursor:default}
+.fb{margin-top:14px;border-radius:18px;padding:14px 20px;font-size:calc(var(--tx) - 2px);display:none}
+.fb.show{display:block;animation:pop .3s}
+.fb.ok{background:var(--goodbg);color:#14532D;border:2px solid var(--good)}
+.fb.no{background:var(--badbg);color:#7F1D1D;border:2px solid var(--bad)}
+.fb.info{background:var(--warnbg);color:#78350F;border:2px solid #F59E0B}
+@keyframes pop{from{transform:scale(.97);opacity:0}to{transform:none;opacity:1}}
+.ans{display:none;margin-top:12px;background:var(--goodbg);border:2px solid var(--good);color:#14532D;border-radius:18px;padding:14px 20px}
+.ans.show{display:block;animation:pop .3s}
+body.nosol .solbtn{display:none!important}
+.bq{border-inline-start:10px solid var(--c1)}
+.bq .meta{font-size:20px;color:var(--ink2)}
+textarea.inp,input.inp{font:inherit;font-size:var(--tx);width:100%;border:3px solid var(--line);border-radius:16px;padding:10px 16px;background:#FBFDFF;color:var(--ink)}
+input.inp{width:auto;min-width:160px;text-align:center}
+.inp:focus{outline:none;border-color:var(--c1)}
+/* صح/خطأ */
+.tfi{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:2px dashed #E2E8F0;flex-wrap:wrap}
+.tfi .s{flex:1;min-width:260px}
+.tfi .b{display:flex;gap:10px}
+.tfi .b button{min-width:96px}
+.tfi .fix{flex-basis:100%;color:#7F1D1D;background:var(--badbg);border-radius:14px;padding:8px 16px;display:none;font-size:calc(var(--tx) - 3px)}
+.tfi .fix.show{display:block}
+/* ترتيب وتصنيف */
+.chips{display:flex;flex-wrap:wrap;gap:12px}
+.chip{border:3px solid var(--c1);background:#fff;border-radius:18px;padding:10px 18px;font-size:var(--tx);font-weight:800;min-height:62px}
+.chip.sel{background:var(--acc);border-color:#CA8A04}
+.chip.used{opacity:.35;pointer-events:none}
+.chip.ok{background:var(--goodbg);border-color:var(--good)}
+.chip.no{background:var(--badbg);border-color:var(--bad);animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.slots{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.slot{min-height:66px;border:3px dashed var(--line);border-radius:18px;display:flex;align-items:center;gap:12px;padding:6px 16px;background:#fff}
+.slot b{width:46px;height:46px;border-radius:50%;background:var(--c1);color:#fff;display:grid;place-items:center;flex:none;font-size:24px}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px}
+.cat{border:3px dashed var(--c1);border-radius:20px;padding:12px;min-height:170px;background:#fff;display:flex;flex-direction:column;gap:8px}
+.cat h3{margin:0;font-size:var(--lab);text-align:center;color:#fff;background:var(--c1);border-radius:12px;padding:4px}
+.cat.drop{background:var(--tint)}
+.cat .chip{font-size:calc(var(--tx) - 4px);min-height:50px;padding:6px 12px}
+/* بطاقات تفاعلية */
+.cardsg{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.flip{perspective:1200px;min-height:230px;border:0;background:none;padding:0}
+.flip .in{position:relative;width:100%;height:100%;min-height:230px;transition:transform .6s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .fa,.flip .fb2{position:absolute;inset:0;backface-visibility:hidden;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center;box-shadow:0 10px 22px rgba(0,0,0,.14)}
+.flip .fa{background:var(--cc,var(--c1));color:#fff;font-size:calc(var(--tx) - 1px)}
+.flip .fa small{font-size:20px;opacity:.95;background:rgba(255,255,255,.22);border-radius:999px;padding:2px 14px;margin-bottom:8px}
+.flip .fb2{background:#fff;color:var(--ink);border:4px solid var(--cc,var(--c1));transform:rotateY(180deg);font-size:calc(var(--tx) - 3px)}
+.uno .fa{border:8px solid #fff;outline:3px solid var(--cc)}
+.uno .fa::before{content:"";position:absolute;width:70%;height:55%;border-radius:50%;background:rgba(255,255,255,.18);transform:rotate(-30deg)}
+/* الفرق */
+.teams{display:flex;gap:10px;flex-wrap:wrap}
+.team{flex:1;min-width:150px;border-radius:18px;padding:8px 12px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:22px}
+.team b{font-size:34px}
+.team button{border:0;background:rgba(255,255,255,.25);color:#fff;border-radius:12px;width:48px;height:48px;font-size:28px}
+/* مؤقت */
+.timer{font-size:56px;font-weight:900;min-width:150px;text-align:center;background:#0F172A;color:var(--acc);border-radius:20px;padding:0 18px;font-variant-numeric:tabular-nums}
+.timer.low{color:#F87171;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.5}}
+/* محاكاة */
+.sim{background:#0B1E33;border-radius:24px;padding:14px;color:#fff}
+.sim canvas{width:100%;height:auto;display:block;border-radius:16px;background:#0F2740;touch-action:none}
+.ctrl{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:12px}
+.ctrl label{font-size:var(--lab);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+input[type=range]{width:min(420px,70vw);height:44px;accent-color:var(--acc)}
+.read{background:rgba(255,255,255,.1);border-radius:16px;padding:8px 16px;font-size:var(--lab)}
+.read b{color:var(--acc)}
+.sim .btn.gh{color:var(--ink)}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button{border:3px solid rgba(255,255,255,.4);background:transparent;color:#fff;border-radius:16px;padding:6px 18px;font-size:var(--lab);font-weight:800;min-height:56px}
+.seg button[aria-pressed=true]{background:var(--acc);color:var(--ink);border-color:var(--acc)}
+/* صندوق الأسرار وخريطة المفاهيم */
+.boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.mbox{border:0;border-radius:22px;min-height:160px;background:linear-gradient(160deg,#7C3AED,#4C1D95);color:#fff;font-size:64px;box-shadow:0 10px 0 #3B0764}
+.mbox.open{font-size:var(--tx);background:#fff;color:var(--ink);border:4px solid #7C3AED;box-shadow:none;padding:12px}
+.cmap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.cnode{border:3px solid var(--c1);background:#fff;border-radius:999px;padding:8px 22px;text-align:center;min-width:200px}
+.cnode.root{background:var(--c1);color:#fff;font-size:var(--h2)}
+.clinks{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;width:100%}
+.ccol{display:flex;flex-direction:column;align-items:center;gap:8px}
+.ccol .lk{font-size:20px;color:var(--ink2)}
+.blank{border:3px dashed var(--c1);border-radius:16px;min-width:200px;min-height:60px;background:#FFFBEB;padding:6px 14px;font-size:calc(var(--tx) - 2px);font-weight:800}
+.blank.ok{border-style:solid;border-color:var(--good);background:var(--goodbg)}
+/* شريط الذكريات */
+.strip{display:flex;gap:14px;overflow-x:auto;padding:34px 18px;scroll-snap-type:x mandatory;background:#111;border-radius:14px;position:relative;
+ background-image:repeating-linear-gradient(90deg,#f5f5f5 0 16px,transparent 16px 34px),repeating-linear-gradient(90deg,#f5f5f5 0 16px,transparent 16px 34px);
+ background-size:100% 14px,100% 14px;background-position:0 10px,0 calc(100% - 10px);background-repeat:repeat-x;background-color:#111}
+.strip .fa img{width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:8px}
+.strip .flip{flex:0 0 280px;scroll-snap-align:start;min-height:300px}.strip .flip .in{min-height:300px}
+.strip .end{flex:0 0 320px;border-radius:22px;background:var(--acc);display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;font-size:calc(var(--tx) - 2px)}
+/* إنجاز */
+.badge{display:flex;align-items:center;gap:22px;background:linear-gradient(135deg,#FEF3C7,#FFFFFF);border:4px solid #F59E0B;border-radius:28px;padding:22px}
+.badge .medal{font-size:96px;line-height:1}
+.stars{font-size:54px;letter-spacing:6px}
+.tonly{display:none!important}
+body.teacher .tonly{display:block!important}
+body.teacher span.tonly{display:inline!important}
+.tnote{background:#EEF2FF;border:2px dashed #6366F1;color:#3730A3;border-radius:16px;padding:10px 16px;font-size:21px}
+.panel{position:fixed;inset:auto 14px 90px auto;z-index:50;background:#fff;border-radius:22px;box-shadow:0 20px 50px rgba(0,0,0,.3);padding:16px;display:flex;flex-direction:column;gap:10px;width:min(420px,calc(100vw - 28px));font-size:22px}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#0F172A;color:#fff;border-radius:16px;padding:10px 22px;font-size:22px;z-index:60}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:70}
+table.dt{border-collapse:collapse;width:100%;font-size:calc(var(--tx) - 4px)}
+table.dt th,table.dt td{border:2px solid var(--line);padding:8px 12px;text-align:center}
+table.dt th{background:var(--c1);color:#fff}
+.stepper{display:flex;flex-direction:column;gap:10px;counter-reset:st}
+.stepper li{list-style:none;display:flex;gap:14px;align-items:flex-start}
+.stepper li::before{counter-increment:st;content:counter(st,arabic-indic);flex:none;width:52px;height:52px;border-radius:16px;background:var(--c1);color:#fff;display:grid;place-items:center;font-size:26px}
+.stepper{padding:0;margin:0}
+.safety{background:var(--badbg);border:2px solid var(--bad);color:#7F1D1D;border-radius:18px;padding:12px 18px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* شريط الذكريات: شريط فيلم بأسئلة مصغّرة */
+.film{margin-top:14px;background:#111;border-radius:14px;padding:30px 14px;position:relative;overflow-x:auto;
+ background-image:radial-gradient(circle at 50% 50%,#f5f5f5 5px,transparent 6px),radial-gradient(circle at 50% 50%,#f5f5f5 5px,transparent 6px);
+ background-size:34px 22px,34px 22px;background-repeat:repeat-x,repeat-x;background-position:0 4px,0 calc(100% - 4px)}
+.frames{display:flex;gap:14px;min-width:min-content}
+.frame{flex:1 0 230px;max-width:300px;min-height:200px;border:0;border-radius:6px;background:#fff;cursor:pointer;padding:8px;display:flex;flex-direction:column;gap:6px;align-items:stretch;font:inherit;color:#1f2937;transition:transform .2s,box-shadow .2s;position:relative}
+.frame:hover,.frame:focus-visible{transform:scale(1.04);box-shadow:0 0 0 4px var(--acc,#FACC15)}
+.frame img{width:100%;height:92px;object-fit:cover;border-radius:4px}
+.frame .fq{font-size:19px;line-height:1.55;text-align:center}
+.frame .fq small{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--c1);color:#fff;font-size:16px;margin-left:6px}
+.frame.seen::after{content:"✓";position:absolute;top:6px;left:8px;background:#16A34A;color:#fff;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:18px}
+/* بطاقات أونو المرقمة */
+.unog{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px;margin-top:16px}
+.unoc{aspect-ratio:2/3;border:8px solid #fff;outline:3px solid var(--cc);border-radius:18px;background:var(--cc);color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;font:inherit;box-shadow:0 6px 14px rgba(0,0,0,.18);transition:transform .2s}
+.unoc::before{content:"";position:absolute;width:85%;height:58%;border-radius:50%;background:#fff;transform:rotate(-30deg)}
+.unoc .un{position:relative;font-size:64px;font-weight:800;color:var(--cc);line-height:1}
+.unoc .uk{position:absolute;bottom:8px;font-size:16px;background:rgba(0,0,0,.25);border-radius:999px;padding:1px 10px}
+.unoc:hover,.unoc:focus-visible{transform:translateY(-6px) rotate(-2deg)}
+.unoc.used{opacity:.45;filter:grayscale(.5)}.unoc.used::after{content:"✓";position:absolute;top:6px;right:8px;font-size:22px}
+/* نافذة التكبير */
+.zm{position:fixed;inset:0;background:rgba(8,12,30,.72);display:grid;place-items:center;z-index:999;padding:16px;animation:zmf .25s}
+@keyframes zmf{from{opacity:0}to{opacity:1}}
+.zmbox{background:#fff;border-radius:24px;max-width:900px;width:100%;max-height:92vh;overflow:auto;padding:22px 26px;border-top:12px solid var(--cc);animation:zmz .3s}
+@keyframes zmz{from{transform:scale(.6)}to{transform:scale(1)}}
+.zmk{display:inline-block;background:var(--cc);color:#fff;border-radius:999px;padding:4px 18px;font-size:20px}
+.zmimg{display:block;max-width:100%;max-height:260px;margin:14px auto;border-radius:12px}
+.zmq{font-size:calc(var(--tx) + 8px);line-height:1.7;color:#111827;margin:14px 0;text-align:center}
+.zma{font-size:calc(var(--tx) + 4px);line-height:1.7;color:#1D4ED8;background:#EFF6FF;border-radius:14px;padding:12px 16px;text-align:center}
+.zmbar{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.btn.ghost{background:#fff;color:var(--c2);box-shadow:inset 0 0 0 3px var(--c2)}
+
+/* عرض البطاقة الواحدة بحجم الشاشة */
+.pgc[hidden]{display:none!important}
+.dots{display:flex;gap:6px;align-items:center;margin-inline-start:auto}
+.dots i{width:12px;height:12px;border-radius:50%;background:#CBD5E1}.dots i.on{background:var(--c1);width:26px;border-radius:8px}.dots i.ok{background:var(--good,#16A34A)}
+.dots b{font-size:18px;color:var(--ink2);margin-inline-start:6px}
+.sh{flex-wrap:wrap}
+.wrap{gap:14px}
+.sim canvas{max-height:calc(100dvh - 360px);width:auto;max-width:100%;margin:0 auto;min-height:150px}
+.sim h2{font-size:calc(var(--h2) - 6px);margin-bottom:4px}
+.sim > p{margin-bottom:6px}
+.ctrl{margin-top:8px;gap:10px}
+/* التجربة الافتراضية */
+.labh{font-size:var(--h2);color:var(--c2)}
+.labg{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;align-items:start}
+@media (max-width:900px){.labg{grid-template-columns:1fr}}
+.labsim{padding:10px}
+.labsteps{margin:0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:6px}
+.labsteps li{counter-increment:s;font-size:calc(var(--tx) - 6px);line-height:1.5;padding:6px 10px 6px 10px;border-radius:12px;background:#F1F5F9;color:#64748B;display:flex;gap:8px}
+.labsteps li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:#CBD5E1;color:#fff;display:grid;place-items:center;font-size:16px}
+.labsteps li.on{background:var(--tint);color:var(--ink);box-shadow:0 0 0 3px var(--c1)}.labsteps li.on::before{background:var(--c1)}
+.labsteps li.ok{color:var(--ink)}.labsteps li.ok::before{content:"✓";background:#16A34A}
+.labtools{margin-top:10px;font-size:18px;color:var(--ink2)}
+.labside .safety{margin-top:8px;font-size:18px}
+.labp{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.labstep{font-size:calc(var(--tx) - 4px);color:#FDE68A;display:flex;gap:10px;align-items:center}
+.labn{flex:none;width:34px;height:34px;border-radius:50%;background:#FACC15;color:#0F172A;display:grid;place-items:center;font-size:20px}
+.labbtns{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.labbtns label{font-size:var(--lab);display:flex;gap:10px;align-items:center}
+.labt{border-collapse:collapse;width:100%;background:#fff;color:#0F172A;border-radius:10px;overflow:hidden;font-size:18px}
+.labt th{background:var(--c1);color:#fff;padding:4px 8px}.labt td{padding:4px 8px;border-top:1px solid #E2E8F0;text-align:center}
+.labend{background:#ECFDF5;color:#065F46;border-radius:14px;padding:10px 14px;font-size:calc(var(--tx) - 6px);line-height:1.6}
+.labc .sim canvas{max-height:calc(100dvh - 470px)}
+/* الشاشات القصيرة (الأجهزة اللوحية أفقيًا) */
+@media (max-height:760px){:root{--h1:30px;--h2:28px;--tx:23px;--q:25px;--btn:22px;--lab:20px}
+ .sh .ic{width:46px;height:46px;font-size:26px;border-radius:14px}.card{padding:14px 18px}.stage{padding-top:12px}.btn{min-height:48px;padding:6px 18px}
+ .fig img{max-height:48vh}}
+
+@media (max-height:820px){
+ .top{padding:4px 10px}.top .tb{min-height:40px;font-size:18px;padding:4px 12px}.top .ttl{font-size:21px}.top .ttl small{font-size:14px}
+ .nav{padding:5px 10px;gap:6px}.nav button{min-height:40px;font-size:17px;padding:3px 10px}
+ .foot{padding:5px 10px}.foot .btn{min-height:44px;font-size:21px}
+ .sh h1{font-size:26px}.sh .ic{width:40px;height:40px;font-size:22px;border-radius:12px}.sh .pg{font-size:16px;padding:2px 10px}
+ .stage{padding:10px clamp(10px,2vw,28px) 14px}.wrap{gap:10px}
+ .tnote{display:none}
+}
+@media (max-height:820px){
+ .slots{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.slot{min-height:46px!important;padding:4px 10px!important}
+ .chip{padding:4px 12px!important}
+ .flip,.flip .in{min-height:150px}
+ .unog{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}.unoc .un{font-size:44px}
+ .frame{min-height:150px}.frame img{height:70px}
+}
+
+.labq{font-size:calc(var(--tx) - 2px);color:var(--c2);margin:4px 0 6px}
+.labinfo{margin-bottom:8px;font-size:18px}.labinfo summary{cursor:pointer;color:var(--ink2);font-size:18px}
+.labinfo .labsteps{margin-top:6px}
+.labsim{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(260px,1fr);gap:12px;align-items:start}
+.labsim canvas{grid-column:1;grid-row:1}
+.labsim .labp{grid-column:2;grid-row:1;margin-top:0}
+@media (max-width:760px){.labsim{grid-template-columns:1fr}.labsim .labp{grid-column:1;grid-row:2}}
+.labc .sim canvas{max-height:calc(100dvh - 330px);width:100%;height:auto}
+@media (max-height:820px){.sim > p{display:none}.sim h2{font-size:22px}}
+.labc .sim canvas,.sim canvas{width:auto;height:auto;max-width:100%}
+@media (max-height:820px) and (min-width:900px){
+ .sim:not(.labsim){display:grid;grid-template-columns:minmax(0,1.8fr) minmax(230px,1fr);column-gap:14px;align-items:center}
+ .sim:not(.labsim)>h2,.sim:not(.labsim)>p{grid-column:1/-1}
+ .sim:not(.labsim) canvas{grid-column:1;max-height:calc(100dvh - 290px)}
+ .sim:not(.labsim) .ctrl{grid-column:2;flex-direction:column;align-items:stretch;margin-top:0}
+ .sim:not(.labsim) .ctrl label{flex-direction:column;align-items:stretch}
+ .labc .sim canvas{max-height:calc(100dvh - 300px)}
+}
+.ctrl{min-width:0}.ctrl input[type=range]{width:100%;min-width:0;max-width:100%}
+.sim:not(.labsim) .ctrl .btn{max-width:100%}
+.labsim .labp{max-height:calc(100dvh - 290px);overflow:auto}
+.labc .labsim canvas{max-height:calc(100dvh - 290px)}
+
+/* استراتيجيات أسماء الطلاب */
+.hasw{position:relative}
+.whob{position:absolute;top:10px;left:12px;border:2px solid var(--line);background:#fff;color:var(--c2);border-radius:999px;padding:3px 14px;font:inherit;font-size:17px;cursor:pointer;z-index:2}
+.whob:hover{background:var(--tint)}
+.stu-badge{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:linear-gradient(90deg,#FEF3C7,#FFFBEB);border:3px solid #F59E0B;border-radius:16px;padding:6px 14px;margin-bottom:10px;font-size:calc(var(--tx) - 2px);animation:zmz .35s}
+.stu-badge b{font-size:calc(var(--tx) + 4px);color:#B45309}.stu-badge button{border:0;background:#fff;border-radius:10px;padding:2px 10px;font:inherit;font-size:18px;cursor:pointer}
+.team .tmem{display:block;font-size:13px;opacity:.9;font-weight:600}
+.stu-bg{position:fixed;inset:0;background:rgba(8,12,30,.72);z-index:1000;display:grid;place-items:center;padding:12px}
+.stu-box{background:#fff;border-radius:22px;width:min(1000px,100%);max-height:94vh;display:flex;flex-direction:column;overflow:hidden;font-size:20px}
+.stu-head{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--c2);color:#fff;font-size:22px}
+.stu-x{border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:10px;width:40px;height:40px;font-size:20px;cursor:pointer}
+.stu-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:8px 12px;border-bottom:2px solid var(--line)}
+.stu-tabs button{border:2px solid var(--line);background:#fff;border-radius:12px;padding:5px 12px;font:inherit;font-size:17px;cursor:pointer}
+.stu-tabs button[aria-pressed=true]{background:var(--c1);color:#fff;border-color:var(--c1)}
+.stu-body{padding:14px 18px;overflow:auto}
+.stu-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.stu-box .b{border:0;border-radius:12px;padding:8px 16px;font:inherit;font-size:18px;background:#E2E8F0;cursor:pointer}
+.stu-box .b.c{background:var(--c1);color:#fff}.stu-box .b.g{background:#16A34A;color:#fff}.stu-box .b.big{font-size:22px;padding:12px 22px}
+.stu-box select,.stu-box input,.stu-ta{font:inherit;font-size:18px;border:2px solid var(--line);border-radius:10px;padding:4px 8px}
+.stu-ta{width:100%;box-sizing:border-box;line-height:1.6}
+.stu-note,.stu-lead,.stu-empty{color:var(--ink2);font-size:17px}
+.stu-wheel{display:grid;grid-template-columns:minmax(0,1.2fr) 1fr;gap:16px;align-items:center}
+.stu-wc{position:relative}.stu-wc canvas{width:100%;max-height:62vh;aspect-ratio:1;display:block;margin:auto}
+.stu-ptr{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-style:normal;font-size:38px;color:#111}
+.stu-side{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+.stu-name{font-size:40px;font-weight:800;color:var(--c2);text-align:center;background:var(--tint);border-radius:16px;padding:12px;animation:zmz .35s}
+.stu-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px;margin:8px 0}
+.stu-card{aspect-ratio:3/4;border:0;border-radius:14px;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;font:inherit;font-size:30px;cursor:pointer;transition:transform .3s}
+.stu-card.on{background:#fff;color:var(--c2);border:3px solid var(--c1);font-size:16px;transform:rotateY(360deg)}
+.stu-hot{text-align:center}.stu-chair{font-size:70px}.stu-hn{font-size:44px;font-weight:800;color:#B91C1C;min-height:64px}.stu-hn.pop{animation:zmz .4s}
+.stu-tm{font-size:46px;font-weight:800;color:var(--c2)}.stu-tm.low{color:#DC2626}
+.stu-grps{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.stu-grp{border:3px solid var(--gc);border-radius:14px;padding:8px 12px}.stu-grp b{color:var(--gc)}.stu-grp ol{margin:6px 0 0;padding-inline-start:22px;font-size:17px}
+.stu-hon{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px}
+.stu-hr{display:flex;align-items:center;gap:8px;border:2px solid var(--line);border-radius:12px;padding:4px 10px}.stu-hr span{flex:1}.stu-hr b{color:#CA8A04;font-size:15px}
+.stu-hr button{border:0;background:#F1F5F9;border-radius:8px;padding:2px 8px;font:inherit;cursor:pointer}
+@media (max-width:760px){.stu-wheel{grid-template-columns:1fr}}
+.hasw .stu-badge{margin-inline-end:150px}
+.labc .labsim canvas{max-height:calc(100dvh - 330px)}
+
+.stu-web{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}.stu-web canvas{width:min(640px,100%);height:auto;background:#F8FAFC;border-radius:16px}.stu-web .stu-side{display:flex;flex-direction:column;gap:8px;min-width:220px;max-width:260px}.stu-web .stu-hn{font-size:30px}
+.stu-num{font-size:44px;font-weight:800;color:#B91C1C;min-width:60px;text-align:center}.stu-grp li.on{background:#FEF3C7;border-radius:8px;font-weight:800;color:#B91C1C}.stu-st{border:0;background:#fff;border-radius:8px;cursor:pointer;font:inherit}
+.stu-duel{display:flex;align-items:center;justify-content:center;gap:20px;margin:16px 0}.stu-dn{font-size:36px;font-weight:800;min-width:240px;text-align:center;padding:16px;border-radius:18px;background:#F1F5F9}.stu-dn.a{color:#1D4ED8}.stu-dn.b{color:#B91C1C}.stu-dn.win{background:#FEF3C7;box-shadow:0 0 0 4px #F59E0B}.stu-vs{font-size:48px}
+
+.stu-tk{display:flex;align-items:center;justify-content:center;gap:18px;margin:8px 0}.stu-tkn{font-size:28px;font-weight:700;min-width:200px;text-align:center;padding:10px 16px;border-radius:14px;background:#F1F5F9}.stu-tkn.win{background:#DCFCE7;color:#15803D}
+.stu-tkc{width:110px;height:110px;transform:rotate(-90deg)}.stu-tkc circle{fill:none;stroke-width:10}.stu-tkc .bgc{stroke:#E2E8F0}.stu-tkc .fgc{stroke:#16A34A;transition:stroke-dashoffset 1s linear}.stu-tks{font-size:34px;font-weight:700;min-width:60px;text-align:center}
+.stu-sp{font-size:22px;min-width:140px;text-align:center}.stu-mt{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}.stu-mc{display:flex;flex-direction:column;align-items:center;width:86px}.stu-mc.on b{color:#C2410C}
+.stu-mbar{position:relative;width:46px;height:130px;border-radius:10px;background:linear-gradient(#E0F2FE,#F8FAFC);border:2px solid #94A3B8;overflow:hidden}.stu-mbar i{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(#22C55E,#15803D);transition:height .5s}.stu-mbar span{position:absolute;top:2px;left:0;right:0;text-align:center;font-size:20px}.stu-mc b{font-size:14px;text-align:center;margin-top:4px}.stu-mc small{font-size:12px;color:#475569}
+
+/* الهوية البصرية للفصل الثامن «التنظيم والتكاثر»: رسائل الحياة — بنفسجي عميق، وردي الهرمونات، كهرماني الطاقة، فيروزي النمو */
+:root{--card:#FFFFFF}
+body{background-color:#FBF7FF;background-image:radial-gradient(circle at 12% 18%,rgba(219,39,119,.07) 0 60px,transparent 61px),radial-gradient(circle at 88% 30%,rgba(124,58,237,.07) 0 90px,transparent 91px),radial-gradient(circle at 70% 85%,rgba(14,116,144,.06) 0 70px,transparent 71px),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360' viewBox='0 0 360 360'%3E%3Cg fill='none' stroke-width='2'%3E%3Ccircle cx='60' cy='70' r='16' stroke='%23DB2777' stroke-opacity='.18'/%3E%3Ccircle cx='60' cy='70' r='5' fill='%23DB2777' fill-opacity='.12'/%3E%3Cpath d='M200 250q24-30 48 0t48 0' stroke='%237C3AED' stroke-opacity='.14'/%3E%3Ccircle cx='280' cy='90' r='9' stroke='%230E7490' stroke-opacity='.16'/%3E%3Ccircle cx='296' cy='96' r='9' stroke='%230E7490' stroke-opacity='.16'/%3E%3C/g%3E%3C/svg%3E");background-size:auto,auto,auto,360px 360px;background-attachment:fixed}
+.top{background:linear-gradient(90deg,var(--c2),var(--c1) 55%,#2E1065);border-bottom:4px solid var(--acc)}
+.top .ttl small{color:#FDE68A}
+.nav{background:rgba(251,247,255,.94);border-bottom:2px solid #EDE4FB}
+.nav button{border-color:#EDE4FB;background:#FFF;border-radius:999px}
+.nav button[aria-current=true]{background:linear-gradient(135deg,var(--c1),var(--c2));border-color:var(--c1)}
+.sh .ic{background:linear-gradient(135deg,var(--c1),#7C3AED);border-radius:50%;box-shadow:0 0 0 4px var(--tint),0 0 0 8px rgba(219,39,119,.18)}
+.sh h1{color:var(--c2)}
+.card{background:#FFFFFF;border:2px solid #EDE4FB;border-radius:22px;box-shadow:0 10px 26px rgba(46,16,101,.09);position:relative;overflow:visible}
+.card::before{content:'';position:absolute;top:12px;left:14px;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,var(--c1) 0 3px,transparent 4px),var(--tint);box-shadow:0 0 0 3px var(--tint);opacity:.9;pointer-events:none}
+.card.tint{background:linear-gradient(180deg,var(--tint),#FFFFFF);border-color:#F5D0FE}
+.tag{background:var(--c1);color:#fff;border-radius:999px}
+.tag.y{background:var(--acc);color:#2E1065}
+.hl{background:linear-gradient(transparent 55%,rgba(244,114,182,.38) 55%)}
+.btn.y{background:#7C3AED;color:#fff}
+.foot{background:rgba(251,247,255,.96);border-top:2px solid #EDE4FB}
+.fig img{border-radius:20px;border:5px solid #fff;box-shadow:0 8px 18px rgba(46,16,101,.16);background:#fff}
+.fig figcaption{font-style:normal;color:var(--c1)}
+/* خريطة الرحلة */
+.jwrap{text-align:center}
+.jwrap .tag{font-size:22px}
+.jmap{position:relative;height:min(470px,52dvh);margin:6px auto 0}
+.jbody{width:100%;height:100%;display:block;object-fit:contain;filter:drop-shadow(0 12px 20px rgba(46,16,101,.22));animation:jbreath 4s ease-in-out infinite}
+@keyframes jbreath{0%,100%{transform:scale(1)}50%{transform:scale(1.015)}}
+.jglow{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(244,114,182,.18),transparent 65%);pointer-events:none;animation:jpulse 3s ease-in-out infinite}
+@keyframes jpulse{0%,100%{opacity:.4}50%{opacity:1}}
+.jpin{position:absolute;transform:translateY(-50%);display:flex;align-items:center;gap:8px;border:3px solid var(--c);background:#fff;border-radius:999px;padding:6px 16px 6px 6px;font:inherit;font-weight:700;font-size:21px;color:#1F1F2E;cursor:pointer;white-space:nowrap;box-shadow:0 6px 14px rgba(0,0,0,.12);transition:transform .2s;z-index:2}
+.jpin:hover{transform:translateY(-50%) scale(1.06)}
+.jpin b{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--c);color:#fff;font-size:22px;animation:jglow 2s infinite}
+@keyframes jglow{0%,100%{box-shadow:0 0 0 0 var(--c)}50%{box-shadow:0 0 0 7px transparent}}
+.jpin i{position:absolute;height:0;border-top:3px dashed var(--c)}
+.jpin.r{left:calc(100% + var(--off,70px));flex-direction:row-reverse;padding:6px 6px 6px 16px}
+.jpin.l{right:calc(100% + var(--off,70px))}
+.jhint{color:var(--c2);font-size:20px;margin:8px 0 0}
+.labstep .labsay{display:inline}
+/* تكبير مشهد التجربة حتى تظهر تفاصيلها بوضوح */
+.labsim{grid-template-columns:minmax(0,2.7fr) minmax(220px,1fr)!important;gap:10px}
+.labc .labsim canvas,.labsim canvas{max-height:calc(100dvh - 345px)!important;width:100%!important;height:auto!important;border-radius:16px}
+.labsim .labp{max-height:calc(100dvh - 345px)!important}
+.labc .labq{margin:0 0 2px;font-size:calc(var(--tx) - 4px)}
+.labc .labinfo{margin-bottom:4px}
+.labstep{font-size:calc(var(--tx) - 6px)!important}
+/* صورة سؤال الكتاب بجانب السؤال حتى تظهر الإجابة دون تمرير */
+.bq .fig{float:left;width:36%;margin:4px 16px 6px 0!important}
+.bq .fig img{width:100%;max-height:44dvh;object-fit:contain}
+.bq .ans{overflow:hidden}
+.bq::after{content:'';display:block;clear:both}
+/* جدول تطبيق العلوم */
+.t5{border-collapse:collapse;margin:8px auto;font-size:20px;min-width:70%}
+.t5 th,.t5 td{border:2px solid #E9D5FF;padding:4px 12px;text-align:center}
+.t5 th{background:var(--c1);color:#fff}
+.t5 tr:nth-child(even) td{background:var(--tint)}
+</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiEgg": "../assets/092b279e9d7d137f.webp", "aiFemale": "../assets/562e2ec78b4d4b00.webp", "aiFetusStages": "../assets/f7a505d218431f12.webp", "aiFetusWomb": "../assets/c07ad95608af935a.webp", "aiGrandpa": "../assets/dd5ac869a8dfaa36.webp", "aiLife": "../assets/c741639c87635b73.webp", "aiNewborn": "../assets/5147392c31500c69.webp", "aiStage0": "../assets/ef4e29f7d218c69f.webp", "aiStage1": "../assets/f7ca4ec822d6fe36.webp", "aiStage2": "../assets/00493d4d6c08bc0f.webp", "aiStage3": "../assets/fbb14e63dd5ea70f.webp", "aiStage4": "../assets/aee1efdb88ccf1b1.webp", "aiSugar": "../assets/161741e3026736da.webp", "aiTwinsF": "../assets/c7b94ab23796db59.webp", "aiTwinsI": "../assets/4f6a71a4080ecda1.webp", "aiZygote": "../assets/d7e591a841c9771d.webp", "fig10": "../assets/77ba099158df582d.webp", "fig13": "../assets/be54fd51a7986aeb.webp", "fig15": "../assets/87d83a7d26af6c83.webp", "fig16": "../assets/98fa800045a39fe2.webp", "fig17": "../assets/3460980e8d8e0f19.webp", "fig8": "../assets/5412a0dfce21cad9.webp", "fig9": "../assets/117d9723dd0cbf7c.webp"};</script><script>/* «رسائل الحياة» — دروس الفصل الثامن */
+window.jgo = function (i) { var b = document.querySelectorAll('#nav button')[i]; if (b) b.click(); };
+window.JMAP = function (title, pins, key, aspect) {
+  // خريطة «رسائل الحياة»: صورة احترافية تحيط بها محطات الدرس
+  var src = (window.IMG && IMG[key]) || '';
+  var img = '<img loading="lazy" decoding="async" class="jbody" alt="" src="' + src + '">';
+  var p = pins.map(function (q) {
+    var on = q.href ? 'location.href=\'' + q.href + '\'' : 'jgo(' + q.go + ')';
+    return '<button class="jpin ' + (q.side || 'r') + '" style="top:' + q.y + '%;--c:' + q.c + ';--off:' + q.len + 'px" onclick="' + on + '"><b>' + q.n + '</b><span>' + q.t + '</span><i style="top:50%;' + (q.side === 'l' ? 'right' : 'left') + ':-' + (q.len + 26) + 'px;width:' + (q.len + 26) + 'px"></i></button>';
+  }).join('');
+  return '<div class="jwrap"><span class="tag">🗺 ' + title + '</span><div class="jmap" style="aspect-ratio:' + (aspect || '240/460') + '">' + img + '<span class="jglow"></span>' + p + '</div><p class="jhint">اضغط على أي محطة لتنتقل إليها، وتابع الرحلة بالترتيب.</p></div>';
+};
+window.LESSON = {
+  id: 'g8s2-c8-l2', chapterKey: 'الفصل الثامن: التنظيم والتكاثر',
+  kicker: 'الفصل 8 · الدرس الثاني · رسائل الحياة', title: 'مراحل حياة الإنسان',
+  theme: { c1: '#0E7490', c2: '#164E63', tint: '#ECFEFF', acc: '#F472B6', sky1: '#CFFAFE', sky2: '#FDF2F8' },
+  stages: [
+    { short: 'الأهداف', icon: '🎯', title: 'رحلة العمر: ماذا ستكتشف اليوم؟', page: 65, time: 'دقيقتان', blocks: [
+      { t: 'hero', tag: 'الدرس الثاني: مراحل حياة الإنسان', img: 'aiLife', cap: 'مراحل حياة الإنسان', h: 'من خلية واحدة إلى جدٍّ حكيم!', text: '<b>تحدث تغيرات باستمرار في جسم الإنسان من قبل ولادته إلى مماته.</b> وتبدأ عملية نمو الإنسان وتطوره بحدوث <b>الإخصاب</b>.', q: 'كم مرحلة من مراحل الحياة تستطيع أن تعدّها الآن؟', a: 'بعد الولادة: الطفولة المبكرة، والطفولة، والمراهقة، والرشد، والشيخوخة؛ وقبلها: الإخصاب والنمو الجنيني.' },
+      { t: 'goals', list: ['تصف عملية إخصاب البويضة في الإنسان.', 'تكتب قائمة بالمراحل الرئيسة التي يمر بها الجنين خلال نموه.', 'تصف مراحل النمو بعد الولادة.'] },
+      { t: 'text', cls: 'tint', h: '⭐ الأهمية', list: ['تبدأ عملية نمو الإنسان وتطوره بحدوث الإخصاب.'] },
+    ] },
+    { short: 'الخبرات', icon: '🧠', title: 'شريط الذكريات: مراجعة المفردات', time: 'دقيقتان', blocks: [
+      { t: 'memory', lead: 'اضغط على السؤال ليكبُر ثم «تراجع».', items: [{ img: 'aiSugar', q: 'ما المواد الغذائية؟', a: 'مواد توجد في الطعام توفر الطاقة والأملاح لنمو الخلايا وتعويض التالف منها.' }, { img: 'aiEgg', q: 'ما الإباضة؟', a: 'خروج بويضة ناضجة من المبيض كل شهر تقريبًا.' }, { img: 'aiFemale', q: 'ما الرحم؟', a: 'كيس عضلي كمثري الشكل تتطور فيه البويضة المخصبة.' }], end: 'استعد لرحلة العمر… من خلية واحدة!' },
+    ] },
+    { short: 'المفردات', icon: '🔤', title: 'حقيبة الرحلة: المفردات', page: 65, time: 'دقيقتان', blocks: [
+      { t: 'vocab', h: 'المفردات الجديدة', items: [{ term: 'الحمل', icon: '🤰', def: 'الفترة الواقعة بين إخصاب البويضة حتى حدوث عملية الولادة.' }, { term: 'المرحلة الجنينية الأولى', icon: '🌱', def: 'المرحلة التي تكون فيها البويضة المخصبة متصلة بجدار الرحم.' }, { term: 'الكيس الرهلي (الأمنيوني)', icon: '💧', def: 'غشاء رقيق حول الجنين مملوء بسائل يحميه ويعمل عمل وسادة.' }, { term: 'الجنين', icon: '👶', def: 'اسمه في المراحل الجنينية المتأخرة بعد مرور شهرين على الحمل.' }, { term: 'الإجهاد الجنيني', icon: '🌍', def: 'المراحل التي يمر بها الطفل خلال عملية الولادة.' }] },
+    ] },
+    { short: 'خريطة الرحلة', icon: '🗺', title: 'خريطة العمر: محطات الدرس الثاني', page: 65, time: 'دقيقة', blocks: [
+      { t: 'html', raw: JMAP('محطات الدرس الثاني: رحلة العمر', [{ n: '١', t: 'الإخصاب', go: 4, y: 12, c: '#0E7490', side: 'r', len: 70 }, { n: '٢', t: 'التوائم', go: 5, y: 34, c: '#0891B2', side: 'r', len: 80 }, { n: '٣', t: 'النمو الجنيني', go: 6, y: 58, c: '#155E75', side: 'r', len: 70 }, { n: '٤', t: 'عملية الولادة', go: 7, y: 22, c: '#DB2777', side: 'l', len: 70 }, { n: '٥', t: 'مراحل الحياة', go: 8, y: 46, c: '#7C3AED', side: 'l', len: 80 }, { n: '٦', t: 'أرقام قياسية', go: 9, y: 70, c: '#B45309', side: 'l', len: 70 }], 'aiFetusWomb', '650/895') },
+    ] },
+    { short: 'الإخصاب', icon: '✨', title: 'المحطة ١: الإخصاب', page: 65, time: '12 دقيقة', blocks: [
+      { t: 'text', h: 'وظيفة الجهاز التناسلي', img: 'fig8', cap: 'الشكل 8: يفرز الحيوان المنوي إنزيمات تعمل على تمزق الغشاء المحيط بالبويضة فيستطيع اختراقها', list: ['قبل المجهر كان يُعتقد أن البويضة أو الحيوان المنوي إنسان متناهٍ في الصغر؛ ثم أظهرت تجارب البرمائيات (نهاية القرن ١٦) ضرورة اتصالهما، ولاحظ العلماء في القرن ١٧ أن الإنسان ينمو من بويضة تُلقّح.', '<span class="hl">الإخصاب</span>: اتحاد الحيوان المنوي بالبويضة، ويحدث في <b>قناة البيض</b>.', 'من بين ٢٠٠–٣٠٠ مليون حيوان منوي يصل عدة آلاف فقط، ويفرز أولها إنزيمًا يسهّل اختراق غشاء البويضة.', 'تتغير الشحنات الكهربائية للغشاء فيمنع دخول غيره، وتندمج النواتان فتتكون <b>الزيجوت</b> التي تبدأ الانقسامات المتساوية.'] },
+      { t: 'exp', h: 'مختبر الإخصاب والانقسام', lab: 'lab_fert', q: 'كيف تتحول بويضة واحدة إلى كرة من الخلايا؟', steps: ['أطلق الحيوانات المنوية وراقبها.', 'دع الإنزيم يفتح غشاء البويضة لأول حيوان منوي.', 'ادمج النواتين لتتكون الزيجوت.', 'ابدأ الانقسامات المتساوية.'], tools: ['نموذج مجهري للبويضة والحيوانات المنوية'], safety: 'لا توجد مخاطر.' },
+      { t: 'book', tag: 'الربط مع الكيمياء', page: 65, q: 'ما الذي يجعل الحيوان المنوي قادرًا على تلقيح البويضة؟', a: 'الإفرازات الكيميائية لجسم الأنثى تُحدث تغيرات في غشاء الحيوان المنوي، ثم يفرز إنزيمًا يسرّع تفاعلات تسهّل اختراق غشاء البويضة.' },
+    ] },
+    { short: 'التوائم', icon: '👯', title: 'المحطة ٢: التوائم', page: 66, time: '8 دقائق', blocks: [
+      { t: 'exp', h: 'مختبر التوائم: متماثلة أم غير متماثلة؟', lab: 'lab_twins', q: 'كيف تتكون التوائم المتماثلة؟ وكيف تتكون غير المتماثلة؟', steps: ['جرّب: بويضة واحدة وحيوان منوي واحد ثم انفصال.', 'جرّب: بويضتان وحيوانان منويان.', 'قارن بين النوعين.'], tools: ['نموذج الرحم'], safety: 'لا توجد مخاطر.' },
+      { t: 'text', h: 'أنواع التوائم', img: 'fig9', cap: 'الشكل 9: تختلف طريقة تكوّن التوائم المتماثلة عن طريقة تكوّن التوائم غير المتماثلة', list: ['<b>غير المتماثلة:</b> من بويضتين مختلفتين خُصبت كل منهما بحيوان منوي مختلف؛ ذكران أو أنثيان أو ذكر وأنثى.', '<b>المتماثلة:</b> من بويضة مخصبة واحدة تنقسم وتنفصل إلى خليتين؛ لهما <span class="hl">المادة الوراثية نفسها</span>، فهما ذكران أو أنثيان.', '<b>التوائم المتعددة:</b> عند إنتاج ثلاث بويضات أو أكثر، أو انفصال البويضة المخصبة إلى ثلاث خلايا أو أكثر.'] },
+      { t: 'mcq', q: 'ولدت امرأة توأمين أحدهما ذكر والآخر أنثى. ما نوعهما؟', o: ['متماثلان', 'غير متماثلين', 'من بويضة واحدة', 'لا يمكن أن يحدث'], a: 1, why: 'المتماثلة من بويضة واحدة ولها المادة الوراثية نفسها فتكون من الجنس نفسه.', hint: 'هل لهما المادة الوراثية نفسها؟' },
+      { t: 'book', tag: 'الربط مع المهن', page: 66, write: 1, q: 'القابلة القانونية: ابحث عن المواد التي تدرسها القابلة والمهارات الضرورية لتصبح قابلة قانونية.', a: 'إجابة مفتوحة: تدرس علوم التمريض والقبالة وتشريح الجسم ووظائفه ورعاية الأم والمولود، وتحتاج إلى مهارات التواصل والهدوء والعمل تحت الضغط.' },
+    ] },
+    { short: 'النمو الجنيني', icon: '🌱', title: 'المحطة ٣: النمو الجنيني', page: 66, time: '14 دقيقة', blocks: [
+      { t: 'text', h: 'الانزراع والمرحلة الجنينية الأولى', img: 'fig10', cap: 'الشكل 10: بعد عدة أيام من الانقسامات تلتصق كرة الخلايا بجدار الرحم وتبدأ في التطور', list: ['تنقسم البويضة المخصبة وهي تنتقل في قناة البيض، وبعد <b>٧ أيام تقريبًا</b> تلتصق بجدار الرحم، ويستمر النمو <b>تسعة أشهر</b>.', '<span class="hl">الحمل</span>: الفترة من الإخصاب حتى الولادة، ٣٨–٣٩ أسبوعًا.', '﴿ثُمَّ خَلَقْنَا النُّطْفَةَ عَلَقَةً فَخَلَقْنَا الْعَلَقَةَ مُضْغَةً فَخَلَقْنَا الْمُضْغَةَ عِظَامًا فَكَسَوْنَا الْعِظَامَ لَحْمًا﴾ [المؤمنون]', '<b>المرحلة الجنينية الأولى:</b> البويضة المخصبة متصلة بجدار الرحم، تتغذى من سوائل الرحم حتى تتكون المشيمة.'] },
+      { t: 'text', h: 'المشيمة والحبل السري والكيس الرهلي', img: 'aiFetusWomb', cap: 'الجنين داخل الرحم مع المشيمة والحبل السري والسائل الرهلي', list: ['يتصل الجنين بالمشيمة عبر <b>الحبل السري</b>، وتتبادل فيها المواد بين دم الأم ودم الجنين <span class="hl">دون أن يختلطا</span>.', 'ينقل الحبل السري المواد الغذائية والأكسجين ويخلّص الجنين من الفضلات، وقد تنتقل عبره العقاقير والسموم والمخلوقات الممرضة.', 'في الأسبوع الثالث يتشكل <b>الكيس الرهلي</b> المملوء بالسائل الرهلي، يعمل عمل وسادة للجنين.', 'أول شهرين: تتشكل الأعضاء ويبدأ القلب ينبض، وفي الأسبوع الخامس الرأس والعينان والأنف والفم، وفي السادس والسابع الأصابع.'] },
+      { t: 'book', tag: 'ماذا قرأت؟', page: 67, q: 'لماذا يجب امتناع الأم الحامل عن التدخين وتناول العقاقير الضارة؟', a: 'لأن المواد الضارة كالعقاقير والسموم تنتقل من دم الأم عبر المشيمة والحبل السري إلى الجنين فتضر نموه.' },
+      { t: 'text', h: 'المراحل الجنينية المتأخرة (الجنين)', img: 'aiFetusStages', cap: 'الجنين في الأسابيع ٦ و١٢ و٢٠ و٣٦', list: ['بعد شهرين يُسمى <span class="hl">الجنين</span>، وتكون أعضاؤه قد تكوّنت.', 'الشهر الثالث: ٨–٩ سم ويمص إبهامه · الرابع: تشعر الأم بحركته، ويمكن تحديد جنسه بالأشعة فوق الصوتية.', 'نهاية الشهر السابع: ٣٠–٣٨ سم، ثم يتراكم النسيج الدهني تحت الجلد.', 'الشهر التاسع: يستدير رأسه إلى أسفل الرحم، وطوله نحو ٥٠ سم ووزنه ٢٫٥–٣٫٥ كجم.'] },
+      { t: 'exp', h: 'تجربة: تمثيل مراحل نمو الجنين بيانيًّا (ص 68)', lab: 'lab_fetus', q: 'في أي شهر يزداد طول الجنين أكثر؟ وما متوسط زيادته الشهرية؟', steps: ['ارسم نقاط الجدول بالنقر في مكان كل نقطة.', 'صل النقاط بخط.', 'أجب عن أسئلة التحليل.'], tools: ['جدول نمو الجنين', 'ورق رسم بياني'], safety: 'لا توجد مخاطر.' },
+      { t: 'book', tag: 'سؤال الشكل 12', page: 68, q: 'صف التغيرات التي تحدث للجنين حتى نهاية الشهر السابع.', a: 'تتكون أعضاؤه، ويزداد طوله من ٨–٩ سم في الشهر الثالث إلى ٣٠–٣٨ سم في نهاية السابع، ويمص إبهامه، وتشعر الأم بحركته في الرابع، ثم يتراكم النسيج الدهني تحت الجلد.' },
+    ] },
+    { short: 'الولادة', icon: '🏥', title: 'المحطة ٤: عملية الولادة', page: 68, time: '8 دقائق', blocks: [
+      { t: 'text', h: 'عملية الولادة', img: 'fig13', cap: 'الشكل 13: تبدأ ولادة الجنين بالطلق، فيزداد عرض عنق الرحم، فيمر الجنين من خلاله', list: ['تبدأ بـ<span class="hl">المخاض (الطلق)</span>: انقباض عضلات الرحم، فيتمزق الكيس الرهلي ويخرج السائل.', 'تسبب الانقباضات اتساع عنق الرحم، ثم تدفع الجنين عبر المهبل.', 'يُفحص الجنين للتأكد من عدم التفاف الحبل السري حول عنقه، وتُزال السوائل من أنفه وفمه، وتخرج المشيمة خلال ساعة.'] },
+      { t: 'order', h: 'رتّب أحداث عملية الولادة', items: ['انقباض عضلات الرحم (المخاض)', 'تمزق الكيس الرهلي وخروج السائل', 'اتساع عنق الرحم', 'دفع الجنين عبر قناة الولادة', 'قطع الحبل السري', 'خروج المشيمة'] },
+      { t: 'text', h: 'العملية القيصرية وما بعد الولادة', img: 'aiNewborn', cap: 'المولود بعد الولادة', list: ['<b>العملية القيصرية:</b> عند صعوبة خروج الجنين (صغر حوض الأم أو عدم دوران رأسه) يُحدث جرح عبر جدار البطن ثم الرحم لاستخراجه.', '<b>بعد الولادة:</b> يوضع مشبكان على الحبل السري ويُقطع بينهما دون ألم، وقد يبكي الطفل لدخول الهواء إلى رئتيه، ومكان الاتصال يُسمى <span class="hl">السرة</span>.'] },
+      { t: 'book', tag: 'ماذا قرأت؟', page: 69, q: 'ما المقصود بالعملية القيصرية؟', a: 'عملية جراحية يُحدث فيها جرح عبر جدار بطن الأم ثم جدار الرحم لاستخراج الجنين، عندما يصعب خروجه من قناة الولادة.' },
+    ] },
+    { short: 'مراحل الحياة', icon: '🧭', title: 'المحطة ٥: مراحل الحياة بعد الولادة', page: 70, time: '14 دقيقة', blocks: [
+      { t: 'exp', h: 'مختبر رحلة العمر: رتّب مراحل الحياة', lab: 'lab_life', q: 'ما ترتيب مراحل الحياة بعد الولادة؟ وما أبرز ما يميز كلًّا منها؟', steps: ['انقر على الأشخاص من الأصغر إلى الأكبر.', 'اقرأ بطاقة كل مرحلة.', 'أجب عن سؤال التحقق.'], tools: ['بطاقات مراحل الحياة'], safety: 'لا توجد مخاطر.' },
+      { t: 'text', h: 'الطفولة المبكرة', img: 'fig15', cap: 'الشكل 15: نمو سريع في الجهازين العضلي والعصبي خلال الـ١٨ شهرًا الأولى', list: ['<span class="hl">الإجهاد الجنيني</span>: ينتقل المولود من بيئة مظلمة مائية ثابتة الحرارة إلى بيئة جديدة، ويتأقلم بسرعة.', 'يعتمد المولود على البالغين، على عكس صغار الثدييات الأخرى (صغير الناقة يمشي بعد ساعات).', 'تمتد حتى <b>١٨ شهرًا</b>، ويتضاعف وزنه حتى ثلاث مرات في السنة الأولى، ويصبح قادرًا على التفاعل مع بيئته.'] },
+      { t: 'text', h: 'الطفولة', img: 'fig16', cap: 'الشكل 16: يتباين نمو الأطفال وتطورهم', list: ['من نهاية الطفولة المبكرة حتى <b>البلوغ</b> أو ١٢ عامًا تقريبًا، والنمو أبطأ من قبل.', '٢–٣ سنوات: التحكم في المثانة والإخراج والنطق بجمل بسيطة · الرابعة: ارتداء الملابس بمساعدة قليلة · الخامسة: قراءة كلمات بسيطة.', 'هذه خطوط عريضة، والتطور يختلف من طفل إلى آخر.'] },
+      { t: 'text', h: 'المراهقة', img: 'fig17', cap: 'الشكل 17: يختلف مقدار تناسب أجزاء الجسم مع نموه وتطوره', list: ['تبدأ عند ١٢–١٣ عامًا، وأهم أحداثها <span class="hl">البلوغ الجنسي</span>؛ الإناث ٩–١٣ والذكور ١٣–١٦ عامًا.', 'تفرز الغدة النخامية هرمونات تطور الصفات الجنسية الثانوية: خشونة الصوت ونمو العضلات وشعر الوجه عند الذكور.', '<b>مرحلة النمو المفاجئ الأخيرة</b>: عند الإناث ١١–١٦، وعند الذكور ١٣–١٨ غالبًا.'] },
+      { t: 'book', tag: 'سؤال الشكل 17', page: 72, q: 'صف كيف يختلف مقدار تناسب حجم الرأس مع حجم الجسم؟', a: 'يكون الرأس كبيرًا نسبيًّا عند الرضيع والطفل، ثم تقل النسبة مع النمو لأن الجسم والأطراف تنمو أكثر من الرأس.' },
+      { t: 'book', tag: 'الربط مع الفيزياء', page: 72, write: 1, q: 'وضّح كيف يمكن أن يؤثر نمو أجزاء الجسم بنسب مختلفة في ممارسة المراهقين للرياضة.', a: 'تنمو الأرجل أطول من الجزء العلوي، فيتغير مركز الجاذبية ونقطة التوازن، فيقل التناسق بين الحركات مؤقتًا حتى يتدرب المراهق ويتكيف.' },
+      { t: 'text', h: 'الرشد والشيخوخة', img: 'aiGrandpa', cap: 'التغذي الجيد والتمارين يطيلان سلامة أجهزة الجسم', list: ['<b>الرشد:</b> من نهاية المراهقة حتى الشيخوخة، ويتوقف نمو العضلات والهيكل العظمي؛ وبين ٤٥ و٦٠ (متوسط العمر) تتناقص القوة الفيزيائية.', '<b>الشيخوخة:</b> بعد ٦٠ عامًا تفقد الأنسجة الرابطة مرونتها، وتصاب العظام بالهشاشة، ويضعف البصر والسمع، وتقل فاعلية القلب والرئتين.', 'سافر جلين إلى الفضاء عام ١٩٦٢م بعمر ٤٠، ثم عام ١٩٩٨م بعمر ٧٧ عامًا!'] },
+      { t: 'book', tag: 'ماذا قرأت؟', page: 73, q: 'ما التغيرات الفيزيائية التي تحدث خلال الشيخوخة؟', a: 'لا تعمل الخلايا كما كانت، وتفقد الأنسجة الرابطة والعضلات والمفاصل مرونتها، وتصاب العظام بالهشاشة، ويضعف البصر والسمع، وتقل فاعلية القلب والرئتين.' },
+    ] },
+    { short: 'أرقام قياسية', icon: '🏅', title: 'المحطة ٦: أرقام قياسية — حقائق عن الطفولة المبكرة', page: 76, time: '6 دقائق', blocks: [
+      { t: 'html', raw: '<span class="tag y">🏅 حقائق عن الثدييات (ص 76)</span><table class="t5"><tr><th>الثدييات</th><th>متوسط فترة الحمل</th><th>الوزن عند الولادة</th><th>الوزن عند البلوغ</th><th>متوسط العمر (سنوات)</th></tr><tr><td>الفيل الإفريقي</td><td>٢٢ شهرًا</td><td>١٣٦ kg</td><td>٤٩٨٩٫٥ kg</td><td>٣٥</td></tr><tr><td>الحوت الأزرق</td><td>١٢ شهرًا</td><td>١٨٠٠ kg</td><td>١٣٥٠٠٠ kg</td><td>٦٠</td></tr><tr><td>الإنسان</td><td>٩ أشهر</td><td>٣٫٣ kg</td><td>٥٩–٧٦ kg</td><td>٧٧</td></tr><tr><td>الدب البني</td><td>٧ أشهر</td><td>٠٫٢٣–٠٫٥ kg</td><td>٣٥٠ kg</td><td>٢٢٫٥</td></tr><tr><td>القطة</td><td>شهران</td><td>٩٩ g</td><td>٢٫٧–٧ kg</td><td>١٣٫٥</td></tr><tr><td>الكنغر</td><td>شهر</td><td>٠٫٧٥–١ g</td><td>٤٥ kg</td><td>٥</td></tr><tr><td>الهمستر الذهبي</td><td>أسبوعان ونصف</td><td>٠٫٣ g</td><td>١١٢ g</td><td>٢</td></tr></table><p>هناك <b>ثلاثة أنواع فقط</b> من بين ٤٠٠٠ نوع من الثدييات تتكاثر بالبيض: منقار البط، وآكل النمل الشوكي ذو الأنف الطويل، وذو الأنف القصير.</p>' },
+      { t: 'mcq', q: 'تطبيق الرياضيات: إذا حملت أنثى كل منها مرة واحدة في حياتها، فأيها تستغرق أطول فترة حمل مقارنة بعمرها؟', o: ['الإنسان', 'الحوت الأزرق', 'الفيل الإفريقي', 'القطة'], a: 2, why: '٢٢ شهرًا ÷ (٣٥ × ١٢ = ٤٢٠ شهرًا) ≈ ٥٫٢٪، وهي أكبر نسبة (الإنسان ≈ ١٪).', hint: 'اقسم فترة الحمل بالأشهر على العمر بالأشهر.' },
+    ] },
+    { short: 'مراجعة الدرس', icon: '📝', title: 'مراجعة الدرس الثاني (ص 73)', page: 73, time: '8 دقائق', blocks: [
+      { t: 'book', tag: 'اختبر نفسك', page: 73, no: 1, q: 'صف ما يحدث عندما تُخصَب البويضة.', a: 'يفرز الحيوان المنوي إنزيمًا يسهّل اختراق الغشاء فيدخل رأسه، وتتغير شحنات الغشاء فتمنع دخول غيره، وتندمج النواتان فتتكون الزيجوت التي تبدأ الانقسامات المتساوية.' },
+      { t: 'book', tag: 'اختبر نفسك', page: 73, no: 2, q: 'وضّح ما يحدث للجنين خلال أول شهرين من الحمل.', a: 'يلتصق بجدار الرحم، وتتكون المشيمة والحبل السري والكيس الرهلي، وتتشكل الأعضاء الرئيسة ويبدأ القلب ينبض، ويصل طوله إلى ٢٫٥ سم.' },
+      { t: 'book', tag: 'اختبر نفسك', page: 73, no: 3, q: 'صف الأحداث الرئيسة التي تحدث خلال مرحلة الولادة.', a: 'المخاض ← تمزق الكيس الرهلي ← اتساع عنق الرحم ← دفع الجنين عبر المهبل ← قطع الحبل السري ← خروج المشيمة.' },
+      { t: 'book', tag: 'اختبر نفسك', page: 73, no: 4, write: 1, q: 'سمِّ مرحلة النمو التي تمر بها الآن، وما التغيرات التي حدثت أو ستحدث لك؟', a: 'المراهقة: البلوغ الجنسي، والصفات الجنسية الثانوية، والنمو المفاجئ الذي لا تنمو فيه أجزاء الجسم بنسبة واحدة.' },
+      { t: 'book', tag: 'التفكير الناقد', page: 73, no: 5, q: 'لماذا يكون من الصعب مقارنة نمو المراهقين وتطورهم؟', a: 'لأن بداية المراهقة ونهايتها وسرعة النمو فيها تختلف من فرد إلى آخر، وبين الذكور والإناث.' },
+      { t: 'order', h: '٦ رتّب مراحل تطور الإنسان قبل الولادة', items: ['البويضة المخصبة (الزيجوت)', 'كرة من الخلايا تنزرع في الرحم', 'المرحلة الجنينية الأولى (أول شهرين)', 'المرحلة الجنينية المتأخرة (الجنين)', 'الولادة'] },
+    ] },
+    { short: 'المسابقة والخروج', icon: '🏆', title: 'المسابقة الختامية والملخص وبطاقة الخروج', page: 73, time: '7 دقائق', blocks: [
+      { t: 'uno', tag: 'مسابقة الدرس: بطاقات أونو', cards: [{ k: 'r', p: 1, q: 'ماذا يُسمى اتحاد الحيوان المنوي بالبويضة؟', a: 'الإخصاب.' }, { k: 'b', p: 1, q: 'ماذا تُسمى البويضة المخصبة؟', a: 'الزيجوت.' }, { k: 'g', p: 2, q: 'كم تتراوح فترة الحمل في الإنسان؟', a: '٣٨–٣٩ أسبوعًا.' }, { k: 'y', p: 2, q: 'ما الذي يربط الجنين بالمشيمة؟', a: 'الحبل السري.' }, { k: 'r', p: 3, q: 'في أي شهر يمكن تحديد جنس الجنين؟', a: 'الرابع.' }, { k: 'b', p: 2, q: 'ما الغشاء المملوء بسائل الذي يحمي الجنين؟', a: 'الكيس الرهلي.' }, { k: 'g', p: 3, q: 'متى تنتهي الطفولة المبكرة؟', a: 'عند ١٨ شهرًا تقريبًا.' }, { k: 'x', p: 4, q: 'تحدٍّ: لماذا تكون التوائم المتماثلة من الجنس نفسه؟', a: 'لأنها من بويضة مخصبة واحدة فلها المادة الوراثية نفسها.' }] },
+      { t: 'text', cls: 'tint', h: '📝 الخلاصة (ص 73)', list: ['<b>الإخصاب:</b> اتحاد الحيوان المنوي بالبويضة.', '<b>النمو الجنيني:</b> يبدأ الحمل منذ الإخصاب حتى الولادة.', '<b>الولادة:</b> تبدأ بالمخاض، انقباضات تدفع الجنين إلى خارج جسم الأم.', '<b>بعد الولادة:</b> الطفولة المبكرة حتى ١٨ شهرًا، والطفولة حتى ١٢ عامًا، والتكاثر ممكن في المراهقة، والشباب آخر مراحل التطور.'] },
+      { t: 'exit', q: 'بطاقة الخروج: أين يحدث الإخصاب عادة؟', o: ['الرحم', 'قناة البيض', 'المبيض', 'المهبل'], a: 1, why: 'ثم تنتقل البويضة المخصبة إلى الرحم.', hint: 'قبل وصول البويضة إلى الرحم.' },
+      { t: 'achieve', msg: 'رائع! تتبعت رحلة العمر من خلية واحدة إلى الشيخوخة… فلننتقل إلى مراجعة الفصل.' },
+      { t: 'links', h: 'تابع رحلتك', items: [{ t: '📋 مراجعة الفصل الثامن', href: 'g8s2-c8-review.html', cls: 'y' }, { t: '⚗ الدرس الأول: جهازا الغدد الصم والتكاثر', href: 'g8s2-c8-l1.html' }] },
+    ] },
+  ],
+};
+</script><script src="../assets/b03ca7485547fa3b.js"></script><script src="../assets/b26017f14b34878d.js"></script></body></html>
