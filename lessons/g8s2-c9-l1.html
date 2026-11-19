@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><script src="../tools/gradeview.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#14532D"><title>النباتات اللابذرية</title><style>@font-face{font-family:"Cairo";font-weight:600;font-display:swap;src:url(../assets/025baf0d675e2423.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:"Cairo";font-weight:600;font-display:swap;src:url(../assets/f659c03eabef9939.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Cairo";font-weight:700;font-display:swap;src:url(../assets/2d843a01ca09a451.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FEFC}
+@font-face{font-family:"Cairo";font-weight:700;font-display:swap;src:url(../assets/c93f95f05c222111.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+body{font-weight:600}h1,h2,.btn,.opt,.q{font-weight:700}
+/* محرك دروس الفصل الدراسي الثاني — خط عربي كبير وعريض، مناسب للمس والبروجكتر */
+:root{
+  --c1:#0E7490; --c2:#0B4F6C; --tint:#E0F2F7; --acc:#FACC15;
+  --ink:#0F172A; --ink2:#334155; --line:#CBD5E1; --card:#FFFFFF; --soft:#F1F5F9;
+  --good:#15803D; --goodbg:#DCFCE7; --bad:#B91C1C; --badbg:#FEE2E2; --warn:#B45309; --warnbg:#FEF3C7;
+  --f:"Cairo",Tahoma,"Segoe UI",sans-serif;
+  --h1:46px; --h2:38px; --tx:30px; --q:33px; --btn:28px; --lab:26px;
+  color-scheme:light;
+}
+@media (max-width:1100px){:root{--h1:40px;--h2:34px;--tx:28px;--q:30px;--btn:26px;--lab:24px}}
+@media (max-width:700px){:root{--h1:30px;--h2:26px;--tx:22px;--q:23px;--btn:21px;--lab:20px}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:var(--f);font-weight:600;color:var(--ink);direction:rtl;background:linear-gradient(180deg,var(--sky1,#BDE3F5) 0,var(--sky2,#EAF6FC) 340px,#F4FAFD 100%);font-size:var(--tx);line-height:1.6;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+[hidden]{display:none!important}
+img{max-width:100%;display:block}
+.app{display:flex;flex-direction:column;height:100dvh}
+/* الشريط العلوي */
+.top{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--c2);color:#fff;flex:none;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.top .tb{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:14px;padding:6px 16px;font-size:22px;font-weight:800;min-height:52px;white-space:nowrap}
+.top .tb:active{transform:scale(.97)}
+.top .ttl{flex:1;min-width:0;text-align:center;font-size:26px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:none}
+.top .ttl small{display:block;font-size:17px;color:var(--acc);font-weight:700;line-height:1.2}
+/* شريط المراحل */
+.nav{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;background:rgba(255,255,255,.75);backdrop-filter:blur(6px);flex:none;scrollbar-width:thin;border-bottom:2px solid var(--line)}
+.nav button{flex:none;border:2px solid var(--line);background:#fff;border-radius:16px;padding:6px 14px;font-size:20px;font-weight:800;display:flex;align-items:center;gap:6px;min-height:52px;color:var(--ink2)}
+.nav button .n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--soft);font-size:17px}
+.nav button[aria-current=true]{background:var(--c1);border-color:var(--c1);color:#fff}
+.nav button[aria-current=true] .n{background:var(--acc);color:var(--ink)}
+.nav button.done .n{background:var(--goodbg);color:var(--good)}
+/* المسرح */
+.stage{flex:1;overflow-y:auto;padding:22px clamp(14px,3vw,40px) 30px;scroll-behavior:smooth}
+.wrap{max-width:1500px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.sh{display:flex;align-items:center;gap:14px}
+.sh .ic{width:68px;height:68px;border-radius:20px;background:var(--c1);color:#fff;display:grid;place-items:center;font-size:36px;flex:none;box-shadow:0 8px 18px rgba(0,0,0,.15)}
+.sh h1{margin:0;font-size:var(--h1);line-height:1.25;color:var(--c2)}
+.sh .pg{margin-inline-start:auto;background:#fff;border:2px solid var(--line);border-radius:14px;padding:4px 14px;font-size:20px;color:var(--ink2);white-space:nowrap}
+h2{margin:0 0 10px;font-size:var(--h2);color:var(--c2);line-height:1.3}
+.card{background:var(--card);border-radius:24px;padding:22px 26px;box-shadow:0 10px 26px rgba(15,42,80,.10);border:2px solid #E2E8F0}
+.card.tint{background:var(--tint);border-color:transparent}
+.lead{font-size:calc(var(--tx) + 2px);color:var(--c2)}
+p{margin:0 0 10px}
+ul.bl{margin:0;padding:0 0 0 0;list-style:none;display:flex;flex-direction:column;gap:10px}
+ul.bl li{position:relative;padding-inline-start:38px}
+ul.bl li::before{content:"";position:absolute;inset-inline-start:6px;top:.62em;width:16px;height:16px;border-radius:5px;background:var(--c1);transform:rotate(45deg)}
+.two{display:grid;grid-template-columns:1.25fr 1fr;gap:22px;align-items:start}
+.two.rev{grid-template-columns:1fr 1.25fr}
+@media (max-width:900px){.two,.two.rev{grid-template-columns:1fr}}
+.fig{background:#fff;border-radius:20px;padding:10px;border:2px solid #E2E8F0}
+.fig img{border-radius:12px;margin:0 auto;max-height:62vh;object-fit:contain}
+.fig figcaption{font-size:20px;color:var(--ink2);padding:8px 6px 0;text-align:center}
+.tag{display:inline-block;background:var(--c1);color:#fff;border-radius:999px;padding:2px 16px;font-size:20px;margin-bottom:8px}
+.tag.y{background:var(--acc);color:var(--ink)}
+.tag.g{background:var(--good)}
+.hl{color:var(--c1)}
+.quote{background:#ECFDF5;border:2px solid #10B981;color:#065F46;border-radius:20px;padding:14px 20px;text-align:center}
+/* أزرار */
+.btn{border:0;border-radius:18px;padding:10px 26px;font-size:var(--btn);font-weight:800;background:var(--c1);color:#fff;min-height:60px;box-shadow:0 5px 0 rgba(0,0,0,.18);display:inline-flex;align-items:center;justify-content:center;gap:10px}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.btn.y{background:var(--acc);color:var(--ink)}
+.btn.g{background:var(--good)}
+.btn.gh{background:#fff;color:var(--ink);border:2px solid var(--line);box-shadow:0 4px 0 #CBD5E1}
+.btn.sm{font-size:22px;min-height:50px;padding:6px 18px}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.foot{display:flex;justify-content:space-between;gap:14px;padding:10px 14px;background:rgba(255,255,255,.85);border-top:2px solid var(--line);flex:none}
+/* أسئلة */
+.q{font-size:var(--q);line-height:1.5;margin-bottom:14px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:800px){.opts{grid-template-columns:1fr}}
+.opt{border:3px solid var(--line);background:#fff;border-radius:20px;padding:12px 18px;text-align:start;font-size:var(--tx);font-weight:800;min-height:72px;display:flex;align-items:center;gap:14px}
+.opt .l{flex:none;width:48px;height:48px;border-radius:50%;background:var(--tint);color:var(--c2);display:grid;place-items:center;font-size:26px}
+.opt:hover{border-color:var(--c1)}
+.opt.ok{border-color:var(--good);background:var(--goodbg)}
+.opt.ok .l{background:var(--good);color:#fff}
+.opt.no{border-color:var(--bad);background:var(--badbg);opacity:.85}
+.opt[disabled]{cursor:default}
+.fb{margin-top:14px;border-radius:18px;padding:14px 20px;font-size:calc(var(--tx) - 2px);display:none}
+.fb.show{display:block;animation:pop .3s}
+.fb.ok{background:var(--goodbg);color:#14532D;border:2px solid var(--good)}
+.fb.no{background:var(--badbg);color:#7F1D1D;border:2px solid var(--bad)}
+.fb.info{background:var(--warnbg);color:#78350F;border:2px solid #F59E0B}
+@keyframes pop{from{transform:scale(.97);opacity:0}to{transform:none;opacity:1}}
+.ans{display:none;margin-top:12px;background:var(--goodbg);border:2px solid var(--good);color:#14532D;border-radius:18px;padding:14px 20px}
+.ans.show{display:block;animation:pop .3s}
+body.nosol .solbtn{display:none!important}
+.bq{border-inline-start:10px solid var(--c1)}
+.bq .meta{font-size:20px;color:var(--ink2)}
+textarea.inp,input.inp{font:inherit;font-size:var(--tx);width:100%;border:3px solid var(--line);border-radius:16px;padding:10px 16px;background:#FBFDFF;color:var(--ink)}
+input.inp{width:auto;min-width:160px;text-align:center}
+.inp:focus{outline:none;border-color:var(--c1)}
+/* صح/خطأ */
+.tfi{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:2px dashed #E2E8F0;flex-wrap:wrap}
+.tfi .s{flex:1;min-width:260px}
+.tfi .b{display:flex;gap:10px}
+.tfi .b button{min-width:96px}
+.tfi .fix{flex-basis:100%;color:#7F1D1D;background:var(--badbg);border-radius:14px;padding:8px 16px;display:none;font-size:calc(var(--tx) - 3px)}
+.tfi .fix.show{display:block}
+/* ترتيب وتصنيف */
+.chips{display:flex;flex-wrap:wrap;gap:12px}
+.chip{border:3px solid var(--c1);background:#fff;border-radius:18px;padding:10px 18px;font-size:var(--tx);font-weight:800;min-height:62px}
+.chip.sel{background:var(--acc);border-color:#CA8A04}
+.chip.used{opacity:.35;pointer-events:none}
+.chip.ok{background:var(--goodbg);border-color:var(--good)}
+.chip.no{background:var(--badbg);border-color:var(--bad);animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.slots{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.slot{min-height:66px;border:3px dashed var(--line);border-radius:18px;display:flex;align-items:center;gap:12px;padding:6px 16px;background:#fff}
+.slot b{width:46px;height:46px;border-radius:50%;background:var(--c1);color:#fff;display:grid;place-items:center;flex:none;font-size:24px}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px}
+.cat{border:3px dashed var(--c1);border-radius:20px;padding:12px;min-height:170px;background:#fff;display:flex;flex-direction:column;gap:8px}
+.cat h3{margin:0;font-size:var(--lab);text-align:center;color:#fff;background:var(--c1);border-radius:12px;padding:4px}
+.cat.drop{background:var(--tint)}
+.cat .chip{font-size:calc(var(--tx) - 4px);min-height:50px;padding:6px 12px}
+/* بطاقات تفاعلية */
+.cardsg{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.flip{perspective:1200px;min-height:230px;border:0;background:none;padding:0}
+.flip .in{position:relative;width:100%;height:100%;min-height:230px;transition:transform .6s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .fa,.flip .fb2{position:absolute;inset:0;backface-visibility:hidden;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center;box-shadow:0 10px 22px rgba(0,0,0,.14)}
+.flip .fa{background:var(--cc,var(--c1));color:#fff;font-size:calc(var(--tx) - 1px)}
+.flip .fa small{font-size:20px;opacity:.95;background:rgba(255,255,255,.22);border-radius:999px;padding:2px 14px;margin-bottom:8px}
+.flip .fb2{background:#fff;color:var(--ink);border:4px solid var(--cc,var(--c1));transform:rotateY(180deg);font-size:calc(var(--tx) - 3px)}
+.uno .fa{border:8px solid #fff;outline:3px solid var(--cc)}
+.uno .fa::before{content:"";position:absolute;width:70%;height:55%;border-radius:50%;background:rgba(255,255,255,.18);transform:rotate(-30deg)}
+/* الفرق */
+.teams{display:flex;gap:10px;flex-wrap:wrap}
+.team{flex:1;min-width:150px;border-radius:18px;padding:8px 12px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:22px}
+.team b{font-size:34px}
+.team button{border:0;background:rgba(255,255,255,.25);color:#fff;border-radius:12px;width:48px;height:48px;font-size:28px}
+/* مؤقت */
+.timer{font-size:56px;font-weight:900;min-width:150px;text-align:center;background:#0F172A;color:var(--acc);border-radius:20px;padding:0 18px;font-variant-numeric:tabular-nums}
+.timer.low{color:#F87171;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.5}}
+/* محاكاة */
+.sim{background:#0B1E33;border-radius:24px;padding:14px;color:#fff}
+.sim canvas{width:100%;height:auto;display:block;border-radius:16px;background:#0F2740;touch-action:none}
+.ctrl{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:12px}
+.ctrl label{font-size:var(--lab);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+input[type=range]{width:min(420px,70vw);height:44px;accent-color:var(--acc)}
+.read{background:rgba(255,255,255,.1);border-radius:16px;padding:8px 16px;font-size:var(--lab)}
+.read b{color:var(--acc)}
+.sim .btn.gh{color:var(--ink)}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button{border:3px solid rgba(255,255,255,.4);background:transparent;color:#fff;border-radius:16px;padding:6px 18px;font-size:var(--lab);font-weight:800;min-height:56px}
+.seg button[aria-pressed=true]{background:var(--acc);color:var(--ink);border-color:var(--acc)}
+/* صندوق الأسرار وخريطة المفاهيم */
+.boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.mbox{border:0;border-radius:22px;min-height:160px;background:linear-gradient(160deg,#7C3AED,#4C1D95);color:#fff;font-size:64px;box-shadow:0 10px 0 #3B0764}
+.mbox.open{font-size:var(--tx);background:#fff;color:var(--ink);border:4px solid #7C3AED;box-shadow:none;padding:12px}
+.cmap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.cnode{border:3px solid var(--c1);background:#fff;border-radius:999px;padding:8px 22px;text-align:center;min-width:200px}
+.cnode.root{background:var(--c1);color:#fff;font-size:var(--h2)}
+.clinks{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;width:100%}
+.ccol{display:flex;flex-direction:column;align-items:center;gap:8px}
+.ccol .lk{font-size:20px;color:var(--ink2)}
+.blank{border:3px dashed var(--c1);border-radius:16px;min-width:200px;min-height:60px;background:#FFFBEB;padding:6px 14px;font-size:calc(var(--tx) - 2px);font-weight:800}
+.blank.ok{border-style:solid;border-color:var(--good);background:var(--goodbg)}
+/* شريط الذكريات */
+.strip{display:flex;gap:14px;overflow-x:auto;padding:34px 18px;scroll-snap-type:x mandatory;background:#111;border-radius:14px;position:relative;
+ background-image:repeating-linear-gradient(90deg,#f5f5f5 0 16px,transparent 16px 34px),repeating-linear-gradient(90deg,#f5f5f5 0 16px,transparent 16px 34px);
+ background-size:100% 14px,100% 14px;background-position:0 10px,0 calc(100% - 10px);background-repeat:repeat-x;background-color:#111}
+.strip .fa img{width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:8px}
+.strip .flip{flex:0 0 280px;scroll-snap-align:start;min-height:300px}.strip .flip .in{min-height:300px}
+.strip .end{flex:0 0 320px;border-radius:22px;background:var(--acc);display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;font-size:calc(var(--tx) - 2px)}
+/* إنجاز */
+.badge{display:flex;align-items:center;gap:22px;background:linear-gradient(135deg,#FEF3C7,#FFFFFF);border:4px solid #F59E0B;border-radius:28px;padding:22px}
+.badge .medal{font-size:96px;line-height:1}
+.stars{font-size:54px;letter-spacing:6px}
+.tonly{display:none!important}
+body.teacher .tonly{display:block!important}
+body.teacher span.tonly{display:inline!important}
+.tnote{background:#EEF2FF;border:2px dashed #6366F1;color:#3730A3;border-radius:16px;padding:10px 16px;font-size:21px}
+.panel{position:fixed;inset:auto 14px 90px auto;z-index:50;background:#fff;border-radius:22px;box-shadow:0 20px 50px rgba(0,0,0,.3);padding:16px;display:flex;flex-direction:column;gap:10px;width:min(420px,calc(100vw - 28px));font-size:22px}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#0F172A;color:#fff;border-radius:16px;padding:10px 22px;font-size:22px;z-index:60}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:70}
+table.dt{border-collapse:collapse;width:100%;font-size:calc(var(--tx) - 4px)}
+table.dt th,table.dt td{border:2px solid var(--line);padding:8px 12px;text-align:center}
+table.dt th{background:var(--c1);color:#fff}
+.stepper{display:flex;flex-direction:column;gap:10px;counter-reset:st}
+.stepper li{list-style:none;display:flex;gap:14px;align-items:flex-start}
+.stepper li::before{counter-increment:st;content:counter(st,arabic-indic);flex:none;width:52px;height:52px;border-radius:16px;background:var(--c1);color:#fff;display:grid;place-items:center;font-size:26px}
+.stepper{padding:0;margin:0}
+.safety{background:var(--badbg);border:2px solid var(--bad);color:#7F1D1D;border-radius:18px;padding:12px 18px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* شريط الذكريات: شريط فيلم بأسئلة مصغّرة */
+.film{margin-top:14px;background:#111;border-radius:14px;padding:30px 14px;position:relative;overflow-x:auto;
+ background-image:radial-gradient(circle at 50% 50%,#f5f5f5 5px,transparent 6px),radial-gradient(circle at 50% 50%,#f5f5f5 5px,transparent 6px);
+ background-size:34px 22px,34px 22px;background-repeat:repeat-x,repeat-x;background-position:0 4px,0 calc(100% - 4px)}
+.frames{display:flex;gap:14px;min-width:min-content}
+.frame{flex:1 0 230px;max-width:300px;min-height:200px;border:0;border-radius:6px;background:#fff;cursor:pointer;padding:8px;display:flex;flex-direction:column;gap:6px;align-items:stretch;font:inherit;color:#1f2937;transition:transform .2s,box-shadow .2s;position:relative}
+.frame:hover,.frame:focus-visible{transform:scale(1.04);box-shadow:0 0 0 4px var(--acc,#FACC15)}
+.frame img{width:100%;height:92px;object-fit:cover;border-radius:4px}
+.frame .fq{font-size:19px;line-height:1.55;text-align:center}
+.frame .fq small{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--c1);color:#fff;font-size:16px;margin-left:6px}
+.frame.seen::after{content:"✓";position:absolute;top:6px;left:8px;background:#16A34A;color:#fff;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:18px}
+/* بطاقات أونو المرقمة */
+.unog{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px;margin-top:16px}
+.unoc{aspect-ratio:2/3;border:8px solid #fff;outline:3px solid var(--cc);border-radius:18px;background:var(--cc);color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;font:inherit;box-shadow:0 6px 14px rgba(0,0,0,.18);transition:transform .2s}
+.unoc::before{content:"";position:absolute;width:85%;height:58%;border-radius:50%;background:#fff;transform:rotate(-30deg)}
+.unoc .un{position:relative;font-size:64px;font-weight:800;color:var(--cc);line-height:1}
+.unoc .uk{position:absolute;bottom:8px;font-size:16px;background:rgba(0,0,0,.25);border-radius:999px;padding:1px 10px}
+.unoc:hover,.unoc:focus-visible{transform:translateY(-6px) rotate(-2deg)}
+.unoc.used{opacity:.45;filter:grayscale(.5)}.unoc.used::after{content:"✓";position:absolute;top:6px;right:8px;font-size:22px}
+/* نافذة التكبير */
+.zm{position:fixed;inset:0;background:rgba(8,12,30,.72);display:grid;place-items:center;z-index:999;padding:16px;animation:zmf .25s}
+@keyframes zmf{from{opacity:0}to{opacity:1}}
+.zmbox{background:#fff;border-radius:24px;max-width:900px;width:100%;max-height:92vh;overflow:auto;padding:22px 26px;border-top:12px solid var(--cc);animation:zmz .3s}
+@keyframes zmz{from{transform:scale(.6)}to{transform:scale(1)}}
+.zmk{display:inline-block;background:var(--cc);color:#fff;border-radius:999px;padding:4px 18px;font-size:20px}
+.zmimg{display:block;max-width:100%;max-height:260px;margin:14px auto;border-radius:12px}
+.zmq{font-size:calc(var(--tx) + 8px);line-height:1.7;color:#111827;margin:14px 0;text-align:center}
+.zma{font-size:calc(var(--tx) + 4px);line-height:1.7;color:#1D4ED8;background:#EFF6FF;border-radius:14px;padding:12px 16px;text-align:center}
+.zmbar{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.btn.ghost{background:#fff;color:var(--c2);box-shadow:inset 0 0 0 3px var(--c2)}
+
+/* عرض البطاقة الواحدة بحجم الشاشة */
+.pgc[hidden]{display:none!important}
+.dots{display:flex;gap:6px;align-items:center;margin-inline-start:auto}
+.dots i{width:12px;height:12px;border-radius:50%;background:#CBD5E1}.dots i.on{background:var(--c1);width:26px;border-radius:8px}.dots i.ok{background:var(--good,#16A34A)}
+.dots b{font-size:18px;color:var(--ink2);margin-inline-start:6px}
+.sh{flex-wrap:wrap}
+.wrap{gap:14px}
+.sim canvas{max-height:calc(100dvh - 360px);width:auto;max-width:100%;margin:0 auto;min-height:150px}
+.sim h2{font-size:calc(var(--h2) - 6px);margin-bottom:4px}
+.sim > p{margin-bottom:6px}
+.ctrl{margin-top:8px;gap:10px}
+/* التجربة الافتراضية */
+.labh{font-size:var(--h2);color:var(--c2)}
+.labg{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;align-items:start}
+@media (max-width:900px){.labg{grid-template-columns:1fr}}
+.labsim{padding:10px}
+.labsteps{margin:0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:6px}
+.labsteps li{counter-increment:s;font-size:calc(var(--tx) - 6px);line-height:1.5;padding:6px 10px 6px 10px;border-radius:12px;background:#F1F5F9;color:#64748B;display:flex;gap:8px}
+.labsteps li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:#CBD5E1;color:#fff;display:grid;place-items:center;font-size:16px}
+.labsteps li.on{background:var(--tint);color:var(--ink);box-shadow:0 0 0 3px var(--c1)}.labsteps li.on::before{background:var(--c1)}
+.labsteps li.ok{color:var(--ink)}.labsteps li.ok::before{content:"✓";background:#16A34A}
+.labtools{margin-top:10px;font-size:18px;color:var(--ink2)}
+.labside .safety{margin-top:8px;font-size:18px}
+.labp{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.labstep{font-size:calc(var(--tx) - 4px);color:#FDE68A;display:flex;gap:10px;align-items:center}
+.labn{flex:none;width:34px;height:34px;border-radius:50%;background:#FACC15;color:#0F172A;display:grid;place-items:center;font-size:20px}
+.labbtns{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.labbtns label{font-size:var(--lab);display:flex;gap:10px;align-items:center}
+.labt{border-collapse:collapse;width:100%;background:#fff;color:#0F172A;border-radius:10px;overflow:hidden;font-size:18px}
+.labt th{background:var(--c1);color:#fff;padding:4px 8px}.labt td{padding:4px 8px;border-top:1px solid #E2E8F0;text-align:center}
+.labend{background:#ECFDF5;color:#065F46;border-radius:14px;padding:10px 14px;font-size:calc(var(--tx) - 6px);line-height:1.6}
+.labc .sim canvas{max-height:calc(100dvh - 470px)}
+/* الشاشات القصيرة (الأجهزة اللوحية أفقيًا) */
+@media (max-height:760px){:root{--h1:30px;--h2:28px;--tx:23px;--q:25px;--btn:22px;--lab:20px}
+ .sh .ic{width:46px;height:46px;font-size:26px;border-radius:14px}.card{padding:14px 18px}.stage{padding-top:12px}.btn{min-height:48px;padding:6px 18px}
+ .fig img{max-height:48vh}}
+
+@media (max-height:820px){
+ .top{padding:4px 10px}.top .tb{min-height:40px;font-size:18px;padding:4px 12px}.top .ttl{font-size:21px}.top .ttl small{font-size:14px}
+ .nav{padding:5px 10px;gap:6px}.nav button{min-height:40px;font-size:17px;padding:3px 10px}
+ .foot{padding:5px 10px}.foot .btn{min-height:44px;font-size:21px}
+ .sh h1{font-size:26px}.sh .ic{width:40px;height:40px;font-size:22px;border-radius:12px}.sh .pg{font-size:16px;padding:2px 10px}
+ .stage{padding:10px clamp(10px,2vw,28px) 14px}.wrap{gap:10px}
+ .tnote{display:none}
+}
+@media (max-height:820px){
+ .slots{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.slot{min-height:46px!important;padding:4px 10px!important}
+ .chip{padding:4px 12px!important}
+ .flip,.flip .in{min-height:150px}
+ .unog{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}.unoc .un{font-size:44px}
+ .frame{min-height:150px}.frame img{height:70px}
+}
+
+.labq{font-size:calc(var(--tx) - 2px);color:var(--c2);margin:4px 0 6px}
+.labinfo{margin-bottom:8px;font-size:18px}.labinfo summary{cursor:pointer;color:var(--ink2);font-size:18px}
+.labinfo .labsteps{margin-top:6px}
+.labsim{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(260px,1fr);gap:12px;align-items:start}
+.labsim canvas{grid-column:1;grid-row:1}
+.labsim .labp{grid-column:2;grid-row:1;margin-top:0}
+@media (max-width:760px){.labsim{grid-template-columns:1fr}.labsim .labp{grid-column:1;grid-row:2}}
+.labc .sim canvas{max-height:calc(100dvh - 330px);width:100%;height:auto}
+@media (max-height:820px){.sim > p{display:none}.sim h2{font-size:22px}}
+.labc .sim canvas,.sim canvas{width:auto;height:auto;max-width:100%}
+@media (max-height:820px) and (min-width:900px){
+ .sim:not(.labsim){display:grid;grid-template-columns:minmax(0,1.8fr) minmax(230px,1fr);column-gap:14px;align-items:center}
+ .sim:not(.labsim)>h2,.sim:not(.labsim)>p{grid-column:1/-1}
+ .sim:not(.labsim) canvas{grid-column:1;max-height:calc(100dvh - 290px)}
+ .sim:not(.labsim) .ctrl{grid-column:2;flex-direction:column;align-items:stretch;margin-top:0}
+ .sim:not(.labsim) .ctrl label{flex-direction:column;align-items:stretch}
+ .labc .sim canvas{max-height:calc(100dvh - 300px)}
+}
+.ctrl{min-width:0}.ctrl input[type=range]{width:100%;min-width:0;max-width:100%}
+.sim:not(.labsim) .ctrl .btn{max-width:100%}
+.labsim .labp{max-height:calc(100dvh - 290px);overflow:auto}
+.labc .labsim canvas{max-height:calc(100dvh - 290px)}
+
+/* استراتيجيات أسماء الطلاب */
+.hasw{position:relative}
+.whob{position:absolute;top:10px;left:12px;border:2px solid var(--line);background:#fff;color:var(--c2);border-radius:999px;padding:3px 14px;font:inherit;font-size:17px;cursor:pointer;z-index:2}
+.whob:hover{background:var(--tint)}
+.stu-badge{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:linear-gradient(90deg,#FEF3C7,#FFFBEB);border:3px solid #F59E0B;border-radius:16px;padding:6px 14px;margin-bottom:10px;font-size:calc(var(--tx) - 2px);animation:zmz .35s}
+.stu-badge b{font-size:calc(var(--tx) + 4px);color:#B45309}.stu-badge button{border:0;background:#fff;border-radius:10px;padding:2px 10px;font:inherit;font-size:18px;cursor:pointer}
+.team .tmem{display:block;font-size:13px;opacity:.9;font-weight:600}
+.stu-bg{position:fixed;inset:0;background:rgba(8,12,30,.72);z-index:1000;display:grid;place-items:center;padding:12px}
+.stu-box{background:#fff;border-radius:22px;width:min(1000px,100%);max-height:94vh;display:flex;flex-direction:column;overflow:hidden;font-size:20px}
+.stu-head{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--c2);color:#fff;font-size:22px}
+.stu-x{border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:10px;width:40px;height:40px;font-size:20px;cursor:pointer}
+.stu-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:8px 12px;border-bottom:2px solid var(--line)}
+.stu-tabs button{border:2px solid var(--line);background:#fff;border-radius:12px;padding:5px 12px;font:inherit;font-size:17px;cursor:pointer}
+.stu-tabs button[aria-pressed=true]{background:var(--c1);color:#fff;border-color:var(--c1)}
+.stu-body{padding:14px 18px;overflow:auto}
+.stu-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.stu-box .b{border:0;border-radius:12px;padding:8px 16px;font:inherit;font-size:18px;background:#E2E8F0;cursor:pointer}
+.stu-box .b.c{background:var(--c1);color:#fff}.stu-box .b.g{background:#16A34A;color:#fff}.stu-box .b.big{font-size:22px;padding:12px 22px}
+.stu-box select,.stu-box input,.stu-ta{font:inherit;font-size:18px;border:2px solid var(--line);border-radius:10px;padding:4px 8px}
+.stu-ta{width:100%;box-sizing:border-box;line-height:1.6}
+.stu-note,.stu-lead,.stu-empty{color:var(--ink2);font-size:17px}
+.stu-wheel{display:grid;grid-template-columns:minmax(0,1.2fr) 1fr;gap:16px;align-items:center}
+.stu-wc{position:relative}.stu-wc canvas{width:100%;max-height:62vh;aspect-ratio:1;display:block;margin:auto}
+.stu-ptr{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-style:normal;font-size:38px;color:#111}
+.stu-side{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+.stu-name{font-size:40px;font-weight:800;color:var(--c2);text-align:center;background:var(--tint);border-radius:16px;padding:12px;animation:zmz .35s}
+.stu-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px;margin:8px 0}
+.stu-card{aspect-ratio:3/4;border:0;border-radius:14px;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;font:inherit;font-size:30px;cursor:pointer;transition:transform .3s}
+.stu-card.on{background:#fff;color:var(--c2);border:3px solid var(--c1);font-size:16px;transform:rotateY(360deg)}
+.stu-hot{text-align:center}.stu-chair{font-size:70px}.stu-hn{font-size:44px;font-weight:800;color:#B91C1C;min-height:64px}.stu-hn.pop{animation:zmz .4s}
+.stu-tm{font-size:46px;font-weight:800;color:var(--c2)}.stu-tm.low{color:#DC2626}
+.stu-grps{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.stu-grp{border:3px solid var(--gc);border-radius:14px;padding:8px 12px}.stu-grp b{color:var(--gc)}.stu-grp ol{margin:6px 0 0;padding-inline-start:22px;font-size:17px}
+.stu-hon{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px}
+.stu-hr{display:flex;align-items:center;gap:8px;border:2px solid var(--line);border-radius:12px;padding:4px 10px}.stu-hr span{flex:1}.stu-hr b{color:#CA8A04;font-size:15px}
+.stu-hr button{border:0;background:#F1F5F9;border-radius:8px;padding:2px 8px;font:inherit;cursor:pointer}
+@media (max-width:760px){.stu-wheel{grid-template-columns:1fr}}
+.hasw .stu-badge{margin-inline-end:150px}
+.labc .labsim canvas{max-height:calc(100dvh - 330px)}
+
+.stu-web{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}.stu-web canvas{width:min(640px,100%);height:auto;background:#F8FAFC;border-radius:16px}.stu-web .stu-side{display:flex;flex-direction:column;gap:8px;min-width:220px;max-width:260px}.stu-web .stu-hn{font-size:30px}
+.stu-num{font-size:44px;font-weight:800;color:#B91C1C;min-width:60px;text-align:center}.stu-grp li.on{background:#FEF3C7;border-radius:8px;font-weight:800;color:#B91C1C}.stu-st{border:0;background:#fff;border-radius:8px;cursor:pointer;font:inherit}
+.stu-duel{display:flex;align-items:center;justify-content:center;gap:20px;margin:16px 0}.stu-dn{font-size:36px;font-weight:800;min-width:240px;text-align:center;padding:16px;border-radius:18px;background:#F1F5F9}.stu-dn.a{color:#1D4ED8}.stu-dn.b{color:#B91C1C}.stu-dn.win{background:#FEF3C7;box-shadow:0 0 0 4px #F59E0B}.stu-vs{font-size:48px}
+
+.stu-tk{display:flex;align-items:center;justify-content:center;gap:18px;margin:8px 0}.stu-tkn{font-size:28px;font-weight:700;min-width:200px;text-align:center;padding:10px 16px;border-radius:14px;background:#F1F5F9}.stu-tkn.win{background:#DCFCE7;color:#15803D}
+.stu-tkc{width:110px;height:110px;transform:rotate(-90deg)}.stu-tkc circle{fill:none;stroke-width:10}.stu-tkc .bgc{stroke:#E2E8F0}.stu-tkc .fgc{stroke:#16A34A;transition:stroke-dashoffset 1s linear}.stu-tks{font-size:34px;font-weight:700;min-width:60px;text-align:center}
+.stu-sp{font-size:22px;min-width:140px;text-align:center}.stu-mt{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}.stu-mc{display:flex;flex-direction:column;align-items:center;width:86px}.stu-mc.on b{color:#C2410C}
+.stu-mbar{position:relative;width:46px;height:130px;border-radius:10px;background:linear-gradient(#E0F2FE,#F8FAFC);border:2px solid #94A3B8;overflow:hidden}.stu-mbar i{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(#22C55E,#15803D);transition:height .5s}.stu-mbar span{position:absolute;top:2px;left:0;right:0;text-align:center;font-size:20px}.stu-mc b{font-size:14px;text-align:center;margin-top:4px}.stu-mc small{font-size:12px;color:#475569}
+
+/* الهوية البصرية للفصل الثامن «التنظيم والتكاثر»: رسائل الحياة — بنفسجي عميق، وردي الهرمونات، كهرماني الطاقة، فيروزي النمو */
+:root{--card:#FFFFFF}
+body{background-color:#F7FBF3;background-image:radial-gradient(circle at 12% 18%,rgba(101,163,13,.07) 0 60px,transparent 61px),radial-gradient(circle at 88% 30%,rgba(21,128,61,.07) 0 90px,transparent 91px),radial-gradient(circle at 70% 85%,rgba(180,83,9,.06) 0 70px,transparent 71px),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360' viewBox='0 0 360 360'%3E%3Cg fill='none' stroke-width='2'%3E%3Ccircle cx='60' cy='70' r='16' stroke='%2365A30D' stroke-opacity='.18'/%3E%3Ccircle cx='60' cy='70' r='5' fill='%2365A30D' fill-opacity='.12'/%3E%3Cpath d='M200 250q24-30 48 0t48 0' stroke='%2315803D' stroke-opacity='.14'/%3E%3Ccircle cx='280' cy='90' r='9' stroke='%23B45309' stroke-opacity='.16'/%3E%3Ccircle cx='296' cy='96' r='9' stroke='%23B45309' stroke-opacity='.16'/%3E%3C/g%3E%3C/svg%3E");background-size:auto,auto,auto,360px 360px;background-attachment:fixed}
+.top{background:linear-gradient(90deg,var(--c2),var(--c1) 55%,#14532D);border-bottom:4px solid var(--acc)}
+.top .ttl small{color:#FEF08A}
+.nav{background:rgba(251,247,255,.94);border-bottom:2px solid #DCEBD0}
+.nav button{border-color:#DCEBD0;background:#FFF;border-radius:999px}
+.nav button[aria-current=true]{background:linear-gradient(135deg,var(--c1),var(--c2));border-color:var(--c1)}
+.sh .ic{background:linear-gradient(135deg,var(--c1),#4D7C0F);border-radius:50%;box-shadow:0 0 0 4px var(--tint),0 0 0 8px rgba(101,163,13,.18)}
+.sh h1{color:var(--c2)}
+.card{background:#FFFFFF;border:2px solid #DCEBD0;border-radius:22px;box-shadow:0 10px 26px rgba(20,83,45,.09);position:relative;overflow:visible}
+.card::before{content:'';position:absolute;top:12px;left:14px;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,var(--c1) 0 3px,transparent 4px),var(--tint);box-shadow:0 0 0 3px var(--tint);opacity:.9;pointer-events:none}
+.card.tint{background:linear-gradient(180deg,var(--tint),#FFFFFF);border-color:#D9F99D}
+.tag{background:var(--c1);color:#fff;border-radius:999px}
+.tag.y{background:var(--acc);color:#14532D}
+.hl{background:linear-gradient(transparent 55%,rgba(250,204,21,.38) 55%)}
+.btn.y{background:#4D7C0F;color:#fff}
+.foot{background:rgba(251,247,255,.96);border-top:2px solid #DCEBD0}
+.fig img{border-radius:20px;border:5px solid #fff;box-shadow:0 8px 18px rgba(20,83,45,.16);background:#fff}
+.fig figcaption{font-style:normal;color:var(--c1)}
+/* خريطة الرحلة */
+.jwrap{text-align:center}
+.jwrap .tag{font-size:22px}
+.jmap{position:relative;height:min(470px,52dvh);margin:6px auto 0}
+.jbody{width:100%;height:100%;display:block;object-fit:contain;filter:drop-shadow(0 12px 20px rgba(20,83,45,.22));animation:jbreath 4s ease-in-out infinite}
+@keyframes jbreath{0%,100%{transform:scale(1)}50%{transform:scale(1.015)}}
+.jglow{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(250,204,21,.18),transparent 65%);pointer-events:none;animation:jpulse 3s ease-in-out infinite}
+@keyframes jpulse{0%,100%{opacity:.4}50%{opacity:1}}
+.jpin{position:absolute;transform:translateY(-50%);display:flex;align-items:center;gap:8px;border:3px solid var(--c);background:#fff;border-radius:999px;padding:6px 16px 6px 6px;font:inherit;font-weight:700;font-size:21px;color:#1F1F2E;cursor:pointer;white-space:nowrap;box-shadow:0 6px 14px rgba(0,0,0,.12);transition:transform .2s;z-index:2}
+.jpin:hover{transform:translateY(-50%) scale(1.06)}
+.jpin b{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--c);color:#fff;font-size:22px;animation:jglow 2s infinite}
+@keyframes jglow{0%,100%{box-shadow:0 0 0 0 var(--c)}50%{box-shadow:0 0 0 7px transparent}}
+.jpin i{position:absolute;height:0;border-top:3px dashed var(--c)}
+.jpin.r{left:calc(100% + var(--off,70px));flex-direction:row-reverse;padding:6px 6px 6px 16px}
+.jpin.l{right:calc(100% + var(--off,70px))}
+.jhint{color:var(--c2);font-size:20px;margin:8px 0 0}
+.labstep .labsay{display:inline}
+/* شريط الذكريات: الصور كاملة غير مقصوصة، والإطارات في المنتصف */
+.frame img{object-fit:contain!important;height:120px!important;background:#fff}
+:has(> .frame){justify-content:center!important;gap:18px}
+/* تكبير مشهد التجربة حتى تظهر تفاصيلها بوضوح */
+.labsim{grid-template-columns:minmax(0,2.7fr) minmax(220px,1fr)!important;gap:10px}
+.labc .labsim canvas,.labsim canvas{max-height:calc(100dvh - 345px)!important;width:100%!important;height:auto!important;border-radius:16px}
+.labsim .labp{max-height:calc(100dvh - 345px)!important}
+.labc .labq{margin:0 0 2px;font-size:calc(var(--tx) - 4px)}
+.labc .labinfo{margin-bottom:4px}
+.labstep{font-size:calc(var(--tx) - 6px)!important}
+/* صورة سؤال الكتاب بجانب السؤال حتى تظهر الإجابة دون تمرير */
+.bq .fig{float:left;width:36%;margin:4px 16px 6px 0!important}
+.bq .fig img{width:100%;max-height:44dvh;object-fit:contain}
+.bq .ans{overflow:hidden}
+.bq::after{content:'';display:block;clear:both}
+/* جدول تطبيق العلوم */
+.t5{border-collapse:collapse;margin:8px auto;font-size:20px;min-width:70%}
+.t5 th,.t5 td{border:2px solid #D9F99D;padding:4px 12px;text-align:center}
+.t5 th{background:var(--c1);color:#fff}
+.t5 tr:nth-child(even) td{background:var(--tint)}
+</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiFern": "../assets/e4d693bc55db72ae.webp", "aiFlower": "../assets/3c472dbbc50bffdf.webp", "aiHorsetail": "../assets/d165949041b11fd7.webp", "aiLeaf": "../assets/61fb5b6e6c293c6f.webp", "aiLiverwort": "../assets/a6fd8232fee2a43d.webp", "aiMedicinal": "../assets/02c37fb94052a0ee.webp", "aiMoss": "../assets/e92fb0a5fd09359c.webp", "fig1": "../assets/f33cd4c81f88dd2c.webp", "fig2": "../assets/b12754e5f6614509.webp", "fig3": "../assets/8778e7d06445e074.webp", "fig4": "../assets/7785fc264f4c6f49.webp", "fig8": "../assets/75c31fc97211690f.webp"};</script><script>/* «حديقة الحياة» — دروس الفصل التاسع */
+window.jgo = function (i) { var b = document.querySelectorAll('#nav button')[i]; if (b) b.click(); };
+window.JMAP = function (title, pins, key, aspect) {
+  // خريطة «رسائل الحياة»: صورة احترافية تحيط بها محطات الدرس
+  var src = (window.IMG && IMG[key]) || '';
+  var img = '<img loading="lazy" decoding="async" class="jbody" alt="" src="' + src + '">';
+  var p = pins.map(function (q) {
+    var on = q.href ? 'location.href=\'' + q.href + '\'' : 'jgo(' + q.go + ')';
+    return '<button class="jpin ' + (q.side || 'r') + '" style="top:' + q.y + '%;--c:' + q.c + ';--off:' + q.len + 'px" onclick="' + on + '"><b>' + q.n + '</b><span>' + q.t + '</span><i style="top:50%;' + (q.side === 'l' ? 'right' : 'left') + ':-' + (q.len + 26) + 'px;width:' + (q.len + 26) + 'px"></i></button>';
+  }).join('');
+  return '<div class="jwrap"><span class="tag">🗺 ' + title + '</span><div class="jmap" style="aspect-ratio:' + (aspect || '240/460') + '">' + img + '<span class="jglow"></span>' + p + '</div><p class="jhint">اضغط على أي محطة لتنتقل إليها، وتابع الرحلة بالترتيب.</p></div>';
+};
+window.LESSON = {
+  id: 'g8s2-c9-l1', chapterKey: 'الفصل التاسع: النباتات',
+  kicker: 'الفصل 9 · الدرس الأول · حديقة الحياة', title: 'النباتات اللابذرية',
+  theme: { c1: '#15803D', c2: '#14532D', tint: '#F0FDF4', acc: '#EAB308', sky1: '#DCFCE7', sky2: '#FEF9C3' },
+  stages: [
+    { short: 'الانطلاق', icon: '🚀', title: 'بوابة الفصل: النباتات', page: 84, time: '8 دقائق', blocks: [
+      { t: 'hero', tag: 'الوحدة الخامسة · الفصل التاسع: النباتات', img: 'aiMedicinal', cap: 'نباتات طبية', h: 'ما العلاقة بين النباتات والصيدلية؟', text: 'اكتشف الناس قبل أكثر من ٢٠٠٠ عام أن لحاء شجرة <b>الصفصاف</b> يقلل الألم ويخفض الحمّى، ثم استُخلص منه <b>الساليسين</b>، وصُنع من مركّب قريب منه <b>الأسبرين</b>. والعديد من الأدوية تُستخلص من النباتات أو من مركبات ذات أصل نباتي.', q: 'فيم تتشابه النباتات؟ اذكر ثلاث خصائص مشتركة.', a: 'تتكون من خلايا عديدة، ويحتوي معظمها على الكلوروفيل، ولها جذور أو أشباه جذور، وتحتاج جميعها إلى الماء.' },
+      { t: 'text', cls: 'tint', h: 'الفكرة العامة للفصل (ص 84)', list: ['<span class="hl">خلق الله تعالى النباتات متنوعة لكي توفر للإنسان والمخلوقات الحية الأخرى الغذاء والمأوى والأكسجين.</span>', '<b>الدرس الأول: النباتات اللابذرية</b> وهب الله عز وجل للنباتات اللابذرية تكيفات لكي تعيش وتنمو في البيئة الرطبة.', '<b>الدرس الثاني: النباتات البذرية</b> وهب الله عز وجل للنباتات البذرية تكيفات لكي تعيش وتنمو في بيئات مختلفة.'] },
+      { t: 'book', tag: 'التجربة الاستهلالية', page: 85, write: 1, q: 'كيف تستفيد من النباتات؟ اكتب مع زملائك قائمة بالأشياء التي تستخدمها يوميًّا ومصدرها نباتي، ثم سجّل الأشياء التي كانت تُصنع من النباتات قبل ١٠٠ عام وتُصنع اليوم من البلاستيك أو الفولاذ.', a: 'إجابة مفتوحة، ومن أمثلتها: الورق والكتب والأثاث الخشبي والملابس القطنية والأدوية والعطور · وكانت تُصنع من النباتات: الأواني والملاعق الخشبية والسلال والحبال والدلاء.' },
+      { t: 'text', cls: 'tint', h: '🗂 المطويات: النباتات (ص 85)', list: ['اطوِ ورقة طوليًّا بحيث يكون أحد طرفيها أقصر من الثاني ١٫٢٥ سم، ثم لُفّها عرضيًّا واطوِها إلى ثلاثة أجزاء.', 'افتح الورقة وقُص الجزء العلوي على طول الطيات لعمل ثلاثة أجزاء.', 'عنون الأجزاء: <span class="hl">ما أعرفه · ما أود معرفته · ما تعلمته</span>.'] },
+      { t: 'html', raw: '<span class="tag y">📖 أتهيأ للقراءة: تسجيل الملاحظات (ص 86)</span><p><b>أتعلّم:</b> أفضل طريقة لتذكر المعلومات كتابة ملاحظات جيدة: عبّر <span class="hl">بلغتك الخاصة</span>، وأعد صياغة الأفكار بإيجاز، وركّز على الأفكار الرئيسة والتفاصيل الداعمة الأهم.</p><p><b>أتدرّب:</b> كوّن جدولًا من عمودين: «الأفكار الرئيسة» و«التفاصيل الداعمة»، واقرأ الدرس الثاني ودوّن ثلاثة تفاصيل داعمة على الأقل لكل فكرة.</p><p><b>أطبّق:</b> بعد قراءة الفصل كوّن جدولًا بالأفكار الرئيسة، ومقابل كل منها تفصيلان داعمان على الأقل.</p>' },
+      { t: 'tf', h: 'توجيه القراءة وتركيزها (ص 87): قبل القراءة', items: [{ s: 'النباتات جميعها لها جذور وسيقان وأوراق.', ans: 0, fix: 'للنباتات اللاوعائية أشباه جذور وأشباه سيقان وأوراق.' }, { s: 'الطبقة الشمعية في النبات تقلل من عملية تبخر الماء.', ans: 1, fix: 'الكيوتيكل.' }, { s: 'تحتوي بعض النباتات على خلايا متخصصة تنقل الماء من الجذور إلى الأوراق.', ans: 1, fix: 'الخشب.' }, { s: 'تنتمي جميع أنواع الأقحوان إلى النوع نفسه.', ans: 0, fix: 'الأقحوان اسم يضم أنواعًا عدة.' }, { s: 'تكيّفت بعض أنواع الحزازيات للنمو في الصحراء.', ans: 1 }, { s: 'النباتات اللاوعائية تكون أحيانًا أول النباتات التي تنمو في البيئات التي تعرضت للدمار.', ans: 1, fix: 'الأنواع الرائدة.' }, { s: 'الفحم الحجري ما هو إلا أحافير ناتجة عن النباتات اللابذرية.', ans: 1 }, { s: 'الأوراق والجذور والسيقان من أجزاء النباتات الوعائية.', ans: 1 }, { s: 'جميع النباتات الدائمة الخضرة هي من الصنوبريات.', ans: 0, fix: 'الكثير من المعرّاة البذور دائمة الخضرة.' }, { s: 'النباتات الزهرية هي أكثر النباتات عددًا على سطح الأرض.', ans: 1, fix: 'أكثر من نصف النباتات المعروفة.' }] },
+    ] },
+    { short: 'الأهداف', icon: '🎯', title: 'حديقة الحياة: ماذا ستكتشف اليوم؟', page: 88, time: 'دقيقتان', blocks: [
+      { t: 'goals', list: ['تحدد الخصائص العامة لجميع النباتات.', 'تقارن بين النباتات الوعائية والنباتات اللاوعائية.', 'تميّز خصائص كل من النباتات اللابذرية اللاوعائية والنباتات الوعائية اللابذرية.', 'تحدد أهمية بعض النباتات اللاوعائية والوعائية.'] },
+      { t: 'text', cls: 'tint', h: '⭐ الأهمية', list: ['هيّأ الله النباتات لإنتاج الأكسجين والغذاء الضروريين لبقاء المخلوقات الحية الأخرى.', 'النباتات اللابذرية من أوائل النباتات التي تنمو في البيئة المدمرة، وتساعد على بناء التربة لنمو النباتات الأخرى.'] },
+    ] },
+    { short: 'الخبرات', icon: '🧠', title: 'شريط الذكريات: مراجعة المفردات', time: 'دقيقتان', blocks: [
+      { t: 'memory', lead: 'اضغط على السؤال ليكبُر ثم «تراجع».', items: [{ img: 'aiFlower', q: 'ما النوع؟', a: 'مجموعة من الأفراد لها صفات مشتركة وتتزاوج فيما بينها.' }, { img: 'aiLeaf', q: 'ما الكلوروفيل؟', a: 'صبغة خضراء في البلاستيدات الخضراء تمتص الضوء لصنع الغذاء.' }], end: 'استعد لرحلة في حديقة الحياة!' },
+    ] },
+    { short: 'المفردات', icon: '🔤', title: 'حقيبة المستكشف: المفردات', page: 88, time: 'دقيقتان', blocks: [
+      { t: 'vocab', h: 'المفردات الجديدة', items: [{ term: 'النباتات الوعائية', icon: '🪴', def: 'نباتات تحتوي على تراكيب أنبوبية تنقل الماء والمواد المغذية والمواد الأخرى داخل النبات.' }, { term: 'النباتات اللاوعائية', icon: '🌿', def: 'نباتات تفتقر إلى التراكيب الأنبوبية، وتستخدم طرائق أخرى لنقل الماء والمواد.' }, { term: 'أشباه الجذور', icon: '〰', def: 'جذور ليفية تثبت النبات اللاوعائي في مكانه بدل الجذور الحقيقية.' }, { term: 'الأنواع الرائدة', icon: '🚩', def: 'المخلوقات التي تنمو أولًا في البيئات الجديدة أو غير المستقرة.' }] },
+    ] },
+    { short: 'خريطة الرحلة', icon: '🗺', title: 'خريطة الحديقة: محطات الدرس الأول', page: 88, time: 'دقيقة', blocks: [
+      { t: 'html', raw: JMAP('محطات الدرس الأول: النباتات اللابذرية', [{ n: '١', t: 'ما النباتات؟', go: 5, y: 12, c: '#15803D', side: 'r', len: 40 }, { n: '٢', t: 'اللاوعائية', go: 6, y: 45, c: '#4D7C0F', side: 'r', len: 40 }, { n: '٣', t: 'الأنواع الرائدة', go: 7, y: 78, c: '#65A30D', side: 'r', len: 40 }, { n: '٤', t: 'الوعائية اللابذرية', go: 8, y: 20, c: '#0F766E', side: 'l', len: 40 }, { n: '٥', t: 'من النبات إلى الفحم', go: 9, y: 55, c: '#57534E', side: 'l', len: 40 }, { n: '٦', t: 'مراجعة الدرس', go: 10, y: 85, c: '#B45309', side: 'l', len: 40 }], 'aiMoss', '891/802') },
+    ] },
+    { short: 'ما النباتات؟', icon: '🌳', title: 'المحطة ١: ما النباتات؟ وكيف تُصنّف؟', page: 88, time: '10 دقائق', blocks: [
+      { t: 'text', h: 'خصائص النباتات', img: 'fig1', cap: 'الشكل 1: تتكون جميع النباتات من خلايا عديدة، ويحتوي معظمها على الكلوروفيل', list: ['﴿وَهُوَ الَّذِي أَنزَلَ مِنَ السَّمَاءِ مَاءً فَأَخْرَجْنَا بِهِ نَبَاتَ كُلِّ شَيْءٍ﴾ [الأنعام: 99]', 'اكتُشف بين <b>٢٦٠٫٠٠٠ و٣٠٠٫٠٠٠ نوع</b> من النباتات، وهي <span class="hl">مصدر رئيس لغذاء الإنسان</span> والمستهلكات الأخرى.', 'تختلف في أحجامها: من سرخسيات مائية مجهرية إلى السكويا العملاقة التي يزيد طولها على ١٠٠ م.', 'لجميعها <b>جذور أو أشباه جذور</b>، وتعيش في كل البيئات تقريبًا، و<b>تحتاج جميعها إلى الماء</b>.'] },
+      { t: 'text', h: 'تصنيف النباتات', img: 'aiFern', cap: 'السرخسيات نباتات وعائية', list: ['تُصنّف المملكة النباتية إلى مجموعات تُسمى <span class="hl">أقسامًا</span>، يقابلها <b>الشعبة</b> في الممالك الأخرى.', '<b>النباتات الوعائية:</b> لها تراكيب أنبوبية تنقل الماء والمواد المغذية داخل النبات.', '<b>النباتات اللاوعائية:</b> تفتقر إلى هذه التراكيب، وتستخدم طرائق أخرى لنقل الماء والمواد.'] },
+      { t: 'mcq', q: 'ما الذي يميّز النباتات الوعائية عن اللاوعائية؟', o: ['تحتوي على الكلوروفيل', 'لها تراكيب أنبوبية تنقل الماء والمواد', 'تحتاج إلى الماء', 'تتكون من خلايا عديدة'], a: 1, why: 'الخصائص الأخرى مشتركة بين جميع النباتات.', hint: 'فكّر في كلمة «وعاء».' },
+    ] },
+    { short: 'اللاوعائية', icon: '🌿', title: 'المحطة ٢: النباتات اللاوعائية اللابذرية', page: 89, time: '12 دقيقة', blocks: [
+      { t: 'text', h: 'نباتات بلا جذور حقيقية', img: 'fig2', cap: 'الشكل 2: الحزازيات والحشائش الكبدية والعشبة ذات القرون', list: ['لا تنمو من البذور، و<b>ليس لها جذور وسيقان وأوراق حقيقية</b>، وسُمكها خلايا قليلة، وطولها ٢–٥ سم.', 'لها <span class="hl">أشباه جذور</span> تثبتها، وتمتص الماء <b>مباشرة عبر غشاء الخلية والجدار الخلوي</b>، وتنمو في المناطق الرطبة.', 'ليس لها أزهار أو مخاريط، بل <b>تتكاثر بالأبواغ</b>.'] },
+      { t: 'text', h: 'الحزازيات والحشائش الكبدية والبوقية', img: 'aiLiverwort', cap: 'حشيشة الكبد: جسم مسطح على صخرة رطبة', list: ['<b>الحزازيات:</b> أشباه أوراق حول أشباه سيقان، وأشباه جذور من خلايا كثيرة، وتراكيب كأسية تحمل الأبواغ؛ وبعضها تكيّف للعيش في الصحراء.', '<b>الحشائش الكبدية:</b> ظُن في القرن التاسع أنها تعالج أمراض الكبد؛ جسمها مسطح، وأشباه جذورها من خلية واحدة.', '<b>الحشائش البوقية:</b> قطرها أقل من ٢٫٥ سم، وفي كل خلية بلاستيدة خضراء واحدة، وأبواغها في تراكيب تشبه البوق.'] },
+      { t: 'exp', h: 'تجربة: قياس كمية الماء الذي تمتصه الحزازيات (ص 89)', lab: 'lab_moss', q: 'كم من الماء يستطيع النبات الحزازي أن يمتص؟', steps: ['ضع ملاعق من نبات حزازي على قماش رقيق واربطها كرة.', 'قِس كتلة الكرة.', 'ضع ٢٠٠ مل من الماء في وعاء، ثم ضع فيه الكرة.', 'ارفع الكرة بعد ١٥ دقيقة وجففها، ثم قِس كتلتها وحجم الماء المتبقي.', 'اغسل يديك بعد لمس الحزازيات.'], tools: ['نبات حزازي', 'قماش رقيق', 'ميزان', 'وعاء', 'مخبار مدرج', 'ماء'], safety: 'اغسل يديك بعد لمس الحزازيات.' },
+      { t: 'sort', h: 'صنّف: حزازيات أم حشائش كبدية أم بوقية؟', cats: ['الحزازيات', 'الحشائش الكبدية', 'الحشائش البوقية'], items: [{ t: 'أشباه أوراق حول أشباه سيقان', c: 0 }, { t: 'تراكيب كأسية تحمل الأبواغ', c: 0 }, { t: 'جسم مسطح وأشباه جذور من خلية واحدة', c: 1 }, { t: 'ظُن أنها تعالج أمراض الكبد', c: 1 }, { t: 'بلاستيدة خضراء واحدة في كل خلية', c: 2 }, { t: 'أبواغ في تراكيب تشبه البوق', c: 2 }] },
+    ] },
+    { short: 'الأنواع الرائدة', icon: '🚩', title: 'المحطة ٣: النباتات اللاوعائية والبيئة', page: 90, time: '8 دقائق', blocks: [
+      { t: 'text', h: 'الأنواع الرائدة', img: 'fig3', cap: 'الشكل 3: تستطيع الحزازيات النمو على طبقة رقيقة من التربة التي تغطي الصخور', list: ['الحزازيات وحشيشة الكبد <b>ضروريتان للبيئة</b>؛ تقاوم الجفاف طويلًا، وتنمو في التربة القليلة السُّمك، وتحمل الرياح أبواغها.', 'تنمو أولًا في البيئات الجديدة كسهول <b>اللابة</b> وأراضي الغابات المحترقة، وتُسمى <span class="hl">الأنواع الرائدة</span>.', 'تحطم الصخور ببطء، وتتجمع موادها المتحللة بعد موتها فتتكون <b>تربة جديدة</b>.'] },
+      { t: 'exp', h: 'مختبر الأنواع الرائدة: من صخر عارٍ إلى غابة', lab: 'lab_pioneer', q: 'كيف تتحول صخور اللابة العارية إلى تربة تنمو فيها النباتات؟', steps: ['اضغط «مرور السنين» وراقب كل مرحلة.', 'لاحظ ما ينمو أولًا وكيف يتغير سُمك التربة.', 'أجب عن أسئلة التحقق.'], tools: ['نموذج سهل لابة'], safety: 'لا توجد مخاطر.' },
+      { t: 'book', tag: 'ماذا قرأت؟', page: 90, q: 'لماذا تُعد النباتات الرائدة مهمة في البيئات غير المستقرة؟', a: 'لأنها أول ما ينمو فيها، فتحطم الصخور، وتتكون من بقاياها المتحللة تربة جديدة تمكّن مخلوقات أخرى من الانتقال إلى المنطقة.' },
+    ] },
+    { short: 'الوعائية اللابذرية', icon: '🌾', title: 'المحطة ٤: النباتات الوعائية اللابذرية', page: 91, time: '14 دقيقة', blocks: [
+      { t: 'text', h: 'السرخسيات والحزازيات', img: 'fig4', cap: 'الشكل 4: الحزازيات والسرخسيات نباتات لابذرية', list: ['<span class="hl">تتشابه السرخسيات والحزازيات في التكاثر بالأبواغ لا بالبذور</span>.', 'تختلف السرخسيات باحتوائها على <b>أنسجة وعائية</b> من خلايا طويلة أنبوبية تحمل الماء والأملاح والغذاء.', 'الحزازيات تمتص كل خلية فيها الماء مباشرة فلا تنمو طويلًا، أما الوعائية فتنمو <b>أطول وأسمك</b>.'] },
+      { t: 'exp', h: 'مختبر النقل: لماذا تنمو الوعائية أطول؟', lab: 'lab_vascular', q: 'كيف يصل الماء إلى خلايا نبات لاوعائي ونبات وعائي؟', steps: ['اسقِ التربة تحت النباتين.', 'قارن سرعة وصول الماء ومسافته في كل نبات.', 'أجب عن سؤال التحقق.'], tools: ['نبات حزازي', 'نبات ذيل الحصان', 'ماء'], safety: 'لا توجد مخاطر.' },
+      { t: 'book', tag: 'سؤال الشكل 4', page: 91, q: 'وضّح لماذا تستطيع السرخسيات النمو أطول من الحزازيات؟', a: 'لأنها وعائية؛ نسيجها الوعائي يوزع الماء والمواد المغذية إلى جميع خلاياها.' },
+      { t: 'text', h: 'أنواع الوعائية اللابذرية', img: 'aiHorsetail', cap: 'ذيل الحصان وحزاز قدم الذئب', list: ['تضم: <b>السرخسيات، والصنوبريات الأرضية، والحزازيات المسمارية، وذيل الحصان</b>؛ ازدهرت قبل ٢٨٦–٣٦٠ مليون عام.', '<span class="hl">السرخسيات</span> أكبرها (١٢٠٠٠ نوع على الأقل)؛ لها سيقان وجذور وأوراق تُسمى <b>السعف</b>، وأبواغها على سطحها السفلي.', '<b>حزازيات قدم الذئب:</b> أوراق إبرية، وأبواغ في تركيب يشبه مخروط الصنوبر في نهاية الساق.', '<b>ذيل الحصان:</b> ساق مجوّفة ذات عُقد، وأبواغ في قمة الساق، وفيها السليكا فاستُخدم في التلميع وتنظيف أدوات الطبخ.'] },
+      { t: 'match', h: 'صِل كل نبات بصفته', pairs: [['السرخسيات', 'أوراقها تُسمى السعف'], ['ذيل الحصان', 'ساق مجوّفة فيها السليكا'], ['حزازيات قدم الذئب', 'أبواغ في تركيب يشبه المخروط'], ['الحزازيات', 'لاوعائية بأشباه جذور']] },
+      { t: 'html', raw: '<span class="tag y">🌎 تطبيق العلوم: ما أهمية الغابات المطيرة؟ (ص 91)</span><p>استُخدم <b>الصفصاف</b> لعلاج الصداع وفيه الساليسيلات، ونبتة <b>كف الثعلب</b> مصدر دواء مشكلات القلب. والغابات المطيرة فيها أكبر تنوع من المخلوقات، وكثير من نباتاتها غير معروف، ويتوقع بعض العلماء تدمير معظمها خلال الثلاثين سنة القادمة.</p><p><b>حل المشكلة:</b> ١ ما الدولة الأكبر في نسبة الدمار؟ ٢ أين يدرس العلماء النباتات قبل تدميرها؟ ٣ كيف يؤثر التدمير في البحث عن أدوية جديدة؟</p>' },
+      { t: 'book', tag: 'تطبيق العلوم', page: 91, q: 'توقّع كيف يمكن أن يؤثر تدمير الغابات المطيرة في البحث عن أدوية جديدة من النباتات؟', a: 'قد تنقرض أنواع نباتية قبل أن يكتشفها العلماء ويدرسوها، فنفقد مصادر محتملة لأدوية جديدة.' },
+    ] },
+    { short: 'من النبات إلى الفحم', icon: '⛏', title: 'المحطة ٥: أهمية النباتات اللابذرية', page: 93, time: '8 دقائق', blocks: [
+      { t: 'exp', h: 'مختبر تكوّن الفحم الحجري', lab: 'lab_coal', q: 'كيف تحولت نباتات المستنقعات القديمة إلى فحم حجري؟', steps: ['انقر على مراحل التكوّن بالترتيب الصحيح.', 'راقب تراكم الطبقات مع الزمن والضغط.', 'أجب عن سؤال التحقق.'], tools: ['بطاقات المراحل'], safety: 'لا توجد مخاطر.' },
+      { t: 'text', h: 'الخث واستخدامات النباتات اللابذرية', img: 'fig8', cap: 'الشكل 8: يُستخدم الخث في بعض الدول وقودًا', list: ['في <b>المستنقعات</b> يقلل التراب المشبع بالماء سرعة تحلل النباتات، فتتحول بالضغط إلى <span class="hl">الخث</span>؛ يُتخذ وقودًا لرخصه، ويحسّن نوعية التربة.', 'تُزرع السرخسيات للزينة، وتُصنع بعض أنواعها والحزازيات سلالًا، وتُطحن سيقان ذيل الحصان الجافة.', 'استُخدمت السرخسيات علاجًا شعبيًّا للحروق واللدغات والحمى وقشرة الرأس.'] },
+    ] },
+    { short: 'مراجعة الدرس', icon: '📝', title: 'مراجعة الدرس الأول (ص 94)', page: 94, time: '10 دقائق', blocks: [
+      { t: 'book', tag: 'اختبر نفسك', page: 94, no: 1, q: 'اكتب خصائص النباتات.', a: 'خلايا عديدة، ومعظمها يحتوي على الكلوروفيل، ولها جذور أو أشباه جذور، وتحتاج إلى الماء، ووهبها الله تكيفات للعيش في معظم البيئات.' },
+      { t: 'book', tag: 'اختبر نفسك', page: 94, no: 2, q: 'قارن بين خصائص النباتات الوعائية والنباتات اللاوعائية.', a: 'الوعائية: تراكيب أنبوبية تنقل الماء والمواد، وتنمو أطول · اللاوعائية: بلا هذه التراكيب، سُمكها خلايا قليلة، وتمتص الماء مباشرة.' },
+      { t: 'book', tag: 'اختبر نفسك', page: 94, no: 3, q: 'قارن بين خصائص الحزازيات والسرخسيات.', a: 'كلتاهما لابذرية تتكاثر بالأبواغ · السرخسيات وعائية لها سيقان وجذور وسعف، والحزازيات لاوعائية لها أشباه جذور وطولها ٢–٥ سم.' },
+      { t: 'book', tag: 'اختبر نفسك', page: 94, no: 4, q: 'حدّد الظروف التي قد تشاهد فيها نمو نباتات رائدة كالحزازيات والحشائش الكبدية.', a: 'في البيئات الجديدة أو غير المستقرة: سهول اللابة، وأراضي الغابات المحترقة، والصخور المغطاة بطبقة رقيقة من التربة.' },
+      { t: 'book', tag: 'اختبر نفسك', page: 94, no: 5, q: 'لخّص وظائف الأنسجة الوعائية.', a: 'تنقل الماء والأملاح والغذاء إلى جميع خلايا النبات، فيستطيع النمو أطول وأسمك.' },
+      { t: 'book', tag: 'التفكير الناقد', page: 94, no: 6, q: 'إذا وضعت لوحًا على العشب عدة أيام فماذا يحدث للعشب تحته؟ ولماذا؟ وما العلاقة بين توليد الكهرباء بحرق الفحم والنباتات الوعائية اللابذرية؟', a: 'يصفرّ ويضعف لأنه لا يصله الضوء فلا يصنع غذاءه · الفحم الحجري تكوّن من بقايا نباتات لابذرية قديمة، فالطاقة المخزنة فيها تتحرر عند حرقه.' },
+      { t: 'book', tag: 'تطبيق الرياضيات', page: 94, no: 7, q: 'استعمال الكسور: هناك حوالي ٨ آلاف نوع من الحشائش الكبدية و٩ آلاف نوع من الحشائش البوقية. قدّر الكسر الذي يمثل الحزازيات من النباتات اللاوعائية اللابذرية؟', a: 'تنبيه: السؤال كما ورد في الكتاب لا يذكر عدد أنواع الحزازيات، فلا يمكن حساب كسرها بالمعطيات وحدها. بالمعطيات الموجودة: الحشائش الكبدية ٨⁄١٧ والبوقية ٩⁄١٧ من مجموعهما.' },
+    ] },
+    { short: 'المسابقة والخروج', icon: '🏆', title: 'المسابقة الختامية والملخص وبطاقة الخروج', page: 94, time: '7 دقائق', blocks: [
+      { t: 'uno', tag: 'مسابقة الدرس: بطاقات أونو', cards: [{ k: 'r', p: 1, q: 'ماذا تُسمى الجذور الليفية في النباتات اللاوعائية؟', a: 'أشباه الجذور.' }, { k: 'b', p: 1, q: 'بماذا تتكاثر النباتات اللابذرية؟', a: 'بالأبواغ.' }, { k: 'g', p: 2, q: 'ما أكبر مجموعات النباتات الوعائية اللابذرية؟', a: 'السرخسيات.' }, { k: 'y', p: 2, q: 'ماذا تُسمى أوراق السرخسيات؟', a: 'السعف.' }, { k: 'r', p: 3, q: 'ما المادة في ساق ذيل الحصان التي جعلته يُستخدم في التلميع؟', a: 'السليكا.' }, { k: 'b', p: 2, q: 'ماذا تُسمى المخلوقات التي تنمو أولًا في البيئات الجديدة؟', a: 'الأنواع الرائدة.' }, { k: 'g', p: 3, q: 'ما المادة التي تتكون من نباتات المستنقعات وتُتخذ وقودًا؟', a: 'الخث.' }, { k: 'x', p: 4, q: 'تحدٍّ: لماذا لا تنمو الحزازيات طويلًا؟', a: 'لأنها لاوعائية تمتص كل خلية الماء مباشرة من البيئة.' }] },
+      { t: 'text', cls: 'tint', h: '📝 الخلاصة (ص 94)', list: ['<b>ما النباتات؟</b> لها صفات مشتركة، وتُقسم إلى وعائية ولاوعائية، وتنقل الأنسجة الوعائية الماء والمواد المغذية.', '<b>اللاوعائية اللابذرية:</b> الحزازيات والحشائش الكبدية والبوقية؛ طبقة رقيقة من الخلايا، وتنتج أبواغًا.', '<b>الوعائية اللابذرية:</b> السرخسيات وقدم الذئب وذيل الحصان؛ تنمو أطول وتعيش فترة أطول بلا ماء.', '<b>الأهمية:</b> تكوين تربة جديدة، وتكوّن الفحم الحجري من نباتات قديمة.'] },
+      { t: 'exit', q: 'بطاقة الخروج: أي النباتات الآتية وعائي لابذري؟', o: ['الحزازيات', 'حشيشة الكبد', 'ذيل الحصان', 'الصنوبر'], a: 2, why: 'له نسيج وعائي ويتكاثر بالأبواغ.', hint: 'له نسيج وعائي ولا ينتج بذورًا.' },
+      { t: 'achieve', msg: 'أحسنت يا مستكشف الحديقة! تعرّفت النباتات اللابذرية… فلننتقل إلى النباتات البذرية.' },
+      { t: 'links', h: 'تابع رحلتك', items: [{ t: '🌻 الدرس الثاني: النباتات البذرية', href: 'g8s2-c9-l2.html', cls: 'y' }, { t: '📋 مراجعة الفصل التاسع', href: 'g8s2-c9-review.html' }] },
+    ] },
+  ],
+};
+</script><script src="../assets/c926d7ad98056084.js"></script><script src="../assets/b26017f14b34878d.js"></script></body></html>
