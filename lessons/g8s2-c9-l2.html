@@ -402,7 +402,7 @@ body{background-color:#F7FBF3;background-image:radial-gradient(circle at 12% 18%
 .t5 th,.t5 td{border:2px solid #D9F99D;padding:4px 12px;text-align:center}
 .t5 th{background:var(--c1);color:#fff}
 .t5 tr:nth-child(even) td{background:var(--tint)}
-</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiFern": "../assets/e4d693bc55db72ae.webp", "aiFlower": "../assets/3c472dbbc50bffdf.webp", "aiLeaf": "../assets/61fb5b6e6c293c6f.webp", "aiMonoDi": "../assets/a440ee653f6f7f8e.webp", "aiPine": "../assets/f2ae0e2b9b9b8640.webp", "aiRoots": "../assets/acb11465514e0637.webp", "aiStem": "../assets/412217938346e5d8.webp", "aiStomata": "../assets/fdb27d37ae904702.webp", "fig10": "../assets/33b163c1033b318b.webp", "fig12": "../assets/b90ff51d6d51d50f.webp", "fig13": "../assets/4cd9148aeed42935.webp", "fig16": "../assets/3a0563ca9b1012c8.webp", "tbl1": "../assets/d363d34f7d0efc12.webp"};</script><script>/* «حديقة الحياة» — دروس الفصل التاسع */
+</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiCelery": "../assets/808e2787283c1b09.webp", "aiFern": "../assets/e4d693bc55db72ae.webp", "aiFlower": "../assets/3c472dbbc50bffdf.webp", "aiLeaf": "../assets/61fb5b6e6c293c6f.webp", "aiMonoDi": "../assets/a440ee653f6f7f8e.webp", "aiPine": "../assets/f2ae0e2b9b9b8640.webp", "aiRoots": "../assets/acb11465514e0637.webp", "aiStem": "../assets/412217938346e5d8.webp", "aiStomata": "../assets/fdb27d37ae904702.webp", "fig10": "../assets/33b163c1033b318b.webp", "fig12": "../assets/b90ff51d6d51d50f.webp", "fig13": "../assets/4cd9148aeed42935.webp", "fig16": "../assets/3a0563ca9b1012c8.webp", "tbl1": "../assets/d363d34f7d0efc12.webp"};</script><script>/* «حديقة الحياة» — دروس الفصل التاسع */
 window.jgo = function (i) { var b = document.querySelectorAll('#nav button')[i]; if (b) b.click(); };
 window.JMAP = function (title, pins, key, aspect) {
   // خريطة «رسائل الحياة»: صورة احترافية تحيط بها محطات الدرس
@@ -413,6 +413,11 @@ window.JMAP = function (title, pins, key, aspect) {
     return '<button class="jpin ' + (q.side || 'r') + '" style="top:' + q.y + '%;--c:' + q.c + ';--off:' + q.len + 'px" onclick="' + on + '"><b>' + q.n + '</b><span>' + q.t + '</span><i style="top:50%;' + (q.side === 'l' ? 'right' : 'left') + ':-' + (q.len + 26) + 'px;width:' + (q.len + 26) + 'px"></i></button>';
   }).join('');
   return '<div class="jwrap"><span class="tag">🗺 ' + title + '</span><div class="jmap" style="aspect-ratio:' + (aspect || '240/460') + '">' + img + '<span class="jglow"></span>' + p + '</div><p class="jhint">اضغط على أي محطة لتنتقل إليها، وتابع الرحلة بالترتيب.</p></div>';
+};
+window.GAL = function (title, items) {
+  // معرض صور الدرس (صور المعلم الاحترافية)
+  var w = items.length > 2 ? '31%' : items.length > 1 ? '46%' : '70%';
+  return '<style>.gal{text-align:center}.galrow{display:flex;gap:18px;justify-content:center;align-items:flex-start;flex-wrap:wrap;margin-top:12px}.gal figure{margin:0;background:#fff;border-radius:22px;padding:8px;box-shadow:0 10px 22px rgba(15,23,42,.14);border:2px solid var(--tint)}.gal img{display:block;max-height:min(50dvh,430px);max-width:100%;margin:auto;object-fit:contain;border-radius:16px}.gal figcaption{font-weight:700;color:var(--c1);margin-top:8px;font-size:20px;line-height:1.5}</style><div class="gal"><span class="tag">🖼 ' + title + '</span><div class="galrow">' + items.map(function (q) { return '<figure style="max-width:' + w + '"><img loading="lazy" decoding="async" alt="" src="' + ((window.IMG && IMG[q.g]) || '') + '"><figcaption>' + q.c + '</figcaption></figure>'; }).join('') + '</div></div>';
 };
 window.LESSON = {
   id: 'g8s2-c9-l2', chapterKey: 'الفصل التاسع: النباتات',
@@ -441,6 +446,7 @@ window.LESSON = {
     ] },
     { short: 'الساق والجذور', icon: '🌱', title: 'المحطة ٢: الساق والجذور', page: 96, time: '12 دقيقة', blocks: [
       { t: 'text', h: 'الساق', img: 'fig10', cap: 'الشكل 10: لبعض النباتات سيقان ذات وظائف متخصصة', list: ['توجد عادة فوق التربة، وتحمل الفروع والأوراق والتراكيب التكاثرية، وتنقل المواد بين الأوراق والجذور.', '<b>عشبية</b> طرية خضراء كالنعناع، أو <b>خشبية</b> قاسية في الأشجار تُستخدم في صنع الأثاث.', 'درنات البطاطس سيقان تحت الأرض تخزن الغذاء، والصبار يخزن الماء، والعنب يتسلق بسيقانه.'] },
+      { t: 'html', raw: GAL('انتقال الماء في الساق', [{ g: 'aiCelery', c: 'ساق الكرفس تنقل الماء الملوّن إلى الأوراق' }]) },
       { t: 'exp', h: 'تجربة: ملاحظة انتقال الماء في النبات (ص 96)', lab: 'lab_onionv', q: 'كيف يرتبط موقع ملون الطعام داخل البصل مع النسيج الوعائي؟', steps: ['ضع الماء في وعاء شفاف حتى ارتفاع ١٫٢ سم، وأضف ٢٥ قطرة من ملون طعام أحمر.', 'ضع نهايات جذور بصلة خضراء في الوعاء دون قطعها، واغسل يديك.', 'في اليوم التالي تفحّص البصلة، ثم انزع أوراقها وتفحّصها.'], tools: ['بصلة خضراء', 'وعاء شفاف', 'ملون طعام أحمر', 'ماء', 'مسطرة'], safety: 'لا تأكل البصلة.' },
       { t: 'text', h: 'الجذور', img: 'aiRoots', cap: 'المجموع الجذري قد يكون أكبر من الساق والأوراق', list: ['تمتص الماء والأملاح المذابة وتنقلها إلى الأوراق، و<span class="hl">تثبت النبات</span> ضد الرياح والمياه الجارية.', 'تخزن الطعام كالجزر والشمندر، وتخزن الماء في نباتات المناطق الجافة.', 'تمتص الأكسجين للتنفس الخلوي؛ لذا ينمو جزء من جذور نباتات الماء في الهواء.'] },
       { t: 'book', tag: 'ماذا قرأت؟', page: 97, q: 'ما وظائف الجذور في النباتات؟', a: 'امتصاص الماء والأملاح ونقلها، وتثبيت النبات ودعمه، وتخزين الطعام والماء، وامتصاص الأكسجين.' },

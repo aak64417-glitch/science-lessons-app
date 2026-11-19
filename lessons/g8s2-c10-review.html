@@ -461,7 +461,7 @@ body{background-color:#F2F8FA;background-image:radial-gradient(circle at 12% 18%
 .t5 th,.t5 td{border:2px solid #A5F3FC;padding:4px 12px;text-align:center}
 .t5 th{background:var(--c1);color:#fff}
 .t5 tr:nth-child(even) td{background:var(--tint)}
-</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiRenew": "../assets/f53d9ea06dec420b.webp", "aiWater": "../assets/8c10b6b32323e006.webp", "cooker138": "../assets/8b06ebc4a4e48cad.webp", "cooker139": "../assets/2c194daeb8944339.webp", "dam142": "../assets/b226ee97e0dd6a5d.webp", "fig23b": "../assets/d2b9f59decdf706d.webp", "q19": "../assets/f8cbe03f0eec02f0.webp"};</script><script>/* «كوكب مستدام» — دروس الفصل العاشر */
+</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiCooker": "../assets/afef733a29d2c447.webp", "aiRenew": "../assets/f53d9ea06dec420b.webp", "aiWater": "../assets/8c10b6b32323e006.webp", "cooker138": "../assets/8b06ebc4a4e48cad.webp", "cooker139": "../assets/2c194daeb8944339.webp", "dam142": "../assets/b226ee97e0dd6a5d.webp", "fig23b": "../assets/d2b9f59decdf706d.webp", "q19": "../assets/f8cbe03f0eec02f0.webp"};</script><script>/* «كوكب مستدام» — دروس الفصل العاشر */
 window.jgo = function (i) { var b = document.querySelectorAll('#nav button')[i]; if (b) b.click(); };
 window.JMAP = function (title, pins, key, aspect) {
   // خريطة «رسائل الحياة»: صورة احترافية تحيط بها محطات الدرس
@@ -473,6 +473,11 @@ window.JMAP = function (title, pins, key, aspect) {
   }).join('');
   return '<div class="jwrap"><span class="tag">🗺 ' + title + '</span><div class="jmap" style="aspect-ratio:' + (aspect || '240/460') + '">' + img + '<span class="jglow"></span>' + p + '</div><p class="jhint">اضغط على أي محطة لتنتقل إليها، وتابع الرحلة بالترتيب.</p></div>';
 };
+window.GAL = function (title, items) {
+  // معرض صور الدرس (صور المعلم الاحترافية)
+  var w = items.length > 2 ? '31%' : items.length > 1 ? '46%' : '70%';
+  return '<style>.gal{text-align:center}.galrow{display:flex;gap:18px;justify-content:center;align-items:flex-start;flex-wrap:wrap;margin-top:12px}.gal figure{margin:0;background:#fff;border-radius:22px;padding:8px;box-shadow:0 10px 22px rgba(15,23,42,.14);border:2px solid var(--tint)}.gal img{display:block;max-height:min(50dvh,430px);max-width:100%;margin:auto;object-fit:contain;border-radius:16px}.gal figcaption{font-weight:700;color:var(--c1);margin-top:8px;font-size:20px;line-height:1.5}</style><div class="gal"><span class="tag">🖼 ' + title + '</span><div class="galrow">' + items.map(function (q) { return '<figure style="max-width:' + w + '"><img loading="lazy" decoding="async" alt="" src="' + ((window.IMG && IMG[q.g]) || '') + '"><figcaption>' + q.c + '</figcaption></figure>'; }).join('') + '</div></div>';
+};
 window.LESSON = {
   id: 'g8s2-c10-review', chapterKey: 'الفصل العاشر: موارد البيئة وحمايتها',
   kicker: 'الفصل 10 · محطة الاعتماد · كوكب مستدام', title: 'مراجعة الفصل العاشر',
@@ -483,6 +488,7 @@ window.LESSON = {
     ] },
     { short: 'الاستقصاء', icon: '☀', title: 'استقصاء من واقع الحياة: الطبخ بالطاقة الشمسية', page: 138, time: '15 دقيقة', blocks: [
       { t: 'text', h: 'سؤال من واقع الحياة: نمذج واخترع', img: 'cooker138', cap: 'آلة طبخ شمسية', list: ['اختفاء الغابات جعل الحصول على الخشب لإشعال النار صعبًا. هل يمكن طهي الطعام دون خشب؟', '<b>الأهداف:</b> تبحث عن تصميم آلة طبخ شمسية، وتصممها، وتخطط تجربة لقياس فاعليتها.', '<b>المواد:</b> لوح إعلانات، صندوق كرتوني، ورق ألومنيوم، كيس بلاستيك شفاف، وعاء طبخ أسود، مقياس حرارة، ساعة إيقاف…'] },
+      { t: 'html', raw: GAL('الطباخ الشمسي', [{ g: 'aiCooker', c: 'طباخ شمسي يركّز أشعة الشمس على القدر' }]) },
       { t: 'exp', h: 'ورشة الطباخ الشمسي (ص 138–139)', lab: 'lab_cooker', q: 'ما التصميم الذي يجعل آلة الطبخ الشمسية أكثر فاعلية؟', steps: ['صمّم آلة طبخ شمسية وارسم صورة لها.', 'اكتب كيف تقيس فاعليتها وماذا تقيس وكيف تنظم البيانات.', 'قارن تصميمك بتصاميم زملائك.', 'تأكد من موافقة معلمك ثم أنشئ الآلة.', 'اختبر تصميمك وجرّب تصميم زميلك وقارن بينهما.'], tools: ['صندوق كرتوني', 'ورق ألومنيوم', 'كيس شفاف', 'وعاء أسود', 'مقياس حرارة', 'ساعة إيقاف'], safety: 'انتبه عند قص المواد، واستخدم القفازات العازلة عند حمل الأجسام الساخنة.' },
       { t: 'book', tag: 'تحليل البيانات', page: 139, q: '١ أي التصاميم أكثر فاعلية؟ وكيف تجعل الآلة أكثر فاعلية؟ ٢ هل تختلف نتائجك في يوم آخر؟ ولماذا تفيد أكثر في بعض المناطق؟', a: '١ الأكثر فاعلية: عاكس يجمع الأشعة، ووعاء أسود، وغطاء شفاف، وتوجيه مباشر نحو الشمس. ٢ نعم؛ تختلف بشدة الأشعة والغيوم والرياح، وتفيد أكثر في المناطق المشمسة معظم السنة كالصحراء.' },
       { t: 'book', tag: 'الاستنتاج والتطبيق', page: 139, q: '١ هل يمكن أن يسبب الطباخ الذي صنعته غليان الماء؟ ٢ قارن وقت الطهي بالطباخ الشمسي والطريقة التقليدية. هل تفضله؟', a: '١ يعتمد على قياساتك؛ يغلي الماء عند ١٠٠°س، والطباخ الفعّال قد يصل إليها في يوم مشمس. ٢ الطباخ الشمسي أبطأ عادة، لكنه مجاني ولا يلوث الهواء ولا يحتاج إلى خشب.' },

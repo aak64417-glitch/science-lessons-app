@@ -461,7 +461,7 @@ body{background-color:#F8F7FF;background-image:radial-gradient(circle at 12% 18%
 .t5 th,.t5 td{border:2px solid #C4B5FD;padding:4px 12px;text-align:center}
 .t5 th{background:var(--c1);color:#fff}
 .t5 tr:nth-child(even) td{background:var(--tint)}
-</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiSlinky": "../assets/c5e146d5862119cf.webp", "aiWater": "../assets/7f64bf160c5b33b7.webp", "fig1": "../assets/f3c2d269da7b15fc.webp", "fig2": "../assets/5d754a15b121e04e.webp", "fig3": "../assets/976168d1261f5da4.webp", "fig4": "../assets/3c961e0c33fa2098.webp", "fig6": "../assets/ef7fec3ef4a28de3.webp", "fig7": "../assets/ba321c73b1556a77.webp", "fig9": "../assets/e62517fa0d1fffab.webp", "surf": "../assets/a7823dee5be31e73.webp"};</script><script>/* «طيف وصدى» — دروس الفصل الثاني عشر */
+</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiMirror": "../assets/ac703638d3d3f57c.webp", "aiParts": "../assets/1fa4badba17cccc1.webp", "aiPencil": "../assets/52a405ab19a29c3f.webp", "aiSlinky": "../assets/c5e146d5862119cf.webp", "aiWater": "../assets/7f64bf160c5b33b7.webp", "fig1": "../assets/f3c2d269da7b15fc.webp", "fig2": "../assets/5d754a15b121e04e.webp", "fig3": "../assets/976168d1261f5da4.webp", "fig4": "../assets/3c961e0c33fa2098.webp", "fig6": "../assets/ef7fec3ef4a28de3.webp", "fig7": "../assets/ba321c73b1556a77.webp", "fig9": "../assets/e62517fa0d1fffab.webp", "surf": "../assets/a7823dee5be31e73.webp"};</script><script>/* «طيف وصدى» — دروس الفصل الثاني عشر */
 window.jgo = function (i) { var b = document.querySelectorAll('#nav button')[i]; if (b) b.click(); };
 window.JMAP = function (title, pins, key, aspect) {
   // خريطة «رسائل الحياة»: صورة احترافية تحيط بها محطات الدرس
@@ -472,6 +472,11 @@ window.JMAP = function (title, pins, key, aspect) {
     return '<button class="jpin ' + (q.side || 'r') + '" style="top:' + q.y + '%;--c:' + q.c + ';--off:' + q.len + 'px" onclick="' + on + '"><b>' + q.n + '</b><span>' + q.t + '</span><i style="top:50%;' + (q.side === 'l' ? 'right' : 'left') + ':-' + (q.len + 26) + 'px;width:' + (q.len + 26) + 'px"></i></button>';
   }).join('');
   return '<div class="jwrap"><span class="tag">🗺 ' + title + '</span><div class="jmap" style="aspect-ratio:' + (aspect || '240/460') + '">' + img + '<span class="jglow"></span>' + p + '</div><p class="jhint">اضغط على أي محطة لتنتقل إليها، وتابع الرحلة بالترتيب.</p></div>';
+};
+window.GAL = function (title, items) {
+  // معرض صور الدرس (صور المعلم الاحترافية)
+  var w = items.length > 2 ? '31%' : items.length > 1 ? '46%' : '70%';
+  return '<style>.gal{text-align:center}.galrow{display:flex;gap:18px;justify-content:center;align-items:flex-start;flex-wrap:wrap;margin-top:12px}.gal figure{margin:0;background:#fff;border-radius:22px;padding:8px;box-shadow:0 10px 22px rgba(15,23,42,.14);border:2px solid var(--tint)}.gal img{display:block;max-height:min(50dvh,430px);max-width:100%;margin:auto;object-fit:contain;border-radius:16px}.gal figcaption{font-weight:700;color:var(--c1);margin-top:8px;font-size:20px;line-height:1.5}</style><div class="gal"><span class="tag">🖼 ' + title + '</span><div class="galrow">' + items.map(function (q) { return '<figure style="max-width:' + w + '"><img loading="lazy" decoding="async" alt="" src="' + ((window.IMG && IMG[q.g]) || '') + '"><figcaption>' + q.c + '</figcaption></figure>'; }).join('') + '</div></div>';
 };
 window.LESSON = {
   id: 'g8s2-c12-l1', chapterKey: 'الفصل الثاني عشر: الموجات والصوت والضوء',
@@ -520,7 +525,7 @@ window.LESSON = {
       { t: 'exp', h: 'حوض الموجات', lab: 'lab_waves', q: 'كيف يتغير الطول الموجي والطاقة عند تغيير التردد والسعة؟', steps: ['شاهد الموجة المستعرضة ثم الطولية، وراقب النقطة الحمراء.', 'غيّر التردد ولاحظ الطول الموجي.', 'غيّر السعة ولاحظ الطاقة المنقولة.', 'سجّل قراءاتك وقارن حاصل ضرب λ × د.'], tools: ['حبل', 'نابض'], safety: 'لا تهز الحبل بعنف قرب زملائك.' },
     ] },
     { short: 'سرعة الموجة', icon: '⚡', title: 'المحطة ٤: سرعة الموجة', page: 181, time: '10 دقائق', blocks: [
-      { t: 'text', h: 'معادلة سرعة الموجة', cls: 'tint', list: ['تعتمد سرعة الموجة على <b>الوسط الناقل</b> لها.', '<span class="hl">ع = λ × د</span>: سرعة الموجة (م/ث) = الطول الموجي (م) × التردد (هرتز).', 'الهرتز = اهتزاز واحد في الثانية (١/ث)، و<b>λ</b> (لامدا) رمز الطول الموجي ويقاس بالمتر.'] },
+      { t: 'text', h: 'معادلة سرعة الموجة', img: 'aiParts', cap: 'أجزاء الموجة: القمة والقاع والطول الموجي', cls: 'tint', list: ['تعتمد سرعة الموجة على <b>الوسط الناقل</b> لها.', '<span class="hl">ع = λ × د</span>: سرعة الموجة (م/ث) = الطول الموجي (م) × التردد (هرتز).', 'الهرتز = اهتزاز واحد في الثانية (١/ث)، و<b>λ</b> (لامدا) رمز الطول الموجي ويقاس بالمتر.'] },
       { t: 'calc', tag: 'تطبيق الرياضيات (ص 181)', q: 'موجة صوتية ناتجة عن الرعد ترددها ٣٤ هرتز، وطولها الموجي ١٠ م. ما سرعتها؟', a: 340, unit: 'م/ث', steps: 'ع = λ × د = 10 × 34 = 340 م/ث', hint: 'اضرب الطول الموجي في التردد.' },
       { t: 'calc', tag: 'مسألة تدريبية ١', q: 'تنتشر موجة طولها ٠٫٥٥ م في وتر، وترددها ٦٫٠ هرتز. ما سرعتها؟', a: 3.3, unit: 'م/ث', steps: 'ع = 0.55 × 6.0 = 3.3 م/ث', hint: 'ع = λ × د.' },
       { t: 'calc', tag: 'مسألة تدريبية ٢', q: 'موجة صوتية ترددها ١٥٠٠٠ هرتز تنتشر في الماء بسرعة ١٥٠٠ م/ث. ما طولها الموجي؟', a: 0.1, unit: 'م', steps: 'λ = ع ÷ د = 1500 ÷ 15000 = 0.1 م', hint: 'اقسم السرعة على التردد.' },
@@ -528,6 +533,7 @@ window.LESSON = {
     { short: 'تغيّر الاتجاه', icon: '↩', title: 'المحطة ٥: الأمواج تغير اتجاهها', page: 182, time: '14 دقيقة', blocks: [
       { t: 'text', h: 'الانعكاس والانكسار', img: 'fig7', cap: 'الشكل 7: زاوية الانعكاس تساوي زاوية السقوط', list: ['<span class="hl">قانون الانعكاس</span>: زاوية السقوط (مع العمود المقام) تساوي زاوية الانعكاس.', '<span class="hl">الانكسار</span>: تغير اتجاه الموجة لتغير سرعتها عند انتقالها من وسط إلى آخر؛ فالضوء أسرع في الهواء منه في الماء (الشكل 8).'] },
       { t: 'text', h: 'الحيود', img: 'fig9', cap: 'الشكل 9: يعتمد الحيود على حجم الجسم وطول الموجة', cls: 'tint', list: ['<span class="hl">الحيود</span>: انعطاف الموجات حول حواف الأجسام، ويزداد كلما زاد الطول الموجي بالنسبة لأبعاد الجسم.', 'أطوال موجات الصوت تماثل أبعاد كثير من الأجسام، أما الضوء فأقصر كثيرًا؛ لذلك تسمع من في الحجرة المجاورة ولا تراه.'] },
+      { t: 'html', raw: GAL('الانعكاس والانكسار', [{ g: 'aiMirror', c: 'انعكاس الضوء على سطح الماء الساكن' }, { g: 'aiPencil', c: 'انكسار الضوء: القلم يبدو مكسورًا' }]) },
       { t: 'exp', h: 'مختبر اتجاه الموجات', lab: 'lab_mirror', q: 'كيف تغير الموجات اتجاهها بالانعكاس والانكسار والحيود؟', steps: ['في الانعكاس غيّر زاوية السقوط وقارنها بزاوية الانعكاس.', 'في الانكسار قارن الماء بالزجاج.', 'في الحيود قارن طولًا موجيًّا قصيرًا بطويل.'], tools: ['مصدر ضوء', 'مرآة', 'حوض ماء'], safety: 'لا تنظر مباشرة إلى مصدر ضوء قوي.' },
       { t: 'exp', h: 'تجربة: انكسار الضوء (ص 182)', lab: 'lab_refract', q: 'كيف يتغير منظر القلم في كأس الماء؟', steps: ['املأ كأسًا زجاجية إلى نصفها بالماء.', 'ضع قلم رصاص في الكأس وصف ما تلاحظه.', 'أضف المزيد من الماء برفق، وصف كيف يتغير منظر القلم.'], tools: ['كأس زجاجية', 'ماء', 'قلم رصاص'], safety: 'امسح الماء المنسكب فورًا.' },
       { t: 'book', tag: 'التحليل', page: 182, q: '١ كيف يعتمد شكل القلم على مستوى الماء؟ ٢ أين تتغير سرعة موجة الضوء القادمة من القلم؟ ٣ استنتج علاقة شكل القلم بتغير سرعة الضوء.', a: '١ يبدو القلم مكسورًا عند سطح الماء تمامًا، فيتغير موضع الكسر بتغير مستوى الماء. ٢ عند انتقال الضوء من الماء إلى الهواء. ٣ يتغير اتجاه الضوء لتغير سرعته فيصل إلى العين باتجاه مختلف فيبدو القلم مكسورًا.' },

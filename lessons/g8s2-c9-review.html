@@ -414,6 +414,11 @@ window.JMAP = function (title, pins, key, aspect) {
   }).join('');
   return '<div class="jwrap"><span class="tag">🗺 ' + title + '</span><div class="jmap" style="aspect-ratio:' + (aspect || '240/460') + '">' + img + '<span class="jglow"></span>' + p + '</div><p class="jhint">اضغط على أي محطة لتنتقل إليها، وتابع الرحلة بالترتيب.</p></div>';
 };
+window.GAL = function (title, items) {
+  // معرض صور الدرس (صور المعلم الاحترافية)
+  var w = items.length > 2 ? '31%' : items.length > 1 ? '46%' : '70%';
+  return '<style>.gal{text-align:center}.galrow{display:flex;gap:18px;justify-content:center;align-items:flex-start;flex-wrap:wrap;margin-top:12px}.gal figure{margin:0;background:#fff;border-radius:22px;padding:8px;box-shadow:0 10px 22px rgba(15,23,42,.14);border:2px solid var(--tint)}.gal img{display:block;max-height:min(50dvh,430px);max-width:100%;margin:auto;object-fit:contain;border-radius:16px}.gal figcaption{font-weight:700;color:var(--c1);margin-top:8px;font-size:20px;line-height:1.5}</style><div class="gal"><span class="tag">🖼 ' + title + '</span><div class="galrow">' + items.map(function (q) { return '<figure style="max-width:' + w + '"><img loading="lazy" decoding="async" alt="" src="' + ((window.IMG && IMG[q.g]) || '') + '"><figcaption>' + q.c + '</figcaption></figure>'; }).join('') + '</div></div>';
+};
 window.LESSON = {
   id: 'g8s2-c9-review', chapterKey: 'الفصل التاسع: النباتات',
   kicker: 'الفصل 9 · محطة الاعتماد · حديقة الحياة', title: 'مراجعة الفصل التاسع',

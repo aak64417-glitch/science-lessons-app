@@ -461,7 +461,7 @@ body{background-color:#F8F7FF;background-image:radial-gradient(circle at 12% 18%
 .t5 th,.t5 td{border:2px solid #C4B5FD;padding:4px 12px;text-align:center}
 .t5 th{background:var(--c1);color:#fff}
 .t5 tr:nth-child(even) td{background:var(--tint)}
-</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiSpectrum": "../assets/561c16a5c5b133f3.webp", "fig16": "../assets/95549f674aa866f8.webp", "fig17": "../assets/39557a4d0b967f3a.webp", "fig18": "../assets/16e01cfc215bd8b4.webp", "fig19": "../assets/f20896af1961127f.webp", "fig2": "../assets/5d754a15b121e04e.webp", "fig20": "../assets/6c5d41c04936432c.webp", "fig21": "../assets/511fe0f2aa4b5d23.webp", "fig23b": "../assets/fcd82be94c366421.webp", "fig24": "../assets/6998ca966c9c47e3.webp"};</script><script>/* «طيف وصدى» — دروس الفصل الثاني عشر */
+</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiEye": "../assets/2f7042e95e2c9d9e.webp", "aiGlasses": "../assets/cff5f97a0794b585.webp", "aiSpectrum": "../assets/561c16a5c5b133f3.webp", "fig16": "../assets/95549f674aa866f8.webp", "fig17": "../assets/39557a4d0b967f3a.webp", "fig18": "../assets/16e01cfc215bd8b4.webp", "fig19": "../assets/f20896af1961127f.webp", "fig2": "../assets/5d754a15b121e04e.webp", "fig20": "../assets/6c5d41c04936432c.webp", "fig21": "../assets/511fe0f2aa4b5d23.webp", "fig23b": "../assets/fcd82be94c366421.webp", "fig24": "../assets/6998ca966c9c47e3.webp"};</script><script>/* «طيف وصدى» — دروس الفصل الثاني عشر */
 window.jgo = function (i) { var b = document.querySelectorAll('#nav button')[i]; if (b) b.click(); };
 window.JMAP = function (title, pins, key, aspect) {
   // خريطة «رسائل الحياة»: صورة احترافية تحيط بها محطات الدرس
@@ -472,6 +472,11 @@ window.JMAP = function (title, pins, key, aspect) {
     return '<button class="jpin ' + (q.side || 'r') + '" style="top:' + q.y + '%;--c:' + q.c + ';--off:' + q.len + 'px" onclick="' + on + '"><b>' + q.n + '</b><span>' + q.t + '</span><i style="top:50%;' + (q.side === 'l' ? 'right' : 'left') + ':-' + (q.len + 26) + 'px;width:' + (q.len + 26) + 'px"></i></button>';
   }).join('');
   return '<div class="jwrap"><span class="tag">🗺 ' + title + '</span><div class="jmap" style="aspect-ratio:' + (aspect || '240/460') + '">' + img + '<span class="jglow"></span>' + p + '</div><p class="jhint">اضغط على أي محطة لتنتقل إليها، وتابع الرحلة بالترتيب.</p></div>';
+};
+window.GAL = function (title, items) {
+  // معرض صور الدرس (صور المعلم الاحترافية)
+  var w = items.length > 2 ? '31%' : items.length > 1 ? '46%' : '70%';
+  return '<style>.gal{text-align:center}.galrow{display:flex;gap:18px;justify-content:center;align-items:flex-start;flex-wrap:wrap;margin-top:12px}.gal figure{margin:0;background:#fff;border-radius:22px;padding:8px;box-shadow:0 10px 22px rgba(15,23,42,.14);border:2px solid var(--tint)}.gal img{display:block;max-height:min(50dvh,430px);max-width:100%;margin:auto;object-fit:contain;border-radius:16px}.gal figcaption{font-weight:700;color:var(--c1);margin-top:8px;font-size:20px;line-height:1.5}</style><div class="gal"><span class="tag">🖼 ' + title + '</span><div class="galrow">' + items.map(function (q) { return '<figure style="max-width:' + w + '"><img loading="lazy" decoding="async" alt="" src="' + ((window.IMG && IMG[q.g]) || '') + '"><figcaption>' + q.c + '</figcaption></figure>'; }).join('') + '</div></div>';
 };
 window.LESSON = {
   id: 'g8s2-c12-l3', chapterKey: 'الفصل الثاني عشر: الموجات والصوت والضوء',
@@ -516,6 +521,7 @@ window.LESSON = {
     { short: 'العين والرؤية', icon: '👁', title: 'المحطة ٥: العين ورؤية الضوء', page: 193, time: '14 دقيقة', blocks: [
       { t: 'text', h: 'كيف ترى العين؟', img: 'fig21', cap: 'الشكل 21: القرنية والعدسة تجمّعان الضوء على الشبكية', list: ['ترى العين الأجسام عندما يدخلها الضوء المنبعث منها أو المنعكس عنها.', 'يعبر الضوء <b>القرنية</b> ثم <b>العدسة</b> المرنة التي يتغير شكلها: أكثر تحدبًا للقريب وأكثر انبساطًا للبعيد (الشكل 22).', '<b>ألوان الأجسام:</b> لون الجسم هو لون الضوء المنعكس عنه؛ فالوردة الحمراء تعكس الأطوال الحمراء، وضوء النيون أحمر لأنه يبعث أطوالًا حمراء.'] },
       { t: 'text', h: 'المشاكل الشائعة للرؤية (ص 194)', img: 'fig23b', cap: 'قصر النظر: تتكون الصورة قبل الشبكية', cls: 'tint', list: ['<b>قصر النظر:</b> يرى القريب بوضوح لا البعيد؛ مقلة العين أكثر استطالة فتتكون صورة البعيد قبل الشبكية، ويُصحح بعدسات <b>مقعرة</b> أو بجراحة الليزر.', '<b>طول النظر:</b> يرى البعيد لا القريب؛ كرة العين قصيرة فلا يتجمع ضوء القريب عند الشبكية، ويُصحح بعدسات <b>محدبة</b>، ويصيب كبار السن لتغير شكل العدسة.'] },
+      { t: 'html', raw: GAL('العين والنظارات', [{ g: 'aiEye', c: 'تركيب العين: القرنية والعدسة والشبكية' }, { g: 'aiGlasses', c: 'نظارات وعدسات لتصحيح الإبصار' }]) },
       { t: 'text', h: 'الخلايا المخروطية والعصوية (ص 195)', img: 'fig24', cap: 'الشكل 24: خلايا الشبكية الحساسة للضوء', list: ['في الشبكية أكثر من مائة مليون خلية حساسة للضوء.', '<b>العصوية:</b> حساسة للضوء الخافت. <b>المخروطية:</b> لرؤية الألوان، وهي ثلاثة أنواع: للأحمر والأصفر، وللأخضر والأصفر، وللأزرق والبنفسجي.'] },
       { t: 'exp', h: 'مختبر العين', lab: 'lab_eye', q: 'أين تتجمع الأشعة في العين السليمة وفي قصر النظر وطوله؟ وكيف تُصحح؟', steps: ['انظر بالعين السليمة إلى جسم بعيد ثم قريب.', 'اعرض قصر النظر وصحّحه بالعدسة المناسبة.', 'اعرض طول النظر وصحّحه بالعدسة المناسبة.'], tools: ['نموذج عين', 'عدسات مقعرة ومحدبة'], safety: 'محاكاة آمنة.' },
     ] },

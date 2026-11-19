@@ -461,7 +461,7 @@ body{background-color:#FFF8F1;background-image:radial-gradient(circle at 12% 18%
 .t5 th,.t5 td{border:2px solid #FED7AA;padding:4px 12px;text-align:center}
 .t5 th{background:var(--c1);color:#fff}
 .t5 tr:nth-child(even) td{background:var(--tint)}
-</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiMol": "../assets/57c043a5240e7755.webp", "aiThermo": "../assets/11641212a844a6ac.webp", "fig1": "../assets/a3f25aff56fd5c75.webp", "fig2": "../assets/a03342aa987d778a.webp", "train": "../assets/f8f18c55cb176aa6.webp"};</script><script>/* «جمرة وطاقة» — دروس الفصل الحادي عشر */
+</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiExp": "../assets/4aabb0e33c1f985f.webp", "aiMol": "../assets/57c043a5240e7755.webp", "aiThermo": "../assets/11641212a844a6ac.webp", "fig1": "../assets/a3f25aff56fd5c75.webp", "fig2": "../assets/a03342aa987d778a.webp", "train": "../assets/f8f18c55cb176aa6.webp"};</script><script>/* «جمرة وطاقة» — دروس الفصل الحادي عشر */
 window.jgo = function (i) { var b = document.querySelectorAll('#nav button')[i]; if (b) b.click(); };
 window.JMAP = function (title, pins, key, aspect) {
   // خريطة «رسائل الحياة»: صورة احترافية تحيط بها محطات الدرس
@@ -472,6 +472,11 @@ window.JMAP = function (title, pins, key, aspect) {
     return '<button class="jpin ' + (q.side || 'r') + '" style="top:' + q.y + '%;--c:' + q.c + ';--off:' + q.len + 'px" onclick="' + on + '"><b>' + q.n + '</b><span>' + q.t + '</span><i style="top:50%;' + (q.side === 'l' ? 'right' : 'left') + ':-' + (q.len + 26) + 'px;width:' + (q.len + 26) + 'px"></i></button>';
   }).join('');
   return '<div class="jwrap"><span class="tag">🗺 ' + title + '</span><div class="jmap" style="aspect-ratio:' + (aspect || '240/460') + '">' + img + '<span class="jglow"></span>' + p + '</div><p class="jhint">اضغط على أي محطة لتنتقل إليها، وتابع الرحلة بالترتيب.</p></div>';
+};
+window.GAL = function (title, items) {
+  // معرض صور الدرس (صور المعلم الاحترافية)
+  var w = items.length > 2 ? '31%' : items.length > 1 ? '46%' : '70%';
+  return '<style>.gal{text-align:center}.galrow{display:flex;gap:18px;justify-content:center;align-items:flex-start;flex-wrap:wrap;margin-top:12px}.gal figure{margin:0;background:#fff;border-radius:22px;padding:8px;box-shadow:0 10px 22px rgba(15,23,42,.14);border:2px solid var(--tint)}.gal img{display:block;max-height:min(50dvh,430px);max-width:100%;margin:auto;object-fit:contain;border-radius:16px}.gal figcaption{font-weight:700;color:var(--c1);margin-top:8px;font-size:20px;line-height:1.5}</style><div class="gal"><span class="tag">🖼 ' + title + '</span><div class="galrow">' + items.map(function (q) { return '<figure style="max-width:' + w + '"><img loading="lazy" decoding="async" alt="" src="' + ((window.IMG && IMG[q.g]) || '') + '"><figcaption>' + q.c + '</figcaption></figure>'; }).join('') + '</div></div>';
 };
 window.LESSON = {
   id: 'g8s2-c11-l1', chapterKey: 'الفصل الحادي عشر: الطاقة الحرارية',
@@ -511,6 +516,7 @@ window.LESSON = {
     { short: 'التمدد الحراري', icon: '↔', title: 'المحطة ٢: التمدد الحراري ومختبره', page: 152, time: '10 دقائق', blocks: [
       { t: 'text', h: 'التمدد الحراري', img: 'fig1', cap: 'الشكل 1: تمدد الأسفلت في يوم حار أدى إلى تشققه', list: ['عند ارتفاع درجة الحرارة تزداد سرعة الجزيئات ويتباعد بعضها عن بعض فيتمدد الجسم، وعند التبريد يتقلص.', 'يعتمد مقدار التمدد على <b>نوع المادة</b> و<b>مقدار التغير</b> في درجة الحرارة.', '<span class="hl">السوائل تتمدد عادةً أكثر من المواد الصلبة.</span>'] },
       { t: 'book', tag: 'ماذا قرأت؟', page: 153, q: 'لماذا تتمدد المواد عندما تزداد درجة حرارتها؟', a: 'لأن ارتفاع درجة الحرارة يزيد سرعة جزيئاتها، فيتباعد بعضها عن بعض فتتمدد.' },
+      { t: 'html', raw: GAL('التمدد الحراري في حياتنا', [{ g: 'aiExp', c: 'فواصل التمدد في الجسور وسكك الحديد' }]) },
       { t: 'exp', h: 'مختبر التمدد الحراري', lab: 'lab_expand', q: 'كيف يتغير طول القضيب الفلزي وعمود السائل عند تسخينهما وتبريدهما؟', steps: ['ضع السائل والقضيب على السخّان.', 'ارفع درجة الحرارة ثم اخفضها.', 'اعرض الجزيئات وقارن حركتها.', 'سجّل قراءاتك وقارن.'], tools: ['سخّان', 'أنبوب فيه سائل ملوّن', 'قضيب حديد'], safety: 'لا تلمس الأجسام الساخنة.' },
     ] },
     { short: 'مقاييس الحرارة', icon: '🌡', title: 'المحطة ٣: المقاييس الفهرنهايتي والسلسيوسي وكلفن', page: 153, time: '8 دقائق', blocks: [

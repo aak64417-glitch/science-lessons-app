@@ -461,7 +461,7 @@ body{background-color:#FFF8F1;background-image:radial-gradient(circle at 12% 18%
 .t5 th,.t5 td{border:2px solid #FED7AA;padding:4px 12px;text-align:center}
 .t5 th{background:var(--c1);color:#fff}
 .t5 tr:nth-child(even) td{background:var(--tint)}
-</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiCond": "../assets/2a2d72e829181d4b.webp", "aiConv": "../assets/3bd6f8b54a117a4f.webp", "aiRad": "../assets/17f60a1ff979cf8d.webp", "aiSea": "../assets/1e828ad02dc979d2.webp", "fig3": "../assets/4a838a978feda983.webp", "fig4": "../assets/0fe550b15cf7669c.webp", "fig5": "../assets/157bb48cf5ebd974.webp", "fig6": "../assets/e7b10079a4e4694e.webp", "fig7": "../assets/0e281ae3d7dd7fd5.webp", "fig8": "../assets/b117877007872dd3.webp"};</script><script>/* «جمرة وطاقة» — دروس الفصل الحادي عشر */
+</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiCond": "../assets/2a2d72e829181d4b.webp", "aiConv": "../assets/3bd6f8b54a117a4f.webp", "aiCooker": "../assets/afef733a29d2c447.webp", "aiIns": "../assets/85a3aaf13a3189ac.webp", "aiRad": "../assets/17f60a1ff979cf8d.webp", "aiSea": "../assets/1e828ad02dc979d2.webp", "aiSpoon": "../assets/451c7a58dffa5cc1.webp", "fig3": "../assets/4a838a978feda983.webp", "fig4": "../assets/0fe550b15cf7669c.webp", "fig5": "../assets/157bb48cf5ebd974.webp", "fig6": "../assets/e7b10079a4e4694e.webp", "fig7": "../assets/0e281ae3d7dd7fd5.webp", "fig8": "../assets/b117877007872dd3.webp"};</script><script>/* «جمرة وطاقة» — دروس الفصل الحادي عشر */
 window.jgo = function (i) { var b = document.querySelectorAll('#nav button')[i]; if (b) b.click(); };
 window.JMAP = function (title, pins, key, aspect) {
   // خريطة «رسائل الحياة»: صورة احترافية تحيط بها محطات الدرس
@@ -472,6 +472,11 @@ window.JMAP = function (title, pins, key, aspect) {
     return '<button class="jpin ' + (q.side || 'r') + '" style="top:' + q.y + '%;--c:' + q.c + ';--off:' + q.len + 'px" onclick="' + on + '"><b>' + q.n + '</b><span>' + q.t + '</span><i style="top:50%;' + (q.side === 'l' ? 'right' : 'left') + ':-' + (q.len + 26) + 'px;width:' + (q.len + 26) + 'px"></i></button>';
   }).join('');
   return '<div class="jwrap"><span class="tag">🗺 ' + title + '</span><div class="jmap" style="aspect-ratio:' + (aspect || '240/460') + '">' + img + '<span class="jglow"></span>' + p + '</div><p class="jhint">اضغط على أي محطة لتنتقل إليها، وتابع الرحلة بالترتيب.</p></div>';
+};
+window.GAL = function (title, items) {
+  // معرض صور الدرس (صور المعلم الاحترافية)
+  var w = items.length > 2 ? '31%' : items.length > 1 ? '46%' : '70%';
+  return '<style>.gal{text-align:center}.galrow{display:flex;gap:18px;justify-content:center;align-items:flex-start;flex-wrap:wrap;margin-top:12px}.gal figure{margin:0;background:#fff;border-radius:22px;padding:8px;box-shadow:0 10px 22px rgba(15,23,42,.14);border:2px solid var(--tint)}.gal img{display:block;max-height:min(50dvh,430px);max-width:100%;margin:auto;object-fit:contain;border-radius:16px}.gal figcaption{font-weight:700;color:var(--c1);margin-top:8px;font-size:20px;line-height:1.5}</style><div class="gal"><span class="tag">🖼 ' + title + '</span><div class="galrow">' + items.map(function (q) { return '<figure style="max-width:' + w + '"><img loading="lazy" decoding="async" alt="" src="' + ((window.IMG && IMG[q.g]) || '') + '"><figcaption>' + q.c + '</figcaption></figure>'; }).join('') + '</div></div>';
 };
 window.LESSON = {
   id: 'g8s2-c11-l2', chapterKey: 'الفصل الحادي عشر: الطاقة الحرارية',
@@ -495,6 +500,7 @@ window.LESSON = {
     { short: 'التوصيل', icon: '🤝', title: 'المحطة ١: طرائق انتقال الحرارة والتوصيل', page: 156, time: '6 دقائق', blocks: [
       { t: 'text', h: 'طرائق انتقال الحرارة', img: 'fig3', cap: 'الشكل 3: من الأسخن إلى الأبرد دائمًا', list: ['يفقد الجسم الأسخن طاقة، ويكتسب الأبرد طاقة فترتفع درجة حرارته.', 'تنتقل الحرارة بثلاث طرائق: <span class="hl">التوصيل · الإشعاع · الحمل</span>.'] },
       { t: 'text', h: 'التوصيل', img: 'fig4', cap: 'الشكل 4: ينصهر مكعب الثلج في يدك بسبب التوصيل', list: ['<span class="hl">التوصيل</span>: انتقال الطاقة الحرارية بالتلامس المباشر، كأكل فطيرة ساخنة.', 'يحدث عندما تتصادم جزيئات المادة مع الجزيئات المجاورة لها.', 'أسرع في المواد الصلبة ثم السائلة ثم الغازية.'] },
+      { t: 'html', raw: GAL('التوصيل الحراري', [{ g: 'aiSpoon', c: 'الملعقة تسخن بالتوصيل في الشاي الساخن' }]) },
       { t: 'book', tag: 'ماذا قرأت؟', page: 157, q: 'لماذا يكون انتقال الحرارة في المواد الصلبة والسائلة أسهل منه في الغازات؟', a: 'لأن جزيئاتها متقاربة فتتصادم دون أن تقطع مسافات كبيرة، أما جزيئات الغاز فمتباعدة.' },
     ] },
     { short: 'سباق الانصهار', icon: '🧊', title: 'المحطة ٢: تجربة مقارنة معدلات الانصهار', page: 158, time: '10 دقائق', blocks: [
@@ -503,6 +509,7 @@ window.LESSON = {
     ] },
     { short: 'الإشعاع والحمل', icon: '🌀', title: 'المحطة ٣: الإشعاع والحمل الحراري', page: 157, time: '14 دقيقة', blocks: [
       { t: 'text', h: 'الإشعاع', img: 'aiRad', cap: 'الدفء الذي تحس به أمام النار', list: ['<span class="hl">الإشعاع</span>: نقل الطاقة الحرارية بالموجات الكهرومغناطيسية خلال الفراغ والمادة.', 'تصل حرارة الشمس إلى الأرض بالإشعاع لوجود فراغ بينهما.', 'كل الأجسام تصدر إشعاعًا، والأجسام الأسخن تصدر إشعاعًا أكثر.'] },
+      { t: 'html', raw: GAL('الإشعاع الشمسي', [{ g: 'aiCooker', c: 'الطباخ الشمسي يجمع الإشعاع الشمسي' }]) },
       { t: 'text', h: 'الحمل الحراري', img: 'fig5', cap: 'الشكل 5: حركة الرياح عند شاطئ البحر بالحمل الطبيعي', list: ['<span class="hl">الحمل</span>: انتقال الطاقة بحركة الجزيئات داخل المائع؛ يسخن الماء في الأسفل فتقل كثافته ويرتفع، ويهبط البارد.', '<b>الحمل الطبيعي:</b> يصعد المائع الساخن بدفع المائع البارد الهابط، كنسيم البحر نهارًا.', '<b>الحمل القسري:</b> قوة خارجية تحرك المائع، كمروحة الحاسوب (الشكل 6).'] },
       { t: 'book', tag: 'ابحث — الشكل 6', page: 159, img: 'fig6', q: 'ابحث عن مثال آخر للحمل الحراري القسري.', a: 'إجابة مفتوحة، مثل: مروحة مكيف الهواء أو المدفأة، ومجفف الشعر، ومروحة مبرد محرك السيارة.' },
       { t: 'exp', h: 'تجربة: ملاحظة الحمل الحراري (ص 159)', lab: 'lab_convect', q: 'ماذا يحدث لقطرة صبغة الطعام قرب قاع كأس ماء موضوعة فوق قطعة نقد ساخنة؟', steps: ['املأ كأسًا سعتها ٢٥٠ مل بماء في درجة حرارة الغرفة، وسخّن ٥٠ مل من الماء حتى يغلي.', 'ضع قطعة نقد معدنية في الماء الساخن دقيقة.', 'ارفع القطعة بملقط وضعها على الطاولة وضع فوقها الكأس مباشرة.', 'ضع قطرة صبغة طعام قرب قاع الكأس، وراقب ما يحدث بضع دقائق.'], tools: ['كأس ٢٥٠ مل', 'كأس ٥٠ مل', 'قطعة نقد معدنية', 'ملقط', 'قطارة', 'صبغة طعام'], safety: 'استخدم الملقط مع القطعة الساخنة.' },
@@ -512,6 +519,7 @@ window.LESSON = {
       { t: 'text', h: 'الموصلات الحرارية', img: 'aiCond', cap: 'مقبض عازل لإناء موصل', list: ['<span class="hl">الموصل</span>: أي مادة تنتقل الطاقة الحرارية خلالها بسهولة.', 'الفلزات موصلات جيدة؛ لأن لذراتها إلكترونات ضعيفة الارتباط حرة الحركة نسبيًّا.', 'أفضل الموصلات الفلزات، ومنها <b>الذهب والنحاس</b>.'] },
       { t: 'book', tag: 'ماذا قرأت؟', page: 159, q: 'ما المادة الموصلة؟', a: 'أي مادة تنتقل الطاقة الحرارية خلالها بسهولة، مثل الفلزات ومنها الذهب والنحاس.' },
       { t: 'text', h: 'العوازل الحرارية', img: 'fig7', cap: 'الشكل 7: المواد العازلة في المنازل', list: ['العازل مادة لا تنتقل الحرارة خلالها بسهولة؛ لذا تُصنع مقابض الأواني من مواد عازلة.', 'الهواء عازل جيد، ومعظم العوازل فيها فقاعات هوائية.', 'الصوف الصخري في الجدران، والزجاج المزدوج بين لوحيه هواء أو غاز عازل.'] },
+      { t: 'html', raw: GAL('العوازل الحرارية', [{ g: 'aiIns', c: 'مواد عازلة تحفظ الحرارة' }]) },
       { t: 'sort', h: 'صنّف: موصل أم عازل؟', cats: ['موصل جيد', 'عازل'], items: [{ t: 'النحاس', c: 0 }, { t: 'الذهب', c: 0 }, { t: 'الألومنيوم', c: 0 }, { t: 'الهواء', c: 1 }, { t: 'الصوف الصخري', c: 1 }, { t: 'الفلين الصناعي', c: 1 }] },
     ] },
     { short: 'الحرارة النوعية', icon: '🏖', title: 'المحطة ٥: الحرارة النوعية والتلوث الحراري', page: 160, time: '10 دقائق', blocks: [

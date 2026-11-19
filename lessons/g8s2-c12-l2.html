@@ -461,7 +461,7 @@ body{background-color:#F8F7FF;background-image:radial-gradient(circle at 12% 18%
 .t5 th,.t5 td{border:2px solid #C4B5FD;padding:4px 12px;text-align:center}
 .t5 th{background:var(--c1);color:#fff}
 .t5 tr:nth-child(even) td{background:var(--tint)}
-</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiFork": "../assets/afd5ed6445a1b2a1.webp", "aiSpeaker": "../assets/b509ea5d95b46dd6.webp", "fig10": "../assets/f355227bc1bb6643.webp", "fig12": "../assets/b9eaf5320721852c.webp", "fig13": "../assets/827ed49801975a12.webp", "fig14": "../assets/bceb6f515e455aad.webp", "fig15": "../assets/a4c9174187a5300f.webp", "fig3": "../assets/976168d1261f5da4.webp"};</script><script>/* «طيف وصدى» — دروس الفصل الثاني عشر */
+</style></head><body><noscript>هذا الدرس التفاعلي يحتاج إلى تفعيل JavaScript.</noscript><script>window.IMG={"aiBat": "../assets/d4d1455994a6d4d8.webp", "aiFork": "../assets/afd5ed6445a1b2a1.webp", "aiSpeaker": "../assets/b509ea5d95b46dd6.webp", "aiUltra": "../assets/51cd4e11856727dd.webp", "fig10": "../assets/f355227bc1bb6643.webp", "fig12": "../assets/b9eaf5320721852c.webp", "fig13": "../assets/827ed49801975a12.webp", "fig14": "../assets/bceb6f515e455aad.webp", "fig15": "../assets/a4c9174187a5300f.webp", "fig3": "../assets/976168d1261f5da4.webp"};</script><script>/* «طيف وصدى» — دروس الفصل الثاني عشر */
 window.jgo = function (i) { var b = document.querySelectorAll('#nav button')[i]; if (b) b.click(); };
 window.JMAP = function (title, pins, key, aspect) {
   // خريطة «رسائل الحياة»: صورة احترافية تحيط بها محطات الدرس
@@ -472,6 +472,11 @@ window.JMAP = function (title, pins, key, aspect) {
     return '<button class="jpin ' + (q.side || 'r') + '" style="top:' + q.y + '%;--c:' + q.c + ';--off:' + q.len + 'px" onclick="' + on + '"><b>' + q.n + '</b><span>' + q.t + '</span><i style="top:50%;' + (q.side === 'l' ? 'right' : 'left') + ':-' + (q.len + 26) + 'px;width:' + (q.len + 26) + 'px"></i></button>';
   }).join('');
   return '<div class="jwrap"><span class="tag">🗺 ' + title + '</span><div class="jmap" style="aspect-ratio:' + (aspect || '240/460') + '">' + img + '<span class="jglow"></span>' + p + '</div><p class="jhint">اضغط على أي محطة لتنتقل إليها، وتابع الرحلة بالترتيب.</p></div>';
+};
+window.GAL = function (title, items) {
+  // معرض صور الدرس (صور المعلم الاحترافية)
+  var w = items.length > 2 ? '31%' : items.length > 1 ? '46%' : '70%';
+  return '<style>.gal{text-align:center}.galrow{display:flex;gap:18px;justify-content:center;align-items:flex-start;flex-wrap:wrap;margin-top:12px}.gal figure{margin:0;background:#fff;border-radius:22px;padding:8px;box-shadow:0 10px 22px rgba(15,23,42,.14);border:2px solid var(--tint)}.gal img{display:block;max-height:min(50dvh,430px);max-width:100%;margin:auto;object-fit:contain;border-radius:16px}.gal figcaption{font-weight:700;color:var(--c1);margin-top:8px;font-size:20px;line-height:1.5}</style><div class="gal"><span class="tag">🖼 ' + title + '</span><div class="galrow">' + items.map(function (q) { return '<figure style="max-width:' + w + '"><img loading="lazy" decoding="async" alt="" src="' + ((window.IMG && IMG[q.g]) || '') + '"><figcaption>' + q.c + '</figcaption></figure>'; }).join('') + '</div></div>';
 };
 window.LESSON = {
   id: 'g8s2-c12-l2', chapterKey: 'الفصل الثاني عشر: الموجات والصوت والضوء',
@@ -515,6 +520,7 @@ window.LESSON = {
     ] },
     { short: 'الصدى', icon: '🦇', title: 'المحطة ٥: انعكاس الصوت وتكرار الصدى', page: 187, time: '10 دقائق', blocks: [
       { t: 'text', h: 'الصدى واستخداماته', img: 'fig14', cap: 'الشكل 14: قاعة مجهزة بمواد تمتص طاقة الموجات الصوتية', list: ['<b>الصدى</b>: سماع الصوت بعد انعكاسه، ولتجنبه تُبطن جدران القاعات بمواد لينة تمتص الطاقة.', 'الخفافيش والدلافين ترسل موجات قصيرة عالية التردد وتستقبل المنعكسة لتحديد المواقع.', 'يرسم الأطباء صور أعضاء الجسم بانعكاس <b>الموجات فوق السمعية</b> ويفحصون الأجنة.'] },
+      { t: 'html', raw: GAL('الصدى في الطبيعة والطب', [{ g: 'aiBat', c: 'الخفافيش والدلافين تحدد المواقع بالصدى' }, { g: 'aiUltra', c: 'التصوير بالموجات فوق السمعية' }]) },
       { t: 'text', h: 'تكرار الصدى', img: 'fig15', cap: 'الشكل 15: الاستفادة من تكرار الصدى', cls: 'tint', list: ['<span class="hl">تكرار الصدى</span>: تكرر سماع الصدى في مكان مغلق أو شبه مغلق.', 'يُستفاد منه في القاعات الكبيرة بتجميع الأصوات المنعكسة عن الجدران والسقف بحسابات دقيقة.'] },
       { t: 'exp', h: 'مختبر الصدى', lab: 'lab_echo', q: 'كيف نحسب بعد جدار من زمن عودة الصدى؟', steps: ['أطلق نبضة نحو جدار صلب وقِس زمن الصدى.', 'احسب المسافة = ٣٤٣ × الزمن ÷ ٢.', 'غيّر البعد وكرّر، ثم بطّن الجدار بمادة لينة.'], tools: ['مصدر نبضات صوتية', 'جدار', 'ساعة إيقاف'], safety: 'محاكاة آمنة.' },
     ] },
