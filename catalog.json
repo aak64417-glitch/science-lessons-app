@@ -1102,7 +1102,7 @@
    "title": "ورقة عمل: العلم وعملياته",
    "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
    "color": "#2F7BF6",
-   "file": "tools/sheet-g7-c1-l1-r2.html",
+   "file": "tools/sheet-g7-c1-l1.html",
    "cover": "img/cover-sheet-g7-c1-l1.webp"
   },
   {
@@ -1114,7 +1114,7 @@
    "title": "ورقة عمل: النماذج العلمية",
    "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
    "color": "#2F7BF6",
-   "file": "tools/sheet-g7-c1-l2-r2.html",
+   "file": "tools/sheet-g7-c1-l2.html",
    "cover": "img/cover-sheet-g7-c1-l2.webp"
   },
   {
@@ -1126,7 +1126,7 @@
    "title": "ورقة عمل: تقويم التفسيرات العلمية",
    "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
    "color": "#2F7BF6",
-   "file": "tools/sheet-g7-c1-l3-r2.html",
+   "file": "tools/sheet-g7-c1-l3.html",
    "cover": "img/cover-sheet-g7-c1-l3.webp"
   },
   {
@@ -1138,7 +1138,7 @@
    "title": "ورقة عمل: الحركة",
    "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
    "color": "#E2662B",
-   "file": "tools/sheet-g7-c2-l1-r2.html",
+   "file": "tools/sheet-g7-c2-l1.html",
    "cover": "img/cover-sheet-g7-c2-l1.webp"
   },
   {
@@ -1150,7 +1150,7 @@
    "title": "ورقة عمل: قوانين نيوتن للحركة",
    "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
    "color": "#E2662B",
-   "file": "tools/sheet-g7-c2-l2-r2.html",
+   "file": "tools/sheet-g7-c2-l2.html",
    "cover": "img/cover-sheet-g7-c2-l2.webp"
   },
   {
@@ -1162,7 +1162,7 @@
    "title": "ورقة عمل: الشغل والآلات البسيطة",
    "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
    "color": "#E2662B",
-   "file": "tools/sheet-g7-c2-l3-r2.html",
+   "file": "tools/sheet-g7-c2-l3.html",
    "cover": "img/cover-sheet-g7-c2-l3.webp"
   },
   {
@@ -1174,7 +1174,7 @@
    "title": "ورقة عمل: الخواص والتغيرات الفيزيائية",
    "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
    "color": "#0F9D78",
-   "file": "tools/sheet-g7-c3-l1-r2.html",
+   "file": "tools/sheet-g7-c3-l1.html",
    "cover": "img/cover-sheet-g7-c3-l1.webp"
   },
   {
@@ -1186,7 +1186,7 @@
    "title": "ورقة عمل: الخواص والتغيرات الكيميائية",
    "desc": "صفحة واحدة للطباعة أو الحل على الشاشة، مع مفتاح الإجابات للمعلم.",
    "color": "#0F9D78",
-   "file": "tools/sheet-g7-c3-l2-r2.html",
+   "file": "tools/sheet-g7-c3-l2.html",
    "cover": "img/cover-sheet-g7-c3-l2.webp"
   },
   {
@@ -1378,7 +1378,7 @@
    "title": "تسلّق القمة: العلم وعملياته",
    "desc": "🧗 كل إجابة صحيحة خطوة نحو القمة، وثلاث متتالية تمنح حبل الإنقاذ.",
    "color": "#2F7BF6",
-   "file": "tools/contest-g7-c1-l1-r2.html",
+   "file": "tools/contest-g7-c1-l1.html",
    "cover": "img/cover-contest-g7-c1-l1.webp"
   },
   {
@@ -1390,7 +1390,7 @@
    "title": "برج النماذج: النماذج العلمية",
    "desc": "🏗 ابنِ برج فريقك بالإجابات الصحيحة، واحذر سقوط الطابق الأعلى.",
    "color": "#2F7BF6",
-   "file": "tools/contest-g7-c1-l2-r2.html",
+   "file": "tools/contest-g7-c1-l2.html",
    "cover": "img/cover-contest-g7-c1-l2.webp"
   },
   {
@@ -1402,7 +1402,7 @@
    "title": "مزاد الأدلة: تقويم التفسيرات العلمية",
    "desc": "🔨 راهن بنقاطك بحسب ثقتك بالإجابة قبل ظهور الخيارات.",
    "color": "#2F7BF6",
-   "file": "tools/contest-g7-c1-l3-r2.html",
+   "file": "tools/contest-g7-c1-l3.html",
    "cover": "img/cover-contest-g7-c1-l3.webp"
   },
   {
@@ -1414,7 +1414,7 @@
    "title": "عجلة الحظ: الحركة",
    "desc": "🎡 أدر العجلة لتحدد قيمة سؤالك، ومنها سؤال مضاعف.",
    "color": "#E2662B",
-   "file": "tools/contest-g7-c2-l1-r2.html",
+   "file": "tools/contest-g7-c2-l1.html",
    "cover": "img/cover-contest-g7-c2-l1.webp"
   },
   {
@@ -1426,7 +1426,7 @@
    "title": "إكس-أو العلمي: قوانين نيوتن للحركة",
    "desc": "❌⭕ لعبة إكس-أو لفريقين: المربع لا يُكسب إلا بإجابة صحيحة.",
    "color": "#E2662B",
-   "file": "tools/contest-g7-c2-l2-r2.html",
+   "file": "tools/contest-g7-c2-l2.html",
    "cover": "img/cover-contest-g7-c2-l2.webp"
   },
   {
@@ -1438,7 +1438,7 @@
    "title": "سلّم المليون: الشغل والآلات البسيطة",
    "desc": "💰 عشرة أسئلة متدرجة بوسائل مساعدة ومحطات أمان.",
    "color": "#E2662B",
-   "file": "tools/contest-g7-c2-l3-r2.html",
+   "file": "tools/contest-g7-c2-l3.html",
    "cover": "img/cover-contest-g7-c2-l3.webp"
   },
   {
@@ -1450,7 +1450,7 @@
    "title": "سباق المواد: الخواص والتغيرات الفيزيائية",
    "desc": "🏎 سباق سيارات بين الفرق مع تيربو للإجابات المتتالية.",
    "color": "#0F9D78",
-   "file": "tools/contest-g7-c3-l1-r2.html",
+   "file": "tools/contest-g7-c3-l1.html",
    "cover": "img/cover-contest-g7-c3-l1.webp"
   },
   {
@@ -1462,7 +1462,7 @@
    "title": "شدّ الحبل: الخواص والتغيرات الكيميائية",
    "desc": "💪 فريقان على طرفي الحبل، مع فرصة سرقة عند الخطأ.",
    "color": "#0F9D78",
-   "file": "tools/contest-g7-c3-l2-r2.html",
+   "file": "tools/contest-g7-c3-l2.html",
    "cover": "img/cover-contest-g7-c3-l2.webp"
   },
   {
