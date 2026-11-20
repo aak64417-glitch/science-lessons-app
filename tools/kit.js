@@ -341,6 +341,7 @@ window.STU = (function () {
     (function spin() {
       if (++k <= steps) { var x = all[Math.floor(Math.random() * all.length)]; if (all.length > 1) while (x === nmEl.textContent) x = all[Math.floor(Math.random() * all.length)]; nmEl.textContent = x; beep(520 + k * 18, 0.05); setTimeout(spin, 45 + k * k * 1.1); return; }
       nmEl.textContent = '🎓 ' + nm; nmEl.className = 'go'; b._spin = false; bs[0].disabled = bs[1].disabled = false;
+      try { card.dispatchEvent(new CustomEvent('stu-picked', { bubbles: true, detail: { name: nm } })); } catch (e) {}
       beep(660, 0.12, 0.1); setTimeout(function () { beep(990, 0.18, 0.1); }, 110);
     })();
     bs[0].onclick = function () { star(nm, 1); this.textContent = '⭐ +١'; this.disabled = true; };

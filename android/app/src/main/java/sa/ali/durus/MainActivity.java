@@ -13,6 +13,7 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.speech.tts.Voice;
 import android.webkit.JavascriptInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -45,6 +46,24 @@ public class MainActivity extends Activity {
             Bundle b = new Bundle();
             b.putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, 1f);
             if (tts.speak(text, TextToSpeech.QUEUE_FLUSH, b, id) != TextToSpeech.SUCCESS) ttsSt.put(id, "error");
+        }
+        /* قائمة الأصوات العربية المثبّتة (الاسم، هل هو محلي، الخصائص) لاختيار صوت رجالي */
+        @JavascriptInterface public String voices() {
+            StringBuilder sb = new StringBuilder("[");
+            try { if (tts != null && tts.getVoices() != null) for (Voice v : tts.getVoices()) {
+                if (v.getLocale() == null || !"ar".equals(v.getLocale().getLanguage())) continue;
+                if (v.getFeatures() != null && v.getFeatures().contains(TextToSpeech.Engine.KEY_FEATURE_NOT_INSTALLED)) continue;
+                if (sb.length() > 1) sb.append(',');
+                String f = v.getFeatures() == null ? "" : v.getFeatures().toString();
+                sb.append("{\"name\":\"").append(v.getName().replace("\"", "")).append("\",\"lang\":\"").append(v.getLocale().toLanguageTag())
+                  .append("\",\"local\":").append(!v.isNetworkConnectionRequired()).append(",\"q\":").append(v.getQuality())
+                  .append(",\"f\":\"").append(f.replace("\"", "")).append("\"}");
+            } } catch (Exception e) { }
+            return sb.append("]").toString();
+        }
+        @JavascriptInterface public boolean setVoice(String name) {
+            try { if (tts != null && tts.getVoices() != null) for (Voice v : tts.getVoices()) if (v.getName().equals(name)) { tts.setVoice(v); return true; } } catch (Exception e) { }
+            return false;
         }
         @JavascriptInterface public String status(String id) { String v = ttsSt.get(id); return v == null ? "none" : v; }
         @JavascriptInterface public void stop() { if (tts != null) tts.stop(); }

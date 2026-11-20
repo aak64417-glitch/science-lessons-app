@@ -34,3 +34,71 @@
     } catch (e) { return set.call(this, k, v); }
   };
 })();
+
+/* ملاءمة المحطة للشاشة: في الدروس التي محتواها داخل main#stage > .wrap، إذا زاد المحتوى قليلًا عن ارتفاع الشاشة
+   يُصغَّر تصغيرًا خفيفًا (حتى ٧٨٪) ليظهر كاملًا دون تمرير عمودي. */
+(function(){
+  var D = document, busy = false, pend = 0;
+  function fit(){
+    pend = 0; var s = D.getElementById('stage'); if (!s || s.tagName !== 'MAIN') return;
+    var w = s.querySelector(':scope > .wrap'); if (!w) return;
+    busy = true;
+    w.style.transform = ''; w.style.marginBottom = ''; w.style.transformOrigin = '';
+    var over = s.scrollHeight - s.clientHeight, h = w.offsetHeight;
+    if (over > 2 && h > 200) {
+      var z = Math.max(0.78, (h - over - 4) / h);
+      w.style.transformOrigin = 'top center'; w.style.transform = 'scale(' + z.toFixed(3) + ')';
+      w.style.marginBottom = (-(h * (1 - z))).toFixed(1) + 'px';
+    }
+    setTimeout(function(){ busy = false; }, 0);
+  }
+  function later(){ if (!pend) pend = setTimeout(fit, 120); }
+  function start(){
+    var s = D.getElementById('stage'); if (!s || s.tagName !== 'MAIN') return;
+    new MutationObserver(function(){ if (!busy) later(); }).observe(s, { subtree: true, childList: true, attributes: true, attributeFilter: ['class', 'hidden', 'open'] });
+    addEventListener('resize', later); later();
+  }
+  if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', start); else start();
+})();
+
+/* قلم التعليق والممحاة في كل الدروس والأدوات: يُحمَّل تلقائيًّا إن لم تتضمنه الصفحة */
+(function(){
+  try {
+    var me = document.currentScript && document.currentScript.src; if (!me) return;
+    function add(){ if ([].some.call(document.scripts, function(s){ return /\/pen\.js(\?|$)/.test(s.src); }) || window.__penKey) return;
+      var s = document.createElement('script'); s.src = new URL('../pen.js', me).href; document.body.appendChild(s); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function(){ setTimeout(add, 50); }); else setTimeout(add, 50);
+  } catch (e) {}
+})();
+
+/* ملاءمة اللوحات الجانبية داخل المحطات (الدروس فقط): إذا زاد محتوى لوحة قابلة للتمرير قليلًا عن ارتفاعها
+   يُصغَّر محتواها تصغيرًا خفيفًا (حتى ٧٥٪) ليظهر كاملًا دون تمرير. يعمل بعد كل لمسة وعند تغيير المقاس. */
+(function(){
+  if (!/\/lessons\//.test(location.pathname)) return;
+  var D = document, SKIP = '.stu-bg,.ov,.ovb,[role=dialog],.qo,#stage>.wrap';
+  function cands(){
+    var out = [], all = D.querySelectorAll('body *');
+    for (var i = 0; i < all.length; i++) { var e = all[i];
+      if (e.id === 'stage' || e.tagName === 'BODY' || e.tagName === 'CANVAS') continue;
+      var cs = getComputedStyle(e); if (!/(auto|scroll)/.test(cs.overflowY)) continue;
+      if (!e.offsetParent || e.clientHeight < 180 || e.clientWidth < 220) continue;
+      if (e.closest(SKIP)) continue;
+      if (e.scrollHeight > e.clientHeight + 4 || e.getAttribute('data-fitz')) out.push(e); }
+    return out;
+  }
+  function setZ(e, z){ for (var k = 0; k < e.children.length; k++) e.children[k].style.zoom = z === 1 ? '' : String(z); if (z === 1) e.removeAttribute('data-fitz'); else e.setAttribute('data-fitz', z); }
+  function run(){
+    cands().forEach(function(e){
+      setZ(e, 1); var r = e.clientHeight / e.scrollHeight; if (r >= 0.995) return;
+      /* أكبر تكبير يتسع دون تمرير (بحث ثنائي بين ٠٫٧٥ و١) */
+      var lo = 0.75, hi = 1;
+      for (var it = 0; it < 6; it++) { var mid = (lo + hi) / 2; setZ(e, mid); if (e.scrollHeight > e.clientHeight + 2) hi = mid; else lo = mid; }
+      setZ(e, lo);
+    });
+  }
+  var t1 = 0, t2 = 0;
+  function later(){ clearTimeout(t1); clearTimeout(t2); t1 = setTimeout(run, 350); t2 = setTimeout(run, 1300); }
+  D.addEventListener('click', later, true); addEventListener('resize', later); addEventListener('hashchange', later);
+  D.addEventListener('keyup', later, true);
+  if (D.readyState === 'loading') D.addEventListener('DOMContentLoaded', later); else later();
+})();

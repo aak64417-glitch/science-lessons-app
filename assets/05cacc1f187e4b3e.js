@@ -236,18 +236,42 @@ S({id:'iforms',name:'م أشكال الصخور النارية الجوفية',b
    '<div class="col grow side" style="gap:10px">'+card('الشكل ١٠','<p style="margin:0;font-size:18.5px;line-height:1.7">تتكوّن الصخور النارية الجوفية عندما تصعد الصهارة في اتجاه سطح الأرض وتبرد قبل أن تصل إلى السطح. تبرد الصهارة بطرائق مختلفة، ثم تتعرّض الصخور التي تعلوها للرفع والتعرية، فتنكشف هذه الصخور الجوفية.</p>')+'<div class="card" style="padding:12px 16px;min-height:120px" id="gT"><p class="hint" style="margin:0">اختر شكلًا من الأزرار لتراه في المقطع.</p></div></div></div>';
   var tl=LK.tools($('#gL',el),F.map(function(f){return ['🔥',f.n]}),function(i){cur=i;$('#gT',el).innerHTML='<h3 style="margin:0 0 6px" class="gl">'+F[i].n+'</h3><p class="big" style="margin:0;font-size:20px">'+F[i].t+'</p>';E.complete&&E.complete('iforms')});$('#gL',el).insertBefore(tl,$('#gC',el));
   var cv=$('#gC',el),x=cv.getContext('2d'),W=1000,H=470;
-  function draw(t){x.fillStyle='#bfe3f5';x.fillRect(0,0,W,H);var top=150+er*70,cols=['#c9a271','#a98258','#d6b585','#8f6c48','#c09060'];
-    x.fillStyle='#7c9a5a';x.beginPath();x.moveTo(0,top);for(var X=0;X<=W;X+=20)x.lineTo(X,top-(er<1?Math.max(0,90-Math.abs(X-760)*.5)*(1-er):0)-Math.sin(X/90)*6);x.lineTo(W,H);x.lineTo(0,H);x.closePath();x.fill();
-    for(var i=0;i<5;i++){x.fillStyle=cols[i];x.fillRect(0,top+8+i*52,W,52)}
-    function hl(k){return cur===k?(Math.sin(t*6)*.25+.85):.95}
-    x.fillStyle='rgba(214,70,40,'+hl(0)+')';x.beginPath();x.ellipse(330,H+10,260,120,0,Math.PI,0);x.fill();
-    x.fillStyle='rgba(235,95,45,'+hl(1)+')';x.beginPath();x.moveTo(300,H-100);x.lineTo(330,top+20);x.lineTo(352,top+20);x.lineTo(345,H-100);x.closePath();x.fill();
-    x.fillStyle='rgba(235,95,45,'+hl(2)+')';x.fillRect(360,top+8+2*52+18,330,18);x.beginPath();x.moveTo(330,H-110);x.lineTo(365,top+8+2*52+22);x.lineTo(380,top+8+2*52+36);x.lineTo(350,H-110);x.fill();
-    x.fillStyle='rgba(190,60,35,'+hl(3)+')';x.beginPath();x.moveTo(740,top+260);x.lineTo(735,top+(er>0?-80*er:20));x.lineTo(785,top+(er>0?-80*er:20));x.lineTo(780,top+260);x.closePath();x.fill();
-    if(er<1){x.fillStyle='rgba(95,85,80,'+(1-er)+')';x.beginPath();x.moveTo(640,top);x.lineTo(735,top-85);x.lineTo(785,top-85);x.lineTo(880,top);x.closePath();x.fill()}
-    var L=[[330,H-40,'الباثوليث'],[300,top+90,'قاطع غير توافقي'],[600,top+8+2*52+12,'قاطع توافقي'],[760,top-(er>0?100*er:110),'عنق بركاني']];L.forEach(function(l,k){LK.pill(x,l[2],l[0],l[1],cur===k?'#13283a':'#fff',cur===k?'#ffd36b':'#13283a',cur===k?18:15)})}
+  /* مقطع عرضي واضح: طبقات متوازية، باثوليث في الأسفل يتفرع منه قاطع مائل يقطع الطبقات، وقاطع توافقي أفقي بين طبقتين، وعنق بركاني يصعد إلى فوهة بركان */
+  var S0=130,LH=50,BX=470,BY=H+40,BRX=330,BRY=175;
+  function bTop(X){var d=(X-BX)/BRX;return d*d>=1?H+50:BY-BRY*Math.sqrt(1-d*d)}
+  var DK=[[300,bTop(300)+6],[395,S0+40]],SY=S0+2*LH,NX=700;
+  function band(a,b,w){var dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),nx=-dy/L*w/2,ny=dx/L*w/2;x.beginPath();x.moveTo(a[0]+nx,a[1]+ny);x.lineTo(b[0]+nx,b[1]+ny);x.lineTo(b[0]-nx,b[1]-ny);x.lineTo(a[0]-nx,a[1]-ny);x.closePath()}
+  function shapes(k){if(k===0){x.beginPath();x.ellipse(BX,BY,BRX,BRY,0,Math.PI,2*Math.PI);x.closePath()}
+    else if(k===1)band(DK[0],DK[1],26);
+    else if(k===2){x.beginPath();x.rect(110,SY-11,(DK[0][0]+(DK[1][0]-DK[0][0])*((DK[0][1]-SY)/(DK[0][1]-DK[1][1])))-110,22)}
+    else {var topN=S0-62;x.beginPath();x.moveTo(NX-24,bTop(NX)+8);x.lineTo(NX-22,topN);x.lineTo(NX+22,topN);x.lineTo(NX+24,bTop(NX)+8);x.closePath()}}
+  var BASE=['#d4502d','#e8673a','#e8673a','#c2432a'];
+  function draw(t){var surf=S0+er*95;
+    x.fillStyle='#cfeaf8';x.fillRect(0,0,W,H);
+    /* الطبقات الصخرية المتوازية (تظهر أسفل السطح الحالي فقط) */
+    var cols=['#d8bd8f','#bf9a6a','#e0c79c','#a5815a','#cba57a','#9c7a55'];
+    for(var i=0;i<6;i++){var y0=S0+i*LH,y1=y0+LH;if(y1<=surf)continue;x.fillStyle=cols[i];x.fillRect(0,Math.max(y0,surf),W,y1-Math.max(y0,surf));x.strokeStyle='rgba(60,40,20,.35)';x.lineWidth=2;x.beginPath();x.moveTo(0,y1);x.lineTo(W,y1);x.stroke()}
+    x.fillStyle='#8a6a48';x.fillRect(0,S0+6*LH,W,H);
+    x.fillStyle='#78a64f';x.fillRect(0,surf-7,W,9);
+    /* البركان قبل التعرية */
+    if(er<1){x.globalAlpha=1-er;x.fillStyle='#8d7f73';x.beginPath();x.moveTo(NX-190,S0);x.quadraticCurveTo(NX-70,S0-40,NX-30,S0-62);x.lineTo(NX+30,S0-62);x.quadraticCurveTo(NX+70,S0-40,NX+190,S0);x.closePath();x.fill();x.fillStyle='#6f6359';x.fillRect(NX-30,S0-66,60,6);x.globalAlpha=1}
+    /* الأشكال الأربعة: المختار ساطع ومحدد، والباقي باهت */
+    var order=[0,2,1,3];order.forEach(function(k){var on=cur===k,dim=cur>=0&&!on;x.save();if(k!==3){x.beginPath();x.rect(0,surf-1,W,H);x.clip()}shapes(k);
+      x.fillStyle=dim?'rgba(150,110,95,.55)':BASE[k];x.fill();
+      if(on){x.save();x.shadowColor='#ffd36b';x.shadowBlur=22;x.lineWidth=5;x.strokeStyle='#fff3c4';x.setLineDash([14,10]);x.lineDashOffset=-t*40;x.stroke();x.restore();
+        /* حركة الصهارة داخل الشكل */
+        x.save();shapes(k);x.clip();x.fillStyle='rgba(255,230,120,.85)';for(var q=0;q<26;q++){var ph=(t*.35+q/26)%1,px,py;
+          if(k===0){px=BX-BRX+((q*97)%660);py=BY-ph*BRY}else if(k===1){px=DK[0][0]+(DK[1][0]-DK[0][0])*ph;py=DK[0][1]+(DK[1][1]-DK[0][1])*ph}else if(k===2){px=330-ph*220;py=SY+(q%3-1)*5}else{px=NX+(q%3-1)*9;py=bTop(NX)-(bTop(NX)-(S0-62))*ph}
+          x.beginPath();x.arc(px,py,4,0,7);x.fill()}x.restore()}
+      else{x.lineWidth=2;x.strokeStyle='rgba(80,20,10,.5)';x.setLineDash([]);x.stroke()}x.restore()});
+    /* بطاقات الأسماء بخطوط دالة */
+    var L=[[BX,H-30,BX,H-55,'الباثوليث'],[180,S0+175,330,S0+165,'قاطع غير توافقي'],[175,SY-40+er*60,200,SY-6+er*20,'قاطع توافقي'],[NX+150,S0-90,NX+22,S0-40,'عنق بركاني']];
+    L.forEach(function(l,k){var on=cur===k;x.strokeStyle=on?'#ffd36b':'rgba(20,34,43,.6)';x.lineWidth=on?3:2;x.beginPath();x.moveTo(l[0],l[1]);x.lineTo(l[2],l[3]);x.stroke();x.fillStyle=x.strokeStyle;x.beginPath();x.arc(l[2],l[3],4,0,7);x.fill();
+      LK.pill(x,l[4],l[0],l[1],on?'#13283a':'#fff',on?'#ffd36b':'#13283a',on?19:15)});
+    LK.pill(x,er>.5?'سطح الأرض بعد التعرية':'سطح الأرض',890,surf-24,'rgba(255,255,255,.9)','#2f5a1f',13);
+    if(er>.95)LK.pill(x,'العنق أقسى؛ فبقي ظاهرًا',NX,S0-110,'#fff7d6','#7a5200',15)}
   function loop(){if(!live)return;raf=requestAnimationFrame(loop);draw(performance.now()/1000)}
-  $('#gE',el).onclick=function(){E.tw&&E.tw(2500,function(q){er=q})};
+  $('#gE',el).onclick=function(){var from=er,to=er>.5?0:1;$('#gE',el).textContent=to?'↺ أعد المقطع قبل التعرية':'⛰ تعرية ورفع: اكشف الصخور الجوفية';var t0=performance.now();(function st(){var q=Math.min(1,(performance.now()-t0)/2500);q=q<.5?2*q*q:1-Math.pow(-2*q+2,2)/2;er=from+(to-from)*q;if(q<1)requestAnimationFrame(st)})();E.complete&&E.complete('iforms')};
   return {enter:function(){live=true;loop()},leave:function(){live=false;cancelAnimationFrame(raf)}}}});
 
 /* ========== اختبر نفسك (مراجعة الدرس ٢ ص ١٥١) ========== */

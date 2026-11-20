@@ -4,9 +4,9 @@
   function U(t){this.text=t||'';this.lang='ar-SA';this.rate=1;this.pitch=1;this.volume=1;this.voice=null;this.onstart=this.onend=this.onerror=null}
   var V=[{name:'صوت الجهاز العربي',lang:'ar-SA',localService:true,'default':true,voiceURI:'android-tts'}];
   var S={speaking:false,pending:false,paused:false,onvoiceschanged:null,_l:[],
-    getVoices:function(){try{return A.ready()?V:[]}catch(e){return[]}},
+    getVoices:function(){try{if(!A.ready())return[];if(A.voices){var L=JSON.parse(A.voices()||'[]');if(L.length)return L.map(function(v){return {name:v.name,lang:v.lang||'ar',localService:!!v.local,'default':false,voiceURI:v.name,_f:v.f||''}})}return V}catch(e){return V}},
     speak:function(u){var id='u'+Date.now()+'_'+(++seq),st0=false;live[id]=u;S.speaking=true;
-      try{A.speak(String(u.text),id,+u.rate||1,+u.pitch||1)}catch(e){delete live[id];S.speaking=false;u.onerror&&u.onerror({error:'synthesis-failed'});return}
+      try{if(u.voice&&u.voice.voiceURI!=='android-tts'&&A.setVoice)A.setVoice(u.voice.name);A.speak(String(u.text),id,+u.rate||1,+u.pitch||1)}catch(e){delete live[id];S.speaking=false;u.onerror&&u.onerror({error:'synthesis-failed'});return}
       var iv=setInterval(function(){if(!live[id]){clearInterval(iv);return}var r='none';try{r=A.status(id)}catch(e){}
         if((r==='start'||r==='done')&&!st0){st0=true;u.onstart&&u.onstart({})}
         if(r==='done'){clearInterval(iv);delete live[id];S.speaking=Object.keys(live).length>0;u.onend&&u.onend({})}
@@ -40,7 +40,8 @@ function activity(K){
     '<div class="acts4">'+ACT.map(function(a){return '<button class="actc" data-a="'+a[0]+'"><span class="ai">'+a[1]+'</span><b>'+a[2]+'</b><small>'+a[3]+'</small></button>'}).join('')+'</div><section class="panel" id="stage"></section></main>';
   wireBar(K);
   var stage=K.$('#stage');
-  document.addEventListener('click',function(e){var b=e.target.closest('[data-a]');if(!b)return;K.$$('[data-a]').forEach(function(x){x.setAttribute('aria-pressed',x===b)});RUN[b.dataset.a]();stage.scrollIntoView({behavior:'smooth',block:'start'})});
+  stage.addEventListener('stu-picked',function(){var f=stage.onstupicked;if(typeof f==='function')f()});
+  document.addEventListener('click',function(e){var b=e.target.closest('[data-a]');if(!b)return;K.$$('[data-a]').forEach(function(x){x.setAttribute('aria-pressed',x===b)});stage.onstupicked=null;RUN[b.dataset.a]();stage.scrollIntoView({behavior:'smooth',block:'start'})});
   var RUN={
    mem:function(){
      var pick=K.shuffle(T).slice(0,6), cards=[];pick.forEach(function(t,i){cards.push({k:i,txt:t.t,term:1},{k:i,txt:t.d,term:0})});cards=K.shuffle(cards);
@@ -76,9 +77,12 @@ function activity(K){
      var R=K.shuffle(tf).slice(0,Math.min(8,tf.length)),i=0,sc=0,timer=null;
      function draw(){clearInterval(timer);if(i>=R.length){K.sfx.win();if(sc===R.length)confetti();stage.innerHTML='<div class="sh"><h2>⚡ صح أم خطأ؟</h2></div><div class="sortend"><b>'+n(sc)+' / '+n(R.length)+'</b><span>جولة خاطفة منتهية.</span><button class="b c" data-a="tf">↺ جولة جديدة</button></div>';return}
        var t=R[i],left=12;stage.innerHTML='<div class="sh"><h2>⚡ صح أم خطأ؟</h2><span class="muted">العبارة '+n(i+1)+' من '+n(R.length)+' · النقاط <b>'+n(sc)+'</b></span></div><div class="tbar"><i id="tb"></i></div><div class="tfcard"><p>'+esc(t.s)+'</p></div><div class="tfbtn"><button class="tfb yes" data-v="1">✓ صح</button><button class="tfb nob" data-v="0">✗ خطأ</button></div><div id="tfb"></div>';
-       var tb=K.$('#tb');tb.style.transition='none';tb.style.width='100%';requestAnimationFrame(function(){tb.style.transition='width 12s linear';tb.style.width='0%'});
-       timer=setTimeout(function(){ans(null)},12000);
-       function ans(v){clearTimeout(timer);K.$$('.tfb',stage).forEach(function(x){x.disabled=true});tb.style.transition='none';var good=v!==null&&(v==='1')===t.v;if(good){sc++;K.sfx.ok()}else K.sfx.no();
+       /* المؤقت لا يبدأ إلا بعد ظهور اسم الطالب («من يجيب؟») أو بضغط زر «ابدأ المؤقت» */
+       var tb=K.$('#tb'),started=false,done=false;tb.style.transition='none';tb.style.width='100%';
+       var sb=document.createElement('button');sb.className='b c';sb.id='tfgo';sb.textContent='⏱ ابدأ المؤقت';sb.style.cssText='display:block;margin:10px auto 0';K.$('.tfbtn',stage).insertAdjacentElement('afterend',sb);
+       function startT(){if(started||done)return;started=true;sb.remove();tb.style.transition='width 12s linear';tb.style.width='0%';timer=setTimeout(function(){ans(null)},12000);K.sfx.tick&&K.sfx.tick()}
+       sb.onclick=startT;stage.onstupicked=startT;
+       function ans(v){if(done)return;done=true;clearTimeout(timer);if(sb.parentNode)sb.remove();K.$$('.tfb',stage).forEach(function(x){x.disabled=true});tb.style.transition='none';var good=v!==null&&(v==='1')===t.v;if(good){sc++;K.sfx.ok()}else K.sfx.no();
          K.$('#tfb').innerHTML='<div class="fb '+(good?'ok':'no')+'">'+(v===null?'انتهى الوقت! ':'')+(good?'صحيح! ':'')+'العبارة '+(t.v?'صحيحة':'خاطئة')+(t.w?': '+esc(t.w):'.')+' <button class="b" id="nx" style="margin-inline-start:10px">التالي ←</button></div>';K.$('#nx').onclick=function(){i++;draw()}}
        K.$$('.tfb',stage).forEach(function(b){b.onclick=function(){ans(b.dataset.v)}})}
      draw();
@@ -199,9 +203,13 @@ function video(K){
   var hasTTS='speechSynthesis' in window;if(!hasTTS)K.$('#vo').hidden=true;
   /* ---- القراءة الصوتية ---- */
   var VO=null,tok=0,warned=false;
+  /* صوت المعلم: يُفضَّل صوت رجالي عربي (ماجد/نايف/حامد/شاكر... أو أصوات Google الرجالية)، ويمكن تغييره من القائمة ويُحفظ الاختيار */
+  var MALE=/(\bmale\b|maged|majed|naayf|naif|hamed|shakir|omar|tarik|tarek|hamdan|fahed|bassel|zayd|ar-xa-x-ard|ar-xa-x-arz|-m\d|male)/i,FEM=/(female|zariyah|hoda|salma|laila|layla|mona|amina|amira|sana|fatima|noura|hala|mariam|-f\d)/i;
+  function maleFirst(ar){var sc=function(v){var s=0,t=v.name+' '+(v._f||'');if(MALE.test(t)&&!FEM.test(t))s+=10;if(FEM.test(t))s-=10;if(/SA/i.test(v.lang))s+=2;if(v.localService)s+=1;return s};return ar.slice().sort(function(a,b){return sc(b)-sc(a)})[0]}
+  function vLabel(v){var t=v.name+' '+(v._f||''),g=MALE.test(t)&&!FEM.test(t)?' · رجالي':FEM.test(t)?' · نسائي':'';return v.name.replace(/^ar-xa-x-/,'صوت ').replace(/-(local|network)$/,'')+g}
   function pickVoice(){try{var vs=speechSynthesis.getVoices()||[],ar=vs.filter(function(v){return /^ar/i.test(v.lang)});var keep=VO&&ar.filter(function(v){return v.name===VO.name})[0];var pref=null;try{pref=localStorage.getItem('kit-voice')}catch(e){}var pv=pref&&ar.filter(function(v){return v.name===pref})[0];
-    VO=pv||keep||ar.filter(function(v){return v.localService&&/SA/i.test(v.lang)})[0]||ar.filter(function(v){return v.localService})[0]||ar.filter(function(v){return /SA/i.test(v.lang)})[0]||ar[0]||null;
-    var sel=K.$('#vsel');if(sel){sel.innerHTML=ar.length?ar.map(function(v){return '<option value="'+esc(v.name)+'"'+(VO&&v.name===VO.name?' selected':'')+'>'+esc(v.name)+' ('+esc(v.lang)+')'+(v.localService?'':' · إنترنت')+'</option>'}).join(''):'<option>لا يوجد صوت عربي</option>';sel.hidden=!voice}}catch(e){}}
+    VO=pv||keep||maleFirst(ar)||null;
+    var sel=K.$('#vsel');if(sel){sel.innerHTML=ar.length?ar.map(function(v){return '<option value="'+esc(v.name)+'"'+(VO&&v.name===VO.name?' selected':'')+'>'+esc(vLabel(v))+(v.localService?'':' · إنترنت')+'</option>'}).join(''):'<option>لا يوجد صوت عربي</option>';sel.hidden=!voice}}catch(e){}}
   if(hasTTS){pickVoice();try{speechSynthesis.addEventListener('voiceschanged',pickVoice)}catch(e){speechSynthesis.onvoiceschanged=pickVoice}}
   function chunks(t){var out=[],buf='';String(t).split(/([.،:؛!؟?\n])/).forEach(function(x){buf+=x;if(/[.،:؛!؟?\n]/.test(x)&&buf.trim().length>40){out.push(buf.trim());buf=''}});if(buf.trim())out.push(buf.trim());
     var r=[];out.forEach(function(c){while(c.length>200){var k=c.lastIndexOf(' ',200);if(k<60)k=200;r.push(c.slice(0,k));c=c.slice(k)}if(c.trim())r.push(c)});return r}
@@ -211,7 +219,7 @@ function video(K){
     var my=++tok,parts=chunks(t),k=0,started=false,busy0=false;
     try{busy0=speechSynthesis.speaking||speechSynthesis.pending;if(busy0)speechSynthesis.cancel()}catch(e){}
     function next(){if(my!==tok)return;if(k>=parts.length){done&&done(true);return}
-      var u=new SpeechSynthesisUtterance(parts[k++]);u.lang=VO?VO.lang:'ar-SA';if(VO)u.voice=VO;u.rate=Math.min(1.6,0.95*spd);u.pitch=1;
+      var u=new SpeechSynthesisUtterance(parts[k++]);u.lang=VO?VO.lang:'ar-SA';if(VO)u.voice=VO;u.rate=Math.min(1.6,0.92*spd);u.pitch=(VO&&FEM.test(VO.name))?1:0.9;
       u.onstart=function(){started=true};u.onend=function(){setTimeout(next,120)};u.onerror=function(e){if(my!==tok)return;if(e&&(e.error==='interrupted'||e.error==='canceled'))return;warn();done&&done(false)};
       u.volume=1;try{if(speechSynthesis.paused)speechSynthesis.resume();speechSynthesis.speak(u)}catch(e){warn();done&&done(false)}}
     if(now&&!busy0)next();else setTimeout(next,busy0?250:30);

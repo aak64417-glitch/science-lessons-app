@@ -4,9 +4,9 @@
   function U(t){this.text=t||'';this.lang='ar-SA';this.rate=1;this.pitch=1;this.volume=1;this.voice=null;this.onstart=this.onend=this.onerror=null}
   var V=[{name:'صوت الجهاز العربي',lang:'ar-SA',localService:true,'default':true,voiceURI:'android-tts'}];
   var S={speaking:false,pending:false,paused:false,onvoiceschanged:null,_l:[],
-    getVoices:function(){try{return A.ready()?V:[]}catch(e){return[]}},
+    getVoices:function(){try{if(!A.ready())return[];if(A.voices){var L=JSON.parse(A.voices()||'[]');if(L.length)return L.map(function(v){return {name:v.name,lang:v.lang||'ar',localService:!!v.local,'default':false,voiceURI:v.name,_f:v.f||''}})}return V}catch(e){return V}},
     speak:function(u){var id='u'+Date.now()+'_'+(++seq),st0=false;live[id]=u;S.speaking=true;
-      try{A.speak(String(u.text),id,+u.rate||1,+u.pitch||1)}catch(e){delete live[id];S.speaking=false;u.onerror&&u.onerror({error:'synthesis-failed'});return}
+      try{if(u.voice&&u.voice.voiceURI!=='android-tts'&&A.setVoice)A.setVoice(u.voice.name);A.speak(String(u.text),id,+u.rate||1,+u.pitch||1)}catch(e){delete live[id];S.speaking=false;u.onerror&&u.onerror({error:'synthesis-failed'});return}
       var iv=setInterval(function(){if(!live[id]){clearInterval(iv);return}var r='none';try{r=A.status(id)}catch(e){}
         if((r==='start'||r==='done')&&!st0){st0=true;u.onstart&&u.onstart({})}
         if(r==='done'){clearInterval(iv);delete live[id];S.speaking=Object.keys(live).length>0;u.onend&&u.onend({})}
