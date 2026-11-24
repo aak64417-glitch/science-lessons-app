@@ -1,5 +1,5 @@
 {
- "version": 61,
+ "version": 62,
  "items": [
   {
    "id": "g7-c1-l1",
@@ -1788,6 +1788,18 @@
    "color": "#8A5A2B",
    "file": "lessons/g7-c6-r4.html#l2",
    "cover": "img/cover-g7-c6-l2-3d.webp"
+  },
+  {
+   "id": "g7-c6-rv",
+   "title": "حل أسئلة مراجعة الفصل السادس",
+   "type": "lesson",
+   "grade": "7",
+   "no": 3,
+   "chapter": "الفصل السادس: القوى المشكلة للأرض",
+   "desc": "حلول أسئلة مراجعة الفصل (١–٢٩) سؤالًا سؤالًا بخط كبير وواضح للعرض في الفصل وفي التيمز",
+   "color": "#8A5A2B",
+   "file": "lessons/g7-c6-review.html",
+   "cover": "img/cover-g7-c6-rv.webp"
   },
   {
    "id": "sheet-g7-c6-l1",
