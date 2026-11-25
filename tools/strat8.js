@@ -41,7 +41,7 @@
   var css = '' +
     '.s8{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;color:#fff;direction:rtl;font-family:inherit;font-weight:700;line-height:1.5;' +
     'background:radial-gradient(1200px 700px at 80% -10%,' + C1 + ' 0,transparent 60%),radial-gradient(900px 600px at 0 110%,' + C2 + ' 0,transparent 60%),#0B1222;overflow:hidden;--acc:' + ACC + ';--c1:' + C1 + ';--c2:' + C2 + '}' +
-    '.s8 *{box-sizing:border-box}.s8 button{font:inherit;font-weight:700;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}' +
+    '.s8 *{box-sizing:border-box}.s8 :where(button){font:inherit;font-weight:700;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}' +
     '.s8-top{display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(0,0,0,.28);border-bottom:2px solid rgba(255,255,255,.12);flex:none}' +
     '.s8-ttl{font-size:clamp(17px,1.7vw,24px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}.s8-ttl small{display:block;font-size:.68em;color:var(--acc);opacity:.95}' +
     '.s8-ib{border:0;border-radius:12px;background:rgba(255,255,255,.14);padding:7px 14px;font-size:clamp(15px,1.4vw,20px)}.s8-ib:active{transform:scale(.96)}' +
@@ -124,6 +124,29 @@
     '.s8-ideas{display:flex;flex-direction:column;gap:8px}.s8-idea{border-radius:14px;background:rgba(255,255,255,.95);color:#111827;padding:8px 14px;font-size:clamp(16px,1.7vw,24px);animation:s8in .45s}.s8-idea::before{content:"💡 "}' +
     '.s8-cv{position:absolute;inset:0;pointer-events:none;z-index:5}' +
     '.s8-hb{position:fixed;inset:auto auto 14px 50%;transform:translateX(-50%);z-index:100001;background:#111827;color:#fff;border:2px solid var(--acc,#FACC15);border-radius:14px;padding:8px 18px;font-size:18px}' +
+    '.s8-surp{border-style:dashed;border-color:var(--acc)}.s8-more{background:rgba(0,0,0,.25)}.s8-card.hl{transform:scale(1.06);border-color:#fff;box-shadow:0 0 30px var(--acc)}' +
+    '.s8-menu3{grid-template-columns:repeat(5,1fr)}.s8-menu3 .s8-card .ds{display:none}' +
+    '.s8-judge{font-size:clamp(60px,7vw,100px);text-align:center;transform-origin:70% 90%}.s8-judge.bang{animation:s8hit .5s}.s8-scroll{background:#FEF3C7;color:#78350F;border-radius:14px;padding:12px 16px;text-align:center;border:3px double #B45309}.s8-court{justify-content:center}' +
+    '.s8-tsel{border:2px solid var(--tc);background:rgba(0,0,0,.25);border-radius:12px;padding:4px 10px;font-size:clamp(13px,1.2vw,17px)}.s8-tsel.on{background:var(--tc);color:#111}' +
+    '.s8-vote{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.25);border-radius:14px;padding:6px 12px;font-size:clamp(15px,1.5vw,21px)}.s8-vote b{font-size:1.5em;min-width:40px;text-align:center}.s8-vote button{border:0;border-radius:10px;width:40px;height:36px;background:rgba(255,255,255,.18);font-size:20px}' +
+    '.s8-lie{flex:1;display:flex;flex-direction:column;gap:10px;min-height:0}.s8-lcards{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;min-height:0}' +
+    '.s8-lcard{border-radius:22px;background:#fff;color:#111827;padding:12px 14px;display:flex;flex-direction:column;gap:8px;justify-content:center;text-align:center;position:relative;border:4px solid transparent;transition:all .4s}.s8-lcard>i{font-style:normal;position:absolute;top:8px;right:12px;background:var(--c1);color:#fff;border-radius:50%;width:34px;height:34px;line-height:34px}' +
+    '.s8-lteams{display:flex;gap:6px;justify-content:center}.s8-lteams button{border:3px solid var(--tc);background:#F1F5F9;border-radius:12px;width:48px;height:44px;font-size:22px;opacity:.55}.s8-lteams button.on{opacity:1;background:var(--tc);transform:scale(1.12)}' +
+    '.s8-lres{font-size:clamp(14px,1.35vw,19px)}.s8-lcard.tru{border-color:#22C55E;background:#ECFDF5}.s8-lcard.lie{border-color:#EF4444;background:#FEF2F2;transform:rotate(-1.5deg) scale(1.03)}.s8-lcard.lie .s8-lres{color:#991B1B}' +
+    '.s8-memw{flex:1;display:flex;gap:14px;min-height:0}.s8-mem{flex:1;display:grid;gap:10px;grid-auto-rows:1fr;min-height:0}.s8-mc{border:0;padding:0;position:relative;perspective:800px;background:none;min-height:0}' +
+    '.s8-mc>div{position:absolute;inset:0;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;padding:6px 8px;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .5s}' +
+    '.s8-mc .fr{background:linear-gradient(135deg,var(--c1),var(--c2));border:3px solid rgba(255,255,255,.3);font-size:clamp(22px,2.4vw,34px)}.s8-mc .fr span{opacity:.6}.s8-mc .bk{transform:rotateY(180deg);background:#fff;color:#111827;font-size:clamp(14px,1.45vw,20px);line-height:1.45}.s8-mc .bk.term{background:#FEF9C3;font-size:clamp(17px,1.8vw,26px)}' +
+    '.s8-mc.up .fr{transform:rotateY(180deg)}.s8-mc.up .bk{transform:rotateY(360deg)}.s8-mc.ok .bk{background:#DCFCE7;box-shadow:0 0 0 4px #22C55E}' +
+    '.s8-bombw{flex:1;display:flex;gap:16px;min-height:0}.s8-bombL{flex:0 0 36%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}.s8-bomb{font-size:clamp(110px,13vw,190px);position:relative;line-height:1}' +
+    '.s8-bomb.lit{animation:s8shk .35s infinite}.s8-bomb .fz{position:absolute;top:2%;right:18%;width:30px;height:30px;border-radius:50%}.s8-bomb.lit .fz{background:radial-gradient(#FFF7AE,#F97316 50%,transparent 70%);animation:s8sh .1s infinite}.s8-bomb.boom{animation:s8in .4s;filter:drop-shadow(0 0 40px #F97316)}.s8-bomb.boom::after{content:"💥";position:absolute;inset:0;font-size:1.2em;text-align:center}' +
+    '.s8-holder{font-size:clamp(20px,2.2vw,32px);background:#fff;color:#111827;border-radius:14px;padding:6px 18px;min-height:1.6em}.s8-holder:empty{display:none}' +
+    '.s8-wheelw{flex:1;display:flex;gap:16px;min-height:0}.s8-wheelL{flex:0 0 40%;position:relative;display:flex;align-items:center;justify-content:center;min-height:0}.s8-wh{width:min(100%,58vh);aspect-ratio:1;transition:transform 4s cubic-bezier(.15,.9,.25,1);border-radius:50%;box-shadow:0 0 0 8px var(--acc),0 20px 50px rgba(0,0,0,.5)}.s8-ptr{position:absolute;top:-4px;left:50%;transform:translateX(-50%);font-size:44px;color:#fff;z-index:2;text-shadow:0 3px 6px #000}' +
+    '.s8-racew{flex:1;display:flex;gap:16px;min-height:0}.s8-mt{flex:0 0 36%;position:relative;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#7DD3FC,#E0F2FE 60%)}.s8-mt::before{content:"";position:absolute;left:4%;right:4%;bottom:0;height:88%;background:linear-gradient(160deg,#78716C,#44403C);clip-path:polygon(50% 0,100% 100%,0 100%)}.s8-mt::after{content:"";position:absolute;left:38%;right:38%;top:12%;height:14%;background:#fff;clip-path:polygon(50% 0,100% 100%,0 100%)}' +
+    '.s8-mt .peak{position:absolute;top:4%;left:50%;transform:translateX(-50%);font-size:40px;z-index:2}.s8-cl{position:absolute;z-index:3;font-size:clamp(28px,3vw,42px);width:56px;height:56px;border-radius:50%;background:#fff;border:4px solid var(--tc);display:grid;place-items:center;transition:bottom .8s cubic-bezier(.3,1.5,.5,1)}.s8-cl.win{animation:s8f .6s infinite}' +
+    '.s8-rgrid{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.s8-rt{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.25);border-radius:14px;padding:5px 10px;font-size:clamp(14px,1.3vw,18px)}.s8-rt button{border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);border-radius:10px;padding:3px 10px}.s8-rt button.on{background:var(--acc);color:#111}' +
+    '.s8-draww{flex:1;display:flex;gap:16px;min-height:0}.s8-board{flex:1;position:relative;background:#fff;border-radius:22px;overflow:hidden;box-shadow:inset 0 0 0 6px #CBD5E1}.s8-board canvas{position:absolute;inset:0;touch-action:none;cursor:crosshair}' +
+    '.s8-dtools{position:absolute;top:10px;left:10px;display:flex;gap:6px;z-index:2}.s8-dtools button{width:38px;height:38px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)}.s8-dtools .cl{background:#F1F5F9;font-size:18px}' +
+    '.s8-peek{border:2px dashed var(--acc);background:rgba(0,0,0,.3);border-radius:14px;padding:10px 14px;font-size:clamp(14px,1.3vw,18px);user-select:none;-webkit-user-select:none}.s8-peek.on{background:#fff;color:#111827;font-size:clamp(22px,2.4vw,34px)}.s8-peek[disabled]{opacity:.4}' +
     '@media (max-width:1180px){.s8-teams .s8-tm b{display:none}}@media (max-width:900px){.s8-menu{grid-template-columns:repeat(2,1fr)}.s8-intro{display:none}}';
   var st = el('style'); st.textContent = css; document.head.appendChild(st);
 
@@ -190,9 +213,40 @@
     hats: { i: '🎩', n: 'قبعات التفكير الست', d: 'ست قبعات ملوّنة، لكل قبعة طريقة تفكير وسؤال من الدرس', goal: 'تناول الموضوع من زوايا تفكير متعددة', skill: 'التفكير الإبداعي والناقد', time: '٨ دقائق' },
     cor: { i: '🧭', n: 'الأركان الأربعة', d: 'عبارة جريئة… يتجه كل طالب إلى الركن الذي يمثّل رأيه، ثم يُعلن الحكم العلمي', goal: 'كشف التصورات البديلة ومناقشتها', skill: 'الحجة والتبرير', time: '٦ دقائق' },
     pr: { i: '🎤', n: 'المؤتمر الصحفي', d: 'طالب يتقمّص شخصية من الدرس، وزملاؤه صحفيون يحاورونه', goal: 'تعميق الفهم بلعب الأدوار', skill: 'التواصل والتقمّص', time: '٧ دقائق' },
-    wi: { i: '💭', n: 'ماذا لو؟', d: 'سيناريو خيالي يثير العقول: فكّر – زاوج – شارك', goal: 'تطبيق المعرفة في مواقف جديدة', skill: 'التفكير التخيّلي وحل المشكلات', time: '٥ دقائق' }
+    wi: { i: '💭', n: 'ماذا لو؟', d: 'سيناريو خيالي يثير العقول: فكّر – زاوج – شارك', goal: 'تطبيق المعرفة في مواقف جديدة', skill: 'التفكير التخيّلي وحل المشكلات', time: '٥ دقائق' },
+    court: { i: '⚖️', n: 'المحكمة العلمية', d: 'ادّعاء علمي في قفص الاتهام: فريق للادعاء وفريق للدفاع، والصف هيئة المحلّفين', goal: 'بناء الحجة العلمية وتقييمها', skill: 'التفكير الناقد والإقناع', time: '٨ دقائق' },
+    lie: { i: '🕵️', n: 'حقيقتان وكذبة', d: 'ثلاث عبارات بينها كذبة واحدة… أي فريق يكشفها أولًا؟', goal: 'تمييز المعلومة الصحيحة من الخاطئة', skill: 'التحليل والتمييز', time: '٥ دقائق' },
+    mem: { i: '🧠', n: 'بطاقات الذاكرة', d: 'اقلب بطاقتين وطابق المصطلح بمعناه… وتذكّر أماكن البطاقات!', goal: 'ترسيخ المفردات العلمية ومعانيها', skill: 'التذكّر والربط', time: '٦ دقائق' },
+    bomb: { i: '💣', n: 'القنبلة الموقوتة', d: 'القنبلة تتنقّل بين الطلاب… ومن تنفجر عنده يجيب السؤال!', goal: 'المراجعة السريعة بإثارة وتشويق', skill: 'الاستدعاء السريع', time: '٥ دقائق' },
+    wheel: { i: '🎡', n: 'عجلة الحظ', d: 'أدر العجلة: نقاط، أو مكافأة، أو سرقة… أو ضياع الدور!', goal: 'التقويم التكويني بروح المنافسة', skill: 'الاستدعاء والتطبيق', time: '٧ دقائق' },
+    race: { i: '🏔️', n: 'سباق القمة', d: 'صح أم خطأ؟ كل إجابة صحيحة ترفع فريقك خطوة نحو قمة الجبل', goal: 'تقويم الفهم بسرعة ومشاركة الجميع', skill: 'اتخاذ القرار', time: '٦ دقائق' },
+    draw: { i: '🎨', n: 'ارسم وخمّن', d: 'طالب يرسم المصطلح دون كلمات، وفريقه يخمّن قبل نهاية الوقت', goal: 'التعبير البصري عن المفاهيم', skill: 'التمثيل البصري والتواصل', time: '٦ دقائق' }
   };
-  var ORDER = ['box', 'auc', 'tab', 'hats', 'cor', 'pr', 'wi'].filter(function (k) { return DATA[k]; });
+  // بيانات الاستراتيجيات الإضافية مشتقة من محتوى الدرس نفسه
+  var TF = (DATA.auc || []).concat(DATA.cor || []);
+  if (DATA.cor) DATA.court = DATA.cor;
+  if (TF.length >= 3) { DATA.lie = TF; DATA.race = TF; }
+  var QS = (DATA.hats || []).concat(DATA.pr ? DATA.pr.qa : []);
+  if (QS.length) { DATA.bomb = QS; DATA.wheel = QS; }
+  if (DATA.tab) DATA.draw = DATA.tab.map(function (x) { return x[0]; });
+  (function () {
+    var pr = [], seen = {};
+    function push(t, d) { t = String(t).replace(/<[^>]+>/g, '').trim(); d = String(d).replace(/<[^>]+>/g, '').trim(); if (!t || !d || seen[t] || pr.length >= 6) return; if (d.length > 90) { var c = d.search(/[،.؛:]/); if (c > 25) d = d.slice(0, c); } seen[t] = 1; pr.push([t, d]); }
+    (function w(o) { if (!o || typeof o !== 'object') return; if (Array.isArray(o)) { o.forEach(w); return; } var t = o.term || o.w, d = o.def || o.d; if (typeof t === 'string' && typeof d === 'string' && d.length > 8) push(t, d); for (var k in o) if (k !== 'theme') w(o[k]); })(L);
+    (DATA.box || []).forEach(function (b) { push(b.a, b.c[2]); });
+    if (pr.length >= 4) DATA.mem = pr;
+  })();
+  // لكل فصل مجموعة استراتيجيات مختلفة
+  var SETS = {
+    1: ['box', 'lie', 'draw', 'hats', 'court'], 2: ['auc', 'mem', 'wheel', 'cor', 'wi'], 3: ['race', 'tab', 'pr', 'bomb', 'lie'],
+    4: ['wheel', 'box', 'court', 'mem', 'wi'], 5: ['pr', 'auc', 'draw', 'hats', 'race'], 6: ['bomb', 'cor', 'mem', 'tab', 'box'],
+    7: ['court', 'race', 'wi', 'pr', 'mem'], 8: ['lie', 'hats', 'tab', 'wheel', 'draw'], 9: ['box', 'bomb', 'auc', 'cor', 'mem'],
+    10: ['court', 'wheel', 'wi', 'race', 'tab'], 11: ['draw', 'lie', 'pr', 'hats', 'bomb'], 12: ['mem', 'race', 'box', 'court', 'cor']
+  };
+  var ALL = Object.keys(META).filter(function (k) { return DATA[k]; });
+  var CH = +((String(L.id).match(/-c(\d+)-/) || [])[1] || 0);
+  var ORDER = (SETS[CH] || ALL.slice(0, 5)).filter(function (k) { return DATA[k]; });
+  var EXTRA = ALL.filter(function (k) { return ORDER.indexOf(k) < 0; });
 
   var root = null, main = null, teamsEl = null, cleanup = null;
   function openUI() {
@@ -257,11 +311,25 @@
     var g = el('div', 's8-menu');
     var intro = el('div', 's8-card s8-intro', '<div class="ic">🚀</div><div class="nm">استراتيجيات نشطة</div><div class="ds">مصمّمة على موضوع الدرس: تعلّم باللعب، وعمل الفرق، والتفكير العليا. النقاط تُحفظ للفرق في أعلى الشاشة.</div>');
     g.appendChild(intro);
-    ORDER.forEach(function (k) {
-      var m = META[k], c = el('button', 's8-card' + (S.done[k] ? ' done' : ''), '<div class="ic">' + m.i + '</div><div class="nm">' + m.n + '</div><div class="ds">' + m.d + '</div><div class="tm">⏱ ' + m.time + '</div>');
-      c.onclick = function () { SFX.pop(); show(k); };
-      g.appendChild(c);
-    });
+    ORDER.forEach(function (k) { g.appendChild(card(k)); });
+    var sp = el('button', 's8-card s8-surp', '<div class="ic">🎲</div><div class="nm">الاستراتيجية المفاجئة</div><div class="ds">دع الحظ يختار استراتيجية اليوم!</div>');
+    sp.onclick = function () {
+      var cs = g.querySelectorAll('.s8-card[data-k]'), k = 0, fin = Math.floor(Math.random() * cs.length), steps = cs.length * 2 + fin;
+      var iv = setInterval(function () { cs.forEach(function (c) { c.classList.remove('hl'); }); cs[k % cs.length].classList.add('hl'); SFX.tick(); if (++k > steps) { clearInterval(iv); setTimeout(function () { show(cs[fin].dataset.k); }, 500); } }, 110);
+    };
+    g.appendChild(sp);
+    if (EXTRA.length) { var mo = el('button', 's8-card s8-more', '<div class="ic">📚</div><div class="nm">استراتيجيات أخرى</div><div class="ds">' + n(EXTRA.length) + ' استراتيجيات إضافية لهذا الدرس</div>'); mo.onclick = more; g.appendChild(mo); }
+    main.appendChild(g);
+  }
+  function card(k) {
+    var m = META[k], c = el('button', 's8-card' + (S.done[k] ? ' done' : ''), '<div class="ic">' + m.i + '</div><div class="nm">' + m.n + '</div><div class="ds">' + m.d + '</div><div class="tm">⏱ ' + m.time + '</div>');
+    c.dataset.k = k; c.onclick = function () { SFX.pop(); show(k); }; return c;
+  }
+  function more() {
+    if (cleanup) cleanup(); cleanup = null; cur = null; main.innerHTML = '';
+    var g = el('div', 's8-menu s8-menu3');
+    var bk = el('button', 's8-card s8-more', '<div class="ic">↩️</div><div class="nm">استراتيجيات الفصل</div><div class="ds">العودة إلى استراتيجيات هذا الفصل</div>'); bk.onclick = menu; g.appendChild(bk);
+    EXTRA.forEach(function (k) { g.appendChild(card(k)); });
     main.appendChild(g);
   }
   function show(k) {
@@ -510,6 +578,291 @@
     return function () { if (tm) tm.stop(); };
   };
 
+  // ================== الاستراتيجيات الإضافية (٧) ==================
+
+  // ⚖️ المحكمة العلمية
+  R.court = function (stage, items) {
+    var tm = null;
+    function go(i) {
+      if (tm) tm.stop(); stage.innerHTML = '';
+      var it = items[i], pro = 0, con = Math.min(1, S.n - 1), votes = [0, 0], phase = -1;
+      var left = el('div', 's8-pnl s8-court'); left.style.flex = '0 0 44%'; stage.appendChild(left);
+      left.innerHTML = '<div class="s8-sm">🏛 القضية رقم ' + n(i + 1) + ' من ' + n(items.length) + '</div><div class="s8-judge">🧑‍⚖️</div><div class="s8-scroll s8-big">«' + it[0] + '»</div>';
+      var right = el('div', 's8-pnl'); right.style.flex = '1'; stage.appendChild(right);
+      function teamSel(lbl, get, set, col) {
+        var r = el('div', 's8-row', '<span style="color:' + col + '">' + lbl + '</span>');
+        for (var t = 0; t < S.n; t++) (function (t) {
+          var b = el('button', 's8-tsel' + (get() === t ? ' on' : ''), TEAMS[t][1] + ' ' + TEAMS[t][0]); b.style.setProperty('--tc', TEAMS[t][2]);
+          b.onclick = function () { if (phase >= 0) return; set(t); r.querySelectorAll('.s8-tsel').forEach(function (x) { x.classList.remove('on'); }); b.classList.add('on'); SFX.tick(); };
+          r.appendChild(b);
+        })(t);
+        return r;
+      }
+      right.appendChild(teamSel('🗣 الادعاء (العبارة صحيحة):', function () { return pro; }, function (t) { pro = t; }, '#4ADE80'));
+      right.appendChild(teamSel('🛡 الدفاع (العبارة خاطئة):', function () { return con; }, function (t) { con = t; }, '#F87171'));
+      var ph = el('div', 's8-phase', '<span>🗣 الادعاء</span><span>🛡 الدفاع</span><span>🗳 المحلّفون</span><span>🔨 الحكم</span>'); right.appendChild(ph);
+      tm = timer(45, function () { if (phase < 2) step(); });
+      var r1 = el('div', 's8-row'), nb = el('button', 's8-btn', '▶ ابدأ الجلسة: مرافعة الادعاء (٤٥ ث)'); r1.appendChild(tm.el); r1.appendChild(nb); right.appendChild(r1);
+      var msg = el('div', 's8-mid', 'يقدّم كل فريق حججه العلمية وأدلته، ثم يصوّت بقية الصف بصفتهم هيئة المحلّفين.'); right.appendChild(msg);
+      var vote = el('div', 's8-row'); vote.style.display = 'none'; right.appendChild(vote);
+      var out = el('div'); right.appendChild(out);
+      function drawVote() {
+        vote.innerHTML = '';
+        [['👍 مقتنع بالادعاء', '#4ADE80'], ['👎 مقتنع بالدفاع', '#F87171']].forEach(function (v, j) {
+          var c = el('div', 's8-vote', '<span style="color:' + v[1] + '">' + v[0] + '</span><b>' + n(votes[j]) + '</b>');
+          var p = el('button', '', '+'), m = el('button', '', '−');
+          p.onclick = function () { votes[j]++; SFX.tick(); drawVote(); }; m.onclick = function () { votes[j] = Math.max(0, votes[j] - 1); drawVote(); };
+          c.appendChild(p); c.appendChild(m); vote.appendChild(c);
+        });
+      }
+      function step() {
+        phase++; ph.querySelectorAll('span').forEach(function (s, j) { s.classList.toggle('on', j === phase); }); SFX.pop();
+        if (phase === 0) { tm.start(45); nb.textContent = '⏭ مرافعة الدفاع (٤٥ ث)'; msg.textContent = '🗣 فريق الادعاء يثبت أن العبارة صحيحة بالأدلة.'; }
+        else if (phase === 1) { tm.start(45); nb.textContent = '⏭ تصويت المحلّفين'; msg.textContent = '🛡 فريق الدفاع يفنّد العبارة ويثبت أنها خاطئة.'; }
+        else if (phase === 2) { tm.stop(); tm.el.style.display = 'none'; nb.textContent = '🔨 أعلن الحكم العلمي'; msg.textContent = '🗳 يرفع المحلّفون أيديهم، والمعلم يعدّ الأصوات.'; vote.style.display = ''; drawVote(); }
+        else {
+          nb.style.display = 'none'; SFX.hammer();
+          var win = it[1] ? pro : con, wins = votes[0] >= votes[1] ? 1 : 0;
+          left.querySelector('.s8-judge').classList.add('bang');
+          out.appendChild(el('div', 's8-ans' + (it[1] ? '' : ' s8-fix'), '🔨 حكمت المحكمة بأن العبارة ' + (it[1] ? 'صحيحة' : 'خاطئة') + ': ' + it[2] + '<br><small>' + ((wins === (it[1] ? 1 : 0)) ? '✅ أصاب المحلّفون في حكمهم' : '⚠️ لم يُصب أغلب المحلّفين') + '</small>'));
+          if (pro !== con) { add(win, 3); confetti(root); out.appendChild(el('div', 's8-award', '<span>🏆 ٣ نقاط لـ ' + TEAMS[win][1] + ' ' + TEAMS[win][0] + '</span>')); }
+        }
+      }
+      nb.onclick = step;
+      right.appendChild(nav(i, items.length, go));
+    }
+    go(0);
+    return function () { if (tm) tm.stop(); };
+  };
+
+  // 🕵️ حقيقتان وكذبة
+  R.lie = function (stage, pool) {
+    var T = shuffle(pool.filter(function (x) { return x[1]; })), F = shuffle(pool.filter(function (x) { return !x[1]; }));
+    var rounds = [];
+    for (var r = 0; r < F.length && T.length >= 2; r++) rounds.push(shuffle([F[r], T[(r * 2) % T.length], T[(r * 2 + 1) % T.length]]));
+    if (!rounds.length) { stage.appendChild(el('div', 's8-big', 'لا تتوفر عبارات كافية لهذا الدرس.')); return; }
+    function go(i) {
+      stage.innerHTML = '';
+      var w = el('div', 's8-lie'); stage.appendChild(w);
+      var picks = [], done = false;
+      for (var t = 0; t < S.n; t++) picks.push(-1);
+      w.appendChild(el('div', 's8-mid', '🕵️ الجولة ' + n(i + 1) + ' من ' + n(rounds.length) + ': عبارتان صحيحتان وعبارة واحدة كاذبة… يختار كل فريق البطاقة التي يراها الكذبة.'));
+      var g = el('div', 's8-lcards'); w.appendChild(g);
+      var cards = rounds[i].map(function (x, j) {
+        var c = el('div', 's8-lcard', '<i>' + 'أبج'[j] + '</i><div class="s8-mid">' + x[0] + '</div><div class="s8-lteams"></div><div class="s8-lres"></div>');
+        var tw = c.querySelector('.s8-lteams');
+        for (var t = 0; t < S.n; t++) (function (t) {
+          var b = el('button', '', TEAMS[t][1]); b.title = TEAMS[t][0]; b.style.setProperty('--tc', TEAMS[t][2]);
+          b.onclick = function () { if (done) return; picks[t] = j; SFX.tick(); g.querySelectorAll('.s8-lteams button').forEach(function (o) { if (o.dataset.t == t) o.classList.remove('on'); }); b.classList.add('on'); };
+          b.dataset.t = t; tw.appendChild(b);
+        })(t);
+        g.appendChild(c); return c;
+      });
+      var row = el('div', 's8-row'), rv = el('button', 's8-btn', '🔎 اكشف الكذبة'); row.appendChild(namePicker('من يبرّر اختيار فريقه؟')); row.appendChild(rv); w.appendChild(row);
+      var res = el('div', 's8-award'); w.appendChild(res);
+      rv.onclick = function () {
+        done = true; rv.disabled = true; SFX.reveal();
+        rounds[i].forEach(function (x, j) {
+          cards[j].classList.add(x[1] ? 'tru' : 'lie');
+          cards[j].querySelector('.s8-lres').innerHTML = x[1] ? '✔ حقيقة' : '🤥 الكذبة! ' + x[2];
+        });
+        var li = rounds[i].findIndex(function (x) { return !x[1]; }), got = [];
+        for (var t = 0; t < S.n; t++) if (picks[t] === li) { add(t, 2); got.push(TEAMS[t][1] + ' ' + TEAMS[t][0]); }
+        res.innerHTML = '<span>' + (got.length ? '🏆 +٢ لكل من: ' + got.join('، ') : 'لم يكشف أي فريق الكذبة هذه المرة!') + '</span>';
+        if (got.length) confetti(root);
+      };
+      w.appendChild(nav(i, rounds.length, go));
+    }
+    go(0);
+  };
+
+  // 🧠 بطاقات الذاكرة
+  R.mem = function (stage, pairs) {
+    var team = 0, open = [], lock = false, found = 0;
+    var w = el('div', 's8-memw'); stage.appendChild(w);
+    var side = el('div', 's8-pnl'); side.style.cssText += 'flex:0 0 26%;justify-content:center;text-align:center';
+    var grid = el('div', 's8-mem'); grid.style.gridTemplateColumns = 'repeat(' + (pairs.length > 4 ? 4 : 4) + ',1fr)';
+    w.appendChild(grid); w.appendChild(side);
+    var turn = el('div', 's8-turn'), info = el('div', 's8-sm', 'يقلب الفريق بطاقتين: إن طابق المصطلحُ معناه أخذ نقطة ولعب مرة أخرى، وإلا انتقل الدور.');
+    side.appendChild(el('div', 's8-mid', '🧠 طابق المصطلح بمعناه')); side.appendChild(turn); side.appendChild(namePicker('من يقلب؟')); side.appendChild(info);
+    var again = el('button', 's8-btn g', '🔁 لعبة جديدة'); again.onclick = function () { stage.innerHTML = ''; R.mem(stage, pairs); }; side.appendChild(again);
+    function drawTurn() { turn.style.setProperty('--tc', TEAMS[team][2]); turn.innerHTML = 'الدور على: <b>' + TEAMS[team][1] + ' ' + TEAMS[team][0] + '</b>'; }
+    var deck = [];
+    pairs.forEach(function (p, i) { deck.push({ k: i, t: 'term', h: p[0] }); deck.push({ k: i, t: 'def', h: p[1] }); });
+    shuffle(deck).forEach(function (d, j) {
+      var c = el('button', 's8-mc', '<div class="fr"><span>' + n(j + 1) + '</span></div><div class="bk ' + d.t + '">' + (d.t === 'term' ? '<b>' + esc(d.h) + '</b>' : esc(d.h)) + '</div>');
+      c.onclick = function () {
+        if (lock || c.classList.contains('up')) return;
+        c.classList.add('up'); SFX.pop(); open.push([c, d]);
+        if (open.length === 2) {
+          lock = true;
+          var a = open[0], b = open[1];
+          if (a[1].k === b[1].k && a[1].t !== b[1].t) {
+            setTimeout(function () { a[0].classList.add('ok'); b[0].classList.add('ok'); add(team, 1); found++; open = []; lock = false; if (found === pairs.length) { SFX.fan(); confetti(root); info.innerHTML = '🎉 اكتملت كل البطاقات!'; } }, 450);
+          } else {
+            setTimeout(function () { SFX.bad(); a[0].classList.remove('up'); b[0].classList.remove('up'); open = []; lock = false; team = (team + 1) % S.n; drawTurn(); }, 1300);
+          }
+        }
+      };
+      grid.appendChild(c);
+    });
+    drawTurn();
+  };
+
+  // 💣 القنبلة الموقوتة
+  R.bomb = function (stage, qs) {
+    var order = shuffle(qs), qi = 0, iv = null, to = null;
+    var w = el('div', 's8-bombw'); stage.appendChild(w);
+    var left = el('div', 's8-bombL', '<div class="s8-bomb">💣<span class="fz"></span></div><div class="s8-holder"></div>'); w.appendChild(left);
+    var right = el('div', 's8-pnl'); right.style.flex = '1'; w.appendChild(right);
+    right.appendChild(el('div', 's8-mid', '💣 مرّروا «القنبلة» (كرة أو قلم) بين الطلاب بسرعة… وعند الانفجار يجيب حاملها عن السؤال!'));
+    var r = el('div', 's8-row'), lit = el('button', 's8-btn', '🔥 أشعل الفتيل'), defuse = el('button', 's8-btn g', '🚫 أوقف'); defuse.disabled = true;
+    r.appendChild(lit); r.appendChild(defuse); right.appendChild(r);
+    var qbox = el('div'); qbox.style.cssText = 'display:flex;flex-direction:column;gap:10px'; right.appendChild(qbox);
+    var bomb = left.querySelector('.s8-bomb'), holder = left.querySelector('.s8-holder');
+    function stop() { if (iv) clearTimeout(iv); if (to) clearTimeout(to); iv = to = null; bomb.classList.remove('lit'); defuse.disabled = true; lit.disabled = false; }
+    lit.onclick = function () {
+      qbox.innerHTML = ''; bomb.classList.remove('boom'); bomb.classList.add('lit'); lit.disabled = true; defuse.disabled = false;
+      var names = roster(), dur = 9000 + Math.random() * 12000, t0 = Date.now();
+      (function tick() {
+        var el2 = Date.now() - t0, gap = Math.max(140, 700 - el2 / 30);
+        SFX.tick(); if (names.length) holder.textContent = '🤲 ' + names[Math.floor(Math.random() * names.length)];
+        iv = setTimeout(tick, gap);
+      })();
+      to = setTimeout(function () {
+        stop(); bomb.classList.add('boom'); SFX.buzz(); tone(70, 0.8, 'sawtooth', 0.2); confetti(root);
+        if (!names.length) holder.textContent = '💥 بوووم!';
+        var q = order[qi++ % order.length];
+        qbox.appendChild(el('div', 's8-pnl s8-big', '❓ ' + q[0]));
+        var rb = el('button', 's8-btn g', '💡 الإجابة'), rr = el('div', 's8-row'); rr.appendChild(rb); qbox.appendChild(rr);
+        rb.onclick = function () { rb.disabled = true; qbox.appendChild(el('div', 's8-ans', q[1])); SFX.reveal(); qbox.appendChild(award(1)); };
+      }, dur);
+    };
+    defuse.onclick = stop;
+    return stop;
+  };
+
+  // 🎡 عجلة الحظ
+  R.wheel = function (stage, qs) {
+    var SEG = [['١', 1, '#38BDF8'], ['٢', 2, '#A78BFA'], ['٣', 3, '#4ADE80'], ['💥', 0, '#F87171'], ['٤', 4, '#FB923C'], ['🔄', -1, '#F472B6'], ['٢', 2, '#FACC15'], ['🎁٥', 5, '#2DD4BF']];
+    var order = shuffle(qs), qi = 0, team = 0, rot = 0, spinning = false;
+    var w = el('div', 's8-wheelw'); stage.appendChild(w);
+    var L2 = el('div', 's8-wheelL'); w.appendChild(L2);
+    var sz = 360, cv = el('canvas', 's8-wh'); cv.width = cv.height = sz * 2; L2.appendChild(el('div', 's8-ptr', '▼')); L2.appendChild(cv);
+    var x = cv.getContext('2d'), R0 = sz, a = 2 * Math.PI / SEG.length;
+    SEG.forEach(function (s, i) {
+      x.beginPath(); x.moveTo(R0, R0); x.arc(R0, R0, R0 - 8, i * a - Math.PI / 2, (i + 1) * a - Math.PI / 2); x.closePath(); x.fillStyle = s[2]; x.fill(); x.lineWidth = 8; x.strokeStyle = '#0B1222'; x.stroke();
+      x.save(); x.translate(R0, R0); x.rotate((i + 0.5) * a - Math.PI / 2); x.textAlign = 'center'; x.fillStyle = '#111827'; x.font = 'bold 74px sans-serif'; x.fillText(s[0], R0 * 0.66, 26); x.restore();
+    });
+    x.beginPath(); x.arc(R0, R0, 60, 0, 7); x.fillStyle = '#fff'; x.fill();
+    var right = el('div', 's8-pnl'); right.style.flex = '1'; w.appendChild(right);
+    var turn = el('div', 's8-turn'); right.appendChild(turn);
+    right.appendChild(el('div', 's8-sm', 'الأرقام نقاط السؤال · 💥 يضيع الدور · 🔄 إن أجاب سرق نقطتين من الفريق المتصدر · 🎁 خمس نقاط'));
+    var r = el('div', 's8-row'), sp = el('button', 's8-btn', '🎡 أدر العجلة'); r.appendChild(sp); r.appendChild(namePicker()); right.appendChild(r);
+    var qb = el('div'); qb.style.cssText = 'display:flex;flex-direction:column;gap:10px'; right.appendChild(qb);
+    function drawTurn() { turn.style.setProperty('--tc', TEAMS[team][2]); turn.innerHTML = 'الدور على: <b>' + TEAMS[team][1] + ' ' + TEAMS[team][0] + '</b>'; }
+    function nextTeam() { team = (team + 1) % S.n; drawTurn(); sp.disabled = false; }
+    sp.onclick = function () {
+      if (spinning) return; spinning = true; sp.disabled = true; qb.innerHTML = '';
+      var k = Math.floor(Math.random() * SEG.length);
+      rot += 360 * 5 + (360 - (k + 0.5) * (360 / SEG.length)) - (rot % 360);
+      cv.style.transform = 'rotate(' + rot + 'deg)';
+      var tk = setInterval(SFX.tick, 120);
+      setTimeout(function () {
+        clearInterval(tk); spinning = false; var s = SEG[k];
+        if (s[1] === 0) { SFX.bad(); qb.appendChild(el('div', 's8-ans s8-fix', '💥 ضاع الدور على ' + TEAMS[team][0] + '!')); setTimeout(nextTeam, 1500); return; }
+        SFX.reveal();
+        var q = order[qi++ % order.length];
+        qb.appendChild(el('div', 's8-mid', (s[1] < 0 ? '🔄 سؤال السرقة' : '🎯 سؤال بـ ' + n(s[1]) + ' نقاط') + ':'));
+        qb.appendChild(el('div', 's8-pnl s8-big', '❓ ' + q[0]));
+        var rr = el('div', 's8-row'), ok = el('button', 's8-btn ok', '✔ أجاب صحيحًا'), no = el('button', 's8-btn no', '✖ لم يُصب'), sh = el('button', 's8-btn g', '💡 الإجابة');
+        rr.appendChild(ok); rr.appendChild(no); rr.appendChild(sh); qb.appendChild(rr);
+        sh.onclick = function () { sh.disabled = true; qb.appendChild(el('div', 's8-ans', q[1])); };
+        ok.onclick = function () {
+          ok.disabled = no.disabled = true;
+          if (s[1] < 0) { var best = -1; for (var t = 0; t < S.n; t++) if (t !== team && (best < 0 || S.sc[t] > S.sc[best])) best = t; var take = Math.min(2, S.sc[best]); S.sc[best] -= take; add(team, take); }
+          else add(team, s[1]);
+          confetti(root); setTimeout(nextTeam, 1200);
+        };
+        no.onclick = function () { ok.disabled = no.disabled = true; SFX.bad(); setTimeout(nextTeam, 900); };
+      }, 4200);
+    };
+    drawTurn();
+  };
+
+  // 🏔️ سباق القمة
+  R.race = function (stage, pool) {
+    var items = shuffle(pool), STEPS = 6, pos = [0, 0, 0, 0], i = 0, over = false;
+    var w = el('div', 's8-racew'); stage.appendChild(w);
+    var mt = el('div', 's8-mt'); w.appendChild(mt);
+    mt.innerHTML = '<div class="peak">🚩</div>';
+    var climbers = [];
+    for (var t = 0; t < S.n; t++) { var c = el('div', 's8-cl', TEAMS[t][1]); c.style.setProperty('--tc', TEAMS[t][2]); c.style.right = (10 + t * (64 / (S.n - 1))) + '%'; mt.appendChild(c); climbers.push(c); }
+    function place() { climbers.forEach(function (c, t) { c.style.bottom = (4 + pos[t] * (80 / STEPS)) + '%'; }); }
+    var right = el('div', 's8-pnl'); right.style.flex = '1'; w.appendChild(right);
+    var qn = el('div', 's8-sm'), q = el('div', 's8-pnl s8-big'), grid = el('div', 's8-rgrid'), r = el('div', 's8-row'), rv = el('button', 's8-btn', '🔎 اكشف'), nx = el('button', 's8-btn g', 'العبارة التالية ←'), ex = el('div');
+    right.appendChild(qn); right.appendChild(q); right.appendChild(grid); r.appendChild(rv); r.appendChild(nx); right.appendChild(r); right.appendChild(ex);
+    var ans;
+    function show() {
+      if (i >= items.length) items = items.concat(shuffle(pool));
+      var it = items[i]; ans = []; for (var t = 0; t < S.n; t++) ans.push(null);
+      qn.innerHTML = 'العبارة ' + n(i + 1) + ' · أول فريق يبلغ القمة (' + n(STEPS) + ' خطوات) يفوز'; q.innerHTML = '❓ ' + it[0]; ex.innerHTML = ''; rv.disabled = false; nx.disabled = true;
+      grid.innerHTML = '';
+      for (var t = 0; t < S.n; t++) (function (t) {
+        var c = el('div', 's8-rt', '<b style="color:' + TEAMS[t][2] + '">' + TEAMS[t][1] + ' ' + TEAMS[t][0] + '</b>');
+        var y = el('button', '', '✔ صح'), nn = el('button', '', '✖ خطأ');
+        y.onclick = function () { ans[t] = 1; y.classList.add('on'); nn.classList.remove('on'); SFX.tick(); };
+        nn.onclick = function () { ans[t] = 0; nn.classList.add('on'); y.classList.remove('on'); SFX.tick(); };
+        c.appendChild(y); c.appendChild(nn); grid.appendChild(c);
+      })(t);
+    }
+    rv.onclick = function () {
+      var it = items[i], v = it[1] ? 1 : 0; rv.disabled = true; nx.disabled = over;
+      for (var t = 0; t < S.n; t++) if (ans[t] === v) pos[t] = Math.min(STEPS, pos[t] + 1);
+      place(); SFX.ok();
+      ex.appendChild(el('div', 's8-ans' + (v ? '' : ' s8-fix'), (v ? '✔ صحيحة: ' : '✖ خاطئة: ') + it[2]));
+      var win = []; for (var t = 0; t < S.n; t++) if (pos[t] >= STEPS) win.push(t);
+      if (win.length) { over = true; nx.disabled = true; SFX.fan(); confetti(root); win.forEach(function (t) { add(t, 3); climbers[t].classList.add('win'); }); ex.appendChild(el('div', 's8-award', '<span>🚩 بلغ القمة: ' + win.map(function (t) { return TEAMS[t][1] + ' ' + TEAMS[t][0]; }).join('، ') + ' (+٣ نقاط)</span>')); }
+    };
+    nx.onclick = function () { i++; show(); };
+    place(); show();
+  };
+
+  // 🎨 ارسم وخمّن
+  R.draw = function (stage, terms) {
+    var deck = shuffle(terms), di = 0, team = 0, playing = false, col = '#111827';
+    var w = el('div', 's8-draww'); stage.appendChild(w);
+    var board = el('div', 's8-board'); w.appendChild(board);
+    var cv = el('canvas'); board.appendChild(cv);
+    var tools = el('div', 's8-dtools'); board.appendChild(tools);
+    ['#111827', '#DC2626', '#2563EB', '#16A34A'].forEach(function (c) { var b = el('button', '', ''); b.style.background = c; b.onclick = function () { col = c; }; tools.appendChild(b); });
+    var clr = el('button', 'cl', '🧽'); tools.appendChild(clr);
+    var x = cv.getContext('2d'), down = false;
+    function fit() { var r = board.getBoundingClientRect(); cv.width = r.width; cv.height = r.height; x.lineCap = x.lineJoin = 'round'; x.lineWidth = 6; }
+    setTimeout(fit, 30);
+    function P(e) { var r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+    cv.addEventListener('pointerdown', function (e) { down = true; var p = P(e); x.beginPath(); x.moveTo(p[0], p[1]); x.strokeStyle = col; cv.setPointerCapture(e.pointerId); });
+    cv.addEventListener('pointermove', function (e) { if (!down) return; var p = P(e); x.lineTo(p[0], p[1]); x.stroke(); });
+    cv.addEventListener('pointerup', function () { down = false; });
+    clr.onclick = function () { x.clearRect(0, 0, cv.width, cv.height); };
+    var side = el('div', 's8-pnl'); side.style.cssText += 'flex:0 0 34%;align-items:center;text-align:center;justify-content:center';
+    w.appendChild(side);
+    var turn = el('div', 's8-turn'), tm = timer(60, endTurn), peek = el('button', 's8-peek', '👁 اضغط مطوّلًا لرؤية المصطلح (للرسّام فقط)'), r1 = el('div', 's8-row'), st = el('button', 's8-btn', '▶ ابدأ (٦٠ ث)'), r2 = el('div', 's8-row'), ok = el('button', 's8-btn ok', '✔ خمّنوا +٢'), sk = el('button', 's8-btn g', '⏭ مصطلح آخر'), info = el('div', 's8-sm', 'يرسم الطالب دون كتابة حروف أو أرقام، وفريقه يخمّن المصطلح.');
+    side.appendChild(turn); side.appendChild(namePicker('من يرسم؟')); r1.appendChild(tm.el); r1.appendChild(st); side.appendChild(r1); side.appendChild(peek); r2.appendChild(ok); r2.appendChild(sk); side.appendChild(r2); side.appendChild(info);
+    function term() { return deck[di % deck.length]; }
+    function showT(on) { peek.textContent = on ? '🔑 ' + term() : '👁 اضغط مطوّلًا لرؤية المصطلح (للرسّام فقط)'; peek.classList.toggle('on', on); }
+    ['pointerdown'].forEach(function (ev) { peek.addEventListener(ev, function () { if (playing) showT(true); }); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(function (ev) { peek.addEventListener(ev, function () { showT(false); }); });
+    function drawTurn() { turn.style.setProperty('--tc', TEAMS[team][2]); turn.innerHTML = 'الدور على: <b>' + TEAMS[team][1] + ' ' + TEAMS[team][0] + '</b>'; ok.disabled = sk.disabled = !playing; st.disabled = playing; peek.disabled = !playing; }
+    function next() { di++; x.clearRect(0, 0, cv.width, cv.height); }
+    function endTurn() { playing = false; tm.stop(); info.innerHTML = '⏰ انتهى الوقت! المصطلح كان: <b style="color:var(--acc)">' + esc(term()) + '</b>'; next(); team = (team + 1) % S.n; drawTurn(); }
+    st.onclick = function () { playing = true; tm.start(60); SFX.pop(); info.textContent = 'ارسم الآن! 🎨'; drawTurn(); };
+    ok.onclick = function () { add(team, 2); confetti(root); playing = false; tm.stop(); info.innerHTML = '🎉 صحيح! المصطلح: <b style="color:var(--acc)">' + esc(term()) + '</b>'; next(); team = (team + 1) % S.n; drawTurn(); };
+    sk.onclick = function () { next(); SFX.tick(); };
+    drawTurn();
+    return function () { tm.stop(); };
+  };
+
   // ---------- زر الفتح ----------
   function mount() {
     if (document.getElementById('bStrat')) return;
@@ -520,5 +873,5 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(mount, 50); });
   else setTimeout(mount, 50);
-  window.STRAT8_OPEN = openUI;
+  window.STRAT8_OPEN = openUI; window.STRAT8_SHOW = function (k) { openUI(); show(k); };
 })();
