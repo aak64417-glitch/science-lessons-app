@@ -1,4 +1,4 @@
-/* ===== party.js — ألعاب الفرق الكبرى: ركلات الترجيح بالأسماء، خلية الحروف، من سيربح المليون =====
+/* ===== party.js — ألعاب الفرق الكبرى: ركلات الترجيح بالأسماء، خلية الحروف، من سيربح التحدي =====
    تُحمَّل من arena.js عند الطلب، وتستخدم بنك أسئلة الدرس + بقية دروس الفصل. */
 (function () {
   'use strict';
@@ -56,7 +56,7 @@
     const kw = [[/مقدم/, 'intro'], [/خلفي|اثناء|أثناء/, 'loop1'], [/بدء|بداية_السؤال/, 'q'], [/ترقب|تفكير/, 'lock'], [/خاطئ/, 'wrong'], [/صحيح/, 'right'], [/فاصل|انتقال/, 'trans'], [/تمرير|مؤشر/, 'hover'], [/نقر/, 'click'], [/مليون/, 'million'], [/جمهور/, 'aud'], [/صديق|اتصال/, 'phone'], [/50|٥٠|حذف/, 'fifty'], [/انسحاب/, 'walk']];
     for (const [re, k] of kw) if (re.test(b)) return k; return byNum[num] || null; }
   async function importZip(file) { const ents = (await readZip(file)).filter(z => /\.(mp3|m4a|wav|ogg|aac)$/i.test(z.name)); let n = 0; for (const z of ents) { const k = slotFor(z.name); if (!k) continue; const blob = await unzipEntry(z); const ext = z.name.split('.').pop().toLowerCase(); await CS.put(k, new Blob([blob], { type: { mp3: 'audio/mpeg', m4a: 'audio/mp4', wav: 'audio/wav', ogg: 'audio/ogg', aac: 'audio/aac' }[ext] || 'audio/mpeg' })); n++; } return n; }
-  const SLOTS = [['intro', 'بداية اللعبة'], ['q', 'ظهور السؤال'], ['loop1', 'موسيقى الأسئلة ١–٥'], ['loop2', 'موسيقى الأسئلة ٦–١٠'], ['loop3', 'موسيقى الأسئلة ١١–١٥'], ['lock', 'الإجابة النهائية (الترقّب)'], ['right', 'إجابة صحيحة'], ['wrong', 'إجابة خاطئة'], ['fifty', 'حذف إجابتين'], ['aud', 'رأي الجمهور'], ['phone', 'الاتصال بصديق'], ['walk', 'الانسحاب'], ['million', 'ربح المليون'], ['trans', 'الفاصل والنتيجة النهائية'], ['hover', 'مرور المؤشر على الإجابة'], ['click', 'النقر على الإجابة']];
+  const SLOTS = [['intro', 'بداية اللعبة'], ['q', 'ظهور السؤال'], ['loop1', 'موسيقى الأسئلة ١–٥'], ['loop2', 'موسيقى الأسئلة ٦–١٠'], ['loop3', 'موسيقى الأسئلة ١١–١٥'], ['lock', 'الإجابة النهائية (الترقّب)'], ['right', 'إجابة صحيحة'], ['wrong', 'إجابة خاطئة'], ['fifty', 'حذف إجابتين'], ['aud', 'رأي الجمهور'], ['phone', 'الاتصال بصديق'], ['walk', 'الانسحاب'], ['million', 'الفوز بالتحدي'], ['trans', 'الفاصل والنتيجة النهائية'], ['hover', 'مرور المؤشر على الإجابة'], ['click', 'النقر على الإجابة']];
   try { AU.muted = localStorage.getItem('arena-snd') === '0'; } catch (e) { }
   const SFX = {
     click() { AU.tone(880, .06, { type: 'square', vol: .04 }); },
@@ -518,13 +518,15 @@
   }
 
   /* =====================================================================
-     ٣) من سيربح المليون
+     ٣) من سيربح التحدي
      ===================================================================== */
   const MM_CSS = `
 .mm{position:absolute;inset:0;color:#fff;background:#020617;overflow:hidden}
 .mm canvas.bg{position:absolute;inset:0;width:100%;height:100%}
 .mm-wrap{position:absolute;inset:0;display:grid;grid-template-columns:1fr 23%;gap:1.2%;padding:3.3em 1.2% 1%}
-.mm-stage{display:flex;flex-direction:column;min-height:0;min-width:0}
+.mm-stage{display:flex;flex-direction:column;min-height:0;min-width:0;position:relative}
+.mm-photo{position:absolute;top:0;left:0;width:100%;aspect-ratio:1972/934;max-height:84%;object-fit:cover;object-position:50% 25%;border-radius:18px;z-index:0;pointer-events:none;-webkit-mask-image:linear-gradient(#000 72%,transparent);mask-image:linear-gradient(#000 72%,transparent);transition:transform 1.4s cubic-bezier(.2,.8,.2,1),opacity 1.2s;image-rendering:auto}
+.mm-head,.mm-qa{position:relative;z-index:1}.mm-center{z-index:1}
 .mm-head{display:flex;align-items:center;gap:.6em;flex-wrap:wrap}
 .mm-pill{background:rgba(2,6,23,.7);border:2px solid rgba(250,204,21,.55);border-radius:99px;padding:.3em 1em;font-family:'Readex Pro',sans-serif}
 .mm-pill b{color:#fde047}
@@ -587,7 +589,7 @@ button.lz:disabled{cursor:default}
     return `<svg class="mm-emb${big ? ' big' : ''}" viewBox="0 0 240 240"><defs><linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f4c542"/><stop offset="1" stop-color="#9a6b0e"/></linearGradient><radialGradient id="eb" cx=".5" cy=".4" r=".6"><stop offset="0" stop-color="#2b4fc4"/><stop offset="1" stop-color="#040b2b"/></radialGradient></defs>
       <g class="rot">${rays}</g><circle cx="120" cy="120" r="88" fill="url(#eb)" stroke="url(#eg)" stroke-width="6"/><circle cx="120" cy="120" r="76" fill="none" stroke="url(#eg)" stroke-width="1.5" stroke-dasharray="3 5"/>
       <text x="120" y="88" text-anchor="middle" font-family="Readex Pro,sans-serif" font-weight="700" font-size="20" fill="#e2e8f0">مَن سيربح</text>
-      <text x="120" y="132" text-anchor="middle" font-family="Readex Pro,sans-serif" font-weight="700" font-size="40" fill="url(#eg)">المليون</text>
+      <text x="120" y="132" text-anchor="middle" font-family="Readex Pro,sans-serif" font-weight="700" font-size="40" fill="url(#eg)">التحدي</text>
       <text x="120" y="172" text-anchor="middle" font-family="Readex Pro,sans-serif" font-weight="700" font-size="30" fill="#f9a825">؟</text></svg>`;
   }
   /* موسيقى ومؤثرات الاستوديو */
@@ -617,7 +619,7 @@ button.lz:disabled{cursor:default}
     function draw() {
       const old = $('.pt-scr', ROOT); if (old) old.remove(); const list = keys.length ? clean(R.classes[cls]) : [];
       const d = document.createElement('div'); d.className = 'pt-scr mm-set'; d.style.background = 'radial-gradient(circle at 50% 30%,#1e3a8a,#040b2b 70%)';
-      d.innerHTML = `<div class="pt-set"><div style="height:min(26vh,12em);display:flex;justify-content:center">${emblem(true)}</div>
+      d.innerHTML = `<div class="pt-set"><div style="height:min(28vh,13em);display:flex;justify-content:center"><img src="../img/mm-challenge-logo.webp" alt="من سيربح التحدي؟" style="height:100%;width:auto;filter:drop-shadow(0 0 22px rgba(250,204,21,.45))" onerror="this.style.display='none'"></div>
         <p class="sub" style="margin-top:.3em">${esc(G.lesson.title)} — ${AD(Math.min(15, mmPool))} سؤالًا من بنك الفصل بترتيب جديد في كل لعبة</p>
         <div class="pt-card"><h3>🎤 المتسابق</h3>${keys.length ? `<div class="chips">${keys.map(k => `<button class="chip" data-c="${esc(k)}" aria-pressed="${k === cls}">الفصل ${esc(k)}</button>`).join('')} <button class="chip" id="spin" style="background:#f59e0b;color:#111">🎲 اختيار عشوائي</button></div><div class="names">${list.map((n, i) => `<button data-i="${i}" class="${n === name ? 'on' : ''}">${esc(n)}</button>`).join('')}</div>` : ''}
           <div style="text-align:center;margin-top:.6em"><input class="nm" placeholder="اسم المتسابق" value="${esc(name)}"></div></div>
@@ -641,7 +643,7 @@ button.lz:disabled{cursor:default}
   function soundPanel(onClose) {
     const m = document.createElement('div'); m.className = 'mm-ov'; m.style.zIndex = 45;
     const draw = () => { m.innerHTML = `<div class="pt-card pop" style="width:min(820px,100%);background:#0b1a4d;border-color:#c9a227;color:#fff;max-height:92vh;overflow:auto">
-      <h3 style="display:flex;justify-content:space-between;align-items:center;gap:.5em;flex-wrap:wrap">🎵 أصوات «من سيربح المليون» <span><button class="mini" data-pick="zipin" style="background:#f59e0b;color:#111">📦 استيراد حزمة أصوات (zip)</button><input type="file" accept=".zip,application/zip,application/x-zip-compressed,application/octet-stream" id="zipin" class="vh"> <button class="mini" id="sx">✔ تم</button></span></h3><div id="zipmsg" style="color:#fde68a;font-size:.9em;min-height:1.2em"></div>
+      <h3 style="display:flex;justify-content:space-between;align-items:center;gap:.5em;flex-wrap:wrap">🎵 أصوات «من سيربح التحدي» <span><button class="mini" data-pick="zipin" style="background:#f59e0b;color:#111">📦 استيراد حزمة أصوات (zip)</button><input type="file" accept=".zip,application/zip,application/x-zip-compressed,application/octet-stream" id="zipin" class="vh"> <button class="mini" id="sx">✔ تم</button></span></h3><div id="zipmsg" style="color:#fde68a;font-size:.9em;min-height:1.2em"></div>
       <p style="margin:0 0 .5em;color:#cbd5e1;font-size:.85em;line-height:1.6">اختر ملفًا صوتيًا (mp3 أو m4a أو wav) لكل لحظة من اللعبة. تُحفظ الملفات على هذا الجهاز فقط، وأي لحظة بلا ملف تعمل بصوت المنصة. ملفات الموسيقى تتكرر تلقائيًا حتى تُختار الإجابة.</p>
       ${SLOTS.map(([k, lab]) => `<div class="row" style="justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.1);padding:.25em 0"><span style="min-width:11em">${lab}</span><span style="color:${CS.has(k) ? '#86efac' : '#94a3b8'};font-size:.85em;flex:1">${CS.has(k) ? '✔ ملفك' : 'صوت المنصة'}</span>
         <button class="mini" data-pick="f-${k}">📂 اختيار ملف</button><input type="file" accept="audio/*,.mp3,.m4a,.wav" data-k="${k}" id="f-${k}" class="vh"><button class="mini" data-p="${k}">▶</button>${CS.has(k) ? `<button class="mini" data-d="${k}">✖</button>` : ''}</div>`).join('')}</div>`;
@@ -657,9 +659,9 @@ button.lz:disabled{cursor:default}
     mount(); if (!$('#mm-css')) document.head.insertAdjacentHTML('beforeend', '<style id="mm-css">' + MM_CSS + '</style>');
     const Q = Queue(q => q.o.length === 4), avail = Q.size(), N = Math.min(15, Math.max(1, avail)), LAD = LADDER.slice(15 - N), SAFE = new Set([LAD.indexOf(1000), LAD.indexOf(32000)].filter(i => i >= 0 && i < N - 1));
     const st = { L: 0, q: null, used: {}, gone: new Set(), phase: 'intro', sel: -1, tmr: 0, mood: 0, moodT: 0 };
-    ROOT.innerHTML = `<div class="mm"><canvas class="bg"></canvas><div class="mm-wrap"><div class="mm-stage">
+    ROOT.innerHTML = `<div class="mm"><canvas class="bg"></canvas><div class="mm-wrap"><div class="mm-stage"><img class="mm-photo" src="../img/mm-challenge-studio.webp" alt="" decoding="async">
         <div class="mm-head"><span class="mm-pill">🎤 <b>${esc(name)}</b></span><span class="mm-pill" id="mmq"></span><div class="mm-clock"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="rgba(2,6,23,.75)" stroke="#1e3a8a" stroke-width="4"/><circle id="mmcr" cx="20" cy="20" r="17" fill="none" stroke="#fde047" stroke-width="4" stroke-dasharray="106.8" stroke-dashoffset="0" stroke-linecap="round"/></svg><span></span></div><button class="mm-walk" id="mmw">🚪 انسحب بالمبلغ</button></div>
-        <div class="mm-center">${emblem(false)}</div>
+        <div class="mm-center"></div>
         <div class="mm-qa"><div class="mm-row"><div class="lz mm-q hide"><span></span></div></div>
           <div class="mm-row">${[0, 1].map(i => `<button class="lz mm-a hide" data-i="${i}"><b>${LET[i]}:</b><span></span></button>`).join('')}</div>
           <div class="mm-row">${[2, 3].map(i => `<button class="lz mm-a hide" data-i="${i}"><b>${LET[i]}:</b><span></span></button>`).join('')}</div>
@@ -686,10 +688,10 @@ button.lz:disabled{cursor:default}
     function lifelines(on) { $$('.mm-ll button', ROOT).forEach(b => { b.classList.toggle('used', !!st.used[b.dataset.l]); b.disabled = !on || !!st.used[b.dataset.l]; }); $('#mmw').disabled = !on; }
     function clock(stop) { clearInterval(st.tmr); const ce = $('.mm-clock', ROOT); const TT = opts.timer ? (st.L < 5 ? 30 : st.L < 10 ? 45 : 0) : 0; if (stop || !TT) { ce.classList.remove('on'); return; } ce.classList.add('on'); const t0 = performance.now(), cr = $('#mmcr', ROOT), sp = $('span', ce); let ls = -1;
       st.tmr = setInterval(() => { const el = (performance.now() - t0) / 1000, left = Math.max(0, TT - el), sec = Math.ceil(left); sp.textContent = AD(sec); cr.style.strokeDashoffset = (106.8 * (1 - left / TT)).toFixed(1); cr.style.stroke = left < 6 ? '#ef4444' : left < 12 ? '#f59e0b' : '#fde047'; if (sec <= 5 && sec !== ls && sec > 0) { ls = sec; AU.tone(1200, .08, { type: 'square', vol: .05 }); } if (left <= 0) { clearInterval(st.tmr); timeUp(); } }, 100); TIMERS.push(st.tmr); }
-    async function intro() { st.phase = 'intro'; lifelines(false); ladder(); head(); const e = $('.mm-emb', C); e.style.transform = 'scale(.2) rotate(-90deg)'; e.style.opacity = '0'; MS.intro(); await wait(60); e.style.transform = 'scale(1)'; e.style.opacity = '1'; CTL.innerHTML = `<span class="fadeup" style="font-family:'Readex Pro';font-size:1.3em;color:#fde047">أهلًا بك يا ${esc(name)}… لنبدأ!</span>`; await wait(1800); if (!CS.has('intro')) { await wait(1200); return show(); } const b = document.createElement('button'); b.className = 'mm-btn fadeup'; b.textContent = '▶ السؤال الأول'; b.onclick = () => show(); CTL.appendChild(b); }
+    async function intro() { st.phase = 'intro'; lifelines(false); ladder(); head(); const e = $('.mm-photo', ROOT); e.style.transition = 'none'; e.style.transform = 'scale(1.18)'; e.style.opacity = '0'; MS.intro(); await wait(60); e.style.transition = ''; e.style.transform = 'scale(1)'; e.style.opacity = '1'; CTL.innerHTML = `<span class="fadeup" style="font-family:'Readex Pro';font-size:1.3em;color:#fde047">أهلًا بك يا ${esc(name)}… لنبدأ!</span>`; await wait(1800); if (!CS.has('intro')) { await wait(1200); return show(); } const b = document.createElement('button'); b.className = 'mm-btn fadeup'; b.textContent = '▶ السؤال الأول'; b.onclick = () => show(); CTL.appendChild(b); }
     async function show(replace) {
       st.phase = 'show'; st.gone = new Set(); st.sel = -1; st.mood = 0; if (!replace) st.q = Q.next(); const q = st.q; head(); ladder(); lifelines(false); clock(true);
-      C.innerHTML = emblem(false); CTL.innerHTML = ''; QE.classList.add('hide'); AE.forEach(b => { b.className = 'lz mm-a hide'; b.disabled = true; });
+      C.innerHTML = ''; CTL.innerHTML = ''; QE.classList.add('hide'); AE.forEach(b => { b.className = 'lz mm-a hide'; b.disabled = true; });
       await wait(350); MS.q(); $('span', QE).textContent = q.q; QE.classList.remove('hide'); await wait(1100);
       for (let i = 0; i < 4; i++) { $('span', AE[i]).textContent = q.o[i]; AE[i].classList.remove('hide'); MS.tick(); await wait(420); }
       st.phase = 'q'; AE.forEach(b => b.disabled = false); lifelines(true); MS.loop(st.L); clock();
@@ -727,7 +729,7 @@ button.lz:disabled{cursor:default}
     function finish(kind) {
       clock(true); clearInterval(AU.loop); ['loop1', 'loop2', 'loop3', 'lock'].forEach(k => CS.stop(k)); Q.done(); const amt = kind === 'million' ? LAD[N - 1] : kind === 'walk' ? won() : safeWon(); st.phase = 'end'; ladder();
       if (kind === 'million') { MS.million(); confetti(300, 5000); } else { if (!CS.cur.wrong && !CS.cur.walk) CS.play('trans'); if (amt > 0) { if (!CS.has('trans')) SFX.win(); confetti(140); } }
-      const o = document.createElement('div'); o.className = 'mm-ov'; o.innerHTML = `<div class="mm-chk pop"><div style="font-size:2.6em">${kind === 'million' ? '🏆💰' : amt ? '🎉' : '💪'}</div><h2>${kind === 'million' ? 'مبروك! ' + esc(name) + ' ربح المليون!' : amt ? 'أحسنت يا ' + esc(name) + '!' : 'حظًّا أوفر يا ' + esc(name)}</h2>
+      const o = document.createElement('div'); o.className = 'mm-ov'; o.innerHTML = `<div class="mm-chk pop"><div style="font-size:2.6em">${kind === 'million' ? '🏆💰' : amt ? '🎉' : '💪'}</div><h2>${kind === 'million' ? 'مبروك! ' + esc(name) + ' فاز بالتحدي!' : amt ? 'أحسنت يا ' + esc(name) + '!' : 'حظًّا أوفر يا ' + esc(name)}</h2>
         <div>${kind === 'wrong' ? 'إجابة خاطئة — تحصل على المبلغ المضمون' : kind === 'walk' ? 'انسحبت بالمبلغ الذي ربحته' : 'أجبت عن كل الأسئلة!'}</div><div class="amt" id="mma">٠</div><div>ريال</div>
         <div class="line">أجبت صحيحًا عن ${AD(kind === 'million' ? N : st.L)} من ${AD(N)} أسئلة · ${esc(G.lesson.title)}</div>
         <button class="gobtn" id="mm1">↺ لعبة جديدة بأسئلة جديدة</button> <button class="gobtn" id="mm2" style="background:linear-gradient(#3b82f6,#1d4ed8);box-shadow:0 6px 0 #1e3a8a">🎤 متسابق آخر</button></div>`;
@@ -994,7 +996,7 @@ button.lz:disabled{cursor:default}
 
   /* ---------- ساحة العلماء ---------- */
   const HUB = [['volcano', 'ثوران البركان', 'tg-volcano-t.webp', 'كل إجابة صحيحة تُثير البركان', 1], ['magnet', 'قوة المغناطيس', 'tg-magnet-t.webp', 'اجذب أكبر عدد من القطع', 1], ['planets', 'رحلة إلى الكواكب', 'tg-planets-t.webp', 'سباق الصواريخ بين الكواكب', 1], ['bell', 'جرس العالِم', 'tg-bell-t.webp', 'لوحة تحدٍّ بدروس الفصل', 1],
-    ['pen', 'ركلات الترجيح بالأسماء', 'tg-pen-t.webp', 'كل طالب يجيب ثم يسدد', 0], ['hex', 'خلية الحروف', '🔤|linear-gradient(135deg,#2563eb,#16a34a)', 'صِل ضفتي اللوحة بخلايا فريقك', 0], ['mm', 'من سيربح المليون', '💰|linear-gradient(135deg,#1e3a8a,#7c3aed)', '١٥ سؤالًا وسلّم الجوائز', 0]];
+    ['pen', 'ركلات الترجيح بالأسماء', 'tg-pen-t.webp', 'كل طالب يجيب ثم يسدد', 0], ['hex', 'خلية الحروف', '🔤|linear-gradient(135deg,#2563eb,#16a34a)', 'صِل ضفتي اللوحة بخلايا فريقك', 0], ['mm', 'من سيربح التحدي', 'tg-mm-t.webp', '١٥ سؤالًا وسلّم الجوائز', 0]];
   const GAMES = () => ({ pen: penalty, hex: hexGame, mm: millionaire, volcano, magnet, planets, bell });
   function hub() {
     mount(); tgCss(); RET = null;

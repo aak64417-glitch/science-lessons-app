@@ -431,7 +431,7 @@ button{font:inherit;font-family:'Readex Pro','IBM Plex Sans Arabic',Tahoma,sans-
     const n = G.qs.length;
     ov.innerHTML = `<a class="back" href="../index.html">⌂ المنصة</a><div class="wrap"><h1>🎮 ${esc(G.lesson.title)}</h1><div class="sub">${esc(G.lesson.chapter || '')} — ${AD(n)} سؤالًا من أسئلة الدرس</div>
       <div class="scs">${ORDER.map(k => `<button class="sc" data-k="${k}" aria-pressed="${k === sceneK}"><canvas></canvas><span>${SC[k].icon} ${SC[k].name}</span></button>`).join('')}</div>
-      <button class="pgb" data-p="hub"><span class="pi">🧪</span><span><b>ساحة العلماء — ألعاب الفرق بأسماء الطلاب</b><small>ثوران البركان · قوة المغناطيس · رحلة إلى الكواكب · جرس العالِم · ركلات الترجيح · خلية الحروف · من سيربح المليون</small></span><span class="go2">ادخل ←</span></button>
+      <button class="pgb" data-p="hub"><span class="pi">🧪</span><span><b>ساحة العلماء — ألعاب الفرق بأسماء الطلاب</b><small>ثوران البركان · قوة المغناطيس · رحلة إلى الكواكب · جرس العالِم · ركلات الترجيح · خلية الحروف · من سيربح التحدي</small></span><span class="go2">ادخل ←</span></button>
       <div><span class="seg" id="md"><button data-m="cpu" aria-pressed="${mode === 'cpu'}">👤 أنت ضد الحاسوب</button><button data-m="team" aria-pressed="${mode === 'team'}">👥 فريقان في الصف</button></span>
       <span class="seg" id="ct">${[5, 7, 10].filter(x => x < n).concat([n]).map(x => `<button data-c="${x}" aria-pressed="${x === Math.min(count, n)}">${x === n ? 'كل الأسئلة (' + AD(n) + ')' : AD(x) + ' أسئلة'}</button>`).join('')}</span></div>
       <button class="go" id="go">▶ ابدأ اللعب</button></div>`;
@@ -441,7 +441,7 @@ button{font:inherit;font-family:'Readex Pro','IBM Plex Sans Arabic',Tahoma,sans-
     ov.querySelectorAll('#ct button').forEach(b => b.onclick = () => { count = +b.dataset.c; ov.querySelectorAll('#ct button').forEach(x => x.setAttribute('aria-pressed', x === b)); });
     $('#go').onclick = start;
     ov.querySelectorAll('.pgb').forEach(b => b.onclick = () => { clearInterval(timer); b.style.opacity = '.6'; loadParty(() => { b.style.opacity = ''; window.PARTY.open(b.dataset.p, G, () => setup()); }); }); }
-  const PG = [['pen', '⚽', 'ركلات الترجيح بالأسماء', 'linear-gradient(135deg,#15803d,#065f46)', 'فريقان من كشف الطلاب، كل طالب يجيب ثم يسدد'], ['hex', '🔤', 'خلية الحروف', 'linear-gradient(135deg,#2563eb,#16a34a)', 'صِل ضفتي اللوحة بخلايا فريقك'], ['mm', '💰', 'من سيربح المليون', 'linear-gradient(135deg,#1e3a8a,#7c3aed)', '١٥ سؤالًا ووسائل مساعدة وسلّم الجوائز']];
+  const PG = [['pen', '⚽', 'ركلات الترجيح بالأسماء', 'linear-gradient(135deg,#15803d,#065f46)', 'فريقان من كشف الطلاب، كل طالب يجيب ثم يسدد'], ['hex', '🔤', 'خلية الحروف', 'linear-gradient(135deg,#2563eb,#16a34a)', 'صِل ضفتي اللوحة بخلايا فريقك'], ['mm', '💰', 'من سيربح التحدي', 'linear-gradient(135deg,#1e3a8a,#7c3aed)', '١٥ سؤالًا ووسائل مساعدة وسلّم الجوائز']];
   function loadParty(cb) { if (window.PARTY) return cb(); const s = document.createElement('script'); s.src = 'party.js'; s.onload = cb; s.onerror = () => alert('تعذر تحميل اللعبة — تحقق من الاتصال'); document.head.appendChild(s); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
   function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
