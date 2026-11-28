@@ -629,7 +629,7 @@ button.lz:disabled{cursor:default}
         <div class="pt-card"><div class="row"><span>المؤقت</span><span class="chips" data-o="timer"><button class="chip" data-v="1" aria-pressed="${opts.timer === 1}">٣٠ ث ثم ٤٥ ث</button><button class="chip" data-v="0" aria-pressed="${opts.timer === 0}">بلا وقت</button></span></div>
           <div class="row"><span>تأكيد الإجابة</span><span class="chips" data-o="confirm"><button class="chip" data-v="1" aria-pressed="${opts.confirm === 1}">«هل هي إجابتك النهائية؟»</button><button class="chip" data-v="0" aria-pressed="${opts.confirm === 0}">مباشرة</button></span></div></div>
         <div class="pt-card"><div class="row"><span>🎵 الأصوات</span><span style="min-width:0;color:#e2e8f0">${CS.count() ? `${AD(CS.count())} من ${AD(SLOTS.length)} أصوات من ملفاتك، والباقي أصوات المنصة` : 'أصوات المنصة المركّبة'}</span><button class="mini" id="snds">🎵 ضع ملفاتك الصوتية</button></div></div>
-        <button class="gobtn" id="go" style="background:linear-gradient(#fde68a,#f59e0b);color:#111;box-shadow:0 6px 0 #92400e">💰 لنبدأ اللعب</button></div>`;
+        <button class="gobtn" id="go" style="background:linear-gradient(#fde68a,#f59e0b);color:#111;box-shadow:0 6px 0 #92400e">💰 لنبدأ اللعب</button> <button class="gobtn" id="mmlog" style="background:linear-gradient(#3b82f6,#1d4ed8);box-shadow:0 6px 0 #1e3a8a">📋 سجل النتائج${mmRes().length ? ' (' + AD(mmRes().length) + ')' : ''}</button></div>`;
       ROOT.appendChild(d);
       rosterUI($('.pt-card', d), keys.length, () => { R = roster(); keys = Object.keys(R.classes); cls = R.cur && R.classes[R.cur] ? R.cur : (keys[0] || ''); draw(); });
       const inp = $('input.nm', d); inp.oninput = () => { name = inp.value.trim(); $$('.names button', d).forEach(b => b.classList.toggle('on', b.textContent === name)); };
@@ -638,10 +638,52 @@ button.lz:disabled{cursor:default}
       const sp = $('#spin', d); if (sp) sp.onclick = () => { if (!list.length || spin) return; AU.init(); const bs = $$('.names button', d), target = Math.floor(Math.random() * bs.length), steps = bs.length * 2 + target; let k = 0; spin = 1;
         (function step() { bs.forEach(x => x.classList.remove('on')); const b = bs[k % bs.length]; b.classList.add('on'); b.scrollIntoView({ block: 'nearest' }); SFX.tick(); if (k >= steps) { name = list[target]; inp.value = name; spin = 0; SFX.ok(); return; } k++; setTimeout(step, 40 + Math.pow(k / steps, 3) * 380); })(); };
       $$('[data-o]', d).forEach(g => $$('button', g).forEach(b => b.onclick = () => { opts[g.dataset.o] = +b.dataset.v; SFX.click(); $$('button', g).forEach(x => x.setAttribute('aria-pressed', x === b)); }));
-      $('#go', d).onclick = () => { AU.init(); mmGame(name || 'المتسابق', opts, list); };
+      $('#go', d).onclick = () => { AU.init(); opts.cls = keys.length && list.indexOf(name) >= 0 ? cls : ''; mmGame(name || 'المتسابق', opts, list); };
+      $('#mmlog', d).onclick = () => mmLog(draw);
       $('#snds', d).onclick = () => soundPanel(draw);
     }
     toolbar(); draw();
+  }
+  /* ---------- سجل نتائج المتسابقين (محفوظ على هذا الجهاز) ---------- */
+  const MMK = 'mm-results';
+  function mmRes() { try { const a = JSON.parse(localStorage.getItem(MMK) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+  function mmPut(a) { try { localStorage.setItem(MMK, JSON.stringify(a.slice(0, 1000))); } catch (e) { } }
+  function mmSave(r) { const a = mmRes(); a.unshift(Object.assign({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), at: Date.now() }, r)); mmPut(a); }
+  function mmLog(onClose) {
+    const m = document.createElement('div'); m.className = 'mm-ov'; m.style.zIndex = 46; let sort = 'new', fc = '', armAll = 0, armId = '';
+    const KIND = { million: ['🏆', 'فاز بالتحدي', '#16a34a'], walk: ['🚪', 'انسحب', '#d97706'], wrong: ['✘', 'إجابة خاطئة', '#dc2626'] };
+    const dt = t => { try { return new Date(t).toLocaleString('ar-SA', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }); } catch (e) { return ''; } };
+    const draw = () => {
+      const all = mmRes(), cs = [...new Set(all.map(r => r.cls).filter(Boolean))];
+      let a = all.filter(r => !fc || r.cls === fc); if (sort === 'top') a = a.slice().sort((x, y) => y.amt - x.amt || y.ok - x.ok || y.at - x.at);
+      const best = a.reduce((v, r) => Math.max(v, r.amt || 0), 0), sum = a.reduce((v, r) => v + (r.amt || 0), 0);
+      m.innerHTML = `<div class="pt-card pop" style="width:min(1100px,100%);background:#0b1a4d;border-color:#c9a227;color:#fff;max-height:94vh;display:flex;flex-direction:column">
+        <h3 style="display:flex;justify-content:space-between;align-items:center;gap:.5em;flex-wrap:wrap;margin:0 0 .4em">📋 سجل نتائج المتسابقين <span><button class="mini" id="lgx" style="background:#f59e0b;color:#111">✔ إغلاق</button></span></h3>
+        <div style="display:flex;gap:.5em;flex-wrap:wrap;align-items:center;font-size:.9em;margin-bottom:.5em">
+          <span class="chips"><button class="chip" data-s="new" aria-pressed="${sort === 'new'}">🕒 الأحدث</button><button class="chip" data-s="top" aria-pressed="${sort === 'top'}">🏆 الأعلى مبلغًا</button></span>
+          ${cs.length ? `<span class="chips"><button class="chip" data-f="" aria-pressed="${!fc}">كل الفصول</button>${cs.map(c => `<button class="chip" data-f="${esc(c)}" aria-pressed="${fc === c}">الفصل ${esc(c)}</button>`).join('')}</span>` : ''}
+          <span style="margin-inline-start:auto;color:#fde68a">${AD(a.length)} متسابق · أعلى مبلغ ${MON(best)} ريال · المجموع ${MON(sum)} ريال</span></div>
+        <div style="overflow:auto;flex:1;min-height:0;border-radius:12px">
+        ${a.length ? `<table style="width:100%;border-collapse:collapse;font-size:.92em;text-align:center"><thead><tr style="background:#1e3a8a;color:#fde68a;position:sticky;top:0">
+          <th style="padding:.5em">#</th><th>المتسابق</th><th>الفصل</th><th>المسابقة</th><th>أين وصل</th><th>الإجابات الصحيحة</th><th>المبلغ</th><th>النتيجة</th><th>التاريخ</th><th>حذف</th></tr></thead><tbody>
+          ${a.map((r, i) => { const k = KIND[r.kind] || KIND.wrong; return `<tr style="border-bottom:1px solid #1e3a8a;background:${i % 2 ? '#0f2160' : 'transparent'}">
+            <td style="padding:.45em">${AD(i + 1)}</td><td style="font-weight:800">${esc(r.name)}</td><td>${r.cls ? esc(r.cls) : '—'}</td>
+            <td style="font-size:.85em;color:#cbd5e1">${r.all ? '🏆 شاملة: ' : ''}${esc(r.src || '')}</td>
+            <td>${r.kind === 'million' ? 'أنهى الأسئلة كلها' : 'السؤال ' + AD(r.reached) + ' من ' + AD(r.N)}</td><td>${AD(r.ok)} / ${AD(r.N)}</td>
+            <td style="font-family:'Readex Pro';color:#fde68a;font-size:1.15em">${MON(r.amt)} <small>ريال</small></td>
+            <td><span style="background:${k[2]};border-radius:99px;padding:.1em .7em;font-size:.85em;white-space:nowrap">${k[0]} ${k[1]}</span></td>
+            <td style="font-size:.8em;color:#cbd5e1;white-space:nowrap">${dt(r.at)}</td>
+            <td><button class="mini" data-del="${esc(r.id)}" style="${armId === r.id ? 'background:#dc2626;color:#fff' : ''}">${armId === r.id ? 'تأكيد؟' : '🗑️'}</button></td></tr>`; }).join('')}</tbody></table>`
+          : '<p style="text-align:center;color:#cbd5e1;padding:2em 0">لا توجد نتائج مسجلة بعد — تُسجَّل نتيجة كل متسابق تلقائيًا عند انتهاء لعبته.</p>'}</div>
+        ${all.length ? `<div style="display:flex;justify-content:space-between;align-items:center;gap:.5em;margin-top:.6em;flex-wrap:wrap"><small style="color:#94a3b8">تُحفظ النتائج على هذا الجهاز فقط.</small><button class="mini" id="lgall" style="background:${armAll ? '#dc2626' : '#7f1d1d'};color:#fff">${armAll ? '⚠️ اضغط مرة أخرى لحذف ' + (fc ? 'نتائج الفصل ' + esc(fc) : 'كل النتائج') : '🗑️ حذف ' + (fc ? 'نتائج هذا الفصل' : 'كل النتائج')}</button></div>` : ''}
+      </div>`;
+      $('#lgx', m).onclick = () => { m.remove(); if (onClose) onClose(); };
+      $$('[data-s]', m).forEach(b => b.onclick = () => { sort = b.dataset.s; armAll = 0; armId = ''; draw(); });
+      $$('[data-f]', m).forEach(b => b.onclick = () => { fc = b.dataset.f; armAll = 0; armId = ''; draw(); });
+      $$('[data-del]', m).forEach(b => b.onclick = () => { const id = b.dataset.del; if (armId !== id) { armId = id; armAll = 0; draw(); return; } mmPut(mmRes().filter(r => r.id !== id)); armId = ''; SFX.click(); draw(); });
+      const la = $('#lgall', m); if (la) la.onclick = () => { if (!armAll) { armAll = 1; armId = ''; draw(); return; } mmPut(fc ? mmRes().filter(r => r.cls !== fc) : []); armAll = 0; fc = ''; SFX.click(); draw(); };
+    };
+    draw(); ROOT.appendChild(m);
   }
   function soundPanel(onClose) {
     const m = document.createElement('div'); m.className = 'mm-ov'; m.style.zIndex = 45;
@@ -730,14 +772,15 @@ button.lz:disabled{cursor:default}
       const cd = setInterval(() => { const e = $('.mm-ph .cd', C); if (!e || st.phase === 'lock' || st.phase === 'end') return clearInterval(cd); left--; e.textContent = AD(Math.max(0, left)); if (left <= 0) { clearInterval(cd); e.textContent = 'انتهت المكالمة'; } }, 1000); TIMERS.push(cd); }
     function swap() { SFX.whoosh(); AU.stopLoop(); st.q = Q.next(); show(true); }
     function finish(kind) {
-      clock(true); clearInterval(AU.loop); ['loop1', 'loop2', 'loop3', 'lock'].forEach(k => CS.stop(k)); Q.done(); const amt = kind === 'million' ? LAD[N - 1] : kind === 'walk' ? won() : safeWon(); st.phase = 'end'; ladder();
+      if (st.fin) return; st.fin = 1; clock(true); clearInterval(AU.loop); ['loop1', 'loop2', 'loop3', 'lock'].forEach(k => CS.stop(k)); Q.done(); const amt = kind === 'million' ? LAD[N - 1] : kind === 'walk' ? won() : safeWon(); st.phase = 'end'; ladder();
       if (kind === 'million') { MS.million(); confetti(300, 5000); } else { if (!CS.cur.wrong && !CS.cur.walk) CS.play('trans'); if (amt > 0) { if (!CS.has('trans')) SFX.win(); confetti(140); } }
+      const reached = kind === 'million' ? N : Math.min(N, st.L + 1); mmSave({ name, cls: opts.cls || '', src: G.lesson.title, all: !!G.groups, ok: kind === 'million' ? N : st.L, reached, N, amt, kind });
       const o = document.createElement('div'); o.className = 'mm-ov'; o.innerHTML = `<div class="mm-chk pop"><div style="font-size:2.6em">${kind === 'million' ? '🏆💰' : amt ? '🎉' : '💪'}</div><h2>${kind === 'million' ? 'مبروك! ' + esc(name) + ' فاز بالتحدي!' : amt ? 'أحسنت يا ' + esc(name) + '!' : 'حظًّا أوفر يا ' + esc(name)}</h2>
         <div>${kind === 'wrong' ? 'إجابة خاطئة — تحصل على المبلغ المضمون' : kind === 'walk' ? 'انسحبت بالمبلغ الذي ربحته' : 'أجبت عن كل الأسئلة!'}</div><div class="amt" id="mma">٠</div><div>ريال</div>
         <div class="line">أجبت صحيحًا عن ${AD(kind === 'million' ? N : st.L)} من ${AD(N)} أسئلة · ${esc(G.lesson.title)}</div>
-        <button class="gobtn" id="mm1">↺ لعبة جديدة بأسئلة جديدة</button> <button class="gobtn" id="mm2" style="background:linear-gradient(#3b82f6,#1d4ed8);box-shadow:0 6px 0 #1e3a8a">🎤 متسابق آخر</button></div>`;
+        <button class="gobtn" id="mm1">↺ لعبة جديدة بأسئلة جديدة</button> <button class="gobtn" id="mm2" style="background:linear-gradient(#3b82f6,#1d4ed8);box-shadow:0 6px 0 #1e3a8a">🎤 متسابق آخر</button> <button class="gobtn" id="mm3" style="background:linear-gradient(#10b981,#047857);box-shadow:0 6px 0 #064e3b">📋 سجل النتائج</button></div>`;
       ROOT.appendChild(o); const ae = $('#mma', o), t0 = performance.now(); (function cnt(now) { const f = clamp((now - t0) / 1600, 0, 1); ae.textContent = MON(Math.round(amt * easeOut(f))); if (f < 1 && ae.isConnected) requestAnimationFrame(cnt); })(t0);
-      $('#mm1', o).onclick = () => mmGame(name, opts, classmates); $('#mm2', o).onclick = millionaire;
+      $('#mm1', o).onclick = () => mmGame(name, opts, classmates); $('#mm2', o).onclick = millionaire; $('#mm3', o).onclick = () => mmLog();
     }
     intro();
   }
