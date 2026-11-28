@@ -1,0 +1,74 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>من سيربح التحدي — المسابقة الشاملة</title><meta name="theme-color" content="#040b2b">
+<style>
+@font-face{font-family:'IBM Plex Sans Arabic';font-weight:600;src:url(../fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Readex Pro';font-weight:700;src:url(../fonts/readex-pro-arabic-700.woff2) format('woff2');unicode-range:U+0600-06FF,U+FE70-FEFF}
+@font-face{font-family:'Readex Pro';font-weight:700;src:url(../fonts/readex-pro-latin-700.woff2) format('woff2');unicode-range:U+0000-00FF}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;font-weight:600;color:#fff;background:radial-gradient(circle at 50% 25%,#1e3a8a,#040b2b 72%);overflow:auto}
+#sel{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2vh 4vw;gap:1.2vh;text-align:center}
+#sel img{height:min(30vh,15em);width:auto;filter:drop-shadow(0 0 26px rgba(250,204,21,.45))}
+h1{font-family:'Readex Pro';margin:0;font-size:clamp(1.3em,3.2vw,2em);background:linear-gradient(#fff6c4,#f5b301);-webkit-background-clip:text;background-clip:text;color:transparent}
+p.sub{margin:0;color:#c7d2fe;font-size:clamp(.95em,1.8vw,1.15em)}
+.card{background:rgba(10,24,72,.75);border:2px solid #f5b30166;border-radius:1.1em;padding:.8em 1.1em;width:min(46em,100%)}
+.card h3{margin:0 0 .5em;font-family:'Readex Pro';color:#fde68a;font-size:1.05em}
+.chips{display:flex;flex-wrap:wrap;gap:.5em;justify-content:center}
+.chip{font:inherit;cursor:pointer;border:2px solid #3b5bdb;background:#0b1f5c;color:#e0e7ff;border-radius:99px;padding:.45em 1.1em;font-size:1em}
+.chip[aria-pressed=true]{background:linear-gradient(#fde68a,#f59e0b);color:#111;border-color:#fde68a}
+.chip.sm{font-size:.85em;padding:.35em .9em}
+#info{color:#93c5fd;min-height:1.4em}
+#go{font:inherit;font-family:'Readex Pro';font-size:1.35em;cursor:pointer;border:0;border-radius:99px;padding:.55em 2.2em;background:linear-gradient(#fde68a,#f59e0b);color:#111;box-shadow:0 6px 0 #92400e}
+#go:disabled{opacity:.5;cursor:default}
+</style></head><body>
+<div id="sel">
+  <img src="../img/mm-challenge-logo.webp" alt="من سيربح التحدي؟">
+  <h1>المسابقة الشاملة</h1>
+  <p class="sub">١٥ سؤالًا متنوعًا من جميع الدروس · الجائزة الكبرى ١٠٠ ريال · أسئلة جديدة في كل لعبة</p>
+  <div class="card"><h3>🎓 الصف</h3><div class="chips" id="gr"></div></div>
+  <div class="card"><h3>📅 الفصل الدراسي</h3><div class="chips" id="tm"></div></div>
+  <div class="card"><h3>📚 الدروس المشمولة</h3><div class="chips" id="ch"></div></div>
+  <div id="info">⏳ تحميل قائمة الدروس…</div>
+  <button id="go" disabled>💰 لنبدأ التحدي</button>
+</div>
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)};
+var GR={7:'الأول المتوسط',8:'الثاني المتوسط',9:'الثالث المتوسط'},TM={1:'الفصل الدراسي الأول',2:'الفصل الدراسي الثاني'};
+var AD=function(n){return String(n).replace(/\d/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d]})};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var P=new URLSearchParams(location.search),S={g:P.get('g')||'7',t:P.get('t')||'1',off:{}},ITEMS=[],CACHE={};
+if(!GR[S.g])S.g='7';if(!TM[S.t])S.t='1';
+function games(){return ITEMS.filter(function(i){return i.type==='game'&&i.grade===S.g&&String(i.term||'1')===S.t&&/arena-/.test(i.file||'')})}
+function chapters(){var a=[];games().forEach(function(i){if(a.indexOf(i.chapter)<0)a.push(i.chapter)});return a}
+function draw(){
+  $('#gr').innerHTML=['7','8','9'].map(function(k){return '<button class="chip" data-g="'+k+'" aria-pressed="'+(S.g===k)+'">'+GR[k]+'</button>'}).join('');
+  $('#tm').innerHTML=['1','2'].map(function(k){return '<button class="chip" data-t="'+k+'" aria-pressed="'+(S.t===k)+'">'+TM[k]+'</button>'}).join('');
+  var ch=chapters();
+  $('#ch').innerHTML='<button class="chip sm" data-all="1" aria-pressed="'+ch.every(function(c){return !S.off[c]})+'">✔ جميع الفصول</button>'+ch.map(function(c){return '<button class="chip sm" data-c="'+esc(c)+'" aria-pressed="'+(!S.off[c])+'">'+esc(c.replace(/^الفصل\s+/,'').replace(/:/,' —'))+'</button>'}).join('');
+  var ls=games().filter(function(i){return !S.off[i.chapter]});
+  $('#info').textContent=ls.length?'سيُختار ١٥ سؤالًا متنوعًا من '+AD(ls.length)+' درسًا':'اختر فصلًا واحدًا على الأقل';
+  $('#go').disabled=!ls.length;
+}
+document.addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;
+  if(b.dataset.g){S.g=b.dataset.g;S.off={}}else if(b.dataset.t){S.t=b.dataset.t;S.off={}}
+  else if(b.dataset.all){var all=chapters().every(function(c){return !S.off[c]});S.off={};if(all)chapters().forEach(function(c){S.off[c]=1})}
+  else if(b.dataset.c){S.off[b.dataset.c]=!S.off[b.dataset.c]}
+  draw()});
+function pageQs(file){if(CACHE[file])return Promise.resolve(CACHE[file]);
+  return fetch('../'+file).then(function(r){return r.text()}).then(function(t){var m=t.match(/window\.GAME=(\{[\s\S]*?\});<\/script>/);var g=m?JSON.parse(m[1]):null;CACHE[file]=g;return g}).catch(function(){return null})}
+function loadParty(cb){if(window.PARTY)return cb();var s=document.createElement('script');s.src='party.js';s.onload=cb;s.onerror=function(){alert('تعذر تحميل اللعبة — تحقق من الاتصال')};document.head.appendChild(s)}
+$('#go').onclick=function(){
+  var ls=games().filter(function(i){return !S.off[i.chapter]});if(!ls.length)return;
+  var go=$('#go');go.disabled=true;go.textContent='⏳ تجهيز الأسئلة…';
+  Promise.all(ls.map(function(i){return pageQs(i.file).then(function(g){return g&&g.qs&&g.qs.length?{t:(g.lesson&&g.lesson.title)||i.title.replace(/^ألعاب:\s*/,''),no:i.no||0,qs:g.qs}:null})})).then(function(groups){
+    groups=groups.filter(Boolean);
+    // دمج الدرس المكرر (مثل المراجعة) تحت اسمه
+    var G={lesson:{id:'all-g'+S.g+'-t'+S.t,title:'جميع دروس الصف '+GR[S.g]+' — '+TM[S.t],grade:S.g,chapter:'all-t'+S.t+'-'+Object.keys(S.off).filter(function(k){return S.off[k]}).length},qs:[],groups:groups};
+    go.textContent='💰 لنبدأ التحدي';
+    if(!groups.length){$('#info').textContent='تعذر تحميل الأسئلة — تحقق من الاتصال';go.disabled=false;return}
+    loadParty(function(){$('#sel').style.display='none';window.PARTY.open('mm',G,function(){$('#sel').style.display='';draw()})});
+  });
+};
+fetch('../catalog-v4.json',{cache:'no-cache'}).then(function(r){return r.json()}).then(function(c){ITEMS=c.items||[];draw()}).catch(function(){$('#info').textContent='تعذر تحميل قائمة الدروس — اتصل بالإنترنت مرة واحدة على الأقل'});
+draw();
+})();
+</script></body></html>

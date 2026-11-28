@@ -80,6 +80,7 @@
     if (POOL) return POOL;
     const seen = new Set(), out = [];
     const add = (qs, src, lt, no) => (qs || []).forEach(q => { if (!q || !q.q || !Array.isArray(q.o) || q.o.length < 2) return; const k = q.q.trim(); if (seen.has(k)) return; seen.add(k); out.push(Object.assign({ src, lt, no }, q)); });
+    if (G.groups) { G.groups.forEach(g => add(g.qs, 'lesson', g.t, g.no || 0)); POOL = out; return POOL; }
     add(G.qs, 'lesson', G.lesson.title, 0);
     try {
       const cat = await (await fetch('../catalog-v4.json', { cache: 'force-cache' })).json();
@@ -97,6 +98,7 @@
   function freshOrder(pool, filter) {
     let p = pool.filter(filter || (() => true)); const s = seenSet(); let un = shuffle(p.filter(q => !s.has(q.q.trim()))), old = shuffle(p.filter(q => s.has(q.q.trim())));
     if (!un.length) { try { localStorage.removeItem(SEENK()); } catch (e) { } }
+    if (G && G.groups) { const mix = a => { const by = {}; a.forEach(q => (by[q.lt] = by[q.lt] || []).push(q)); const ks = shuffle(Object.keys(by)), r = []; let more = true; while (more) { more = false; ks.forEach(k => { if (by[k].length) { r.push(by[k].shift()); more = true; } }); } return r; }; un = mix(un); old = mix(old); }
     return un.concat(old);
   }
   function mixQ(q) { const idx = shuffle(q.o.map((_, i) => i)); return { q: q.q, o: idx.map(i => q.o[i]), a: idx.indexOf(q.a), ex: q.ex || '', raw: q }; }
@@ -583,7 +585,8 @@ button.lz:disabled{cursor:default}
 .mm-set .names button.on{background:#f59e0b;color:#111;border-color:#fff!important;transform:scale(1.08)}
 .mm-set input.nm{font:inherit;font-family:'Readex Pro',sans-serif;font-size:1.3em;text-align:center;width:min(28em,100%);border-radius:14px;border:3px solid #c9a227;background:rgba(2,6,23,.6);color:#fde047;padding:.3em}
 `;
-  const LADDER = [100, 200, 300, 500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 125000, 250000, 500000, 1000000];
+  /* الجائزة الكبرى ١٠٠ ريال موزعة تصاعديًا على ١٥ سؤالًا — المبلغان المضمونان عند السؤال ٥ و١٠ */
+  const LADDER = [1, 2, 3, 5, 7, 10, 13, 16, 20, 25, 30, 40, 50, 70, 100];
   function emblem(big) {
     const rays = Array.from({ length: 24 }, (_, k) => { const a = k * 15 * Math.PI / 180, r1 = 92, r2 = k % 2 ? 112 : 120; return `<line x1="${(120 + Math.cos(a) * r1).toFixed(1)}" y1="${(120 + Math.sin(a) * r1).toFixed(1)}" x2="${(120 + Math.cos(a) * r2).toFixed(1)}" y2="${(120 + Math.sin(a) * r2).toFixed(1)}" stroke="url(#eg)" stroke-width="${k % 2 ? 2 : 4}" stroke-linecap="round"/>`; }).join('');
     return `<svg class="mm-emb${big ? ' big' : ''}" viewBox="0 0 240 240"><defs><linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".5" stop-color="#f4c542"/><stop offset="1" stop-color="#9a6b0e"/></linearGradient><radialGradient id="eb" cx=".5" cy=".4" r=".6"><stop offset="0" stop-color="#2b4fc4"/><stop offset="1" stop-color="#040b2b"/></radialGradient></defs>
@@ -620,7 +623,7 @@ button.lz:disabled{cursor:default}
       const old = $('.pt-scr', ROOT); if (old) old.remove(); const list = keys.length ? clean(R.classes[cls]) : [];
       const d = document.createElement('div'); d.className = 'pt-scr mm-set'; d.style.background = 'radial-gradient(circle at 50% 30%,#1e3a8a,#040b2b 70%)';
       d.innerHTML = `<div class="pt-set"><div style="height:min(28vh,13em);display:flex;justify-content:center"><img src="../img/mm-challenge-logo.webp" alt="من سيربح التحدي؟" style="height:100%;width:auto;filter:drop-shadow(0 0 22px rgba(250,204,21,.45))" onerror="this.style.display='none'"></div>
-        <p class="sub" style="margin-top:.3em">${esc(G.lesson.title)} — ${AD(Math.min(15, mmPool))} سؤالًا من بنك الفصل بترتيب جديد في كل لعبة</p>
+        <p class="sub" style="margin-top:.3em">${esc(G.lesson.title)} — ${G.groups ? AD(Math.min(15, mmPool)) + ' سؤالًا متنوعًا من ' + AD(G.groups.length) + ' درسًا' : AD(Math.min(15, mmPool)) + ' سؤالًا من بنك الفصل'} بترتيب جديد في كل لعبة · الجائزة الكبرى ١٠٠ ريال</p>
         <div class="pt-card"><h3>🎤 المتسابق</h3>${keys.length ? `<div class="chips">${keys.map(k => `<button class="chip" data-c="${esc(k)}" aria-pressed="${k === cls}">الفصل ${esc(k)}</button>`).join('')} <button class="chip" id="spin" style="background:#f59e0b;color:#111">🎲 اختيار عشوائي</button></div><div class="names">${list.map((n, i) => `<button data-i="${i}" class="${n === name ? 'on' : ''}">${esc(n)}</button>`).join('')}</div>` : ''}
           <div style="text-align:center;margin-top:.6em"><input class="nm" placeholder="اسم المتسابق" value="${esc(name)}"></div></div>
         <div class="pt-card"><div class="row"><span>المؤقت</span><span class="chips" data-o="timer"><button class="chip" data-v="1" aria-pressed="${opts.timer === 1}">٣٠ ث ثم ٤٥ ث</button><button class="chip" data-v="0" aria-pressed="${opts.timer === 0}">بلا وقت</button></span></div>
@@ -657,7 +660,7 @@ button.lz:disabled{cursor:default}
   }
   function mmGame(name, opts, classmates) {
     mount(); if (!$('#mm-css')) document.head.insertAdjacentHTML('beforeend', '<style id="mm-css">' + MM_CSS + '</style>');
-    const Q = Queue(q => q.o.length === 4), avail = Q.size(), N = Math.min(15, Math.max(1, avail)), LAD = LADDER.slice(15 - N), SAFE = new Set([LAD.indexOf(1000), LAD.indexOf(32000)].filter(i => i >= 0 && i < N - 1));
+    const Q = Queue(q => q.o.length === 4), avail = Q.size(), N = Math.min(15, Math.max(1, avail)), LAD = LADDER.slice(15 - N), SAFE = new Set([4, 9].map(i => i - (15 - N)).filter(i => i >= 0 && i < N - 1));
     const st = { L: 0, q: null, used: {}, gone: new Set(), phase: 'intro', sel: -1, tmr: 0, mood: 0, moodT: 0 };
     ROOT.innerHTML = `<div class="mm"><canvas class="bg"></canvas><div class="mm-wrap"><div class="mm-stage"><img class="mm-photo" src="../img/mm-challenge-studio.webp" alt="" decoding="async">
         <div class="mm-head"><span class="mm-pill">🎤 <b>${esc(name)}</b></span><span class="mm-pill" id="mmq"></span><div class="mm-clock"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="rgba(2,6,23,.75)" stroke="#1e3a8a" stroke-width="4"/><circle id="mmcr" cx="20" cy="20" r="17" fill="none" stroke="#fde047" stroke-width="4" stroke-dasharray="106.8" stroke-dashoffset="0" stroke-linecap="round"/></svg><span></span></div><button class="mm-walk" id="mmw">🚪 انسحب بالمبلغ</button></div>
@@ -707,8 +710,8 @@ button.lz:disabled{cursor:default}
     function reveal(ok) {
       const q = st.q; AE[q.a].classList.remove('sel'); AE[q.a].classList.add('ok'); st.mood = ok ? 2 : 3; st.moodT = 1.5;
       if (ok) { MS.right(st.L); st.L++; ladder(true); if (st.L >= N) { st.phase = 'end'; return setTimeout(() => finish('million'), 2200); } if (SAFE.has(st.L - 1)) confetti(90, 2000);
-        st.phase = 'reveal'; CTL.innerHTML = `<span class="ex"><b>✔ إجابة صحيحة! رصيدك ${MON(won())} ريال</b>${q.ex ? ' — ' + esc(q.ex) : ''}${SAFE.has(st.L - 1) ? '<br>✦ وصلت إلى مبلغ مضمون!' : ''}</span><button class="mm-btn g" id="mmx">السؤال التالي ←</button>`; $('#mmx').onclick = () => show(); }
-      else { MS.wrong(); st.phase = 'end'; CTL.innerHTML = `<span class="ex"><b class="x">✘ الإجابة الصحيحة: ${esc(q.o[q.a])}</b>${q.ex ? ' — ' + esc(q.ex) : ''}</span><button class="mm-btn" id="mmx">النتيجة</button>`; $('#mmx').onclick = () => finish('wrong'); }
+        st.phase = 'reveal'; CTL.innerHTML = `<span class="ex"><b>✔ إجابة صحيحة! رصيدك ${MON(won())} ريال</b>${q.ex ? ' — ' + esc(q.ex) : ''}${G.groups && q.raw && q.raw.lt ? '<br><small style="color:#93c5fd">📘 من درس: ' + esc(q.raw.lt) + '</small>' : ''}${SAFE.has(st.L - 1) ? '<br>✦ وصلت إلى مبلغ مضمون!' : ''}</span><button class="mm-btn g" id="mmx">السؤال التالي ←</button>`; $('#mmx').onclick = () => show(); }
+      else { MS.wrong(); st.phase = 'end'; CTL.innerHTML = `<span class="ex"><b class="x">✘ الإجابة الصحيحة: ${esc(q.o[q.a])}</b>${q.ex ? ' — ' + esc(q.ex) : ''}${G.groups && q.raw && q.raw.lt ? '<br><small style="color:#93c5fd">📘 من درس: ' + esc(q.raw.lt) + '</small>' : ''}</span><button class="mm-btn" id="mmx">النتيجة</button>`; $('#mmx').onclick = () => finish('wrong'); }
     }
     function timeUp() { if (st.phase !== 'q' && st.phase !== 'sel') return; st.phase = 'end'; AU.stopLoop(); AE.forEach(b => b.disabled = true); lifelines(false); MS.wrong(); AE[st.q.a].classList.add('ok'); CTL.innerHTML = `<span class="ex"><b class="x">⏰ انتهى الوقت! الإجابة الصحيحة: ${esc(st.q.o[st.q.a])}</b></span><button class="mm-btn" id="mmx">النتيجة</button>`; $('#mmx').onclick = () => finish('walk'); }
     $('#mmw').onclick = () => { if (st.phase !== 'q' && st.phase !== 'sel') return; const prev = st.phase; st.phase = 'ask'; CTL.innerHTML = `<span style="font-family:'Readex Pro'">تنسحب بمبلغ ${MON(won())} ريال؟</span><button class="mm-btn" id="mmy">نعم، أنسحب</button><button class="mm-btn n" id="mmn">أكمل اللعب</button>`;
@@ -1012,7 +1015,7 @@ button.lz:disabled{cursor:default}
   /* ---------------- نقطة الدخول ---------------- */
   window.PARTY = {
     async open(kind, game, back) {
-      G = game; BACK = back; mount(); ROOT.innerHTML = '<div class="pt-scr" style="color:#fff;font-family:Readex Pro;font-size:1.4em">⏳ تجهيز الأسئلة…</div>';
+      if (G !== game) POOL = null; G = game; BACK = back; mount(); ROOT.innerHTML = '<div class="pt-scr" style="color:#fff;font-family:Readex Pro;font-size:1.4em">⏳ تجهيز الأسئلة…</div>';
       await Promise.all([loadPool(), CS.loadAll()]); if (!POOL.length) { ROOT.innerHTML = '<div class="pt-scr" style="color:#fff">لا توجد أسئلة لهذا الدرس.</div>'; toolbar(); return; }
       if (kind === 'hub') return hub(); RET = null; ({ pen: penalty, hex: hexGame, mm: millionaire, volcano, magnet, planets, bell })[kind]();
     }
